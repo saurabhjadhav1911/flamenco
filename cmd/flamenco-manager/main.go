@@ -288,10 +288,10 @@ func openWebbrowser(ctx context.Context, url url.URL) {
 
 	urlToTry := url.String()
 	if err := browser.OpenURL(urlToTry); err != nil {
-		log.Fatal().Err(err).Msgf("unable to open a browser to %s", urlToTry)
+		log.Error().Err(err).Msgf("unable to open a browser to %s, please open it yourself or try any of the other URLs above", urlToTry)
+		return
 	}
 	log.Info().Str("url", urlToTry).Msgf("opened browser to the Flamenco interface")
-
 }
 
 func parseCliArgs() {
