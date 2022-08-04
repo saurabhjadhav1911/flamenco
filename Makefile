@@ -5,7 +5,7 @@ PKG := git.blender.org/flamenco
 VERSION := 3.0-beta1
 RELEASE_CYCLE := beta
 
-GITHASH := $(shell git describe --dirty --always)
+GITHASH := $(subst v${VERSION}-,,$(shell git describe --dirty --always))
 LDFLAGS := -X ${PKG}/internal/appinfo.ApplicationVersion=${VERSION} \
 	-X ${PKG}/internal/appinfo.ApplicationGitHash=${GITHASH} \
 	-X ${PKG}/internal/appinfo.ReleaseCycle=${RELEASE_CYCLE}
