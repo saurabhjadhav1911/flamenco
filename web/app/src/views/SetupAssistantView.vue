@@ -395,7 +395,7 @@ export default {
           this.blenderExeCheckResult = result;
           if (result.is_usable) {
             this.selectedBlender = result;
-          } else if (this.selectedBlender.source === 'input_path') {
+          } else if (this.selectedBlender != null && this.selectedBlender.source === 'input_path') {
             this.selectedBlender = null;
           }
           this._refreshAllBlenders();
