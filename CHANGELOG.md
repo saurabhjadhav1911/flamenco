@@ -10,6 +10,10 @@ bugs in actually-released versions.
   ([44ccc6c3ca70](https://developer.blender.org/rF44ccc6c3ca706fdd268bf310f3e8965d58482449)).
 - Manager: don't stop when the Flamenco Setup Assistant cannot start a webbrowser
   ([7d3d3d1d6078](https://developer.blender.org/rF7d3d3d1d6078828122b4b2d1376b1aaf2ba03b8b)).
+- Change path inside the Linux and macOS tarballs, so that they contain an
+  embedded `flamenco-3.x.y-xxxx/` directory with all the files (instead of
+  putting all the files in the root of the tarball).
+
 
 ## 3.0-beta1 - released 2022-08-03
 

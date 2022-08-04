@@ -258,9 +258,15 @@ tools-windows:
 	unzip -j $(FFMPEG_PACKAGE_WINDOWS) ffmpeg-5.0.1-essentials_build/bin/ffmpeg.exe -d .
 	mv ffmpeg.exe $(TOOLS)/ffmpeg-windows-amd64.exe
 
-RELEASE_PACKAGE_LINUX := dist/flamenco-${VERSION}-linux-amd64.tar.gz
-RELEASE_PACKAGE_DARWIN := dist/flamenco-${VERSION}-macos-amd64.tar.gz
+
+RELEASE_PACKAGE_LINUX_BASE := flamenco-${VERSION}-linux-amd64
+RELEASE_PACKAGE_LINUX := ${RELEASE_PACKAGE_LINUX_BASE}.tar.gz
+
+RELEASE_PACKAGE_DARWIN_BASE := flamenco-${VERSION}-macos-amd64
+RELEASE_PACKAGE_DARWIN := ${RELEASE_PACKAGE_DARWIN_BASE}.tar.gz
+
 RELEASE_PACKAGE_WINDOWS := dist/flamenco-${VERSION}-windows-amd64.zip
+
 RELEASE_PACKAGE_EXTRA_FILES := README.md LICENSE CHANGELOG.md
 
 .PHONY: release-package
@@ -276,8 +282,10 @@ release-package-linux:
 	$(MAKE) -s flamenco-manager-without-webapp GOOS=linux GOARCH=amd64
 	$(MAKE) -s flamenco-worker GOOS=linux GOARCH=amd64
 	$(MAKE) -s tools-linux
-	mkdir -p dist
-	tar zcvf ${RELEASE_PACKAGE_LINUX} flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-linux*
+	mkdir -p dist/${RELEASE_PACKAGE_LINUX_BASE}
+	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-linux* dist/${RELEASE_PACKAGE_LINUX_BASE}
+	cd dist; tar zcvf ${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_LINUX_BASE}
+	rm -rf dist/${RELEASE_PACKAGE_LINUX_BASE}
 	@echo "Done! Created ${RELEASE_PACKAGE_LINUX}"
 
 .PHONY: release-package-darwin
@@ -287,8 +295,10 @@ release-package-darwin:
 	$(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=amd64
 	$(MAKE) -s flamenco-worker GOOS=darwin GOARCH=amd64
 	$(MAKE) -s tools-darwin
-	mkdir -p dist
-	tar zcvf ${RELEASE_PACKAGE_DARWIN} flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-darwin*
+	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_BASE}
+	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-darwin* dist/${RELEASE_PACKAGE_DARWIN_BASE}
+	cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_BASE}
+	rm -rf dist/${RELEASE_PACKAGE_DARWIN_BASE}
 	@echo "Done! Created ${RELEASE_PACKAGE_DARWIN}"
 
 .PHONY: release-package-windows
