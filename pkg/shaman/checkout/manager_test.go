@@ -58,6 +58,9 @@ func TestSymlinkToCheckout(t *testing.T) {
 	err = manager.SymlinkToCheckout(blobPath, manager.checkoutBasePath, symlinkRelativePath)
 	assert.NoError(t, err)
 
+	err = manager.SymlinkToCheckout(blobPath, manager.checkoutBasePath, symlinkRelativePath)
+	assert.NoError(t, err, "symlinking a file twice should not be an issue")
+
 	// Wait for touch() calls to be done.
 	manager.wg.Wait()
 

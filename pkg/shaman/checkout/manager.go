@@ -200,24 +200,45 @@ func (m *Manager) SymlinkToCheckout(blobPath, checkoutPath, symlinkRelativePath 
 	// This is expected to fail sometimes, because we don't create parent directories yet.
 	// We only create those when we get a failure from symlinking.
 	err = os.Symlink(blobPath, symlinkPath)
-	if err == nil {
-		return err
-	}
-	if !errors.Is(err, fs.ErrNotExist) {
+	switch {
+	case err == nil:
+		return nil
+	case errors.Is(err, fs.ErrExist):
+		// The symlink already exists, which is weird. Investigate so we can log a
+		// more detailed warning.
+		linkTarget, readErr := os.Readlink(symlinkPath)
+		if readErr != nil {
+			logger.Error().
+				AnErr("symlinkError", err).
+				AnErr("symlinkReadError", readErr).
+				Msg("shaman: unable to create symlink as it already exists, but also it cannot be read")
+			return err
+		}
+		if linkTarget != blobPath {
+			logger.Error().
+				AnErr("symlinkError", err).
+				Str("alreadyLinkedFrom", linkTarget).
+				Msg("shaman: unable to create simlink, as it already exists and links a different blob")
+			return err
+		}
+		// The right file is linked, so let's warn about the situation and otherwise ignore it.
+		logger.Warn().
+			AnErr("symlinkError", err).
+			Msg("shaman: symlink unexpectedly already exists, but it is linking the right path so let's just use it")
+	case errors.Is(err, fs.ErrNotExist):
+		// The directory doesn't exist yet.
+		logger.Debug().Msg("shaman: creating parent directory")
+		dir := filepath.Dir(symlinkPath)
+		if err := os.MkdirAll(dir, 0777); err != nil {
+			logger.Error().Err(err).Msg("shaman: unable to create parent directory")
+			return err
+		}
+		if err := os.Symlink(blobPath, symlinkPath); err != nil {
+			logger.Error().Err(err).Msg("shaman: unable to create symlink, after creating parent directory")
+			return err
+		}
+	default:
 		logger.Error().Err(err).Msg("shaman: unable to create symlink")
-		return err
-	}
-
-	logger.Debug().Msg("shaman: creating parent directory")
-
-	dir := filepath.Dir(symlinkPath)
-	if err := os.MkdirAll(dir, 0777); err != nil {
-		logger.Error().Err(err).Msg("shaman: unable to create parent directory")
-		return err
-	}
-
-	if err := os.Symlink(blobPath, symlinkPath); err != nil {
-		logger.Error().Err(err).Msg("shaman: unable to create symlink, after creating parent directory")
 		return err
 	}
 
