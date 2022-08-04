@@ -195,7 +195,7 @@ class JobTypePropertyGroup:
         dirpath = bpathlib.make_absolute(filepath).parent
         if n >= len(dirpath.parts):
             all_parts = dirpath.relative_to(dirpath.anchor)
-            return all_parts
+            return Path(all_parts)
 
         subset = Path(*dirpath.parts[-n:])
         return subset
