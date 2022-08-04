@@ -214,6 +214,13 @@ class Transferrer(submodules.transfer.FileTransferer):  # type: ignore
                     size=filesize,
                     path=relpath,
                 )
+                if filespec in filespecs:
+                    # FIXME: there is an issue in BAT that some UDIM files are
+                    # reported twice. There is no use asking Shaman to check
+                    # them out twice, so avoid duplicates here for now.
+                    # ShamanFileSpec is not a hashable type, so unfortunately we
+                    # can't use a set() here.
+                    continue
                 filespecs.append(filespec)
                 self._rel_to_local_path[relpath] = src
 
