@@ -261,6 +261,7 @@ tools-windows:
 RELEASE_PACKAGE_LINUX := dist/flamenco-${VERSION}-linux-amd64.tar.gz
 RELEASE_PACKAGE_DARWIN := dist/flamenco-${VERSION}-macos-amd64.tar.gz
 RELEASE_PACKAGE_WINDOWS := dist/flamenco-${VERSION}-windows-amd64.zip
+RELEASE_PACKAGE_EXTRA_FILES := README.md LICENSE CHANGELOG.md
 
 .PHONY: release-package
 release-package:
@@ -276,7 +277,7 @@ release-package-linux:
 	$(MAKE) -s flamenco-worker GOOS=linux GOARCH=amd64
 	$(MAKE) -s tools-linux
 	mkdir -p dist
-	tar zcvf ${RELEASE_PACKAGE_LINUX} flamenco-manager flamenco-worker README.md LICENSE tools/*-linux*
+	tar zcvf ${RELEASE_PACKAGE_LINUX} flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-linux*
 	@echo "Done! Created ${RELEASE_PACKAGE_LINUX}"
 
 .PHONY: release-package-darwin
@@ -287,7 +288,7 @@ release-package-darwin:
 	$(MAKE) -s flamenco-worker GOOS=darwin GOARCH=amd64
 	$(MAKE) -s tools-darwin
 	mkdir -p dist
-	tar zcvf ${RELEASE_PACKAGE_DARWIN} flamenco-manager flamenco-worker README.md LICENSE tools/*-darwin*
+	tar zcvf ${RELEASE_PACKAGE_DARWIN} flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-darwin*
 	@echo "Done! Created ${RELEASE_PACKAGE_DARWIN}"
 
 .PHONY: release-package-windows
@@ -299,7 +300,7 @@ release-package-windows:
 	$(MAKE) -s tools-windows
 	mkdir -p dist
 	rm -f ${RELEASE_PACKAGE_WINDOWS}
-	zip -r -9 ${RELEASE_PACKAGE_WINDOWS} flamenco-manager.exe flamenco-worker.exe README.md LICENSE tools/*-windows*
+	zip -r -9 ${RELEASE_PACKAGE_WINDOWS} flamenco-manager.exe flamenco-worker.exe ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-windows*
 	@echo "Done! Created ${RELEASE_PACKAGE_WINDOWS}"
 
 .PHONY: publish-release-packages
