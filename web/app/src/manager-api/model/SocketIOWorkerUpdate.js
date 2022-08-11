@@ -84,6 +84,9 @@ class SocketIOWorkerUpdate {
             if (data.hasOwnProperty('version')) {
                 obj['version'] = ApiClient.convertToType(data['version'], 'String');
             }
+            if (data.hasOwnProperty('deleted_at')) {
+                obj['deleted_at'] = ApiClient.convertToType(data['deleted_at'], 'Date');
+            }
         }
         return obj;
     }
@@ -134,6 +137,12 @@ SocketIOWorkerUpdate.prototype['status_change'] = undefined;
  * @member {String} version
  */
 SocketIOWorkerUpdate.prototype['version'] = undefined;
+
+/**
+ * This is only set when the worker was deleted.
+ * @member {Date} deleted_at
+ */
+SocketIOWorkerUpdate.prototype['deleted_at'] = undefined;
 
 
 

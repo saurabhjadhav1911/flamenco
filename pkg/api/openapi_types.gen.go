@@ -560,6 +560,9 @@ type SocketIOTaskUpdate struct {
 
 // Subset of a Worker, sent over SocketIO when a worker changes.
 type SocketIOWorkerUpdate struct {
+	// This is only set when the worker was deleted.
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+
 	// UUID of the Worker
 	Id string `json:"id"`
 

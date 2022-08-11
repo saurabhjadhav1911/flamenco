@@ -97,6 +97,7 @@ class SocketIOWorkerUpdate(ModelNormal):
             'last_seen': (datetime,),  # noqa: E501
             'previous_status': (WorkerStatus,),  # noqa: E501
             'status_change': (WorkerStatusChangeRequest,),  # noqa: E501
+            'deleted_at': (datetime,),  # noqa: E501
         }
 
     @cached_property
@@ -113,6 +114,7 @@ class SocketIOWorkerUpdate(ModelNormal):
         'last_seen': 'last_seen',  # noqa: E501
         'previous_status': 'previous_status',  # noqa: E501
         'status_change': 'status_change',  # noqa: E501
+        'deleted_at': 'deleted_at',  # noqa: E501
     }
 
     read_only_vars = {
@@ -166,6 +168,7 @@ class SocketIOWorkerUpdate(ModelNormal):
             last_seen (datetime): Last time this worker was seen by the Manager.. [optional]  # noqa: E501
             previous_status (WorkerStatus): [optional]  # noqa: E501
             status_change (WorkerStatusChangeRequest): [optional]  # noqa: E501
+            deleted_at (datetime): This is only set when the worker was deleted.. [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)
@@ -262,6 +265,7 @@ class SocketIOWorkerUpdate(ModelNormal):
             last_seen (datetime): Last time this worker was seen by the Manager.. [optional]  # noqa: E501
             previous_status (WorkerStatus): [optional]  # noqa: E501
             status_change (WorkerStatusChangeRequest): [optional]  # noqa: E501
+            deleted_at (datetime): This is only set when the worker was deleted.. [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)

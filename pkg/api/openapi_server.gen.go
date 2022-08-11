@@ -98,6 +98,9 @@ type ServerInterface interface {
 	// Get list of workers.
 	// (GET /api/v3/worker-mgt/workers)
 	FetchWorkers(ctx echo.Context) error
+	// Remove the given worker. It is recommended to only call this function when the worker is in `offline` state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued.
+	// (DELETE /api/v3/worker-mgt/workers/{worker_id})
+	DeleteWorker(ctx echo.Context, workerId string) error
 	// Fetch info about the worker.
 	// (GET /api/v3/worker-mgt/workers/{worker_id})
 	FetchWorker(ctx echo.Context, workerId string) error
@@ -553,6 +556,22 @@ func (w *ServerInterfaceWrapper) FetchWorkers(ctx echo.Context) error {
 	return err
 }
 
+// DeleteWorker converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteWorker(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "worker_id" -------------
+	var workerId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "worker_id", runtime.ParamLocationPath, ctx.Param("worker_id"), &workerId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter worker_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteWorker(ctx, workerId)
+	return err
+}
+
 // FetchWorker converts echo context to params.
 func (w *ServerInterfaceWrapper) FetchWorker(ctx echo.Context) error {
 	var err error
@@ -791,6 +810,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/api/v3/tasks/:task_id/setstatus", wrapper.SetTaskStatus)
 	router.GET(baseURL+"/api/v3/version", wrapper.GetVersion)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers", wrapper.FetchWorkers)
+	router.DELETE(baseURL+"/api/v3/worker-mgt/workers/:worker_id", wrapper.DeleteWorker)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers/:worker_id", wrapper.FetchWorker)
 	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/setstatus", wrapper.RequestWorkerStatusChange)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers/:worker_id/sleep-schedule", wrapper.FetchWorkerSleepSchedule)

@@ -4,12 +4,78 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**delete_worker**](WorkerMgtApi.md#delete_worker) | **DELETE** /api/v3/worker-mgt/workers/{worker_id} | Remove the given worker. It is recommended to only call this function when the worker is in &#x60;offline&#x60; state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued. 
 [**fetch_worker**](WorkerMgtApi.md#fetch_worker) | **GET** /api/v3/worker-mgt/workers/{worker_id} | Fetch info about the worker.
 [**fetch_worker_sleep_schedule**](WorkerMgtApi.md#fetch_worker_sleep_schedule) | **GET** /api/v3/worker-mgt/workers/{worker_id}/sleep-schedule | 
 [**fetch_workers**](WorkerMgtApi.md#fetch_workers) | **GET** /api/v3/worker-mgt/workers | Get list of workers.
 [**request_worker_status_change**](WorkerMgtApi.md#request_worker_status_change) | **POST** /api/v3/worker-mgt/workers/{worker_id}/setstatus | 
 [**set_worker_sleep_schedule**](WorkerMgtApi.md#set_worker_sleep_schedule) | **POST** /api/v3/worker-mgt/workers/{worker_id}/sleep-schedule | 
 
+
+# **delete_worker**
+> delete_worker(worker_id)
+
+Remove the given worker. It is recommended to only call this function when the worker is in `offline` state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued. 
+
+### Example
+
+
+```python
+import time
+import flamenco.manager
+from flamenco.manager.api import worker_mgt_api
+from flamenco.manager.model.error import Error
+from pprint import pprint
+# Defining the host is optional and defaults to http://localhost
+# See configuration.py for a list of all supported configuration parameters.
+configuration = flamenco.manager.Configuration(
+    host = "http://localhost"
+)
+
+
+# Enter a context with an instance of the API client
+with flamenco.manager.ApiClient() as api_client:
+    # Create an instance of the API class
+    api_instance = worker_mgt_api.WorkerMgtApi(api_client)
+    worker_id = "worker_id_example" # str | 
+
+    # example passing only required values which don't have defaults set
+    try:
+        # Remove the given worker. It is recommended to only call this function when the worker is in `offline` state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued. 
+        api_instance.delete_worker(worker_id)
+    except flamenco.manager.ApiException as e:
+        print("Exception when calling WorkerMgtApi->delete_worker: %s\n" % e)
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **worker_id** | **str**|  |
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**204** | Normal response, worker has been deleted |  -  |
+**0** | Unexpected error. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **fetch_worker**
 > Worker fetch_worker(worker_id)

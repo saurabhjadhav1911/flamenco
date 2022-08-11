@@ -40,6 +40,52 @@ export default class WorkerMgtApi {
 
 
     /**
+     * Remove the given worker. It is recommended to only call this function when the worker is in `offline` state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued. 
+     * @param {String} workerId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    deleteWorkerWithHttpInfo(workerId) {
+      let postBody = null;
+      // verify the required parameter 'workerId' is set
+      if (workerId === undefined || workerId === null) {
+        throw new Error("Missing the required parameter 'workerId' when calling deleteWorker");
+      }
+
+      let pathParams = {
+        'worker_id': workerId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/api/v3/worker-mgt/workers/{worker_id}', 'DELETE',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Remove the given worker. It is recommended to only call this function when the worker is in `offline` state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued. 
+     * @param {String} workerId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    deleteWorker(workerId) {
+      return this.deleteWorkerWithHttpInfo(workerId)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
      * Fetch info about the worker.
      * @param {String} workerId 
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/Worker} and HTTP response

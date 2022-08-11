@@ -116,6 +116,26 @@ func (mr *MockFlamencoClientMockRecorder) CheckSharedStoragePathWithResponse(arg
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckSharedStoragePathWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).CheckSharedStoragePathWithResponse), varargs...)
 }
 
+// DeleteWorkerWithResponse mocks base method.
+func (m *MockFlamencoClient) DeleteWorkerWithResponse(arg0 context.Context, arg1 string, arg2 ...api.RequestEditorFn) (*api.DeleteWorkerResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteWorkerWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.DeleteWorkerResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteWorkerWithResponse indicates an expected call of DeleteWorkerWithResponse.
+func (mr *MockFlamencoClientMockRecorder) DeleteWorkerWithResponse(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkerWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).DeleteWorkerWithResponse), varargs...)
+}
+
 // FetchGlobalLastRenderedInfoWithResponse mocks base method.
 func (m *MockFlamencoClient) FetchGlobalLastRenderedInfoWithResponse(arg0 context.Context, arg1 ...api.RequestEditorFn) (*api.FetchGlobalLastRenderedInfoResponse, error) {
 	m.ctrl.T.Helper()
