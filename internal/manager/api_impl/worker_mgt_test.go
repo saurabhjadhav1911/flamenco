@@ -141,6 +141,44 @@ func TestFetchWorker(t *testing.T) {
 	})
 }
 
+func TestDeleteWorker(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+	worker := testWorker()
+	workerUUID := worker.UUID
+
+	// Test on non-existent worker.
+	mf.persistence.EXPECT().FetchWorker(gomock.Any(), workerUUID).
+		Return(nil, fmt.Errorf("wrapped: %w", persistence.ErrWorkerNotFound))
+	echo := mf.prepareMockedRequest(nil)
+	err := mf.flamenco.DeleteWorker(echo, workerUUID)
+	assert.NoError(t, err)
+	assertResponseAPIError(t, echo, http.StatusNotFound, fmt.Sprintf("worker %q not found", workerUUID))
+
+	// Test with existing worker.
+	mf.persistence.EXPECT().FetchWorker(gomock.Any(), workerUUID).Return(&worker, nil)
+	mf.stateMachine.EXPECT().RequeueActiveTasksOfWorker(
+		gomock.Any(), &worker, "worker is being deleted")
+	mf.persistence.EXPECT().DeleteWorker(gomock.Any(), workerUUID).Return(nil)
+
+	mockedNow := mf.clock.Now()
+	mf.broadcaster.EXPECT().BroadcastWorkerUpdate(api.SocketIOWorkerUpdate{
+		DeletedAt: &mockedNow,
+		Id:        worker.UUID,
+		Name:      worker.Name,
+		Status:    worker.Status,
+		Updated:   worker.UpdatedAt,
+		Version:   worker.Software,
+	})
+
+	echo = mf.prepareMockedRequest(nil)
+	err = mf.flamenco.DeleteWorker(echo, workerUUID)
+	assert.NoError(t, err)
+	assertResponseNoContent(t, echo)
+}
+
 func TestRequestWorkerStatusChange(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

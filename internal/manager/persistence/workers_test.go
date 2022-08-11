@@ -252,3 +252,68 @@ func TestFetchWorkers(t *testing.T) {
 		assert.Equal(t, windowsWorker.UUID, workers[1].UUID)
 	}
 }
+
+func TestDeleteWorker(t *testing.T) {
+	ctx, cancel, db := persistenceTestFixtures(t, 1*time.Second)
+	defer cancel()
+
+	// Test deleting non-existent worker
+	err := db.DeleteWorker(ctx, "dabf67a1-b591-4232-bf73-0b8de2a9488e")
+	assert.ErrorIs(t, err, ErrWorkerNotFound)
+
+	// Test deleting existing worker
+	w1 := Worker{
+		UUID:   "fd97a35b-a5bd-44b4-ac2b-64c193ca877d",
+		Name:   "Worker 1",
+		Status: api.WorkerStatusAwake,
+	}
+	w2 := Worker{
+		UUID:   "82b2d176-cb8c-4bfa-8300-41c216d766df",
+		Name:   "Worker  2",
+		Status: api.WorkerStatusOffline,
+	}
+
+	assert.NoError(t, db.CreateWorker(ctx, &w1))
+	assert.NoError(t, db.CreateWorker(ctx, &w2))
+
+	// Delete the 2nd worker, just to have a test with ID != 1.
+	assert.NoError(t, db.DeleteWorker(ctx, w2.UUID))
+
+	// The deleted worker should now no longer be found.
+	{
+		fetchedWorker, err := db.FetchWorker(ctx, w2.UUID)
+		assert.ErrorIs(t, err, ErrWorkerNotFound)
+		assert.Nil(t, fetchedWorker)
+	}
+
+	// The other worker should still exist.
+	{
+		fetchedWorker, err := db.FetchWorker(ctx, w1.UUID)
+		assert.NoError(t, err)
+		assert.Equal(t, w1.UUID, fetchedWorker.UUID)
+	}
+
+	// Assign a task to the other worker, and then delete that worker.
+	authJob := createTestAuthoredJobWithTasks()
+	persistAuthoredJob(t, ctx, db, authJob)
+	taskUUID := authJob.Tasks[0].UUID
+	{
+		task, err := db.FetchTask(ctx, taskUUID)
+		assert.NoError(t, err)
+		task.Worker = &w1
+		assert.NoError(t, db.SaveTask(ctx, task))
+	}
+
+	// Delete the worker.
+	assert.NoError(t, db.DeleteWorker(ctx, w1.UUID))
+
+	// Check the task after deletion of the Worker.
+	{
+		fetchedTask, err := db.FetchTask(ctx, taskUUID)
+		assert.NoError(t, err)
+		assert.Equal(t, taskUUID, fetchedTask.UUID)
+		assert.Equal(t, w1.UUID, fetchedTask.Worker.UUID)
+		assert.NotZero(t, fetchedTask.Worker.DeletedAt.Time)
+		assert.True(t, fetchedTask.Worker.DeletedAt.Valid)
+	}
+}

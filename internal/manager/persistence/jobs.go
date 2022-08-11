@@ -237,6 +237,9 @@ func (db *DB) SaveJobStatus(ctx context.Context, j *Job) error {
 func (db *DB) FetchTask(ctx context.Context, taskUUID string) (*Task, error) {
 	dbTask := Task{}
 	tx := db.gormDB.WithContext(ctx).
+		// Allow finding the Worker, even after it was deleted. Jobs and Tasks
+		// don't have soft-deletion.
+		Unscoped().
 		Joins("Job").
 		Joins("Worker").
 		First(&dbTask, "tasks.uuid = ?", taskUUID)

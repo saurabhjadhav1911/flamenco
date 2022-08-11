@@ -141,6 +141,20 @@ func (mr *MockPersistenceServiceMockRecorder) CreateWorker(arg0, arg1 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorker", reflect.TypeOf((*MockPersistenceService)(nil).CreateWorker), arg0, arg1)
 }
 
+// DeleteWorker mocks base method.
+func (m *MockPersistenceService) DeleteWorker(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteWorker", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteWorker indicates an expected call of DeleteWorker.
+func (mr *MockPersistenceServiceMockRecorder) DeleteWorker(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorker", reflect.TypeOf((*MockPersistenceService)(nil).DeleteWorker), arg0, arg1)
+}
+
 // FetchJob mocks base method.
 func (m *MockPersistenceService) FetchJob(arg0 context.Context, arg1 string) (*persistence.Job, error) {
 	m.ctrl.T.Helper()

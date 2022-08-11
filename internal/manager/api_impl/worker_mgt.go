@@ -71,6 +71,63 @@ func (f *Flamenco) FetchWorker(e echo.Context, workerUUID string) error {
 	return e.JSON(http.StatusOK, apiWorker)
 }
 
+func (f *Flamenco) DeleteWorker(e echo.Context, workerUUID string) error {
+	logger := requestLogger(e)
+	logger = logger.With().Str("worker", workerUUID).Logger()
+
+	if !uuid.IsValid(workerUUID) {
+		return sendAPIError(e, http.StatusBadRequest, "not a valid UUID")
+	}
+
+	// All information to do the deletion is known, so even when the client
+	// disconnects, the deletion should be completed.
+	ctx, ctxCancel := bgContext()
+	defer ctxCancel()
+
+	// Fetch the worker in order to re-queue its tasks.
+	worker, err := f.persist.FetchWorker(ctx, workerUUID)
+	if errors.Is(err, persistence.ErrWorkerNotFound) {
+		logger.Debug().Msg("deletion of non-existent worker requested")
+		return sendAPIError(e, http.StatusNotFound, "worker %q not found", workerUUID)
+	}
+	if err != nil {
+		logger.Error().Err(err).Msg("error fetching worker for deletion")
+		return sendAPIError(e, http.StatusInternalServerError,
+			"error fetching worker for deletion: %v", err)
+	}
+
+	err = f.stateMachine.RequeueActiveTasksOfWorker(ctx, worker, "worker is being deleted")
+	if err != nil {
+		logger.Error().Err(err).Msg("error requeueing tasks before deleting worker")
+		return sendAPIError(e, http.StatusInternalServerError,
+			"error requeueing tasks before deleting worker: %v", err)
+	}
+
+	// Actually delete the worker.
+	err = f.persist.DeleteWorker(ctx, workerUUID)
+	if errors.Is(err, persistence.ErrWorkerNotFound) {
+		logger.Debug().Msg("deletion of non-existent worker requested")
+		return sendAPIError(e, http.StatusNotFound, "worker %q not found", workerUUID)
+	}
+	if err != nil {
+		logger.Error().Err(err).Msg("error deleting worker")
+		return sendAPIError(e, http.StatusInternalServerError, "error deleting worker: %v", err)
+	}
+	logger.Info().Msg("deleted worker")
+
+	// It would be cleaner to re-fetch the Worker from the database and get the
+	// exact 'deleted at' timestamp from there, but that would require more DB
+	// operations, and this is accurate enough for a quick broadcast via SocketIO.
+	now := f.clock.Now()
+
+	// Broadcast the fact that this worker was just deleted.
+	update := webupdates.NewWorkerUpdate(worker)
+	update.DeletedAt = &now
+	f.broadcaster.BroadcastWorkerUpdate(update)
+
+	return e.NoContent(http.StatusNoContent)
+}
+
 func (f *Flamenco) RequestWorkerStatusChange(e echo.Context, workerUUID string) error {
 	logger := requestLogger(e)
 	logger = logger.With().Str("worker", workerUUID).Logger()

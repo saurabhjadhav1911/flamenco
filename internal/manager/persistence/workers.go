@@ -9,10 +9,13 @@ import (
 	"time"
 
 	"git.blender.org/flamenco/pkg/api"
+	"gorm.io/gorm"
 )
 
 type Worker struct {
 	Model
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+
 	UUID   string `gorm:"type:char(36);default:'';unique;index;default:''"`
 	Secret string `gorm:"type:varchar(255);default:''"`
 	Name   string `gorm:"type:varchar(64);default:''"`
@@ -69,6 +72,19 @@ func (db *DB) FetchWorker(ctx context.Context, uuid string) (*Worker, error) {
 		return nil, workerError(tx.Error, "fetching worker")
 	}
 	return &w, nil
+}
+
+func (db *DB) DeleteWorker(ctx context.Context, uuid string) error {
+	tx := db.gormDB.WithContext(ctx).
+		Where("uuid = ?", uuid).
+		Delete(&Worker{})
+	if tx.Error != nil {
+		return workerError(tx.Error, "deleting worker")
+	}
+	if tx.RowsAffected == 0 {
+		return ErrWorkerNotFound
+	}
+	return nil
 }
 
 func (db *DB) FetchWorkers(ctx context.Context) ([]*Worker, error) {

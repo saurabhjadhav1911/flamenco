@@ -46,6 +46,7 @@ type PersistenceService interface {
 	SaveWorker(ctx context.Context, w *persistence.Worker) error
 	SaveWorkerStatus(ctx context.Context, w *persistence.Worker) error
 	WorkerSeen(ctx context.Context, w *persistence.Worker) error
+	DeleteWorker(ctx context.Context, uuid string) error
 
 	// ScheduleTask finds a task to execute by the given worker, and assigns it to that worker.
 	// If no task is available, (nil, nil) is returned, as this is not an error situation.
