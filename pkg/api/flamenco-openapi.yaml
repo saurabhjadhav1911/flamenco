@@ -461,6 +461,27 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Worker" }
+    delete:
+      operationId: deleteWorker
+      summary: >
+        Remove the given worker. It is recommended to only call this function
+        when the worker is in `offline` state. If the worker is still running,
+        stop it first. Any task still assigned to the worker will be requeued.
+      tags: [worker-mgt]
+      parameters:
+        - name: worker_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Normal response, worker has been deleted
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /api/v3/worker-mgt/workers/{worker_id}/setstatus:
     summary: Request a status change for the given worker.
@@ -1936,6 +1957,10 @@ components:
         "status_change":
           $ref: "#/components/schemas/WorkerStatusChangeRequest"
         "version": { type: string }
+        "deleted_at":
+          type: string
+          format: date-time
+          description: This is only set when the worker was deleted.
       required: [id, name, updated, status, version]
 
     SocketIOSubscription:
