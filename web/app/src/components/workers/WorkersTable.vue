@@ -160,7 +160,7 @@ export default {
       promise
         .then(this.sortData)
         .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
-        .then(this.refreshAvailableStatuses);
+        .then(this._refreshAvailableStatuses);
 
       // TODO: this should also resize the columns, as the status column can
       // change sizes considerably.
