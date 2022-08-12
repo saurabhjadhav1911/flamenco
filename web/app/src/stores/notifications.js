@@ -71,6 +71,9 @@ export const useNotifs = defineStore('notifications', {
       if (workerUpdate.previous_status && workerUpdate.previous_status != workerUpdate.status) {
         msg += ` changed status ${workerUpdate.previous_status} ➜ ${workerUpdate.status}`;
         this.add(msg);
+      } else if (workerUpdate.deleted_at) {
+        msg += " was removed from the system";
+        this.add(msg);
       }
     },
 
