@@ -34,7 +34,7 @@
       </dd>
     </dl>
 
-    <section class="sleep-schedule" :class="{'is-schedule-active': workerSleepSchedule.is_active}">
+    <section class="sleep-schedule" :class="{ 'is-schedule-active': workerSleepSchedule.is_active }">
       <h3 class="sub-title">
         <switch-checkbox :isChecked="workerSleepSchedule.is_active" @switch-toggle="toggleWorkerSleepSchedule">
         </switch-checkbox>
@@ -94,6 +94,22 @@
           {{ workerSleepScheduleFormatted.end_time }}
         </dd>
       </dl>
+    </section>
+
+    <section class="worker-maintenance">
+      <h3 class="sub-title">Maintenance</h3>
+      <p>{{ workerData.name }} is <span class="worker-status">{{ workerData.status }}</span>, which means
+        <template v-if="workerData.status == 'offline'">can be safely removed.</template>
+        <template v-else>removing it now can cause the Worker to log errors. It
+          is adviced to shut down the Worker before removing it from the
+          system.</template>
+      </p>
+      <p><button @click="deleteWorker">Remove {{ workerData.name }}</button></p>
+      <p class="hint">
+        When a Worker is removed from the system, any active task still assigned
+        to it will be requeued. Restarting the Worker after removing it from the
+        system will simply register it anew.
+      </p>
     </section>
   </template>
 
@@ -203,6 +219,16 @@ export default {
     },
     defaultWorkerSleepSchedule() {
       return new WorkerSleepSchedule(false, '', '', '')  // Default values in OpenAPI
+    },
+    deleteWorker() {
+      let msg = `Are you sure you want to remove ${this.workerData.name}?`;
+      if (this.workerData.status != "offline") {
+        msg += "\nRemoving it without first shutting it down will cause it to log errors.";
+      }
+      if (!confirm(msg)) {
+        return;
+      }
+      this.api.deleteWorker(this.workerData.id);
     },
   }
 };
