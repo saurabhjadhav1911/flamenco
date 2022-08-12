@@ -4,7 +4,7 @@
   <template v-if="hasWorkerData">
     <dl>
       <dt class="field-id">ID</dt>
-      <dd>{{ workerData.id }}</dd>
+      <dd><span @click="copyElementText" class="click-to-copy">{{ workerData.id }}</span></dd>
 
       <dt class="field-name">Name</dt>
       <dd>{{ workerData.name }}</dd>
@@ -111,6 +111,7 @@ import { apiClient } from '@/stores/api-query-count';
 import { workerStatus } from "../../statusindicator";
 import LinkWorkerTask from '@/components/LinkWorkerTask.vue';
 import SwitchCheckbox from '@/components/SwitchCheckbox.vue';
+import { copyElementText } from '@/clipboard';
 
 export default {
   props: [
@@ -128,6 +129,7 @@ export default {
       workerSleepSchedule: this.defaultWorkerSleepSchedule(),
       isScheduleEditing: false,
       notifs: useNotifs(),
+      copyElementText: copyElementText,
     };
   },
   mounted() {
