@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"sync"
 	"syscall"
 	"time"
 
@@ -153,10 +154,22 @@ func main() {
 		}
 	}()
 
-	go listener.Run(workerCtx)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		listener.Run(workerCtx)
+	}()
+
 	go w.Start(workerCtx, startupState)
 
+	if w.WaitForShutdown(workerCtx) {
+		go shutdown()
+	}
 	<-shutdownComplete
+
+	workerCtxCancel()
+	wg.Wait()
 
 	log.Debug().Msg("process shutting down")
 }
@@ -166,7 +179,6 @@ func shutdown() {
 	go func() {
 		if w != nil {
 			w.Close()
-			listener.Wait()
 			if err := buffer.Close(); err != nil {
 				log.Error().Err(err).Msg("closing upstream task buffer")
 			}

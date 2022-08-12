@@ -4,7 +4,6 @@ package worker
 
 import (
 	"context"
-	"os"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -18,17 +17,9 @@ func (w *Worker) gotoStateOffline(context.Context) {
 
 	w.state = api.WorkerStatusOffline
 
-	logger := log.With().Int("pid", os.Getpid()).Logger()
-	proc, err := os.FindProcess(os.Getpid())
-	if err != nil {
-		logger.Fatal().Err(err).Msg("unable to find our own process for clean shutdown")
-	}
-
-	logger.Warn().Msg("sending our own process an interrupt signal")
-	err = proc.Signal(os.Interrupt)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("unable to send interrupt signal to our own process")
-	}
+	// Signal that the Worker should shut down.
+	log.Debug().Msg("closing the shutdown channel")
+	close(w.shutdown)
 }
 
 // SignOff forces the worker in shutdown state and acknlowedges this to the Manager.

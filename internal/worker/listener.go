@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/rs/zerolog/log"
 
@@ -23,7 +22,6 @@ var (
 
 // Listener listens to the result of task and command execution, and sends it to the Manager.
 type Listener struct {
-	doneWg         *sync.WaitGroup
 	client         FlamencoClient
 	buffer         UpstreamBuffer
 	outputUploader *OutputUploader
@@ -37,26 +35,17 @@ type UpstreamBuffer interface {
 // NewListener creates a new Listener that will send updates to the API client.
 func NewListener(client FlamencoClient, buffer UpstreamBuffer) *Listener {
 	l := &Listener{
-		doneWg:         new(sync.WaitGroup),
 		client:         client,
 		buffer:         buffer,
 		outputUploader: NewOutputUploader(client),
 	}
-	l.doneWg.Add(1)
 	return l
 }
 
 func (l *Listener) Run(ctx context.Context) {
-	defer l.doneWg.Done()
 	defer log.Debug().Msg("listener shutting down")
-
 	log.Debug().Msg("listener starting up")
 	l.outputUploader.Run(ctx)
-}
-
-func (l *Listener) Wait() {
-	log.Debug().Msg("waiting for listener to shut down")
-	l.doneWg.Wait()
 }
 
 func ptr[T any](value T) *T {

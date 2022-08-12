@@ -16,6 +16,9 @@ type Worker struct {
 	doneChan chan struct{}
 	doneWg   *sync.WaitGroup
 
+	// Will be closed by the Worker when it wants to shut down. See Worker.WaitForShutdown().
+	shutdown chan struct{}
+
 	client FlamencoClient
 
 	state         api.WorkerStatus
@@ -40,6 +43,7 @@ func NewWorker(
 	worker := &Worker{
 		doneChan: make(chan struct{}),
 		doneWg:   new(sync.WaitGroup),
+		shutdown: make(chan struct{}),
 
 		client: flamenco,
 
@@ -63,4 +67,16 @@ func (w *Worker) Close() {
 	log.Debug().Msg("worker gracefully shutting down")
 	close(w.doneChan)
 	w.doneWg.Wait()
+}
+
+// WaitForShutdown waits until Flamenco wants to shut down the application.
+// Returns `true` when the Worker has signalled it wants to shut down.
+// Returns `false` when the shutdown was caused by the context closing.
+func (w *Worker) WaitForShutdown(ctx context.Context) bool {
+	select {
+	case <-ctx.Done():
+		return false
+	case <-w.shutdown:
+		return true
+	}
 }
