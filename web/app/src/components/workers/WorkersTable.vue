@@ -137,17 +137,23 @@ export default {
       const existingRow = this.tabulator.rowManager.findRow(workerUpdate.id);
 
       let promise;
+      // TODO: clean up the code below:
       if (existingRow) {
-        // Tabbulator doesn't update ommitted fields, but if `status_change`
-        // is ommitted it means "no status change requested"; this should still
-        // force an update of the `status_change` field.
-        if (!workerUpdate.status_change) {
-          workerUpdate.status_change = null;
+        if (workerUpdate.deleted_at) {
+          // This is a deletion, not a regular update.
+          promise = existingRow.delete();
+        } else {
+          // Tabbulator doesn't update ommitted fields, but if `status_change`
+          // is ommitted it means "no status change requested"; this should still
+          // force an update of the `status_change` field.
+          if (!workerUpdate.status_change) {
+            workerUpdate.status_change = null;
+          }
+          promise = this.tabulator.updateData([workerUpdate]);
+          // Tabulator doesn't know we're using 'status_change' in the 'status'
+          // column, so it also won't know to redraw when that field changes.
+          promise.then(() => existingRow.reinitialize(true));
         }
-        promise = this.tabulator.updateData([workerUpdate]);
-        // Tabulator doesn't know we're using 'status_change' in the 'status'
-        // column, so it also won't know to redraw when that field changes.
-        promise.then(() => existingRow.reinitialize(true));
       } else {
         promise = this.tabulator.addData([workerUpdate]);
       }

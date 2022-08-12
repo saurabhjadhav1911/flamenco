@@ -78,6 +78,11 @@ export default {
       if (this.workerID != workerUpdate.id)
         return;
 
+      if (workerUpdate.deleted_at) {
+        this._routeToWorker("");
+        return;
+      }
+
       this._fetchWorker(this.workerID);
     },
 
