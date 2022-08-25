@@ -435,6 +435,7 @@ func (c *Conf) ExpandVariables(inputChannel <-chan string, outputChannel chan<- 
 		//
 		// Practically, this replaces "value for the Manager platform" with "value
 		// for the target platform".
+		isPathValue := false
 		for varname, managerValue := range twoWayVars {
 			targetValue, ok := varsForPlatform[varname]
 			if !ok {
@@ -444,12 +445,18 @@ func (c *Conf) ExpandVariables(inputChannel <-chan string, outputChannel chan<- 
 				continue
 			}
 			expanded = targetValue + expanded[len(managerValue):]
+
+			// Since two-way variables are meant for path replacement, we know this
+			// should be a path.
+			if c.isTwoWay(varname) {
+				isPathValue = true
+			}
 		}
 
-		// Since two-way variables are meant for path replacement, we know this
-		// should be a path. For added bonus, translate it to the target platform's
-		// path separators.
-		return crosspath.ToPlatform(expanded, string(platform))
+		if isPathValue {
+			expanded = crosspath.ToPlatform(expanded, string(platform))
+		}
+		return expanded
 	}
 
 	for valueToExpand := range inputChannel {
@@ -505,6 +512,10 @@ func (c *Conf) getVariables(audience VariableAudience, platform VariablePlatform
 	return varsForPlatform
 }
 
+func (c *Conf) isTwoWay(varname string) bool {
+	return c.implicitVariables[varname].IsTwoWay || c.Variables[varname].IsTwoWay
+}
+
 // GetTwoWayVariables returns the two-way variable values for this (audience,
 // platform) combination. If no variables are found, just returns an empty map.
 // If a value is defined for both the "all" platform and specifically the given
@@ -515,8 +526,7 @@ func (c *Conf) GetTwoWayVariables(audience VariableAudience, platform VariablePl
 	// Only keep the two-way variables.
 	twoWayVars := map[string]string{}
 	for varname, value := range varsForPlatform {
-		isTwoWay := c.implicitVariables[varname].IsTwoWay || c.Variables[varname].IsTwoWay
-		if isTwoWay {
+		if c.isTwoWay(varname) {
 			twoWayVars[varname] = value
 		}
 	}
