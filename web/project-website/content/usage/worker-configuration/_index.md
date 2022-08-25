@@ -29,11 +29,11 @@ and a *database file* to queue task updates when the Manager is unreachable.
 
 These files are stored in a platform-specific location:
 
-| Platform | Default location |
-| -- | -- |
-| Linux | `$HOME/.local/share/flamenco` |
-| Windows | `C:\Users\UserName\AppData\Local\Blender Foundation\Flamenco` |
-| macOS | `$HOME/Library/Application Support/Flamenco` |
+| Platform | Default location                                              |
+|----------|---------------------------------------------------------------|
+| Linux    | `$HOME/.local/share/flamenco`                                 |
+| Windows  | `C:\Users\UserName\AppData\Local\Blender Foundation\Flamenco` |
+| macOS    | `$HOME/Library/Application Support/Flamenco`                  |
 
 ## Configuration from Environment Variables
 
