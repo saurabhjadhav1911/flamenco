@@ -149,3 +149,16 @@ func pathSepForPlatform(platform string) string {
 func isPathSep(r rune) bool {
 	return r == '/' || r == '\\'
 }
+
+// TrimTrailingSep removes any trailling path separator.
+func TrimTrailingSep(path string) string {
+	if path == "" {
+		return ""
+	}
+
+	trimmed := strings.TrimRightFunc(path, isPathSep)
+	if trimmed == "" {
+		return string([]rune(path)[0])
+	}
+	return trimmed
+}

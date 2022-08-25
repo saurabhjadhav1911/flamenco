@@ -378,15 +378,7 @@ func (c *Conf) constructVariableLookupTableForVars(vars map[string]Variable) {
 			// Given a variable 'apps' with value '/path/to/apps',
 			// '/path/to/apps/blender' should be remapped to '{apps}/blender'.
 			if variable.IsTwoWay {
-				if strings.Contains(value.Value, "\\") {
-					log.Warn().
-						Str("variable", name).
-						Str("audience", string(value.Audience)).
-						Str("platform", string(value.Platform)).
-						Str("value", value.Value).
-						Msg("Backslash found in variable value. Change paths to use forward slashes instead.")
-				}
-				value.Value = strings.TrimRight(value.Value, "/")
+				value.Value = crosspath.TrimTrailingSep(value.Value)
 			}
 
 			if value.Platform != "" {

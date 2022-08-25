@@ -1,7 +1,5 @@
 package crosspath
 
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 import (
 	"path"
 	"path/filepath"
@@ -233,6 +231,38 @@ func TestToPlatform(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := ToPlatform(tt.args.path, tt.args.platform); got != tt.want {
 				t.Errorf("ToPlatform() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTrimTrailingSep(t *testing.T) {
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{"empty", args{""}, ""},
+		{"single-slash", args{`/`}, `/`},
+		{"single-backslash", args{`\`}, `\`},
+		{"multiple-slashes", args{`///`}, `/`},
+		{"multiple-backslashes", args{`\\\`}, `\`},
+		{"multiple-mixed-slash-first", args{`/\\`}, `/`},
+		{"multiple-mixed-backslash-first", args{`\//`}, `\`},
+		{"nothing-trailing", args{`nothing/trailing\here`}, `nothing/trailing\here`},
+		{"trailing-space", args{`trailing/space/ `}, `trailing/space/ `},
+		{"trailing-slash", args{`trailing/slash/`}, `trailing/slash`},
+		{"trailing-slashes", args{`trailing/slashes///`}, `trailing/slashes`},
+		{"trailing-backslash", args{`trailing\backslash\`}, `trailing\backslash`},
+		{"trailing-backslashes", args{`trailing\backslashes\\\`}, `trailing\backslashes`},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := TrimTrailingSep(tt.args.path); got != tt.want {
+				t.Errorf("TrimTrailingSep() = %v, want %v", got, tt.want)
 			}
 		})
 	}
