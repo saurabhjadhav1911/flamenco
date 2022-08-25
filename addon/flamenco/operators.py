@@ -5,7 +5,7 @@ import datetime
 import logging
 from pathlib import Path, PurePosixPath
 from typing import Optional, TYPE_CHECKING
-from urllib3.exceptions import MaxRetryError
+from urllib3.exceptions import HTTPError, MaxRetryError
 
 import bpy
 
@@ -366,6 +366,12 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
 
         try:
             submitted_job = job_submission.submit_job(self.job, api_client)
+        except MaxRetryError as ex:
+            self.report({"ERROR"}, "Unable to reach Flamenco Manager")
+            return
+        except HTTPError as ex:
+            self.report({"ERROR"}, "Error communicating with Flamenco Manager: %s" % ex)
+            return
         except ApiException as ex:
             if ex.status == 412:
                 self.report(
