@@ -85,6 +85,18 @@ class JobTypePropertyGroup:
         label: str = self.bl_rna.properties[setting_key].name  # type: ignore
         return label
 
+    def locals(self, context: bpy.types.Context) -> dict[str, object]:
+        """Return the local variables for job type evaluation."""
+        return {
+            "bpy": bpy,
+            "C": context,
+            "jobname": context.scene.flamenco_job_name,
+            "Path": Path,
+            "abspath": self.abspath,
+            "last_n_dir_parts": self.last_n_dir_parts,
+            "settings": self,
+        }
+
     def eval_and_assign(
         self,
         context: bpy.types.Context,
@@ -103,14 +115,7 @@ class JobTypePropertyGroup:
     ) -> Any:
         """Evaluate `setting_eval` and return the result."""
 
-        eval_locals = {
-            "bpy": bpy,
-            "C": context,
-            "jobname": context.scene.flamenco_job_name,
-            "Path": Path,
-            "last_n_dir_parts": self.last_n_dir_parts,
-            "settings": self,
-        }
+        eval_locals = self.locals(context)
         try:
             value = eval(setting_eval, {}, eval_locals)
         except Exception as ex:
@@ -199,6 +204,15 @@ class JobTypePropertyGroup:
 
         subset = Path(*dirpath.parts[-n:])
         return subset
+
+    @staticmethod
+    def abspath(filepath: Union[str, Path]) -> Path:
+        """Return the filepath as absolute path."""
+
+        # This changes blendfile-relative paths to absolute.
+        # It does not resolve `..` entries, though.
+        abs_unclean = Path(bpy.path.abspath(str(filepath)))
+        return bpathlib.make_absolute(abs_unclean)
 
 
 # Mapping from AvailableJobType.setting.type to a callable that converts a value

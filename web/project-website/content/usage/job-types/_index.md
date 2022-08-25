@@ -117,12 +117,13 @@ following names:
   directory path manipulation. Note that this does *not* understand Blender's
   `//` prefix for blendfile-relative paths. Use `bpy.path.abspath()` to turn
   those into an absolute path if necessary.
+- `abspath(path: str | Path) -> Path`: a function that returns the given path as
+  absolute path. Unlike `bpy.path.abspath()` this also resolves `..` entries.
 - `last_n_dir_parts(n, Optional[file_path])`: a function that returns the last
   `n` directory parts of some file's path. For example,
   `last_n_dir_parts(2, '/complex/path/to/a/file.blend')` will return `to/a`, as
   those are the last `2` components of the directory. If `file_path` is
   ommitted, it uses the current blend file, i.e. `bpy.data.filepath`.
-
 
 [bpy]: https://docs.blender.org/api/master/
 [context]: https://docs.blender.org/api/master/bpy.context.html
