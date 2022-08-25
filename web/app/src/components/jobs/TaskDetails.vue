@@ -4,7 +4,7 @@
   <template v-if="hasTaskData">
     <dl>
       <dt class="field-id" title="ID">ID</dt>
-      <dd>{{ taskData.id }}</dd>
+      <dd><span @click="copyElementText" class="click-to-copy">{{ taskData.id }}</span></dd>
 
       <dt class="field-name" title="Name">Name</dt>
       <dd>{{ taskData.name }}</dd>
@@ -76,6 +76,7 @@ import { backendURL } from '@/urls';
 import { apiClient } from '@/stores/api-query-count';
 import { useNotifs } from "@/stores/notifications";
 import LinkWorker from '@/components/LinkWorker.vue';
+import { copyElementText } from '@/clipboard';
 
 export default {
   props: [
@@ -88,6 +89,7 @@ export default {
   data() {
     return {
       datetime: datetime, // So that the template can access it.
+      copyElementText: copyElementText,
       jobsApi: new JobsApi(apiClient),
       notifs: useNotifs(),
     };

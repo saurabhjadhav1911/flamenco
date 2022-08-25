@@ -30,7 +30,7 @@
       <TabItem title="Details">
         <dl>
           <dt class="field-name" title="ID">ID</dt>
-          <dd>{{ jobData.id }}</dd>
+          <dd><span @click="copyElementText" class="click-to-copy">{{ jobData.id }}</span></dd>
 
           <dt class="field-name" title="Name">Name</dt>
           <dd>{{ jobData.name }}</dd>
@@ -73,6 +73,7 @@ import LastRenderedImage from '@/components/jobs/LastRenderedImage.vue'
 import Blocklist from './Blocklist.vue'
 import TabItem from '@/components/TabItem.vue'
 import TabsWrapper from '@/components/TabsWrapper.vue'
+import { copyElementText } from '@/clipboard';
 
 export default {
   props: [
@@ -90,6 +91,7 @@ export default {
   data() {
     return {
       datetime: datetime, // So that the template can access it.
+      copyElementText: copyElementText,
       simpleSettings: null, // Object with filtered job settings, or null if there is no job.
       jobsApi: new API.JobsApi(apiClient),
       jobType: null, // API.AvailableJobType object for the current job type.
