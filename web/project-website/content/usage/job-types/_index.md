@@ -9,6 +9,14 @@ Flamenco uses JavaScript files called *job compiler scripts* or two things. They
 - convert a job of this type (like "*render this Blend file*") into concrete
   tasks that can be executed by workers.
 
+The default scripts are built into the Flamenco Manager executable. You can add
+custom scripts simply by creating a directory called `scripts` next to the
+`flamenco-manager` executable and putting your custom scripts there. If a script
+is named the same as a [built-in script][built-in-scripts] it will override the
+built-in one. In any case, name the file something like `scripts/my_job_type.js`
+and it should work.
+
+
 ## Example
 
 These scripts are written in JavaScript. Before describing how they work, here
