@@ -1,6 +1,6 @@
 ---
 title: Worker Configuration
-weight: 2
+weight: 3
 ---
 
 Flamenco Worker will read its configuration from `flamenco-worker.yaml` in the
