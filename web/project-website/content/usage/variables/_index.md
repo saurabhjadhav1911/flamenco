@@ -177,10 +177,13 @@ only `{variablename}` is replaced with the value. Two-way variables go both ways
 
 Let's look at a more concrete example, with the same configuration as above.
 
-- Alice runs Blender on macOS. She submits a job that has its render output set
+- Alice runs Blender on **macOS**. She submits a job that has its render output set
   to `/Volumes/shared/flamenco/renders/shot_010_a_anim`.
 - Flamenco recognises the path, and stores the job as rendering to
   `{shared_storage}/renders/shot_010_a_anim`.
-- Bob's Linux machine is running the Worker, so when it receives a render task
-  Flamenco will tell it to render to
+- Bob's computer is running the Worker on **Windows**, so when it receives a render
+  task Flamenco will tell it to render to
+  `F:\flamenco\renders\shot_010_a_anim`.
+- Carol's computer is also running a worker, but on **Linux**. When it receives a
+  render task, Flamenco will tell it to render to
   `/media/shared/flamenco/renders/shot_010_a_anim`.
