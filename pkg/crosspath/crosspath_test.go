@@ -200,3 +200,40 @@ func TestIsRoot(t *testing.T) {
 		})
 	}
 }
+
+func TestToPlatform(t *testing.T) {
+	type args struct {
+		path     string
+		platform string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{"empty-win", args{``, "windows"}, ``},
+		{"empty-lnx", args{``, "linux"}, ``},
+		{"single-win", args{`path with spaces`, "windows"}, `path with spaces`},
+		{"single-lnx", args{`path with spaces`, "linux"}, `path with spaces`},
+		{"native-win", args{`native\path`, "windows"}, `native\path`},
+		{"native-lnx", args{`native/path`, "linux"}, `native/path`},
+		{"opposite-win", args{`opposite/path`, "windows"}, `opposite\path`},
+		{"opposite-lnx", args{`opposite\path`, "linux"}, `opposite/path`},
+		{"mixed-win", args{`F:/mixed/path\to\file.blend`, "windows"}, `F:\mixed\path\to\file.blend`},
+		{"mixed-lnx", args{`F:/mixed/path\to\file.blend`, "linux"}, `F:/mixed/path/to/file.blend`},
+		{"absolute-win", args{`F:/absolute/path`, "windows"}, `F:\absolute\path`},
+		{"absolute-lnx", args{`/absolute/path`, "linux"}, `/absolute/path`},
+		{"drive-relative-win", args{`/absolute/path`, "windows"}, `\absolute\path`},
+
+		// UNC notation should survive, even when it no longer makes sense (like on Linux).
+		{"unc-win", args{`\\NAS\share\path`, "windows"}, `\\NAS\share\path`},
+		{"unc-lnx", args{`\\NAS\share\path`, "linux"}, `//NAS/share/path`},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ToPlatform(tt.args.path, tt.args.platform); got != tt.want {
+				t.Errorf("ToPlatform() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

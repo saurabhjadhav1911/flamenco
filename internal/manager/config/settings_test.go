@@ -109,7 +109,7 @@ func TestExpandVariables(t *testing.T) {
 			Values: []VariableValue{
 				{Value: "/path/to/ffmpeg", Audience: VariableAudienceUsers, Platform: VariablePlatformLinux},
 				{Value: "/path/to/ffmpeg/on/darwin", Audience: VariableAudienceUsers, Platform: VariablePlatformDarwin},
-				{Value: "C:/flamenco/ffmpeg", Audience: VariableAudienceUsers, Platform: VariablePlatformWindows},
+				{Value: `C:\flamenco\ffmpeg`, Audience: VariableAudienceUsers, Platform: VariablePlatformWindows},
 			},
 		}
 	})
@@ -128,7 +128,7 @@ func TestExpandVariables(t *testing.T) {
 	assert.Equal(t, "unchanged value", <-receiver)
 
 	feeder <- "{ffmpeg}"
-	assert.Equal(t, "C:/flamenco/ffmpeg", <-receiver)
+	assert.Equal(t, `C:\flamenco\ffmpeg`, <-receiver)
 
 	feeder <- "{demo}"
 	assert.Equal(t, "{demo}", <-receiver, "missing value on the platform should not be replaced")
@@ -156,7 +156,7 @@ func TestExpandVariablesWithTwoWay(t *testing.T) {
 			Values: []VariableValue{
 				{Value: "/path/on/linux", Platform: VariablePlatformLinux, Audience: VariableAudienceWorkers},
 				{Value: "/path/on/darwin", Platform: VariablePlatformDarwin, Audience: VariableAudienceWorkers},
-				{Value: "C:/path/on/windows", Platform: VariablePlatformWindows, Audience: VariableAudienceWorkers},
+				{Value: `C:\path\on\windows`, Platform: VariablePlatformWindows, Audience: VariableAudienceWorkers},
 			},
 		}
 	})
@@ -174,11 +174,11 @@ func TestExpandVariablesWithTwoWay(t *testing.T) {
 
 	// Simple two-way variable replacement.
 	feeder <- "/path/on/linux/file.txt"
-	assert.Equal(t, "C:/path/on/windows/file.txt", <-receiver)
+	assert.Equal(t, `C:\path\on\windows\file.txt`, <-receiver)
 
 	// {locally-set-path} expands to a value that's then further replaced by a two-way variable.
 	feeder <- "{locally-set-path}/should/be/remapped"
-	assert.Equal(t, "C:/path/on/windows/should/be/remapped", <-receiver)
+	assert.Equal(t, `C:\path\on\windows\should\be\remapped`, <-receiver)
 
 	close(feeder)
 	wg.Wait()

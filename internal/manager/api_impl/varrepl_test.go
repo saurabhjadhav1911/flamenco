@@ -87,14 +87,14 @@ func TestReplacePathsWindows(t *testing.T) {
 	replacedTask := replaceTaskVariables(&conf, task, worker)
 
 	assert.Equal(t,
-		"s:/flamenco/jobs/sybren/2017-06-08-181223.625800-sybren-flamenco-test.flamenco/flamenco-test.flamenco.blend",
+		`s:\flamenco\jobs\sybren\2017-06-08-181223.625800-sybren-flamenco-test.flamenco\flamenco-test.flamenco.blend`,
 		replacedTask.Commands[2].Parameters["filepath"],
 	)
 	assert.Equal(t,
-		[]string{"--render-out", "s:/flamenco/render/long/sybren/blender-cloud-addon/flamenco-test__intermediate/render-smpl-0001-0084-frm-######"},
+		[]string{"--render-out", `s:\flamenco\render\long\sybren\blender-cloud-addon\flamenco-test__intermediate\render-smpl-0001-0084-frm-######`},
 		replacedTask.Commands[2].Parameters["args"],
 	)
-	assert.Equal(t, "{hey}/haha", replacedTask.Commands[2].Parameters["otherpath"])
+	assert.Equal(t, `{hey}\haha`, replacedTask.Commands[2].Parameters["otherpath"])
 }
 
 func TestReplacePathsUnknownOS(t *testing.T) {

@@ -428,10 +428,12 @@ func (c *Conf) ExpandVariables(inputChannel <-chan string, outputChannel chan<- 
 	}
 
 	doValueReplacement := func(valueToExpand string) string {
+		expanded := valueToExpand
+
 		// Expand variables from {varname} to their value for the target platform.
 		for varname, varvalue := range varsForPlatform {
 			placeholder := fmt.Sprintf("{%s}", varname)
-			valueToExpand = strings.Replace(valueToExpand, placeholder, varvalue, -1)
+			expanded = strings.Replace(expanded, placeholder, varvalue, -1)
 		}
 
 		// Go through the two-way variables, to make sure that the result of
@@ -446,13 +448,16 @@ func (c *Conf) ExpandVariables(inputChannel <-chan string, outputChannel chan<- 
 			if !ok {
 				continue
 			}
-			if !strings.HasPrefix(valueToExpand, managerValue) {
+			if !strings.HasPrefix(expanded, managerValue) {
 				continue
 			}
-			valueToExpand = targetValue + valueToExpand[len(managerValue):]
+			expanded = targetValue + expanded[len(managerValue):]
 		}
 
-		return valueToExpand
+		// Since two-way variables are meant for path replacement, we know this
+		// should be a path. For added bonus, translate it to the target platform's
+		// path separators.
+		return crosspath.ToPlatform(expanded, string(platform))
 	}
 
 	for valueToExpand := range inputChannel {

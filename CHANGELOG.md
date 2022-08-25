@@ -13,6 +13,7 @@ bugs in actually-released versions.
 - Change path inside the Linux and macOS tarballs, so that they contain an
   embedded `flamenco-3.x.y-xxxx/` directory with all the files (instead of
   putting all the files in the root of the tarball).
+- Two-way variable replacement now also changes the path separators to the target platform.
 
 
 ## 3.0-beta1 - released 2022-08-03

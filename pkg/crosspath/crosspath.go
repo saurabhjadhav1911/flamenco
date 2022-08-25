@@ -104,3 +104,48 @@ func IsRoot(path string) bool {
 	runes := []rune(path)
 	return validDriveLetter(runes[0])
 }
+
+// ToPlatform returns the path, with path separators adjusted for the given platform.
+// It is assumed that all forward and backward slashes in the path are path
+// separators, and that apart from the style of separators the path makes sense
+// on the target platform.
+func ToPlatform(path, platform string) string {
+	if path == "" {
+		return ""
+	}
+
+	components := strings.FieldsFunc(path, isPathSep)
+
+	// FieldsFunc() removes leading path separators, turning an absolute path on
+	// Linux to a relative path, and turning `\\NAS\share` on Windows into
+	// `NAS\share`.
+	extraComponents := []string{}
+	for _, r := range path {
+		if !isPathSep(r) {
+			break
+		}
+		extraComponents = append(extraComponents, "")
+	}
+	components = append(extraComponents, components...)
+
+	pathsep := pathSepForPlatform(platform)
+	translated := strings.Join(components, pathsep)
+
+	return translated
+}
+
+// pathSepForPlatform returns the path separator for the given platform.
+// This is rather simple, and just returns `\` on Windows and `/` on all other
+// platforms.
+func pathSepForPlatform(platform string) string {
+	switch platform {
+	case "windows":
+		return `\`
+	default:
+		return "/"
+	}
+}
+
+func isPathSep(r rune) bool {
+	return r == '/' || r == '\\'
+}
