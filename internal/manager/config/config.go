@@ -291,7 +291,7 @@ func (c *Conf) addImplicitVariables() {
 			{
 				Audience: VariableAudienceAll,
 				Platform: VariablePlatformAll,
-				Value:    crosspath.ToSlash(c.EffectiveStoragePath()),
+				Value:    c.EffectiveStoragePath(),
 			},
 		},
 	}
