@@ -1,0 +1,24 @@
+# File for use in unit tests
+#
+# This file has variable definitions with various ways to include backslashes in
+# values.
+
+_meta:
+  version: 3
+manager_name: Backslash Tester
+database: flamenco-manager-backslash-tester.sqlite
+listen: :8123
+autodiscoverable: false
+local_manager_storage_path: ./flamenco-manager-storage
+shared_storage_path: ./tmp/flamenco-shared-storage
+shaman:
+  enabled: false
+variables:
+  blender:
+    values:
+      - platform: single-backslash
+        value: C:\Downloads\blender-1.0\blender.exe
+      - platform: double-backslash
+        value: C:\\Downloads\\blender-1.0\\blender.exe
+      - platform: quoted-double-backslash
+        value: "C:\\Downloads\\blender-1.0\\blender.exe"
