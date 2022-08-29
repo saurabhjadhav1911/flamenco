@@ -311,9 +311,10 @@ func (c *Conf) ensureVariablesUnique() {
 }
 
 func (c *Conf) constructVariableLookupTable() {
-	if c.VariablesLookup == nil {
-		c.VariablesLookup = map[VariableAudience]map[VariablePlatform]map[string]string{}
-	}
+	// Always start with a fresh map, so that variables (or values) that have been
+	// removed are actually gone. This is even necessary to account for
+	// differences between the default config and the loaded config.
+	c.VariablesLookup = map[VariableAudience]map[VariablePlatform]map[string]string{}
 
 	c.constructVariableLookupTableForVars(c.Variables)
 	c.constructVariableLookupTableForVars(c.implicitVariables)
