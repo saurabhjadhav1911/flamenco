@@ -44,7 +44,9 @@ sudo npm install --global yarn
 
 {{< /tab >}}
 {{< tab "Windows" >}}
-Install [Node v16 LTS](https://nodejs.org/en/download/) and then install Yarn via:
+Install [Node v16 LTS](https://nodejs.org/en/download/). Be sure to enable the "Automatically install the necessary tools" checkbox.
+
+Then install Yarn via:
 
 ```
 npm install --global yarn
