@@ -129,6 +129,14 @@ def register() -> None:
         description="Name of the Flamenco job; an empty name will use the blend file name as job name",
     )
 
+    bpy.types.Scene.flamenco_job_priority = bpy.props.IntProperty(
+        name="Flamenco Job Priority",
+        description="Priority of the render jobs; higher numbers will get higher priority",
+        default=50,
+        min=0,
+        max=100,
+    )
+
     preferences.register()
     operators.register()
     gui.register()

@@ -14,6 +14,7 @@ bugs in actually-released versions.
   embedded `flamenco-3.x.y-xxxx/` directory with all the files (instead of
   putting all the files in the root of the tarball).
 - Two-way variable replacement now also changes the path separators to the target platform.
+- Allow setting priority when submitting a job.
 
 
 ## 3.0-beta1 - released 2022-08-03

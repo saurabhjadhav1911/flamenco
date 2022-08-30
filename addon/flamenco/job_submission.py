@@ -41,10 +41,12 @@ def job_for_scene(scene: bpy.types.Scene) -> Optional[_SubmittedJob]:
     settings = propgroup.as_jobsettings()
     metadata = JobMetadata()
 
+    priority = getattr(scene, "flamenco_job_priority", 50)
+
     job: SubmittedJob = SubmittedJob(
         name=scene.flamenco_job_name,
         type=propgroup.job_type.name,
-        priority=50,
+        priority=priority,
         settings=settings,
         metadata=metadata,
         submitter_platform=platform.system().lower(),
