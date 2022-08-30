@@ -41,7 +41,7 @@ func (ce *CommandExecutor) cmdBlenderRender(ctx context.Context, logger zerolog.
 	logChunker := NewLogChunker(taskID, ce.listener, ce.timeService)
 	lineChannel := make(chan string)
 
-	// Process the output of Blender.
+	// Process the output of Blender in its own goroutine.
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
