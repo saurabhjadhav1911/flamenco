@@ -48,7 +48,10 @@ func NewTaskExecutor(cmdRunner CommandRunner, listener TaskExecutionListener) *T
 // Run runs a task.
 // Returns ErrTaskReassigned when the task was reassigned to another worker.
 func (te *TaskExecutor) Run(ctx context.Context, task api.AssignedTask) error {
-	logger := log.With().Str("task", task.Uuid).Logger()
+	logger := log.With().
+		Str("task", task.Uuid).
+		Str("job", task.Job).
+		Logger()
 	logger.Info().Str("taskType", task.TaskType).Msg("starting task")
 
 	if err := te.listener.TaskStarted(ctx, task.Uuid); err != nil {
