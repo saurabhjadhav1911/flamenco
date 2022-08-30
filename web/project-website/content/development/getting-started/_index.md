@@ -79,7 +79,7 @@ brew install yarn
 {{< /tab >}}
 {{< /tabs >}}
 
-## 3. Utility Tools
+## 3. Utilities
 
 Building Flamenco requires only a few tools to be installed on your system.
 
@@ -95,7 +95,7 @@ sudo apt install make
 ```
 {{< /tab >}}
 {{< tab "Windows" >}}
-Install [MingW W64][mingw]. If in doubt which version to get, grab the `686`/`seh` one.
+Install [MingW W64][mingw]. If in doubt which version to get, grab the `x86_64...seh` one.
 
 [mingw]: https://github.com/niXman/mingw-builds-binaries/releases
 {{< /tab >}}
