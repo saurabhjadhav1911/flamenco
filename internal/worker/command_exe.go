@@ -96,7 +96,7 @@ func NewCommandExecutor(cli CommandLineRunner, listener CommandListener, timeSer
 
 func (ce *CommandExecutor) Run(ctx context.Context, taskID string, cmd api.Command) error {
 	logger := log.With().Str("task", string(taskID)).Str("command", cmd.Name).Logger()
-	logger.Info().Interface("parameters", cmd.Parameters).Msg("running command")
+	logger.Info().Interface("parameters", cmd.Parameters).Msg("running Flamenco command")
 
 	runner, ok := ce.registry[cmd.Name]
 	if !ok {
