@@ -79,7 +79,32 @@ brew install yarn
 {{< /tab >}}
 {{< /tabs >}}
 
-## 3. Your First Build
+## 4. Utility Tools
+
+Building Flamenco requires only a few tools to be installed on your system.
+
+
+{{< tabs "installing-utils" >}}
+{{< tab "Linux" >}}
+On Linux only `make` is necessary, which can be installed via your package manager.
+
+On Debian, and relatives like Ubuntu, run:
+
+```
+sudo apt install make
+```
+{{< /tab >}}
+{{< tab "Windows" >}}
+Install [MingW W64][mingw]. If in doubt which version to get, grab the `686`/`seh` one.
+
+[mingw]: https://github.com/niXman/mingw-builds-binaries/releases
+{{< /tab >}}
+{{< tab "macOS" >}}
+TODO: write this documentation.
+{{< /tab >}}
+{{< /tabs >}}
+
+## 4. Your First Build
 
 Run `make with-deps` to install build-time dependencies and build the application.
 Subsequent builds can just run `make` without arguments.
@@ -92,7 +117,7 @@ enable the race condition checker, and all other kinds of useful things.
 
 [building]: {{< relref "../building/" >}}
 
-## 4. Get Involved
+## 5. Get Involved
 
 If you're interested in helping out with Flamenco development, please read [Get Involved!][get-involved]
 
