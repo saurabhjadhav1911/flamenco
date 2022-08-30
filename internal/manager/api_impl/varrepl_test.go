@@ -136,9 +136,10 @@ func TestReplaceJobsVariable(t *testing.T) {
 			c.SharedStoragePath = storagePath
 			c.Shaman.Enabled = true
 		})
+		nativeCheckoutPath := crosspath.ToNative(conf.Shaman.CheckoutPath())
 
 		replacedTask := replaceTaskVariables(&conf, task, worker)
-		expectPath := crosspath.Join(crosspath.ToSlash(conf.Shaman.CheckoutPath()), "path/in/storage.blend")
+		expectPath := nativeCheckoutPath + "/path/in/storage.blend"
 		assert.Equal(t, expectPath, replacedTask.Commands[2].Parameters["filepath"])
 	}
 
@@ -147,9 +148,10 @@ func TestReplaceJobsVariable(t *testing.T) {
 			c.SharedStoragePath = storagePath
 			c.Shaman.Enabled = false
 		})
+		nativeJobsPath := crosspath.ToNative(crosspath.Join(storagePath, "jobs"))
 
 		replacedTask := replaceTaskVariables(&conf, task, worker)
-		expectPath := crosspath.Join(storagePath, "jobs", "path/in/storage.blend")
+		expectPath := nativeJobsPath + "/path/in/storage.blend"
 		assert.Equal(t, expectPath, replacedTask.Commands[2].Parameters["filepath"])
 	}
 }

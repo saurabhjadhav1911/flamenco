@@ -69,7 +69,7 @@ func TestStorageImplicitVariablesWithShaman(t *testing.T) {
 	}
 	assert.False(t, c.implicitVariables["jobs"].IsTwoWay)
 	assert.Equal(t,
-		crosspath.ToSlash(c.Shaman.CheckoutPath()),
+		crosspath.ToNative(c.Shaman.CheckoutPath()),
 		c.implicitVariables["jobs"].Values[0].Value)
 }
 
@@ -97,7 +97,7 @@ func TestStorageImplicitVariablesWithoutShaman(t *testing.T) {
 	}
 	assert.False(t, c.implicitVariables["jobs"].IsTwoWay)
 	assert.Equal(t,
-		crosspath.ToSlash(c.SharedStoragePath),
+		crosspath.ToNative(c.SharedStoragePath),
 		c.implicitVariables["jobs"].Values[0].Value)
 }
 
