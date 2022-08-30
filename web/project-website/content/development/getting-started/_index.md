@@ -79,7 +79,7 @@ brew install yarn
 {{< /tab >}}
 {{< /tabs >}}
 
-## 4. Utility Tools
+## 3. Utility Tools
 
 Building Flamenco requires only a few tools to be installed on your system.
 
