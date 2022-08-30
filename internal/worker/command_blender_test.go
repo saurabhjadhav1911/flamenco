@@ -44,11 +44,21 @@ func TestCmdBlenderCliArgsInExeParameter(t *testing.T) {
 
 	ce, mocks := testCommandExecutor(t, mockCtrl)
 
+	// Just use backslashes even when we're testing on Linux/macOS. Backslashes
+	// are always causing issues, so it's better to test with those on other
+	// platforms as well. Even when the resulting command cannot be run, every
+	// platform should be able to at least make the backslashes survive any
+	// processing.
+	exe := `D:\Blender_3.2_stable\blender.exe`
+
 	taskID := "1d54c6fe-1242-4c8f-bd63-5a09e358d7b6"
 	cmd := api.Command{
 		Name: "blender",
 		Parameters: map[string]interface{}{
-			"exe":        "/path/to/blender --factory-startup --python-expr \"import bpy; print('hello world')\"",
+			"exe": exe,
+			// This intentionally starts with a space (should be ignored) and has
+			// quoted text within quoted text:
+			"exeArgs":    ` --factory-startup --python-expr "import bpy; print(\"hello world\")"`,
 			"argsBefore": []string{"-no-audio"},
 			"blendfile":  "file with spaces.blend",
 			"args":       []string{"--debug"},
@@ -56,10 +66,10 @@ func TestCmdBlenderCliArgsInExeParameter(t *testing.T) {
 	}
 
 	mocks.cli.EXPECT().CommandContext(gomock.Any(),
-		"/path/to/blender",                 // from 'exe'
-		"--factory-startup",                // from 'exe'
-		"--python-expr",                    // from 'exe'
-		"import bpy; print('hello world')", // from 'exe'
+		exe,                                // from 'exe'
+		"--factory-startup",                // from 'exeArgs'
+		"--python-expr",                    // from 'exeArgs'
+		`import bpy; print("hello world")`, // from 'exeArgs'
 		"-no-audio",                        // from 'argsBefore'
 		"file with spaces.blend",           // from 'blendfile'
 		"--debug",                          // from 'args'

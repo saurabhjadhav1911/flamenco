@@ -20,8 +20,11 @@ func TestDefaultSettings(t *testing.T) {
 	assert.Equal(t, defaultConfig.DatabaseDSN, config.DatabaseDSN)
 
 	assert.Equal(t, false, config.Variables["blender"].IsTwoWay)
-	assert.Equal(t, "blender "+DefaultBlenderArguments, config.Variables["blender"].Values[0].Value)
+	assert.Equal(t, "blender", config.Variables["blender"].Values[0].Value)
 	assert.Equal(t, VariablePlatformLinux, config.Variables["blender"].Values[0].Platform)
+
+	assert.Equal(t, DefaultBlenderArguments, config.Variables["blenderArgs"].Values[0].Value)
+	assert.Equal(t, VariablePlatformAll, config.Variables["blenderArgs"].Values[0].Platform)
 
 	assert.Greater(t, config.BlocklistThreshold, 0)
 }

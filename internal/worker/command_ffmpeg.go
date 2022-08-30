@@ -26,7 +26,8 @@ import (
 )
 
 type CreateVideoParams struct {
-	exe        string   // Executable path + its CLI parameters defined by the Manager.
+	exe        string   // Executable path defined by the Manager.
+	exeArgs    string   // Its CLI parameters defined by the Manager.
 	fps        float64  // Frames per second of the video file.
 	inputGlob  string   // Glob of input files.
 	outputFile string   // File to save the video to.
@@ -119,6 +120,10 @@ func cmdFramesToVideoParams(logger zerolog.Logger, cmd api.Command) (CreateVideo
 		logger.Warn().Interface("command", cmd).Msg("missing 'exe' parameter")
 		return parameters, NewParameterMissingError("exe", cmd)
 	}
+	if parameters.exeArgs, ok = cmdParameter[string](cmd, "exeArgs"); !ok {
+		logger.Warn().Interface("command", cmd).Msg("invalid 'exeArgs' parameter")
+		return parameters, NewParameterInvalidError("exeArgs", cmd, "parameter must be string")
+	}
 	if parameters.fps, ok = cmdParameter[float64](cmd, "fps"); !ok || parameters.fps == 0.0 {
 		logger.Warn().Interface("command", cmd).Msg("missing 'fps' parameter")
 		return parameters, NewParameterMissingError("fps", cmd)
@@ -140,17 +145,16 @@ func cmdFramesToVideoParams(logger zerolog.Logger, cmd api.Command) (CreateVideo
 		return parameters, NewParameterInvalidError("args", cmd, "cannot convert to list of strings")
 	}
 
-	// Move any CLI args from 'exe' to 'argsBefore'.
-	exeArgs, err := shlex.Split(parameters.exe)
+	// Split the exeArgs string into separate parts, and prepend them to `argsBefore`.
+	exeArgs, err := shlex.Split(parameters.exeArgs)
 	if err != nil {
-		logger.Warn().Err(err).Interface("command", cmd).Msg("error parsing 'exe' parameter with shlex")
-		return parameters, NewParameterInvalidError("exe", cmd, err.Error())
+		logger.Warn().Err(err).Interface("command", cmd).Msg("error parsing 'exeArgs' parameter with shlex")
+		return parameters, NewParameterInvalidError("exeArgs", cmd, err.Error())
 	}
-	if len(exeArgs) > 1 {
+	if len(exeArgs) > 0 {
 		allArgsBefore := []string{}
-		allArgsBefore = append(allArgsBefore, exeArgs[1:]...)
+		allArgsBefore = append(allArgsBefore, exeArgs...)
 		allArgsBefore = append(allArgsBefore, parameters.argsBefore...)
-		parameters.exe = exeArgs[0]
 		parameters.argsBefore = allArgsBefore
 	}
 	parameters.args = append(parameters.args,

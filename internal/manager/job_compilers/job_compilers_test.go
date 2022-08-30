@@ -103,6 +103,7 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 	assert.Equal(t, "blender-render", t0.Commands[0].Name)
 	assert.EqualValues(t, AuthoredCommandParameters{
 		"exe":        "{blender}",
+		"exeArgs":    "{blenderArgs}",
 		"blendfile":  settings["blendfile"].(string),
 		"args":       expectCliArgs,
 		"argsBefore": make([]interface{}, 0),
@@ -187,6 +188,7 @@ func TestSimpleBlenderRenderWindowsPaths(t *testing.T) {
 	assert.Equal(t, "blender-render", t0.Commands[0].Name)
 	assert.EqualValues(t, AuthoredCommandParameters{
 		"exe":        "{blender}",
+		"exeArgs":    "{blenderArgs}",
 		"blendfile":  "R:\\sf\\jobs\\scene123.blend", // The blendfile parameter is just copied as-is, so keeps using backslash notation.
 		"args":       expectCliArgs,
 		"argsBefore": make([]interface{}, 0),
@@ -240,6 +242,7 @@ func TestSimpleBlenderRenderOutputPathFieldReplacement(t *testing.T) {
 	}
 	assert.EqualValues(t, AuthoredCommandParameters{
 		"exe":        "{blender}",
+		"exeArgs":    "{blenderArgs}",
 		"blendfile":  sj.Settings.AdditionalProperties["blendfile"].(string),
 		"args":       expectCliArgs,
 		"argsBefore": make([]interface{}, 0),

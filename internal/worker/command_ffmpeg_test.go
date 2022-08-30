@@ -24,10 +24,12 @@ func TestCmdFramesToVideoSimplePosix(t *testing.T) {
 	ce, mocks := testCommandExecutor(t, mockCtrl)
 
 	taskID := "1d54c6fe-1242-4c8f-bd63-5a09e358d7b6"
+	exe := `F:\software\tools\ffmpeg.exe` // Backslashes are tricksy, test with them on all platforms.
 	cmd := api.Command{
 		Name: "blender",
 		Parameters: map[string]interface{}{
-			"exe":        "/path/to/ffmpeg -v quiet",
+			"exe":        exe,
+			"exeArgs":    "-v quiet",
 			"argsBefore": []string{"-report"},
 			"inputGlob":  "path/to/renders/*.png",
 			"fps":        10.0,
@@ -41,7 +43,7 @@ func TestCmdFramesToVideoSimplePosix(t *testing.T) {
 	}
 
 	cliArgs := []string{
-		"-v", "quiet", // exe
+		"-v", "quiet", // exeArgs
 		"-report",  // argsBefore
 		"-r", "10", // input frame rate
 		"-pattern_type", "glob", "-i", "path/to/renders/*.png", // inputGlob
@@ -49,7 +51,7 @@ func TestCmdFramesToVideoSimplePosix(t *testing.T) {
 		"-r", "10", // output frame rate
 		"path/to/renders/preview.mkv", // outputFile
 	}
-	mocks.cli.EXPECT().CommandContext(gomock.Any(), "/path/to/ffmpeg", cliArgs).Return(nil)
+	mocks.cli.EXPECT().CommandContext(gomock.Any(), exe, cliArgs).Return(nil)
 
 	err := ce.cmdFramesToVideo(context.Background(), zerolog.Nop(), taskID, cmd)
 	assert.Equal(t, ErrNoExecCmd, err, "nil *exec.Cmd should result in ErrNoExecCmd")
@@ -66,10 +68,12 @@ func TestCmdFramesToVideoSimpleWindows(t *testing.T) {
 	ce, mocks := testCommandExecutor(t, mockCtrl)
 
 	taskID := "1d54c6fe-1242-4c8f-bd63-5a09e358d7b6"
+	exe := `F:\software\tools\ffmpeg.exe`
 	cmd := api.Command{
 		Name: "blender",
 		Parameters: map[string]interface{}{
-			"exe":        "/path/to/ffmpeg -v quiet",
+			"exe":        exe,
+			"exeArgs":    "-v quiet",
 			"argsBefore": []string{"-report"},
 			// NOTE: these files MUST exist, otherwise the glob index file creation will fail.
 			"inputGlob": "command_ffmpeg_test_files/*.png",
@@ -84,7 +88,7 @@ func TestCmdFramesToVideoSimpleWindows(t *testing.T) {
 	}
 
 	cliArgs := []string{
-		"-v", "quiet", // exe
+		"-v", "quiet", // exeArgs
 		"-report",                                                                              // argsBefore
 		"-f", "concat", "-safe", "0", "-i", "command_ffmpeg_test_files\\ffmpeg-file-index.txt", // input glob
 		"-c:v", "hevc", "-crf", "31", "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2", // args
@@ -92,7 +96,7 @@ func TestCmdFramesToVideoSimpleWindows(t *testing.T) {
 		"path/to/renders/preview.mkv", // outputFile
 	}
 	mocks.cli.EXPECT().
-		CommandContext(gomock.Any(), "/path/to/ffmpeg", gomock.Any()).
+		CommandContext(gomock.Any(), exe, gomock.Any()).
 		DoAndReturn(func(ctx context.Context, name string, arg ...string) error {
 			assert.EqualValues(t, cliArgs, arg)
 			return nil // this is the nil *exec.Cmd referenced below

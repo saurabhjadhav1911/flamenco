@@ -278,16 +278,18 @@ func (f *Flamenco) SaveSetupAssistantConfig(e echo.Context) error {
 	if commandNeedsQuoting(executable) {
 		executable = strconv.Quote(executable)
 	}
-	blenderCommand := fmt.Sprintf("%s %s", executable, config.DefaultBlenderArguments)
 
-	// Use the same command for each platform for now, but put them each in their
 	// own definition so that they're easier to edit later.
 	conf.Variables["blender"] = config.Variable{
-		IsTwoWay: false,
 		Values: config.VariableValues{
-			{Platform: "linux", Value: blenderCommand},
-			{Platform: "windows", Value: blenderCommand},
-			{Platform: "darwin", Value: blenderCommand},
+			{Platform: "linux", Value: executable},
+			{Platform: "windows", Value: executable},
+			{Platform: "darwin", Value: executable},
+		},
+	}
+	conf.Variables["blenderArgs"] = config.Variable{
+		Values: config.VariableValues{
+			{Platform: config.VariablePlatformAll, Value: config.DefaultBlenderArguments},
 		},
 	}
 
@@ -314,5 +316,5 @@ func flamencoManagerDir() (string, error) {
 }
 
 func commandNeedsQuoting(cmd string) bool {
-	return strings.ContainsAny(cmd, " \n\t;()")
+	return strings.ContainsAny(cmd, "\n\t;()")
 }

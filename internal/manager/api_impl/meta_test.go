@@ -126,6 +126,12 @@ func TestSaveSetupAssistantConfig(t *testing.T) {
 	mf, finish := metaTestFixtures(t)
 	defer finish()
 
+	defaultBlenderArgsVar := config.Variable{
+		Values: config.VariableValues{
+			{Platform: config.VariablePlatformAll, Value: config.DefaultBlenderArguments},
+		},
+	}
+
 	doTest := func(body api.SetupAssistantConfig) config.Conf {
 		// Always start the test with a clean configuration.
 		originalConfig := config.DefaultConfig(func(c *config.Conf) {
@@ -165,12 +171,13 @@ func TestSaveSetupAssistantConfig(t *testing.T) {
 		assert.Equal(t, mf.tempdir, savedConfig.SharedStoragePath)
 		expectBlenderVar := config.Variable{
 			Values: config.VariableValues{
-				{Platform: "linux", Value: "blender " + config.DefaultBlenderArguments},
-				{Platform: "windows", Value: "blender " + config.DefaultBlenderArguments},
-				{Platform: "darwin", Value: "blender " + config.DefaultBlenderArguments},
+				{Platform: "linux", Value: "blender"},
+				{Platform: "windows", Value: "blender"},
+				{Platform: "darwin", Value: "blender"},
 			},
 		}
 		assert.Equal(t, expectBlenderVar, savedConfig.Variables["blender"])
+		assert.Equal(t, defaultBlenderArgsVar, savedConfig.Variables["blenderArgs"])
 	}
 
 	// Test situation where the given command could be found on $PATH.
@@ -187,12 +194,13 @@ func TestSaveSetupAssistantConfig(t *testing.T) {
 		assert.Equal(t, mf.tempdir, savedConfig.SharedStoragePath)
 		expectBlenderVar := config.Variable{
 			Values: config.VariableValues{
-				{Platform: "linux", Value: "kitty " + config.DefaultBlenderArguments},
-				{Platform: "windows", Value: "kitty " + config.DefaultBlenderArguments},
-				{Platform: "darwin", Value: "kitty " + config.DefaultBlenderArguments},
+				{Platform: "linux", Value: "kitty"},
+				{Platform: "windows", Value: "kitty"},
+				{Platform: "darwin", Value: "kitty"},
 			},
 		}
 		assert.Equal(t, expectBlenderVar, savedConfig.Variables["blender"])
+		assert.Equal(t, defaultBlenderArgsVar, savedConfig.Variables["blenderArgs"])
 	}
 
 	// Test a custom command given with the full path.
@@ -209,12 +217,13 @@ func TestSaveSetupAssistantConfig(t *testing.T) {
 		assert.Equal(t, mf.tempdir, savedConfig.SharedStoragePath)
 		expectBlenderVar := config.Variable{
 			Values: config.VariableValues{
-				{Platform: "linux", Value: "/bin/cat " + config.DefaultBlenderArguments},
-				{Platform: "windows", Value: "/bin/cat " + config.DefaultBlenderArguments},
-				{Platform: "darwin", Value: "/bin/cat " + config.DefaultBlenderArguments},
+				{Platform: "linux", Value: "/bin/cat"},
+				{Platform: "windows", Value: "/bin/cat"},
+				{Platform: "darwin", Value: "/bin/cat"},
 			},
 		}
 		assert.Equal(t, expectBlenderVar, savedConfig.Variables["blender"])
+		assert.Equal(t, defaultBlenderArgsVar, savedConfig.Variables["blenderArgs"])
 	}
 }
 

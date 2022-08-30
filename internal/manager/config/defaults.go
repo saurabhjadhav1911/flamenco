@@ -62,9 +62,14 @@ var defaultConfig = Conf{
 		// The default commands assume that the executables are available on $PATH.
 		"blender": {
 			Values: VariableValues{
-				VariableValue{Platform: "linux", Value: "blender " + DefaultBlenderArguments},
-				VariableValue{Platform: "windows", Value: "blender.exe " + DefaultBlenderArguments},
-				VariableValue{Platform: "darwin", Value: "blender " + DefaultBlenderArguments},
+				VariableValue{Platform: VariablePlatformLinux, Value: "blender"},
+				VariableValue{Platform: VariablePlatformWindows, Value: "blender.exe"},
+				VariableValue{Platform: VariablePlatformDarwin, Value: "blender"},
+			},
+		},
+		"blenderArgs": {
+			Values: VariableValues{
+				VariableValue{Platform: VariablePlatformAll, Value: DefaultBlenderArguments},
 			},
 		},
 		// TODO: determine useful defaults for these.

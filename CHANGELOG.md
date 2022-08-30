@@ -6,6 +6,13 @@ bugs in actually-released versions.
 
 ## 3.0-beta2 - in development
 
+WARNING: this version is backward incompatible. Any job created with Flamenco
+3.0-beta1 will not run with Flamenco 3.0-beta2. Only upgrade after
+currently-active jobs have finished, or cancel them.
+
+It is recommended to remove `flamenco-manager.yaml`, restart Flamenco Manager,
+and reconfigure via the setup assistant.
+
 - Manager & Add-on: avoid error that could occur when submitting jobs with UDIM files
   ([44ccc6c3ca70](https://developer.blender.org/rF44ccc6c3ca706fdd268bf310f3e8965d58482449)).
 - Manager: don't stop when the Flamenco Setup Assistant cannot start a webbrowser
@@ -15,7 +22,11 @@ bugs in actually-released versions.
   putting all the files in the root of the tarball).
 - Two-way variable replacement now also changes the path separators to the target platform.
 - Allow setting priority when submitting a job.
-
+- Separate "blender location" and "blender arguments" into two variables.
+  - The variable `blender` now should only point at the Blender executable, for
+    example `D:\Blender_3.2_stable\blender.exe`.
+  - The variable `blenderArgs` can be used to set the default Blender arguments,
+    for example `-b -y`.
 
 ## 3.0-beta1 - released 2022-08-03
 

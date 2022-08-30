@@ -22,7 +22,8 @@ import (
 var regexpFileSaved = regexp.MustCompile("Saved: '(.*)'")
 
 type BlenderParameters struct {
-	exe        string   // Expansion of `{blender}`: executable path + its CLI parameters defined by the Manager.
+	exe        string   // Expansion of `{blender}`: the executable path defined by the Manager.
+	exeArgs    string   // Expansion of `{blenderargs}`: its CLI parameters defined by the Manager.
 	argsBefore []string // Additional CLI arguments defined by the job compiler script, to go before the blend file name.
 	blendfile  string   // Path of the file to open.
 	args       []string // Additional CLI arguments defined by the job compiler script, to go after the blend file name.
@@ -133,6 +134,10 @@ func cmdBlenderRenderParams(logger zerolog.Logger, cmd api.Command) (BlenderPara
 		logger.Warn().Interface("command", cmd).Msg("missing 'exe' parameter")
 		return parameters, NewParameterMissingError("exe", cmd)
 	}
+
+	// Ignore the `ok` return value, as a missing exeArgs key is fine:
+	parameters.exeArgs, _ = cmdParameter[string](cmd, "exeArgs")
+
 	if parameters.argsBefore, ok = cmdParameterAsStrings(cmd, "argsBefore"); !ok {
 		logger.Warn().Interface("command", cmd).Msg("invalid 'argsBefore' parameter")
 		return parameters, NewParameterInvalidError("argsBefore", cmd, "cannot convert to list of strings")
@@ -146,17 +151,16 @@ func cmdBlenderRenderParams(logger zerolog.Logger, cmd api.Command) (BlenderPara
 		return parameters, NewParameterInvalidError("args", cmd, "cannot convert to list of strings")
 	}
 
-	// Move any CLI args from 'exe' to 'argsBefore'.
-	exeArgs, err := shlex.Split(parameters.exe)
+	// Split the exeArgs string into separate parts, and prepend them to `argsBefore`.
+	exeArgs, err := shlex.Split(parameters.exeArgs)
 	if err != nil {
-		logger.Warn().Err(err).Interface("command", cmd).Msg("error parsing 'exe' parameter with shlex")
-		return parameters, NewParameterInvalidError("exe", cmd, err.Error())
+		logger.Warn().Err(err).Interface("command", cmd).Msg("error parsing 'exeArgs' parameter with shlex")
+		return parameters, NewParameterInvalidError("exeArgs", cmd, err.Error())
 	}
-	if len(exeArgs) > 1 {
+	if len(exeArgs) > 0 {
 		allArgsBefore := []string{}
-		allArgsBefore = append(allArgsBefore, exeArgs[1:]...)
+		allArgsBefore = append(allArgsBefore, exeArgs...)
 		allArgsBefore = append(allArgsBefore, parameters.argsBefore...)
-		parameters.exe = exeArgs[0]
 		parameters.argsBefore = allArgsBefore
 	}
 
