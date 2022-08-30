@@ -30,7 +30,7 @@ variables:
 Whenever a Worker gets a task that contains `{blender}`, that'll be replaced by
 the appropriate value for that worker.
 
-{{< hint type=note title="Custom Job Types" >}}
+{{< expand "Custom Job Types" >}}
 This documentation section focuses on pre-existing variables, `blender` and
 `blenderArgs`. There is nothing special about these. Apart from being part of
 Flamenco's default configuration, that is. When you go the more advanced route
@@ -38,7 +38,7 @@ of creating your own [custom job types][jobtypes] you're free to create your own
 set of variables to suit your needs.
 
 [jobtypes]: {{< ref "usage/job-types" >}}
-{{< /hint >}}
+{{< /expand >}}
 
 ## Platform
 
