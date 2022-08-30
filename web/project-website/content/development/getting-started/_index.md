@@ -96,8 +96,10 @@ sudo apt install make
 {{< /tab >}}
 {{< tab "Windows" >}}
 Install [MingW W64][mingw]. If in doubt which version to get, grab the `x86_64...seh` one.
+You'll need [7Zip][7zip] to extract it.
 
 [mingw]: https://github.com/niXman/mingw-builds-binaries/releases
+[7zip]: https://www.7-zip.org/download.html
 {{< /tab >}}
 {{< tab "macOS" >}}
 TODO: write this documentation.
