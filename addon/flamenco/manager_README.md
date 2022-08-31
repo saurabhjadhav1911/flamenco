@@ -93,6 +93,7 @@ Class | Method | HTTP request | Description
 *MetaApi* | [**find_blender_exe_path**](flamenco/manager/docs/MetaApi.md#find_blender_exe_path) | **GET** /api/v3/configuration/check/blender | Find one or more CLI commands for use as way to start Blender
 *MetaApi* | [**get_configuration**](flamenco/manager/docs/MetaApi.md#get_configuration) | **GET** /api/v3/configuration | Get the configuration of this Manager.
 *MetaApi* | [**get_configuration_file**](flamenco/manager/docs/MetaApi.md#get_configuration_file) | **GET** /api/v3/configuration/file | Retrieve the configuration of Flamenco Manager.
+*MetaApi* | [**get_shared_storage**](flamenco/manager/docs/MetaApi.md#get_shared_storage) | **GET** /api/v3/configuration/shared-storage/{audience}/{platform} | Get the shared storage location of this Manager, adjusted for the given audience and platform. 
 *MetaApi* | [**get_variables**](flamenco/manager/docs/MetaApi.md#get_variables) | **GET** /api/v3/configuration/variables/{audience}/{platform} | Get the variables of this Manager. Used by the Blender add-on to recognise two-way variables, and for the web interface to do variable replacement based on the browser&#39;s platform. 
 *MetaApi* | [**get_version**](flamenco/manager/docs/MetaApi.md#get_version) | **GET** /api/v3/version | Get the Flamenco version of this Manager
 *MetaApi* | [**save_setup_assistant_config**](flamenco/manager/docs/MetaApi.md#save_setup_assistant_config) | **POST** /api/v3/configuration/setup-assistant | Update the Manager&#39;s configuration, and restart it in fully functional mode.
@@ -109,6 +110,7 @@ Class | Method | HTTP request | Description
 *WorkerApi* | [**task_update**](flamenco/manager/docs/WorkerApi.md#task_update) | **POST** /api/v3/worker/task/{task_id} | Update the task, typically to indicate progress, completion, or failure.
 *WorkerApi* | [**worker_state**](flamenco/manager/docs/WorkerApi.md#worker_state) | **GET** /api/v3/worker/state | 
 *WorkerApi* | [**worker_state_changed**](flamenco/manager/docs/WorkerApi.md#worker_state_changed) | **POST** /api/v3/worker/state-changed | Worker changed state. This could be as acknowledgement of a Manager-requested state change, or in response to worker-local signals.
+*WorkerMgtApi* | [**delete_worker**](flamenco/manager/docs/WorkerMgtApi.md#delete_worker) | **DELETE** /api/v3/worker-mgt/workers/{worker_id} | Remove the given worker. It is recommended to only call this function when the worker is in &#x60;offline&#x60; state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued. 
 *WorkerMgtApi* | [**fetch_worker**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker) | **GET** /api/v3/worker-mgt/workers/{worker_id} | Fetch info about the worker.
 *WorkerMgtApi* | [**fetch_worker_sleep_schedule**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker_sleep_schedule) | **GET** /api/v3/worker-mgt/workers/{worker_id}/sleep-schedule | 
 *WorkerMgtApi* | [**fetch_workers**](flamenco/manager/docs/WorkerMgtApi.md#fetch_workers) | **GET** /api/v3/worker-mgt/workers | Get list of workers.
@@ -161,6 +163,7 @@ Class | Method | HTTP request | Description
  - [ShamanRequirementsRequest](flamenco/manager/docs/ShamanRequirementsRequest.md)
  - [ShamanRequirementsResponse](flamenco/manager/docs/ShamanRequirementsResponse.md)
  - [ShamanSingleFileStatus](flamenco/manager/docs/ShamanSingleFileStatus.md)
+ - [SharedStorageLocation](flamenco/manager/docs/SharedStorageLocation.md)
  - [SocketIOJobUpdate](flamenco/manager/docs/SocketIOJobUpdate.md)
  - [SocketIOLastRenderedUpdate](flamenco/manager/docs/SocketIOLastRenderedUpdate.md)
  - [SocketIOSubscription](flamenco/manager/docs/SocketIOSubscription.md)

@@ -22,6 +22,7 @@ import ManagerVariableAudience from '../model/ManagerVariableAudience';
 import PathCheckInput from '../model/PathCheckInput';
 import PathCheckResult from '../model/PathCheckResult';
 import SetupAssistantConfig from '../model/SetupAssistantConfig';
+import SharedStorageLocation from '../model/SharedStorageLocation';
 
 /**
 * Meta service.
@@ -242,6 +243,59 @@ export default class MetaApi {
      */
     getConfigurationFile() {
       return this.getConfigurationFileWithHttpInfo()
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * Get the shared storage location of this Manager, adjusted for the given audience and platform. 
+     * @param {module:model/ManagerVariableAudience} audience 
+     * @param {String} platform 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/SharedStorageLocation} and HTTP response
+     */
+    getSharedStorageWithHttpInfo(audience, platform) {
+      let postBody = null;
+      // verify the required parameter 'audience' is set
+      if (audience === undefined || audience === null) {
+        throw new Error("Missing the required parameter 'audience' when calling getSharedStorage");
+      }
+      // verify the required parameter 'platform' is set
+      if (platform === undefined || platform === null) {
+        throw new Error("Missing the required parameter 'platform' when calling getSharedStorage");
+      }
+
+      let pathParams = {
+        'audience': audience,
+        'platform': platform
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = SharedStorageLocation;
+      return this.apiClient.callApi(
+        '/api/v3/configuration/shared-storage/{audience}/{platform}', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Get the shared storage location of this Manager, adjusted for the given audience and platform. 
+     * @param {module:model/ManagerVariableAudience} audience 
+     * @param {String} platform 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/SharedStorageLocation}
+     */
+    getSharedStorage(audience, platform) {
+      return this.getSharedStorageWithHttpInfo(audience, platform)
         .then(function(response_and_data) {
           return response_and_data.data;
         });

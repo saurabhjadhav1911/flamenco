@@ -489,6 +489,16 @@ type ShamanSingleFileStatus struct {
 	Status ShamanFileStatus `json:"status"`
 }
 
+// Location of the shared storage, adjusted for a specific audience & platform. This uses two-way variables to adjust the shared storage path from the Manager's configuration.
+type SharedStorageLocation struct {
+	Audience ManagerVariableAudience `json:"audience"`
+	Location string                  `json:"location"`
+	Platform string                  `json:"platform"`
+
+	// Whether the Shaman file transfer API is available.
+	ShamanEnabled bool `json:"shamanEnabled"`
+}
+
 // Subset of a Job, sent over SocketIO when a job changes. For new jobs, `previous_status` will be excluded.
 type SocketIOJobUpdate struct {
 	// UUID of the Job

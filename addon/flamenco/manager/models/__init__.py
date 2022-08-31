@@ -52,6 +52,7 @@ from flamenco.manager.model.shaman_file_status import ShamanFileStatus
 from flamenco.manager.model.shaman_requirements_request import ShamanRequirementsRequest
 from flamenco.manager.model.shaman_requirements_response import ShamanRequirementsResponse
 from flamenco.manager.model.shaman_single_file_status import ShamanSingleFileStatus
+from flamenco.manager.model.shared_storage_location import SharedStorageLocation
 from flamenco.manager.model.socket_io_job_update import SocketIOJobUpdate
 from flamenco.manager.model.socket_io_last_rendered_update import SocketIOLastRenderedUpdate
 from flamenco.manager.model.socket_io_subscription import SocketIOSubscription

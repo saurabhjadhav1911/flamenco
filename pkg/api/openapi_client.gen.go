@@ -116,6 +116,9 @@ type ClientInterface interface {
 
 	SaveSetupAssistantConfig(ctx context.Context, body SaveSetupAssistantConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetSharedStorage request
+	GetSharedStorage(ctx context.Context, audience ManagerVariableAudience, platform string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetVariables request
 	GetVariables(ctx context.Context, audience ManagerVariableAudience, platform string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -349,6 +352,18 @@ func (c *Client) SaveSetupAssistantConfigWithBody(ctx context.Context, contentTy
 
 func (c *Client) SaveSetupAssistantConfig(ctx context.Context, body SaveSetupAssistantConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewSaveSetupAssistantConfigRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSharedStorage(ctx context.Context, audience ManagerVariableAudience, platform string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSharedStorageRequest(c.Server, audience, platform)
 	if err != nil {
 		return nil, err
 	}
@@ -1144,6 +1159,47 @@ func NewSaveSetupAssistantConfigRequestWithBody(server string, contentType strin
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetSharedStorageRequest generates requests for GetSharedStorage
+func NewGetSharedStorageRequest(server string, audience ManagerVariableAudience, platform string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "audience", runtime.ParamLocationPath, audience)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "platform", runtime.ParamLocationPath, platform)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/configuration/shared-storage/%s/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -2557,6 +2613,9 @@ type ClientWithResponsesInterface interface {
 
 	SaveSetupAssistantConfigWithResponse(ctx context.Context, body SaveSetupAssistantConfigJSONRequestBody, reqEditors ...RequestEditorFn) (*SaveSetupAssistantConfigResponse, error)
 
+	// GetSharedStorage request
+	GetSharedStorageWithResponse(ctx context.Context, audience ManagerVariableAudience, platform string, reqEditors ...RequestEditorFn) (*GetSharedStorageResponse, error)
+
 	// GetVariables request
 	GetVariablesWithResponse(ctx context.Context, audience ManagerVariableAudience, platform string, reqEditors ...RequestEditorFn) (*GetVariablesResponse, error)
 
@@ -2824,6 +2883,28 @@ func (r SaveSetupAssistantConfigResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r SaveSetupAssistantConfigResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetSharedStorageResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SharedStorageLocation
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSharedStorageResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSharedStorageResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3723,6 +3804,15 @@ func (c *ClientWithResponses) SaveSetupAssistantConfigWithResponse(ctx context.C
 	return ParseSaveSetupAssistantConfigResponse(rsp)
 }
 
+// GetSharedStorageWithResponse request returning *GetSharedStorageResponse
+func (c *ClientWithResponses) GetSharedStorageWithResponse(ctx context.Context, audience ManagerVariableAudience, platform string, reqEditors ...RequestEditorFn) (*GetSharedStorageResponse, error) {
+	rsp, err := c.GetSharedStorage(ctx, audience, platform, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSharedStorageResponse(rsp)
+}
+
 // GetVariablesWithResponse request returning *GetVariablesResponse
 func (c *ClientWithResponses) GetVariablesWithResponse(ctx context.Context, audience ManagerVariableAudience, platform string, reqEditors ...RequestEditorFn) (*GetVariablesResponse, error) {
 	rsp, err := c.GetVariables(ctx, audience, platform, reqEditors...)
@@ -4331,6 +4421,32 @@ func ParseSaveSetupAssistantConfigResponse(rsp *http.Response) (*SaveSetupAssist
 			return nil, err
 		}
 		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetSharedStorageResponse parses an HTTP response from a GetSharedStorageWithResponse call
+func ParseGetSharedStorageResponse(rsp *http.Response) (*GetSharedStorageResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSharedStorageResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SharedStorageLocation
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	}
 

@@ -31,6 +31,9 @@ type ServerInterface interface {
 	// Update the Manager's configuration, and restart it in fully functional mode.
 	// (POST /api/v3/configuration/setup-assistant)
 	SaveSetupAssistantConfig(ctx echo.Context) error
+	// Get the shared storage location of this Manager, adjusted for the given audience and platform.
+	// (GET /api/v3/configuration/shared-storage/{audience}/{platform})
+	GetSharedStorage(ctx echo.Context, audience ManagerVariableAudience, platform string) error
 	// Get the variables of this Manager. Used by the Blender add-on to recognise two-way variables, and for the web interface to do variable replacement based on the browser's platform.
 	// (GET /api/v3/configuration/variables/{audience}/{platform})
 	GetVariables(ctx echo.Context, audience ManagerVariableAudience, platform string) error
@@ -198,6 +201,30 @@ func (w *ServerInterfaceWrapper) SaveSetupAssistantConfig(ctx echo.Context) erro
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.SaveSetupAssistantConfig(ctx)
+	return err
+}
+
+// GetSharedStorage converts echo context to params.
+func (w *ServerInterfaceWrapper) GetSharedStorage(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "audience" -------------
+	var audience ManagerVariableAudience
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "audience", runtime.ParamLocationPath, ctx.Param("audience"), &audience)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter audience: %s", err))
+	}
+
+	// ------------- Path parameter "platform" -------------
+	var platform string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "platform", runtime.ParamLocationPath, ctx.Param("platform"), &platform)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter platform: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetSharedStorage(ctx, audience, platform)
 	return err
 }
 
@@ -788,6 +815,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/api/v3/configuration/check/shared-storage", wrapper.CheckSharedStoragePath)
 	router.GET(baseURL+"/api/v3/configuration/file", wrapper.GetConfigurationFile)
 	router.POST(baseURL+"/api/v3/configuration/setup-assistant", wrapper.SaveSetupAssistantConfig)
+	router.GET(baseURL+"/api/v3/configuration/shared-storage/:audience/:platform", wrapper.GetSharedStorage)
 	router.GET(baseURL+"/api/v3/configuration/variables/:audience/:platform", wrapper.GetVariables)
 	router.POST(baseURL+"/api/v3/jobs", wrapper.SubmitJob)
 	router.GET(baseURL+"/api/v3/jobs/last-rendered", wrapper.FetchGlobalLastRenderedInfo)

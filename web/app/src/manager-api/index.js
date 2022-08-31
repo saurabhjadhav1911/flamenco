@@ -51,6 +51,7 @@ import ShamanFileStatus from './model/ShamanFileStatus';
 import ShamanRequirementsRequest from './model/ShamanRequirementsRequest';
 import ShamanRequirementsResponse from './model/ShamanRequirementsResponse';
 import ShamanSingleFileStatus from './model/ShamanSingleFileStatus';
+import SharedStorageLocation from './model/SharedStorageLocation';
 import SocketIOJobUpdate from './model/SocketIOJobUpdate';
 import SocketIOLastRenderedUpdate from './model/SocketIOLastRenderedUpdate';
 import SocketIOSubscription from './model/SocketIOSubscription';
@@ -352,6 +353,12 @@ export {
      * @property {module:model/ShamanSingleFileStatus}
      */
     ShamanSingleFileStatus,
+
+    /**
+     * The SharedStorageLocation model constructor.
+     * @property {module:model/SharedStorageLocation}
+     */
+    SharedStorageLocation,
 
     /**
      * The SocketIOJobUpdate model constructor.
