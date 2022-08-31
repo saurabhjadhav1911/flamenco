@@ -11,6 +11,7 @@ import (
 
 	"github.com/benbjohnson/clock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"git.blender.org/flamenco/pkg/api"
 )
@@ -73,12 +74,8 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 
 	sj := exampleSubmittedJob()
 	aj, err := s.Compile(ctx, sj)
-	if err != nil {
-		t.Fatalf("job compiler failed: %v", err)
-	}
-	if aj == nil {
-		t.Fatalf("job compiler returned nil but no error")
-	}
+	require.NoError(t, err)
+	require.NotNil(t, aj)
 
 	// Properties should be copied as-is.
 	assert.Equal(t, sj.Name, aj.Name)
@@ -157,12 +154,8 @@ func TestSimpleBlenderRenderWindowsPaths(t *testing.T) {
 	sj.Settings.AdditionalProperties["render_output_path"] = "R:\\sprites\\farm_output\\promo\\square_ellie\\square_ellie.lighting_light_breakdown2\\######"
 
 	aj, err := s.Compile(ctx, sj)
-	if err != nil {
-		t.Fatalf("job compiler failed: %v", err)
-	}
-	if aj == nil {
-		t.Fatalf("job compiler returned nil but no error")
-	}
+	require.NoError(t, err)
+	require.NotNil(t, aj)
 
 	// Properties should be copied as-is, so also with filesystem paths as-is.
 	assert.Equal(t, sj.Name, aj.Name)
@@ -212,7 +205,7 @@ func TestSimpleBlenderRenderOutputPathFieldReplacement(t *testing.T) {
 	c := mockedClock(t)
 
 	s, err := Load(c)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Compiling a job should be really fast.
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
@@ -222,12 +215,8 @@ func TestSimpleBlenderRenderOutputPathFieldReplacement(t *testing.T) {
 	sj.Settings.AdditionalProperties["render_output_path"] = "/root/{timestamp}/jobname/######"
 
 	aj, err := s.Compile(ctx, sj)
-	if err != nil {
-		t.Fatalf("job compiler failed: %v", err)
-	}
-	if aj == nil {
-		t.Fatalf("job compiler returned nil but no error")
-	}
+	require.NoError(t, err)
+	require.NotNil(t, aj)
 
 	// The job compiler should have replaced the {timestamp} and {ext} fields.
 	assert.Equal(t, "/root/2006-01-02_090405/jobname/######", aj.Settings["render_output_path"])
@@ -263,13 +252,11 @@ func TestEtag(t *testing.T) {
 	c := mockedClock(t)
 
 	s, err := Load(c)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Etags should be computed when the compiler VM is obtained.
 	vm, err := s.compilerVMForJobType("echo-sleep-test")
-	if !assert.NoError(t, err) {
-		t.FailNow()
-	}
+	require.NoError(t, err)
 	const expectEtag = "eba586e16d6b55baaa43e32f9e78ae514b457fee"
 	assert.Equal(t, expectEtag, vm.jobTypeEtag)
 
