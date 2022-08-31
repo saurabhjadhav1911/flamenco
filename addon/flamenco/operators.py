@@ -86,7 +86,7 @@ class FLAMENCO_OT_ping_manager(FlamencoOpMixin, bpy.types.Operator):
         api_client = self.get_api_client(context)
         prefs = preferences.get(context)
 
-        report, level = comms.ping_manager(context, api_client, prefs)
+        report, level = comms.ping_manager_with_report(context, api_client, prefs)
         self.report({level}, report)
 
         return {"FINISHED"}

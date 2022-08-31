@@ -3,7 +3,7 @@
 # <pep8 compliant>
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from urllib3.exceptions import HTTPError, MaxRetryError
 import bpy
@@ -13,10 +13,16 @@ _log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from flamenco.manager import ApiClient as _ApiClient
+    from flamenco.manager.models import (
+        FlamencoVersion as _FlamencoVersion,
+        ManagerConfiguration as _ManagerConfiguration,
+    )
     from .preferences import FlamencoPreferences as _FlamencoPreferences
 else:
     _ApiClient = object
     _FlamencoPreferences = object
+    _FlamencoVersion = object
+    _ManagerConfiguration = object
 
 
 def flamenco_api_client(manager_url: str) -> _ApiClient:
@@ -50,7 +56,9 @@ def discard_flamenco_data():
     _flamenco_client = None
 
 
-def ping_manager(context: bpy.types.Context, api_client: _ApiClient, prefs: _FlamencoPreferences) -> tuple[str, str]:
+def ping_manager_with_report(
+    context: bpy.types.Context, api_client: _ApiClient, prefs: _FlamencoPreferences
+) -> tuple[str, str]:
     """Ping the Manager, update preferences, and return a report as string.
 
     :returns: tuple (report, level). The report will be something like "<name>
@@ -59,36 +67,48 @@ def ping_manager(context: bpy.types.Context, api_client: _ApiClient, prefs: _Fla
         `Operator.report()`.
     """
 
+    context.window_manager.flamenco_status_ping = "..."
+
+    version, _, err = ping_manager(api_client, prefs)
+    if err:
+        context.window_manager.flamenco_status_ping = err
+        return err, "ERROR"
+
+    assert version is not None
+    report = "%s version %s found" % (version.name, version.version)
+    context.window_manager.flamenco_status_ping = report
+    return report, "INFO"
+
+
+def ping_manager(
+    api_client: _ApiClient, prefs: _FlamencoPreferences
+) -> tuple[Optional[_FlamencoVersion], Optional[_ManagerConfiguration], str]:
+    """Fetch Manager config & version, and update preferences.
+
+    :returns: tuple (version, config, error).
+    """
+
     # Do a late import, so that the API is only imported when actually used.
     from flamenco.manager import ApiException
     from flamenco.manager.apis import MetaApi
     from flamenco.manager.models import FlamencoVersion, ManagerConfiguration
-
-    context.window_manager.flamenco_status_ping = "..."
 
     meta_api = MetaApi(api_client)
     try:
         version: FlamencoVersion = meta_api.get_version()
         config: ManagerConfiguration = meta_api.get_configuration()
     except ApiException as ex:
-        report = "Manager cannot be reached: %s" % ex
-        level = "ERROR"
+        return (None, None, "Manager cannot be reached: %s" % ex)
     except MaxRetryError as ex:
         # This is the common error, when for example the port number is
-        # incorrect and nothing is listening.
-        report = "Manager cannot be reached"
-        level = "WARNING"
+        # incorrect and nothing is listening. The exception text is not included
+        # because it's very long and confusing.
+        return (None, None, "Manager cannot be reached")
     except HTTPError as ex:
-        report = "Manager cannot be reached: %s" % ex
-        level = "ERROR"
-    else:
-        report = "%s version %s found" % (version.name, version.version)
-        level = "INFO"
+        return (None, None, "Manager cannot be reached: %s" % ex)
 
-        # Store whether this Manager supports the Shaman API.
-        prefs.is_shaman_enabled = config.shaman_enabled
-        prefs.job_storage = config.storage_location
+    # Store whether this Manager supports the Shaman API.
+    prefs.is_shaman_enabled = config.shaman_enabled
+    prefs.job_storage = config.storage_location
 
-    context.window_manager.flamenco_status_ping = report
-
-    return report, level
+    return version, config, ""
