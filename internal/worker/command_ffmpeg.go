@@ -168,7 +168,7 @@ func cmdFramesToVideoParams(logger zerolog.Logger, cmd api.Command) (CreateVideo
 			log.Warn().Msg("FFmpeg could not be found on this system, render jobs may not run correctly")
 			return parameters, NewParameterInvalidError("exe", cmd, err.Error())
 		case err != nil:
-			log.Warn().Err(err).Msg("there was an unexpected error finding FFmepg on this system, render jobs may not run correctly")
+			log.Warn().Err(err).Msg("there was an unexpected error finding FFmpeg on this system, render jobs may not run correctly")
 			return parameters, NewParameterInvalidError("exe", cmd, err.Error())
 		}
 
