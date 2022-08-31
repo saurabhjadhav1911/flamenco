@@ -321,7 +321,7 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
 
         if isinstance(msg, bat_interface.MsgException):
             self.log.error("Error performing BAT pack: %s", msg.ex)
-            self.report({"ERROR"}, "Error performing BAT pack")
+            self.report({"ERROR"}, "Error performing BAT pack: %s" % msg.ex)
 
             # This was an exception caught at the top level of the thread, so
             # the packing thread itself has stopped.
