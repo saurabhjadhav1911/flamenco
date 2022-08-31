@@ -23,11 +23,12 @@ class FlamencoVersion {
      * Constructs a new <code>FlamencoVersion</code>.
      * @alias module:model/FlamencoVersion
      * @param version {String} 
+     * @param shortversion {String} 
      * @param name {String} 
      */
-    constructor(version, name) { 
+    constructor(version, shortversion, name) { 
         
-        FlamencoVersion.initialize(this, version, name);
+        FlamencoVersion.initialize(this, version, shortversion, name);
     }
 
     /**
@@ -35,8 +36,9 @@ class FlamencoVersion {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, version, name) { 
+    static initialize(obj, version, shortversion, name) { 
         obj['version'] = version;
+        obj['shortversion'] = shortversion;
         obj['name'] = name;
     }
 
@@ -54,6 +56,9 @@ class FlamencoVersion {
             if (data.hasOwnProperty('version')) {
                 obj['version'] = ApiClient.convertToType(data['version'], 'String');
             }
+            if (data.hasOwnProperty('shortversion')) {
+                obj['shortversion'] = ApiClient.convertToType(data['shortversion'], 'String');
+            }
             if (data.hasOwnProperty('name')) {
                 obj['name'] = ApiClient.convertToType(data['name'], 'String');
             }
@@ -68,6 +73,11 @@ class FlamencoVersion {
  * @member {String} version
  */
 FlamencoVersion.prototype['version'] = undefined;
+
+/**
+ * @member {String} shortversion
+ */
+FlamencoVersion.prototype['shortversion'] = undefined;
 
 /**
  * @member {String} name

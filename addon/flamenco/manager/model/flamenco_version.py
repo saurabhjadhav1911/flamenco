@@ -82,6 +82,7 @@ class FlamencoVersion(ModelNormal):
         """
         return {
             'version': (str,),  # noqa: E501
+            'shortversion': (str,),  # noqa: E501
             'name': (str,),  # noqa: E501
         }
 
@@ -92,6 +93,7 @@ class FlamencoVersion(ModelNormal):
 
     attribute_map = {
         'version': 'version',  # noqa: E501
+        'shortversion': 'shortversion',  # noqa: E501
         'name': 'name',  # noqa: E501
     }
 
@@ -102,11 +104,12 @@ class FlamencoVersion(ModelNormal):
 
     @classmethod
     @convert_js_args_to_python_args
-    def _from_openapi_data(cls, version, name, *args, **kwargs):  # noqa: E501
+    def _from_openapi_data(cls, version, shortversion, name, *args, **kwargs):  # noqa: E501
         """FlamencoVersion - a model defined in OpenAPI
 
         Args:
             version (str):
+            shortversion (str):
             name (str):
 
         Keyword Args:
@@ -168,6 +171,7 @@ class FlamencoVersion(ModelNormal):
         self._visited_composed_classes = _visited_composed_classes + (self.__class__,)
 
         self.version = version
+        self.shortversion = shortversion
         self.name = name
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
@@ -189,11 +193,12 @@ class FlamencoVersion(ModelNormal):
     ])
 
     @convert_js_args_to_python_args
-    def __init__(self, version, name, *args, **kwargs):  # noqa: E501
+    def __init__(self, version, shortversion, name, *args, **kwargs):  # noqa: E501
         """FlamencoVersion - a model defined in OpenAPI
 
         Args:
             version (str):
+            shortversion (str):
             name (str):
 
         Keyword Args:
@@ -253,6 +258,7 @@ class FlamencoVersion(ModelNormal):
         self._visited_composed_classes = _visited_composed_classes + (self.__class__,)
 
         self.version = version
+        self.shortversion = shortversion
         self.name = name
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \

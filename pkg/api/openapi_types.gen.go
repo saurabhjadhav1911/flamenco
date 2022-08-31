@@ -260,8 +260,9 @@ type Error struct {
 
 // FlamencoVersion defines model for FlamencoVersion.
 type FlamencoVersion struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
+	Name         string `json:"name"`
+	Shortversion string `json:"shortversion"`
+	Version      string `json:"version"`
 }
 
 // Job defines model for Job.
