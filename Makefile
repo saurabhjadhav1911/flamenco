@@ -180,7 +180,12 @@ update-version:
 	@echo
 	@echo 'File replacement done, commit with:'
 	@echo
-	@echo 'git commit -m "Bumped version to ${VERSION}" Makefile addon/flamenco/__init__.py addon/flamenco/manager addon/flamenco/manager_README.md web/app/src/manager-api'
+	@echo git commit -m "Bumped version to ${VERSION}" Makefile \
+		addon/flamenco/__init__.py \
+		addon/flamenco/manager \
+		addon/flamenco/manager_README.md \
+		web/app/src/manager-api \
+		web/project-website/data/flamenco.yaml
 	@echo 'git tag -a -m "Tagged version ${VERSION}" v${VERSION}'
 
 version:
