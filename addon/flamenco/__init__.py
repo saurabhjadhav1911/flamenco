@@ -37,7 +37,7 @@ def discard_global_flamenco_data(_):
     job_types.discard_flamenco_data()
     comms.discard_flamenco_data()
 
-    bpy.context.WindowManager.flamenco_version_mismatch = False
+    bpy.context.window_manager.flamenco_version_mismatch = False
 
 
 def redraw(self, context):
