@@ -167,6 +167,30 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ManagerVariables" }
 
+  /api/v3/configuration/shared-storage/{audience}/{platform}:
+    summary: Endpoint for getting the shared storage location from Flamenco Manager's configuration.
+    get:
+      summary: >
+        Get the shared storage location of this Manager, adjusted for the given
+        audience and platform.
+      operationId: getSharedStorage
+      tags: [meta]
+      parameters:
+        - name: audience
+          in: path
+          required: true
+          schema: { $ref: "#/components/schemas/ManagerVariableAudience" }
+        - name: platform
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Normal response.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SharedStorageLocation" }
+
   ## Worker
 
   /api/v3/worker/register-worker:
@@ -1156,6 +1180,21 @@ components:
     ManagerVariableAudience:
       type: string
       enum: [workers, users]
+
+    SharedStorageLocation:
+      type: object
+      description: >
+        Location of the shared storage, adjusted for a specific audience &
+        platform. This uses two-way variables to adjust the shared storage path
+        from the Manager's configuration.
+      properties:
+        "location": { type: string }
+        "audience": { $ref: "#/components/schemas/ManagerVariableAudience" }
+        "platform": { type: string }
+        "shamanEnabled":
+          description: Whether the Shaman file transfer API is available.
+          type: boolean
+      required: [location, audience, platform, shamanEnabled]
 
     PathCheckInput:
       type: object
