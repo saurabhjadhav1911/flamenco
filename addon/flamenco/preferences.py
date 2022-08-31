@@ -31,7 +31,7 @@ def _manager_url_updated(prefs, context):
 
     # Warning, be careful what of the context to access here. Accessing /
     # changing too much can cause crashes, infinite loops, etc.
-    comms.ping_manager_with_report(context, api_client, prefs)
+    comms.ping_manager_with_report(context.window_manager, api_client, prefs)
 
 
 class FlamencoPreferences(bpy.types.AddonPreferences):
