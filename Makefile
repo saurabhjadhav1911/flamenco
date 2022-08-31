@@ -265,7 +265,7 @@ RELEASE_PACKAGE_LINUX := ${RELEASE_PACKAGE_LINUX_BASE}.tar.gz
 RELEASE_PACKAGE_DARWIN_BASE := flamenco-${VERSION}-macos-amd64
 RELEASE_PACKAGE_DARWIN := ${RELEASE_PACKAGE_DARWIN_BASE}.tar.gz
 
-RELEASE_PACKAGE_WINDOWS := dist/flamenco-${VERSION}-windows-amd64.zip
+RELEASE_PACKAGE_WINDOWS := flamenco-${VERSION}-windows-amd64.zip
 
 RELEASE_PACKAGE_EXTRA_FILES := README.md LICENSE CHANGELOG.md
 
@@ -309,14 +309,14 @@ release-package-windows:
 	$(MAKE) -s flamenco-worker GOOS=windows GOARCH=amd64
 	$(MAKE) -s tools-windows
 	mkdir -p dist
-	rm -f ${RELEASE_PACKAGE_WINDOWS}
-	zip -r -9 ${RELEASE_PACKAGE_WINDOWS} flamenco-manager.exe flamenco-worker.exe ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-windows*
+	rm -f dist/${RELEASE_PACKAGE_WINDOWS}
+	zip -r -9 dist/${RELEASE_PACKAGE_WINDOWS} flamenco-manager.exe flamenco-worker.exe ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-windows*
 	@echo "Done! Created ${RELEASE_PACKAGE_WINDOWS}"
 
 .PHONY: publish-release-packages
 publish-release-packages:
-	rsync -va \
-		${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_WINDOWS} \
+	cd dist; rsync -va \
+		${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_WINDOWS} ${RELEASE_PACKAGE_SHAFILE} \
 		${WEBSERVER_SSH}:${WEBSERVER_ROOT}/downloads/
 
 .PHONY: application version flamenco-manager flamenco-worker flamenco-manager_race flamenco-worker_race webapp webapp-static generate generate-go generate-py with-deps swagger-ui list-embedded test clean clean-webapp-static
