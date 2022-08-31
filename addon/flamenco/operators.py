@@ -18,11 +18,19 @@ if TYPE_CHECKING:
         PackThread as _PackThread,
         Message as _Message,
     )
-    from .manager.models import SubmittedJob as _SubmittedJob
+    from .manager.models import (
+        Error as _Error,
+        SubmittedJob as _SubmittedJob,
+    )
+    from .manager.api_client import ApiClient as _ApiClient
+    from .manager.exceptions import ApiException as _ApiException
 else:
     _PackThread = object
     _Message = object
     _SubmittedJob = object
+    _ApiClient = object
+    _ApiException = object
+    _Error = object
 
 _log = logging.getLogger(__name__)
 
@@ -440,6 +448,10 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
                     "Cached job type is old. Refresh the job types and submit again, please",
                 )
                 return
+            if ex.status == 400:
+                error = parse_api_error(api_client, ex)
+                self.report({"ERROR"}, error.message)
+                return
             self.report({"ERROR"}, f"Could not submit job: {ex.reason}")
             return
 
@@ -518,3 +530,18 @@ classes = (
     FLAMENCO3_OT_explore_file_path,
 )
 register, unregister = bpy.utils.register_classes_factory(classes)
+
+
+def parse_api_error(api_client: _ApiClient, ex: _ApiException) -> _Error:
+    """Parse the body of an ApiException into an manager.models.Error instance."""
+
+    from .manager.models import Error
+
+    class MockResponse:
+        data: str
+
+    response = MockResponse()
+    response.data = ex.body
+
+    error: _Error = api_client.deserialize(response, (Error, ), True)
+    return error
