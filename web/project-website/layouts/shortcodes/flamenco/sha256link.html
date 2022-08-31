@@ -1,0 +1,2 @@
+{{- $filename := printf "flamenco-%s.sha256" $.Site.Data.flamenco.latestVersion -}}
+<a class="flamenco-download-link" href="/downloads/{{ $filename }}">{{ $filename }}</a>

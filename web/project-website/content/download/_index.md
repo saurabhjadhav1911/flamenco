@@ -29,12 +29,12 @@ planned by the end of September 2022.
 [bugs]: (https://developer.blender.org/project/profile/58/)
 {{< /hint >}}
 
-| Platform | File                                                 |
-|----------|------------------------------------------------------|
-| Windows  | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
-| Linux    | {{< flamenco/downloadLink os="linux" >}}             |
-| macOS    | {{< flamenco/downloadLink os="macos" >}}             |
-
+| Platform  | File                                                 |
+|-----------|------------------------------------------------------|
+| Windows   | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
+| Linux     | {{< flamenco/downloadLink os="linux" >}}             |
+| macOS     | {{< flamenco/downloadLink os="macos" >}}             |
+| checksums | {{< flamenco/sha256link >}}                          |
 
 ## License
 
