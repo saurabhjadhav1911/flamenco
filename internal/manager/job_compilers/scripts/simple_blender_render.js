@@ -45,23 +45,22 @@ function compileJob(job) {
     print("Blender Render job submitted");
     print("job: ", job);
 
-    if (videoFormats.indexOf(job.settings.format) >= 0) {
-      throw `This job type only renders images, and not "${job.settings.format}"`;
+    const settings = job.settings;
+    if (videoFormats.indexOf(settings.format) >= 0) {
+        throw `This job type only renders images, and not "${settings.format}"`;
     }
 
     const renderOutput = renderOutputPath(job);
-    job.settings.render_output_path = renderOutput;
 
-    const finalDir = path.dirname(renderOutput);
-    const renderDir = intermediatePath(job, finalDir);
+    // Make sure that when the job is investigated later, it shows the
+    // actually-used render output:
+    settings.render_output_path = renderOutput;
 
-    const settings = job.settings;
+    const renderDir = path.dirname(renderOutput);
     const renderTasks = authorRenderTasks(settings, renderDir, renderOutput);
     const videoTask = authorCreateVideoTask(settings, renderDir);
-    const cleanupTask = authorCleanupTask(finalDir, renderDir);
 
     for (const rt of renderTasks) {
-        cleanupTask.addDependency(rt);
         job.addTask(rt);
     }
     if (videoTask) {
@@ -69,10 +68,8 @@ function compileJob(job) {
         for (const rt of renderTasks) {
             videoTask.addDependency(rt);
         }
-        cleanupTask.addDependency(videoTask);
         job.addTask(videoTask);
     }
-    job.addTask(cleanupTask);
 }
 
 // Do field replacement on the render output path.
@@ -89,13 +86,6 @@ function renderOutputPath(job) {
             return match;
         }
     });
-}
-
-// Determine the intermediate render output path.
-function intermediatePath(job, finalDir) {
-    const basename = path.basename(finalDir);
-    const name = `${basename}__intermediate-${formatTimestampLocal(job.created)}`;
-    return path.join(path.dirname(finalDir), name);
 }
 
 function authorRenderTasks(settings, renderDir, renderOutput) {
@@ -154,15 +144,5 @@ function authorCreateVideoTask(settings, renderDir) {
     task.addCommand(command);
 
     print(`Creating output video for ${settings.format}`);
-    return task;
-}
-
-function authorCleanupTask(finalDir, renderDir) {
-    const task = author.Task("move-to-final", "file-management");
-    const command = author.Command("move-directory", {
-        src: renderDir,
-        dest: finalDir,
-    });
-    task.addCommand(command);
     return task;
 }

@@ -89,11 +89,11 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 
 	settings := sj.Settings.AdditionalProperties
 
-	// Tasks should have been created to render the frames: 1-3, 4-6, 7-9, 10, video-encoding, and cleanup
-	assert.Len(t, aj.Tasks, 6)
+	// Tasks should have been created to render the frames: 1-3, 4-6, 7-9, 10, and video-encoding
+	assert.Len(t, aj.Tasks, 5)
 	t0 := aj.Tasks[0]
 	expectCliArgs := []interface{}{ // They are strings, but Goja doesn't know that and will produce an []interface{}.
-		"--render-output", "/render/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2__intermediate-2006-01-02_090405/######",
+		"--render-output", "/render/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2/######",
 		"--render-format", settings["format"].(string),
 		"--render-frame", "1..3",
 	}
@@ -116,8 +116,8 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 	assert.Equal(t, "frames-to-video", tVideo.Commands[0].Name)
 	assert.EqualValues(t, AuthoredCommandParameters{
 		"exe":        "ffmpeg",
-		"inputGlob":  "/render/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2__intermediate-2006-01-02_090405/*.png",
-		"outputFile": "/render/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2__intermediate-2006-01-02_090405/scene123-1-10.mp4",
+		"inputGlob":  "/render/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2/*.png",
+		"outputFile": "/render/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2/scene123-1-10.mp4",
 		"fps":        int64(24),
 		"args":       expectedFramesToVideoArgs,
 	}, tVideo.Commands[0].Parameters)
@@ -173,12 +173,12 @@ func TestSimpleBlenderRenderWindowsPaths(t *testing.T) {
 
 	settings := sj.Settings.AdditionalProperties
 
-	// Tasks should have been created to render the frames: 1-3, 4-6, 7-9, 10, video-encoding, and cleanup
-	assert.Len(t, aj.Tasks, 6)
+	// Tasks should have been created to render the frames: 1-3, 4-6, 7-9, 10, and video-encoding
+	assert.Len(t, aj.Tasks, 5)
 	t0 := aj.Tasks[0]
 	expectCliArgs := []interface{}{ // They are strings, but Goja doesn't know that and will produce an []interface{}.
 		// The render output is constructed by the job compiler, and thus transforms to forward slashes.
-		"--render-output", "R:/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2__intermediate-2006-01-02_090405/######",
+		"--render-output", "R:/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2/######",
 		"--render-format", settings["format"].(string),
 		"--render-frame", "1..3",
 	}
@@ -201,8 +201,8 @@ func TestSimpleBlenderRenderWindowsPaths(t *testing.T) {
 	assert.Equal(t, "frames-to-video", tVideo.Commands[0].Name)
 	assert.EqualValues(t, AuthoredCommandParameters{
 		"exe":        "ffmpeg",
-		"inputGlob":  "R:/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2__intermediate-2006-01-02_090405/*.png",
-		"outputFile": "R:/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2__intermediate-2006-01-02_090405/scene123-1-10.mp4",
+		"inputGlob":  "R:/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2/*.png",
+		"outputFile": "R:/sprites/farm_output/promo/square_ellie/square_ellie.lighting_light_breakdown2/scene123-1-10.mp4",
 		"fps":        int64(24),
 		"args":       expectedFramesToVideoArgs,
 	}, tVideo.Commands[0].Parameters)
@@ -232,11 +232,11 @@ func TestSimpleBlenderRenderOutputPathFieldReplacement(t *testing.T) {
 	// The job compiler should have replaced the {timestamp} and {ext} fields.
 	assert.Equal(t, "/root/2006-01-02_090405/jobname/######", aj.Settings["render_output_path"])
 
-	// Tasks should have been created to render the frames: 1-3, 4-6, 7-9, 10, video-encoding, and cleanup
-	assert.Len(t, aj.Tasks, 6)
+	// Tasks should have been created to render the frames: 1-3, 4-6, 7-9, 10, and video-encoding
+	require.Len(t, aj.Tasks, 5)
 	t0 := aj.Tasks[0]
 	expectCliArgs := []interface{}{ // They are strings, but Goja doesn't know that and will produce an []interface{}.
-		"--render-output", "/root/2006-01-02_090405/jobname__intermediate-2006-01-02_090405/######",
+		"--render-output", "/root/2006-01-02_090405/jobname/######",
 		"--render-format", sj.Settings.AdditionalProperties["format"].(string),
 		"--render-frame", "1..3",
 	}
@@ -251,8 +251,8 @@ func TestSimpleBlenderRenderOutputPathFieldReplacement(t *testing.T) {
 	tVideo := aj.Tasks[4] // This should be a video encoding task
 	assert.EqualValues(t, AuthoredCommandParameters{
 		"exe":        "ffmpeg",
-		"inputGlob":  "/root/2006-01-02_090405/jobname__intermediate-2006-01-02_090405/*.png",
-		"outputFile": "/root/2006-01-02_090405/jobname__intermediate-2006-01-02_090405/scene123-1-10.mp4",
+		"inputGlob":  "/root/2006-01-02_090405/jobname/*.png",
+		"outputFile": "/root/2006-01-02_090405/jobname/scene123-1-10.mp4",
 		"fps":        int64(24),
 		"args":       expectedFramesToVideoArgs,
 	}, tVideo.Commands[0].Parameters)
