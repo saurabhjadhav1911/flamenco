@@ -19,7 +19,6 @@ const JOB_TYPE = {
           description: "Final file path of where render output will be saved"},
 
         // Automatically evaluated settings:
-        { key: "blender_cmd", type: "string", default: "{blender}", visible: "hidden" },
         { key: "blendfile", type: "string", required: true, description: "Path of the Blend file to render", visible: "web" },
         { key: "fps", type: "float", eval: "C.scene.render.fps / C.scene.render.fps_base", visible: "hidden" },
         {
@@ -120,7 +119,7 @@ function authorRenderTasks(settings, renderDir, renderOutput) {
     for (let chunk of chunks) {
         const task = author.Task(`render-${chunk}`, "blender");
         const command = author.Command("blender-render", {
-            exe: settings.blender_cmd,
+            exe: "{blender}",
             exeArgs: "{blenderArgs}",
             argsBefore: [],
             blendfile: settings.blendfile,
