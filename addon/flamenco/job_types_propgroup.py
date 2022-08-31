@@ -156,7 +156,6 @@ class JobTypePropertyGroup:
         If the setting has an `eval` property, it'll be evaluated and used as
         the setting value. Otherwise it will be skipped.
         """
-        print(f"eval_visible_settings_if_no_value")
         for setting in self.job_type.settings:
             if not job_types.setting_is_visible(setting):
                 # Skip those settings that will be hidden from the GUI.
