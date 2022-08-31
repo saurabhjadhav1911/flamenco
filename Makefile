@@ -2,7 +2,7 @@ PKG := git.blender.org/flamenco
 
 # To update the version number in all the relevant places, update the VERSION
 # variable below and run `make update-version`.
-VERSION := 3.0-beta2
+VERSION := 3.0-beta3
 RELEASE_CYCLE := beta
 
 # _GIT_DESCRIPTION_OR_TAG is either something like '16-123abc' (when we're 16
