@@ -10,6 +10,17 @@ The latest version is: **{{< flamenco/latestVersion >}}**
 This is a **beta** version of the software! This means that the features for the
 3.0 version are there, but are likely to be some bugs.
 
+When **upgrading** from a previous beta, it is recommended to start afresh with the following steps:
+
+1. Cancel any running or queued job.
+2. Shut down Flamenco Manager and all Workers.
+3. Remove `flamenco-manager.yaml` and `flamenco-manager.sqlite`.
+4. Download the new version and replace your old Flamenco files with the new ones.
+5. Start `flamenco-manager` and go through the setup setup assistant again.
+6. Don't forget to re-download the Blender add-on from the Manager's web
+   interface, and install it. It has seen development as well, and will need to
+   be upgraded.
+
 Read the announcement at the [Blender Studio blog][blog]. <br>
 Please report any issue at [developer.blender.org][bugs]. A stable release is
 planned by the end of September 2022.
