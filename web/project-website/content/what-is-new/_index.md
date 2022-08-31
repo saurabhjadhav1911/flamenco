@@ -19,3 +19,9 @@ Compared to version 2, Flamenco 3:
 [custom-jobs]: {{< ref "usage/job-types" >}}
 
 {{< button size="large" relref="usage/quickstart/" >}}Quickstart{{< /button >}}
+
+## Flamenco 3 Change Log
+
+The more interesting changes between Flamenco 3 versions are listed in the [changelog][changelog].
+
+[changelog]: https://developer.blender.org/diffusion/F/browse/main/CHANGELOG.md
