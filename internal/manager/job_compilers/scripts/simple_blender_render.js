@@ -45,9 +45,6 @@ function compileJob(job) {
     print("Blender Render job submitted");
     print("job: ", job);
 
-    print(`file format: ${job.settings.format}`);
-    print(`index: ${videoFormats.indexOf(job.settings.format)}`);
-
     if (videoFormats.indexOf(job.settings.format) >= 0) {
       throw `This job type only renders images, and not "${job.settings.format}"`;
     }
