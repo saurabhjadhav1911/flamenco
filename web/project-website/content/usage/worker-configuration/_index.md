@@ -10,7 +10,7 @@ This is an example of such a configuration file:
 
 ```yaml
 manager_url: http://flamenco.local:8080/
-task_types: blender, ffmpeg, file-management, misc
+task_types: [blender, ffmpeg, file-management, misc]
 ```
 
 The task types are determined by the [job compiler scripts][scripts]. The ones
