@@ -37,6 +37,8 @@ def discard_global_flamenco_data(_):
     job_types.discard_flamenco_data()
     comms.discard_flamenco_data()
 
+    bpy.context.WindowManager.flamenco_version_mismatch = False
+
 
 def redraw(self, context):
     if context.area is None:
@@ -117,6 +119,11 @@ def register() -> None:
         min=0,
         max=100,
         update=redraw,
+    )
+    bpy.types.WindowManager.flamenco_version_mismatch = bpy.props.BoolProperty(
+        name="Flamenco Ignore Version Mismatch",
+        default=False,
+        description="Ignore version mismatch between add-on and Manager when submitting a job",
     )
 
     # Placeholder to contain the result of a 'ping' to Flamenco Manager,

@@ -133,13 +133,7 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
         # Show current status of Flamenco.
         flamenco_status = context.window_manager.flamenco_bat_status
         if flamenco_status in {"IDLE", "ABORTED", "DONE"}:
-            ui = layout
-            props = ui.operator(
-                "flamenco.submit_job",
-                text="Submit to Flamenco",
-                icon="RENDER_ANIMATION",
-            )
-            props.job_name = context.scene.flamenco_job_name
+            self.draw_submit_button(context, layout)
         elif flamenco_status == "INVESTIGATING":
             row = layout.row(align=True)
             row.label(text="Investigating your files")
@@ -162,6 +156,28 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
             flamenco_status != "IDLE" and context.window_manager.flamenco_bat_status_txt
         ):
             layout.label(text=context.window_manager.flamenco_bat_status_txt)
+
+    def draw_submit_button(
+        self, context: bpy.types.Context, layout: bpy.types.UILayout
+    ) -> None:
+        row = layout.row(align=True)
+
+        props = row.operator(
+            "flamenco.submit_job",
+            text="Submit to Flamenco",
+            icon="RENDER_ANIMATION",
+        )
+        props.job_name = context.scene.flamenco_job_name
+        props.ignore_version_mismatch = False
+
+        if context.window_manager.flamenco_version_mismatch:
+            props = row.operator(
+                "flamenco.submit_job",
+                text="Force Submit",
+                icon="NONE",
+            )
+            props.job_name = context.scene.flamenco_job_name
+            props.ignore_version_mismatch = True
 
 
 classes = (FLAMENCO_PT_job_submission,)

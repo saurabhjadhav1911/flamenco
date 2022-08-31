@@ -86,7 +86,9 @@ class FLAMENCO_OT_ping_manager(FlamencoOpMixin, bpy.types.Operator):
         api_client = self.get_api_client(context)
         prefs = preferences.get(context)
 
-        report, level = comms.ping_manager_with_report(context, api_client, prefs)
+        report, level = comms.ping_manager_with_report(
+            context.window_manager, api_client, prefs
+        )
         self.report({level}, report)
 
         return {"FINISHED"}
@@ -122,6 +124,10 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
     job_name: bpy.props.StringProperty(name="Job Name")  # type: ignore
     job: Optional[_SubmittedJob] = None
     temp_blendfile: Optional[Path] = None
+    ignore_version_mismatch: bpy.props.BoolProperty(  # type: ignore
+        name="Ignore Version Mismatch",
+        default=False,
+    )
 
     timer: Optional[bpy.types.Timer] = None
     packthread: Optional[_PackThread] = None
@@ -135,6 +141,16 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         return job_type is not None
 
     def invoke(self, context: bpy.types.Context, event: bpy.types.Event) -> set[str]:
+        # Before doing anything, make sure the info we cached about the Manager
+        # is up to date. A change in job storage directory on the Manager can
+        # cause nasty error messages when we submit, and it's better to just be
+        # ahead of the curve and refresh first. This also allows for checking
+        # the actual Manager version before submitting.
+        err = self._check_manager(context)
+        if err:
+            self.report({"WARNING"}, err)
+            return {"CANCELLED"}
+
         filepath = self._save_blendfile(context)
 
         # Construct the Job locally before trying to pack. If any validations fail, better fail early.
@@ -159,6 +175,51 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             return {"RUNNING_MODAL"}
 
         return self._on_bat_pack_msg(context, msg)
+
+    def _check_manager(self, context: bpy.types.Context) -> str:
+        """Check the Manager version & fetch the job storage directory.
+
+        :return: an error string when something went wrong.
+        """
+        from . import comms, preferences
+
+        # Get the manager's info. This is cached in the preferences, so
+        # regardless of whether this function actually responds to version
+        # mismatches, it has to be called to also refresh the shared storage
+        # location.
+        api_client = self.get_api_client(context)
+        prefs = preferences.get(context)
+        mgrinfo = comms.ping_manager(context.window_manager, api_client, prefs)
+        if mgrinfo.error:
+            return mgrinfo.error
+
+        # Check the Manager's version.
+        if not self.ignore_version_mismatch:
+            my_version = comms.flamenco_client_version()
+            assert mgrinfo.version is not None
+
+            try:
+                mgrversion = mgrinfo.version.shortversion
+            except AttributeError:
+                # shortversion was introduced in Manager version 3.0-beta2, which
+                # may not be running here yet.
+                mgrversion = mgrinfo.version.version
+            if mgrversion != my_version:
+                context.window_manager.flamenco_version_mismatch = True
+                return (
+                    f"Manager ({mgrversion}) and this add-on ({my_version}) version "
+                    + "mismatch, either update the add-on or force the submission"
+                )
+
+        # Un-set the 'flamenco_version_mismatch' when the versions match or when
+        # one forced submission is done. Each submission has to go through the
+        # same cycle of submitting, seeing the warning, then explicitly ignoring
+        # the mismatch, to make it a concious decision to keep going with
+        # potentially incompatible versions.
+        context.window_manager.flamenco_version_mismatch = False
+
+        # Empty error message indicates 'ok'.
+        return ""
 
     def _save_blendfile(self, context):
         """Save to a different file, specifically for Flamenco.

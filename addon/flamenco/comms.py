@@ -3,6 +3,7 @@
 # <pep8 compliant>
 
 import logging
+import dataclasses
 from typing import TYPE_CHECKING, Optional
 
 from urllib3.exceptions import HTTPError, MaxRetryError
@@ -25,6 +26,23 @@ else:
     _ManagerConfiguration = object
 
 
+@dataclasses.dataclass(frozen=True)
+class ManagerInfo:
+    version: Optional[_FlamencoVersion] = None
+    config: Optional[_ManagerConfiguration] = None
+    error: str = ""
+
+    @classmethod
+    def with_error(cls, error: str) -> "ManagerInfo":
+        return cls(error=error)
+
+    @classmethod
+    def with_info(
+        cls, version: _FlamencoVersion, config: _ManagerConfiguration
+    ) -> "ManagerInfo":
+        return cls(version=version, config=config)
+
+
 def flamenco_api_client(manager_url: str) -> _ApiClient:
     """Returns an API client for communicating with a Manager."""
     global _flamenco_client
@@ -45,6 +63,18 @@ def flamenco_api_client(manager_url: str) -> _ApiClient:
     return _flamenco_client
 
 
+def flamenco_client_version() -> str:
+    """Return the version of the Flamenco OpenAPI client."""
+
+    from . import dependencies
+
+    dependencies.preload_modules()
+
+    from . import manager
+
+    return manager.__version__
+
+
 def discard_flamenco_data():
     global _flamenco_client
 
@@ -57,7 +87,9 @@ def discard_flamenco_data():
 
 
 def ping_manager_with_report(
-    context: bpy.types.Context, api_client: _ApiClient, prefs: _FlamencoPreferences
+    window_manager: bpy.types.WindowManager,
+    api_client: _ApiClient,
+    prefs: _FlamencoPreferences,
 ) -> tuple[str, str]:
     """Ping the Manager, update preferences, and return a report as string.
 
@@ -67,26 +99,23 @@ def ping_manager_with_report(
         `Operator.report()`.
     """
 
-    context.window_manager.flamenco_status_ping = "..."
+    info = ping_manager(window_manager, api_client, prefs)
+    if info.error:
+        return info.error, "ERROR"
 
-    version, _, err = ping_manager(api_client, prefs)
-    if err:
-        context.window_manager.flamenco_status_ping = err
-        return err, "ERROR"
-
-    assert version is not None
-    report = "%s version %s found" % (version.name, version.version)
-    context.window_manager.flamenco_status_ping = report
+    assert info.version is not None
+    report = "%s version %s found" % (info.version.name, info.version.version)
     return report, "INFO"
 
 
 def ping_manager(
-    api_client: _ApiClient, prefs: _FlamencoPreferences
-) -> tuple[Optional[_FlamencoVersion], Optional[_ManagerConfiguration], str]:
-    """Fetch Manager config & version, and update preferences.
+    window_manager: bpy.types.WindowManager,
+    api_client: _ApiClient,
+    prefs: _FlamencoPreferences,
+) -> ManagerInfo:
+    """Fetch Manager config & version, and update cached preferences."""
 
-    :returns: tuple (version, config, error).
-    """
+    window_manager.flamenco_status_ping = "..."
 
     # Do a late import, so that the API is only imported when actually used.
     from flamenco.manager import ApiException
@@ -94,21 +123,29 @@ def ping_manager(
     from flamenco.manager.models import FlamencoVersion, ManagerConfiguration
 
     meta_api = MetaApi(api_client)
+    error = ""
     try:
         version: FlamencoVersion = meta_api.get_version()
         config: ManagerConfiguration = meta_api.get_configuration()
     except ApiException as ex:
-        return (None, None, "Manager cannot be reached: %s" % ex)
+        error = "Manager cannot be reached: %s" % ex
     except MaxRetryError as ex:
         # This is the common error, when for example the port number is
         # incorrect and nothing is listening. The exception text is not included
         # because it's very long and confusing.
-        return (None, None, "Manager cannot be reached")
+        error = "Manager cannot be reached"
     except HTTPError as ex:
-        return (None, None, "Manager cannot be reached: %s" % ex)
+        error = "Manager cannot be reached: %s" % ex
+
+    if error:
+        window_manager.flamenco_status_ping = error
+        return ManagerInfo.with_error(error)
 
     # Store whether this Manager supports the Shaman API.
     prefs.is_shaman_enabled = config.shaman_enabled
     prefs.job_storage = config.storage_location
 
-    return version, config, ""
+    report = "%s version %s found" % (version.name, version.version)
+    window_manager.flamenco_status_ping = report
+
+    return ManagerInfo.with_info(version, config)
