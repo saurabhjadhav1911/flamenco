@@ -21,19 +21,9 @@ const JOB_TYPE = {
         // Automatically evaluated settings:
         { key: "blendfile", type: "string", required: true, description: "Path of the Blend file to render", visible: "web" },
         { key: "fps", type: "float", eval: "C.scene.render.fps / C.scene.render.fps_base", visible: "hidden" },
-        {
-            key: "images_or_video",
-            type: "string",
-            required: true,
-            choices: ["images", "video"],
-            visible: "hidden",
-            eval: "'video' if C.scene.render.image_settings.file_format in {'FFMPEG', 'AVI_RAW', 'AVI_JPEG'} else 'images'"
-        },
         { key: "format", type: "string", required: true, eval: "C.scene.render.image_settings.file_format", visible: "web" },
         { key: "image_file_extension", type: "string", required: true, eval: "C.scene.render.file_extension", visible: "hidden",
-          description: "File extension used when rendering images; ignored when images_or_video='video'" },
-        { key: "video_container_format", type: "string", required: true, eval: "C.scene.render.ffmpeg.format", visible: "hidden",
-          description: "Container format used when rendering video; ignored when images_or_video='images'" },
+          description: "File extension used when rendering images" },
     ]
 };
 
@@ -47,21 +37,20 @@ const ffmpegIncompatibleImageFormats = new Set([
     "OPEN_EXR_MULTILAYER", // DNA values for these formats.
 ]);
 
-// Mapping from video container (scene.render.ffmpeg.format) to the file name
-// extension typically used to store those videos.
-const videoContainerToExtension = {
-    "QUICKTIME": ".mov",
-    "MPEG1": ".mpg",
-    "MPEG2": ".dvd",
-    "MPEG4": ".mp4",
-    "OGG": ".ogv",
-    "FLASH": ".flv",
-};
+// File formats that would cause rendering to video.
+// This is not supported by this job type.
+const videoFormats = ['FFMPEG', 'AVI_RAW', 'AVI_JPEG'];
 
 function compileJob(job) {
     print("Blender Render job submitted");
     print("job: ", job);
 
+    print(`file format: ${job.settings.format}`);
+    print(`index: ${videoFormats.indexOf(job.settings.format)}`);
+
+    if (videoFormats.indexOf(job.settings.format) >= 0) {
+      throw `This job type only renders images, and not "${job.settings.format}"`;
+    }
 
     const renderOutput = renderOutputPath(job);
     job.settings.render_output_path = renderOutput;
@@ -136,10 +125,6 @@ function authorRenderTasks(settings, renderDir, renderOutput) {
 }
 
 function authorCreateVideoTask(settings, renderDir) {
-    if (settings.images_or_video == "video") {
-        print("Not authoring video task, render output is already a video");
-        return;
-    }
     if (ffmpegIncompatibleImageFormats.has(settings.format)) {
         print("Not authoring video task, FFmpeg-incompatible render output")
         return;
@@ -151,7 +136,7 @@ function authorCreateVideoTask(settings, renderDir) {
 
     const stem = path.stem(settings.blendfile).replace('.flamenco', '');
     const outfile = path.join(renderDir, `${stem}-${settings.frames}.mp4`);
-    const outfileExt = guessOutputFileExtension(settings);
+    const outfileExt = settings.image_file_extension;
 
     const task = author.Task('preview-video', 'ffmpeg');
     const command = author.Command("frames-to-video", {
@@ -183,20 +168,4 @@ function authorCleanupTask(finalDir, renderDir) {
     });
     task.addCommand(command);
     return task;
-}
-
-// Return file name extension, including period, like '.png' or '.mkv'.
-function guessOutputFileExtension(settings) {
-    switch (settings.images_or_video) {
-    case "images":
-        return settings.image_file_extension;
-    case "video":
-        const container = settings.video_container_format;
-        if (container in videoContainerToExtension) {
-            return videoContainerToExtension[container];
-        }
-        return "." + container.lower();
-    default:
-        throw `invalid setting images_or_video: "${settings.images_or_video}"`
-    }
 }
