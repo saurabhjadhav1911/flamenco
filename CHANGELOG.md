@@ -9,6 +9,15 @@ bugs in actually-released versions.
 - Clean up how version numbers are reported, so that there are no repeats of the
   version (beta2 was reported as `3.0-beta2-v3.0-beta2`).
 - Fix an issue running FFmpeg.
+- The "Simple Blender Render" job type no longer accepts files that render to
+  video (so FFmpeg or one of the built-in AVI options). This was originally
+  intended to work, but had various problems. Now the script actively refuses to
+  handle such files, and limits itself to images only. It will still create a
+  preview video out of these images.
+- The "Simple Blender Render" job type no longer renders to an intermediate
+  directory. It simply always renders to the configured path. Not only does this
+  simplify the script, but it also makes it possible to allow selective
+  rerendering in the future.
 
 
 ## 3.0-beta2 - released 2022-08-31
