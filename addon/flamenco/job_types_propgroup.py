@@ -212,7 +212,8 @@ class JobTypePropertyGroup:
         # This changes blendfile-relative paths to absolute.
         # It does not resolve `..` entries, though.
         abs_unclean = Path(bpy.path.abspath(str(filepath)))
-        return bpathlib.make_absolute(abs_unclean)
+        abs_clean: Path = bpathlib.make_absolute(abs_unclean)
+        return abs_clean
 
 
 # Mapping from AvailableJobType.setting.type to a callable that converts a value
