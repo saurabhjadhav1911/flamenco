@@ -4,6 +4,7 @@
 
 import logging
 import dataclasses
+import platform
 from typing import TYPE_CHECKING, Optional
 
 from urllib3.exceptions import HTTPError, MaxRetryError
@@ -16,20 +17,20 @@ if TYPE_CHECKING:
     from flamenco.manager import ApiClient as _ApiClient
     from flamenco.manager.models import (
         FlamencoVersion as _FlamencoVersion,
-        ManagerConfiguration as _ManagerConfiguration,
+        SharedStorageLocation as _SharedStorageLocation,
     )
     from .preferences import FlamencoPreferences as _FlamencoPreferences
 else:
     _ApiClient = object
     _FlamencoPreferences = object
     _FlamencoVersion = object
-    _ManagerConfiguration = object
+    _SharedStorageLocation = object
 
 
 @dataclasses.dataclass(frozen=True)
 class ManagerInfo:
     version: Optional[_FlamencoVersion] = None
-    config: Optional[_ManagerConfiguration] = None
+    storage: Optional[_SharedStorageLocation] = None
     error: str = ""
 
     @classmethod
@@ -38,9 +39,9 @@ class ManagerInfo:
 
     @classmethod
     def with_info(
-        cls, version: _FlamencoVersion, config: _ManagerConfiguration
+        cls, version: _FlamencoVersion, storage: _SharedStorageLocation
     ) -> "ManagerInfo":
-        return cls(version=version, config=config)
+        return cls(version=version, storage=storage)
 
 
 def flamenco_api_client(manager_url: str) -> _ApiClient:
@@ -120,13 +121,14 @@ def ping_manager(
     # Do a late import, so that the API is only imported when actually used.
     from flamenco.manager import ApiException
     from flamenco.manager.apis import MetaApi
-    from flamenco.manager.models import FlamencoVersion, ManagerConfiguration
+    from flamenco.manager.models import FlamencoVersion, SharedStorageLocation
 
     meta_api = MetaApi(api_client)
     error = ""
     try:
         version: FlamencoVersion = meta_api.get_version()
-        config: ManagerConfiguration = meta_api.get_configuration()
+        storage: SharedStorageLocation = meta_api.get_shared_storage(
+            "users", platform.system().lower())
     except ApiException as ex:
         error = "Manager cannot be reached: %s" % ex
     except MaxRetryError as ex:
@@ -142,10 +144,10 @@ def ping_manager(
         return ManagerInfo.with_error(error)
 
     # Store whether this Manager supports the Shaman API.
-    prefs.is_shaman_enabled = config.shaman_enabled
-    prefs.job_storage = config.storage_location
+    prefs.is_shaman_enabled = storage.shaman_enabled
+    prefs.job_storage = storage.location
 
     report = "%s version %s found" % (version.name, version.version)
     window_manager.flamenco_status_ping = report
 
-    return ManagerInfo.with_info(version, config)
+    return ManagerInfo.with_info(version, storage)

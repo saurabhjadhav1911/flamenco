@@ -15,6 +15,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetVariables(t *testing.T) {
@@ -62,6 +63,89 @@ func TestGetVariables(t *testing.T) {
 		assert.NoError(t, err)
 		assertResponseJSON(t, echoCtx, http.StatusOK, api.ManagerVariables{})
 	}
+}
+
+func TestGetSharedStorage(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	conf := config.GetTestConfig(func(c *config.Conf) {
+		// Test with a Manager on Windows.
+		c.MockCurrentGOOSForTests("windows")
+
+		// Set up a two-way variable to do the mapping.
+		c.Variables["shared_storage_mapping"] = config.Variable{
+			IsTwoWay: true,
+			Values: []config.VariableValue{
+				{Value: "/user/shared/storage", Platform: config.VariablePlatformLinux, Audience: config.VariableAudienceUsers},
+				{Value: "/worker/shared/storage", Platform: config.VariablePlatformLinux, Audience: config.VariableAudienceWorkers},
+				{Value: `S:\storage`, Platform: config.VariablePlatformWindows, Audience: config.VariableAudienceAll},
+			},
+		}
+	})
+	mf.config.EXPECT().Get().Return(&conf).AnyTimes()
+	mf.config.EXPECT().EffectiveStoragePath().Return(`S:\storage\flamenco`).AnyTimes()
+
+	{ // Test user client on Linux.
+		mf.config.EXPECT().
+			ExpandVariables(gomock.Any(), gomock.Any(), config.VariableAudienceUsers, config.VariablePlatformLinux).
+			Do(func(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform) {
+				// Defer to the actual ExpandVariables() implementation of the above config.
+				conf.ExpandVariables(inputChannel, outputChannel, audience, platform)
+			})
+		mf.shaman.EXPECT().IsEnabled().Return(false)
+
+		echoCtx := mf.prepareMockedRequest(nil)
+		err := mf.flamenco.GetSharedStorage(echoCtx, api.ManagerVariableAudienceUsers, "linux")
+		require.NoError(t, err)
+		assertResponseJSON(t, echoCtx, http.StatusOK, api.SharedStorageLocation{
+			Location: "/user/shared/storage/flamenco",
+			Audience: api.ManagerVariableAudienceUsers,
+			Platform: "linux",
+		})
+	}
+
+	{ // Test worker client on Linux with Shaman enabled.
+		mf.config.EXPECT().
+			ExpandVariables(gomock.Any(), gomock.Any(), config.VariableAudienceWorkers, config.VariablePlatformLinux).
+			Do(func(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform) {
+				// Defer to the actual ExpandVariables() implementation of the above config.
+				conf.ExpandVariables(inputChannel, outputChannel, audience, platform)
+			})
+		mf.shaman.EXPECT().IsEnabled().Return(true)
+
+		echoCtx := mf.prepareMockedRequest(nil)
+		err := mf.flamenco.GetSharedStorage(echoCtx, api.ManagerVariableAudienceWorkers, "linux")
+		require.NoError(t, err)
+		assertResponseJSON(t, echoCtx, http.StatusOK, api.SharedStorageLocation{
+			Location:      "/worker/shared/storage/flamenco",
+			Audience:      api.ManagerVariableAudienceWorkers,
+			Platform:      "linux",
+			ShamanEnabled: true,
+		})
+	}
+
+	{ // Test user client on Windows.
+		mf.config.EXPECT().
+			ExpandVariables(gomock.Any(), gomock.Any(), config.VariableAudienceUsers, config.VariablePlatformWindows).
+			Do(func(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform) {
+				// Defer to the actual ExpandVariables() implementation of the above config.
+				conf.ExpandVariables(inputChannel, outputChannel, audience, platform)
+			})
+		mf.shaman.EXPECT().IsEnabled().Return(false)
+
+		echoCtx := mf.prepareMockedRequest(nil)
+		err := mf.flamenco.GetSharedStorage(echoCtx, api.ManagerVariableAudienceUsers, "windows")
+		require.NoError(t, err)
+		assertResponseJSON(t, echoCtx, http.StatusOK, api.SharedStorageLocation{
+			Location: `S:\storage\flamenco`,
+			Audience: api.ManagerVariableAudienceUsers,
+			Platform: "windows",
+		})
+	}
+
 }
 
 func TestCheckSharedStoragePath(t *testing.T) {

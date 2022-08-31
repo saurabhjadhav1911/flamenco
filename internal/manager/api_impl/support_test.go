@@ -70,6 +70,7 @@ func newMockedFlamenco(mockCtrl *gomock.Controller) mockedFlamenco {
 		logStorage:     logStore,
 		config:         cs,
 		stateMachine:   sm,
+		shaman:         sha,
 		clock:          clock,
 		lastRender:     lr,
 		localStorage:   localStore,
