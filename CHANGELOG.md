@@ -4,6 +4,13 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
+## 3.0-beta3 - in development
+
+- Clean up how version numbers are reported, so that there are no repeats of the
+  version (beta2 was reported as `3.0-beta2-v3.0-beta2`).
+- Fix an issue running FFmpeg.
+
+
 ## 3.0-beta2 - released 2022-08-31
 
 WARNING: this version is backward incompatible. Any job created with Flamenco
