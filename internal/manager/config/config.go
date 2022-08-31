@@ -174,6 +174,7 @@ func DefaultConfig(override ...func(c *Conf)) Conf {
 		panic(fmt.Sprintf("unable to create copy of default config: %v", err))
 	}
 	c.Meta.Version = latestConfigVersion
+	c.currentGOOS = VariablePlatform(runtime.GOOS)
 	c.processAfterLoading(override...)
 	return *c
 }
