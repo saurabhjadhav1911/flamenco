@@ -99,7 +99,7 @@ func (f *Flamenco) SubmitJob(e echo.Context) error {
 	case err != nil:
 		logger.Warn().Err(err).Msg("error compiling job")
 		// TODO: make this a more specific error object for this API call.
-		return sendAPIError(e, http.StatusBadRequest, fmt.Sprintf("error compiling job: %v", err))
+		return sendAPIError(e, http.StatusBadRequest, err.Error())
 	}
 
 	logger = logger.With().Str("job_id", authoredJob.JobID).Logger()
