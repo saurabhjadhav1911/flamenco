@@ -1097,8 +1097,13 @@ components:
       type: object
       properties:
         "version": { type: string }
+        "shortversion": { type: string }
         "name": { type: string }
-      required: [version, name]
+      required: [version, shortversion, name]
+      example:
+        version: 3.0-beta1-56-g4761e3d7-dirty
+        shortversion: 3.0-beta1
+        name: Your Manager
 
     ManagerConfiguration:
       type: object
