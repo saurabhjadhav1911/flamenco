@@ -120,10 +120,10 @@ func cmdFramesToVideoParams(logger zerolog.Logger, cmd api.Command) (CreateVideo
 		logger.Warn().Interface("command", cmd).Msg("missing 'exe' parameter")
 		return parameters, NewParameterMissingError("exe", cmd)
 	}
-	if parameters.exeArgs, ok = cmdParameter[string](cmd, "exeArgs"); !ok {
-		logger.Warn().Interface("command", cmd).Msg("invalid 'exeArgs' parameter")
-		return parameters, NewParameterInvalidError("exeArgs", cmd, "parameter must be string")
-	}
+
+	// Ignore the `ok` return value, as a missing exeArgs key is fine:
+	parameters.exeArgs, _ = cmdParameter[string](cmd, "exeArgs")
+
 	if parameters.fps, ok = cmdParameter[float64](cmd, "fps"); !ok || parameters.fps == 0.0 {
 		logger.Warn().Interface("command", cmd).Msg("missing 'fps' parameter")
 		return parameters, NewParameterMissingError("fps", cmd)
