@@ -1,6 +1,6 @@
 ---
 title: Frequently Asked Questions
-weight: 30
+weight: 10
 ---
 
 This is a list of frequently asked questions, with their answers. It's by no
