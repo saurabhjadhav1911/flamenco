@@ -33,6 +33,7 @@ __pycache__
 web/manager-api/dist/
 web/static/
 web/project-website/public/
+web/project-website/resources/_gen/
 /dist/
 /tools/
 

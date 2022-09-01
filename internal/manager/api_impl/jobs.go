@@ -94,8 +94,8 @@ func (f *Flamenco) SubmitJob(e echo.Context) error {
 	authoredJob, err := f.jobCompiler.Compile(ctx, submittedJob)
 	switch {
 	case errors.Is(err, job_compilers.ErrJobTypeBadEtag):
-		logger.Warn().Err(err).Msg("rejecting submitted job, job type etag does not match")
-		return sendAPIError(e, http.StatusPreconditionFailed, "rejecting job, job type etag does not match")
+		logger.Warn().Err(err).Msg("rejecting submitted job because its settings are outdated, refresh the job type")
+		return sendAPIError(e, http.StatusPreconditionFailed, "rejecting job because its settings are outdated, refresh the job type")
 	case err != nil:
 		logger.Warn().Err(err).Msg("error compiling job")
 		// TODO: make this a more specific error object for this API call.
