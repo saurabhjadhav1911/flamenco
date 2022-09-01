@@ -13,6 +13,13 @@ This means that you have to click on the little "Refresh" icon next to the job t
 <img src="job-types-refresh.webp" width="396" height="41">
 
 
+## What does "command exited abnormally with code 1" mean?
+
+It means that the program (probably Blender) exited with an error status. Take a
+look at the task log, which you can access by going to the task in Flamenco's
+web interface.
+
+
 ## ​What's the difference with OpenCue?
 
 OpenCue is aimed at a different audience than Flamenco. OpenCue is a large and
