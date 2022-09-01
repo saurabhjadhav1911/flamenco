@@ -443,7 +443,7 @@ func (c *Conf) ExpandVariables(inputChannel <-chan string, outputChannel chan<- 
 			if !ok {
 				continue
 			}
-			if !strings.HasPrefix(expanded, managerValue) {
+			if !isValueMatch(expanded, managerValue) {
 				continue
 			}
 			expanded = targetValue + expanded[len(managerValue):]
@@ -484,7 +484,7 @@ func (c *Conf) ConvertTwoWayVariables(inputChannel <-chan string, outputChannel 
 
 	doValueReplacement := func(valueToConvert string) string {
 		for varName, varValue := range twoWayVars {
-			if !strings.HasPrefix(valueToConvert, varValue) {
+			if !isValueMatch(valueToConvert, varValue) {
 				continue
 			}
 			valueToConvert = fmt.Sprintf("{%s}%s", varName, valueToConvert[len(varValue):])
@@ -496,6 +496,25 @@ func (c *Conf) ConvertTwoWayVariables(inputChannel <-chan string, outputChannel 
 	for valueToExpand := range inputChannel {
 		outputChannel <- doValueReplacement(valueToExpand)
 	}
+}
+
+// isValueMatch returns whether `valueToMatch` starts with `variableValue`.
+// When `variableValue` is a Windows path (with backslash separators), it is
+// also tested with forward slashes against `valueToMatch`.
+func isValueMatch(valueToMatch, variableValue string) bool {
+	if strings.HasPrefix(valueToMatch, variableValue) {
+		return true
+	}
+
+	// If the variable value has a backslash, assume it is a Windows path.
+	// Convert it to slash notation just to see if that would provide a
+	// match.
+	if strings.ContainsRune(variableValue, '\\') {
+		slashedValue := crosspath.ToSlash(variableValue)
+		return strings.HasPrefix(valueToMatch, slashedValue)
+	}
+
+	return false
 }
 
 // getVariables returns the variable values for this (audience, platform) combination.

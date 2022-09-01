@@ -18,3 +18,30 @@ func TestVariablesWithBackslashes(t *testing.T) {
 	assert.Equal(t, expectDouble, vars["double-backslash"]["blender"])
 	assert.Equal(t, expectSingle, vars["quoted-double-backslash"]["blender"])
 }
+
+func TestReplaceTwowayVariables(t *testing.T) {
+	c := DefaultConfig(func(c *Conf) {
+		c.Variables["shared"] = Variable{
+			IsTwoWay: true,
+			Values: []VariableValue{
+				{Value: "/shared/flamenco", Platform: VariablePlatformLinux},
+				{Value: `Y:\shared\flamenco`, Platform: VariablePlatformWindows},
+			},
+		}
+	})
+
+	feeder := make(chan string, 2)
+	receiver := make(chan string, 2)
+
+	feeder <- `Y:\shared\flamenco\shot\file.blend`
+
+	// This is the real reason for this test: forward slashes in the path should
+	// still be matched to the backslashes in the variable value.
+	feeder <- `Y:/shared/flamenco/shot/file.blend`
+	close(feeder)
+
+	c.ConvertTwoWayVariables(feeder, receiver, VariableAudienceUsers, VariablePlatformWindows)
+
+	assert.Equal(t, `{shared}\shot\file.blend`, <-receiver)
+	assert.Equal(t, `{shared}/shot/file.blend`, <-receiver)
+}
