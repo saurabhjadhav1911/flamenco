@@ -201,7 +201,7 @@ func TestSubmitJobWithEtag(t *testing.T) {
 		err := mf.flamenco.SubmitJob(echoCtx)
 		assert.NoError(t, err)
 		assertResponseAPIError(t, echoCtx,
-			http.StatusPreconditionFailed, "rejecting job, job type etag does not match")
+			http.StatusPreconditionFailed, "rejecting job because its settings are outdated, refresh the job type")
 	}
 
 	// Expect the job compiler to be called.
