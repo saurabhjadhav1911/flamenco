@@ -4,6 +4,11 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
+## 3.0 - in development
+
+- Faster & more accurate progress reporting of file submission.
+
+
 ## 3.0-beta3 - released 2022-08-31
 
 - Clean up how version numbers are reported, so that there are no repeats of the

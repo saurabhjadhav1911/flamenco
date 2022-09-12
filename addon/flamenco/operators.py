@@ -3,6 +3,7 @@
 
 import datetime
 import logging
+import time
 from pathlib import Path, PurePosixPath
 from typing import Optional, TYPE_CHECKING
 from urllib3.exceptions import HTTPError, MaxRetryError
@@ -137,6 +138,7 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         default=False,
     )
 
+    TIMER_PERIOD = 0.25  # seconds
     timer: Optional[bpy.types.Timer] = None
     packthread: Optional[_PackThread] = None
 
@@ -178,11 +180,22 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             # If there is no pack thread running, there isn't much we can do.
             return self._quit(context)
 
-        msg = self.packthread.poll()
-        if not msg:
-            return {"RUNNING_MODAL"}
+        # Limit the time for which messages are processed. If there are no
+        # queued messages, this code stops immediately, but otherwise it will
+        # continue to process until the deadline.
+        deadline = time.monotonic() + 0.9 * self.TIMER_PERIOD
+        num_messages = 0
+        msg = None
+        while time.monotonic() < deadline:
+            msg = self.packthread.poll()
+            if not msg:
+                break
+            num_messages += 1
+            result = self._on_bat_pack_msg(context, msg)
+            if "RUNNING_MODAL" not in result:
+                return result
 
-        return self._on_bat_pack_msg(context, msg)
+        return {"RUNNING_MODAL"}
 
     def _check_manager(self, context: bpy.types.Context) -> str:
         """Check the Manager version & fetch the job storage directory.
@@ -296,7 +309,7 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
 
         context.window_manager.modal_handler_add(self)
         wm = context.window_manager
-        self.timer = wm.event_timer_add(0.25, window=context.window)
+        self.timer = wm.event_timer_add(self.TIMER_PERIOD, window=context.window)
 
         return {"RUNNING_MODAL"}
 
