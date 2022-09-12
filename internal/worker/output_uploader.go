@@ -5,6 +5,7 @@ package worker
 import (
 	"bytes"
 	"context"
+	"errors"
 	"image"
 	"image/jpeg"
 	_ "image/png"
@@ -140,7 +141,15 @@ func loadAsJPEG(imagePath string) []byte {
 
 	// Try to decode the file as image.
 	img, fileType, err := image.Decode(file)
-	if err != nil {
+	switch {
+	case errors.Is(err, image.ErrFormat):
+		// Blender writing formats not supported by this Go code will happen, for
+		// example EXR files. This is fine, and shouldn't even trigger a warning.
+		logger.Info().Msg("output uploader: file a format I cannot decode, ignoring it")
+		return nil
+	case err != nil:
+		// Any other error than the above is more serious, though, because that
+		// could mean file corruption.
 		logger.Error().Err(err).Msg("output uploader: cannot decode image file")
 		return nil
 	}
