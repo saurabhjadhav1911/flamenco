@@ -17,7 +17,7 @@ func updateWebsite() bool {
 		if !strings.HasPrefix(line, "latestVersion: ") {
 			return line
 		}
-		return fmt.Sprintf("latestVersion: %s", cliArgs.newVersion)
+		return fmt.Sprintf("latestVersion: %q", cliArgs.newVersion)
 	}
 
 	fileWasChanged, err := updateLines(websiteFile, replacer)
