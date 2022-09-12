@@ -4,7 +4,7 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
-## 3.0 - in development
+## 3.0 - released 2022-09-12
 
 - Faster & more accurate progress reporting of file submission.
 - Add-on: report which files were missing after submitting a job. This is reported in the terminal (aka System Console).
