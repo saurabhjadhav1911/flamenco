@@ -85,6 +85,7 @@ class BatProgress(submodules.progress.Callback):  # type: ignore
     ) -> None:
         if missing_files:
             self._txt("There were %d missing files" % len(missing_files))
+            self._log_missing_files(missing_files)
         else:
             self._txt("Pack of %s done" % output_blendfile.name)
 
@@ -116,6 +117,11 @@ class BatProgress(submodules.progress.Callback):  # type: ignore
     def missing_file(self, filename: Path) -> None:
         # TODO(Sybren): report missing files in a nice way
         pass
+
+    def _log_missing_files(self, missing_files: typing.Set[Path]) -> None:
+        print("Missing files:")
+        for path in sorted(missing_files):
+            print(f"  - {path}")
 
 
 class PackThread(threading.Thread):
