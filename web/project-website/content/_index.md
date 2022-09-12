@@ -12,9 +12,6 @@ geekdocBreadcrumb: false
 Take control of your computing infrastructure and get things done.<br>
 Flamenco is used in production at [Blender Studio](https://studio.blender.org).
 
-**Disclaimer:** this site describes Flamenco 3, which is still under heavy
-development. For information on its predecessor, see [Flamenco 2](/v2/).
-
 {{< button size="large" relref="usage/quickstart/" >}}Quickstart{{< /button >}}
 
 {{< button size="large" relref="download" >}}Download Flamenco{{< /button >}}
@@ -71,8 +68,8 @@ The core of Flamenco is build using Go and SQLite. Check out the sources on
 
 ### In Development
 
-Getting close to Beta release, Flamenco v3 is in active development at Blender
-Studio. Join [the chat](https://blender.chat/channel/flamenco) to see what's happening!
+Flamenco v3 is in active development at Blender Studio. Join
+[the chat](https://blender.chat/channel/flamenco) to see what's happening!
 
 {{< /columns >}}
 

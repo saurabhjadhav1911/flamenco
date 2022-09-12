@@ -2,15 +2,23 @@
 title: Download
 ---
 
-Download Flamenco for your platform here. Each download contains both Flamenco Manager and Worker.
+Download Flamenco for your platform here. Each download contains both Flamenco
+Manager and Worker. The Blender add-on can be downloaded from the Flamenco
+Manager web-interface after installation.
 
 The latest version is: **{{< flamenco/latestVersion >}}**
 
-{{< hint type=caution >}}
-This is a **beta** version of the software! This means that the features for the
-3.0 version are there, but are likely to be some bugs.
+| Platform  | File                                                 |
+|-----------|------------------------------------------------------|
+| Windows   | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
+| Linux     | {{< flamenco/downloadLink os="linux" >}}             |
+| macOS     | {{< flamenco/downloadLink os="macos" >}}             |
+| checksums | {{< flamenco/sha256link >}}                          |
 
-When **upgrading** from a previous beta, it is recommended to start afresh with the following steps:
+
+{{< hint type=caution >}}
+When **upgrading** from a previous v3 beta version, it is recommended to start
+afresh with the following steps:
 
 1. Cancel any running or queued job.
 2. Shut down Flamenco Manager and all Workers.
@@ -21,20 +29,13 @@ When **upgrading** from a previous beta, it is recommended to start afresh with 
    interface, and install it. It has seen development as well, and will need to
    be upgraded.
 
-Read the announcement at the [Blender Studio blog][blog]. <br>
-Please report any issue at [developer.blender.org][bugs]. A stable release is
-planned by the end of September 2022.
+Read the beta announcement at the [Blender Studio blog][blog].<br>
+Please report any issue at [developer.blender.org][bugs].
 
 [blog]: (https://studio.blender.org/blog/announcing-flamenco-3-beta/)
 [bugs]: (https://developer.blender.org/project/profile/58/)
 {{< /hint >}}
 
-| Platform  | File                                                 |
-|-----------|------------------------------------------------------|
-| Windows   | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
-| Linux     | {{< flamenco/downloadLink os="linux" >}}             |
-| macOS     | {{< flamenco/downloadLink os="macos" >}}             |
-| checksums | {{< flamenco/sha256link >}}                          |
 
 ## License
 
