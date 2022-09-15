@@ -32,8 +32,8 @@ afresh with the following steps:
 Read the beta announcement at the [Blender Studio blog][blog].<br>
 Please report any issue at [developer.blender.org][bugs].
 
-[blog]: (https://studio.blender.org/blog/announcing-flamenco-3-beta/)
-[bugs]: (https://developer.blender.org/project/profile/58/)
+[blog]: https://studio.blender.org/blog/announcing-flamenco-3-beta/
+[bugs]: https://developer.blender.org/project/profile/58/
 {{< /hint >}}
 
 
