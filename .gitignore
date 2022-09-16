@@ -15,6 +15,9 @@ flamenco-worker.yaml
 flamenco-worker-credentials.yaml
 node_modules/
 
+# Directory for custom job compiler scripts:
+/scripts/
+
 # Default storage locations:
 /flamenco-manager-storage/
 /flamenco-shared-storage/
