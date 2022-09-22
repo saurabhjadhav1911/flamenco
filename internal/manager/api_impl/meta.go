@@ -181,7 +181,7 @@ func (f *Flamenco) FindBlenderExePath(e echo.Context) error {
 	// executable and reports on the version of Blender.
 	result, err := find_blender.CheckBlender(ctx, "")
 	switch {
-	case errors.Is(err, fs.ErrNotExist):
+	case errors.Is(err, fs.ErrNotExist), errors.Is(err, exec.ErrNotFound):
 		logger.Info().Msg("Blender could not be found")
 	case err != nil:
 		logger.Warn().AnErr("cause", err).Msg("there was an issue finding Blender")

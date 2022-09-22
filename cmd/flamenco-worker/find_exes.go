@@ -33,7 +33,7 @@ func findBlender() {
 
 	result, err := find_blender.Find(ctx)
 	switch {
-	case errors.Is(err, fs.ErrNotExist):
+	case errors.Is(err, fs.ErrNotExist), errors.Is(err, exec.ErrNotFound):
 		log.Warn().Msg("Blender could not be found, Flamenco Manager will have to supply a full path")
 	case err != nil:
 		log.Warn().AnErr("cause", err).Msg("there was an issue finding Blender on this system, Flamenco Manager will have to supply a full path")
