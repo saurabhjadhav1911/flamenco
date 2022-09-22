@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io/fs"
+	"os/exec"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -35,7 +36,7 @@ func findBlender() {
 	case errors.Is(err, fs.ErrNotExist):
 		log.Warn().Msg("Blender could not be found, Flamenco Manager will have to supply a full path")
 	case err != nil:
-		log.Warn().Err(err).Msg("there was an unexpected error finding Blender on this system, Flamenco Manager will have to supply a full path")
+		log.Warn().AnErr("cause", err).Msg("there was an issue finding Blender on this system, Flamenco Manager will have to supply a full path")
 	default:
 		log.Info().
 			Str("path", result.FoundLocation).
