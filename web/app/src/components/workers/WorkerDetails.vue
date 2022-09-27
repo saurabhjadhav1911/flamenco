@@ -20,7 +20,7 @@
       <dd title="Version of Flamenco">{{ workerData.version }}</dd>
 
       <dt class="field-ip_address">IP Addr</dt>
-      <dd>{{ workerData.ip_address }}</dd>
+      <dd><span @click="copyElementText" class="click-to-copy">{{ workerData.ip_address }}</span></dd>
 
       <dt class="field-platform">Platform</dt>
       <dd>{{ workerData.platform }}</dd>

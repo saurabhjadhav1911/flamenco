@@ -4,6 +4,10 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
+## 3.1 - in development
+
+- Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked.
+
 ## 3.0 - released 2022-09-12
 
 - Faster & more accurate progress reporting of file submission.
