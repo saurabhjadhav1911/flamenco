@@ -95,6 +95,25 @@ func TestSetScheduleSwappedStartEnd(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+// Test that a sleep check that happens at shutdown of the Manager doesn't cause any panics.
+func TestCheckSleepScheduleAtShutdown(t *testing.T) {
+	ss, mocks, _ := testFixtures(t)
+
+	sched := persistence.SleepSchedule{
+		IsActive:   true,
+		DaysOfWeek: "mo tu we",
+		StartTime:  mkToD(18, 0),
+		EndTime:    mkToD(9, 0),
+		Worker:     nil,
+	}
+
+	// Cancel the context to mimick the Manager shutting down.
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	mocks.persist.EXPECT().SetWorkerSleepScheduleNextCheck(ctx, &sched).Return(context.Canceled)
+	ss.checkSchedule(ctx, &sched)
+}
+
 func TestApplySleepSchedule(t *testing.T) {
 	ss, mocks, ctx := testFixtures(t)
 

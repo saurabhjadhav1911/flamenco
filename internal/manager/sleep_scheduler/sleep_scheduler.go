@@ -4,6 +4,7 @@ package sleep_scheduler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -200,7 +201,12 @@ func (ss *SleepScheduler) CheckSchedules(ctx context.Context) {
 func (ss *SleepScheduler) checkSchedule(ctx context.Context, schedule *persistence.SleepSchedule) {
 	// Compute the next time to check.
 	schedule.NextCheck = ss.calculateNextCheck(schedule)
-	if err := ss.persist.SetWorkerSleepScheduleNextCheck(ctx, schedule); err != nil {
+	err := ss.persist.SetWorkerSleepScheduleNextCheck(ctx, schedule)
+	switch {
+	case errors.Is(ctx.Err(), context.Canceled):
+		// Manager is shutting down, this is fine.
+		return
+	case err != nil:
 		log.Error().
 			Err(err).
 			Str("worker", schedule.Worker.Identifier()).
@@ -209,12 +215,15 @@ func (ss *SleepScheduler) checkSchedule(ctx context.Context, schedule *persisten
 	}
 
 	// Apply the schedule to the worker.
-	if err := ss.ApplySleepSchedule(ctx, schedule); err != nil {
+	err = ss.ApplySleepSchedule(ctx, schedule)
+	switch {
+	case errors.Is(ctx.Err(), context.Canceled):
+		// Manager is shutting down, this is fine.
+	case err != nil:
 		log.Error().
 			Err(err).
 			Str("worker", schedule.Worker.Identifier()).
 			Msg("sleep scheduler: error applying worker's sleep schedule")
-		return
 	}
 }
 

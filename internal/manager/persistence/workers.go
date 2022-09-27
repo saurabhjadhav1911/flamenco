@@ -33,6 +33,10 @@ type Worker struct {
 }
 
 func (w *Worker) Identifier() string {
+	// Avoid a panic when worker.Identifier() is called on a nil pointer.
+	if w == nil {
+		return "-nil worker-"
+	}
 	return fmt.Sprintf("%s (%s)", w.Name, w.UUID)
 }
 
