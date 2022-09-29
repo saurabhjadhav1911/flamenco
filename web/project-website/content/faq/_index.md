@@ -36,6 +36,20 @@ file][workercfg].
 
 [workercfg]: {{< ref "usage/worker-configuration" >}}
 
+
+## Can I use the Compositor to output multiple EXR files?
+
+This is possible with Flamenco, but it takes a bit of work. It's not managed by
+Flamenco's default job types. You can create [your own custom job
+type][jobtypes] for this, though. With that, you have control over the arguments
+that get used before and/or after the filename on the CLI.
+
+If you have this working, please [share your job compiler script with us][getinvolved]!
+
+[jobtypes]: {{< ref "usage/job-types" >}}
+[getinvolved]: {{< ref "development/get-involved" >}}
+
+
 ## What do "Error: Cached job type is old" or "job type etag does not match" mean?
 
 This means that you have to click on the little "Refresh" icon next to the job type:
