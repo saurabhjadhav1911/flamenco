@@ -155,6 +155,11 @@ type ClientInterface interface {
 	// FetchJobLastRenderedInfo request
 	FetchJobLastRenderedInfo(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// SetJobPriority request with any body
+	SetJobPriorityWithBody(ctx context.Context, jobId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	SetJobPriority(ctx context.Context, jobId string, body SetJobPriorityJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// SetJobStatus request with any body
 	SetJobStatusWithBody(ctx context.Context, jobId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -520,6 +525,30 @@ func (c *Client) FetchJobBlocklist(ctx context.Context, jobId string, reqEditors
 
 func (c *Client) FetchJobLastRenderedInfo(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewFetchJobLastRenderedInfoRequest(c.Server, jobId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetJobPriorityWithBody(ctx context.Context, jobId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetJobPriorityRequestWithBody(c.Server, jobId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetJobPriority(ctx context.Context, jobId string, body SetJobPriorityJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetJobPriorityRequest(c.Server, jobId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1558,6 +1587,53 @@ func NewFetchJobLastRenderedInfoRequest(server string, jobId string) (*http.Requ
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewSetJobPriorityRequest calls the generic SetJobPriority builder with application/json body
+func NewSetJobPriorityRequest(server string, jobId string, body SetJobPriorityJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSetJobPriorityRequestWithBody(server, jobId, "application/json", bodyReader)
+}
+
+// NewSetJobPriorityRequestWithBody generates requests for SetJobPriority with any type of body
+func NewSetJobPriorityRequestWithBody(server string, jobId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "job_id", runtime.ParamLocationPath, jobId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/jobs/%s/setpriority", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2652,6 +2728,11 @@ type ClientWithResponsesInterface interface {
 	// FetchJobLastRenderedInfo request
 	FetchJobLastRenderedInfoWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*FetchJobLastRenderedInfoResponse, error)
 
+	// SetJobPriority request with any body
+	SetJobPriorityWithBodyWithResponse(ctx context.Context, jobId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetJobPriorityResponse, error)
+
+	SetJobPriorityWithResponse(ctx context.Context, jobId string, body SetJobPriorityJSONRequestBody, reqEditors ...RequestEditorFn) (*SetJobPriorityResponse, error)
+
 	// SetJobStatus request with any body
 	SetJobStatusWithBodyWithResponse(ctx context.Context, jobId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetJobStatusResponse, error)
 
@@ -3129,6 +3210,28 @@ func (r FetchJobLastRenderedInfoResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r FetchJobLastRenderedInfoResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type SetJobPriorityResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r SetJobPriorityResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SetJobPriorityResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3925,6 +4028,23 @@ func (c *ClientWithResponses) FetchJobLastRenderedInfoWithResponse(ctx context.C
 		return nil, err
 	}
 	return ParseFetchJobLastRenderedInfoResponse(rsp)
+}
+
+// SetJobPriorityWithBodyWithResponse request with arbitrary body returning *SetJobPriorityResponse
+func (c *ClientWithResponses) SetJobPriorityWithBodyWithResponse(ctx context.Context, jobId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetJobPriorityResponse, error) {
+	rsp, err := c.SetJobPriorityWithBody(ctx, jobId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetJobPriorityResponse(rsp)
+}
+
+func (c *ClientWithResponses) SetJobPriorityWithResponse(ctx context.Context, jobId string, body SetJobPriorityJSONRequestBody, reqEditors ...RequestEditorFn) (*SetJobPriorityResponse, error) {
+	rsp, err := c.SetJobPriority(ctx, jobId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetJobPriorityResponse(rsp)
 }
 
 // SetJobStatusWithBodyWithResponse request with arbitrary body returning *SetJobStatusResponse
@@ -4735,6 +4855,32 @@ func ParseFetchJobLastRenderedInfoResponse(rsp *http.Response) (*FetchJobLastRen
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseSetJobPriorityResponse parses an HTTP response from a SetJobPriorityWithResponse call
+func ParseSetJobPriorityResponse(rsp *http.Response) (*SetJobPriorityResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SetJobPriorityResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 

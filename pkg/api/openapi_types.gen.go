@@ -305,6 +305,11 @@ type JobMetadata struct {
 	AdditionalProperties map[string]string `json:"-"`
 }
 
+// JobPriorityChange defines model for JobPriorityChange.
+type JobPriorityChange struct {
+	Priority int `json:"priority"`
+}
+
 // JobSettings defines model for JobSettings.
 type JobSettings struct {
 	AdditionalProperties map[string]interface{} `json:"-"`
@@ -793,6 +798,9 @@ type QueryJobsJSONBody JobsQuery
 // RemoveJobBlocklistJSONBody defines parameters for RemoveJobBlocklist.
 type RemoveJobBlocklistJSONBody JobBlocklist
 
+// SetJobPriorityJSONBody defines parameters for SetJobPriority.
+type SetJobPriorityJSONBody JobPriorityChange
+
 // SetJobStatusJSONBody defines parameters for SetJobStatus.
 type SetJobStatusJSONBody JobStatusChange
 
@@ -849,6 +857,9 @@ type QueryJobsJSONRequestBody QueryJobsJSONBody
 
 // RemoveJobBlocklistJSONRequestBody defines body for RemoveJobBlocklist for application/json ContentType.
 type RemoveJobBlocklistJSONRequestBody RemoveJobBlocklistJSONBody
+
+// SetJobPriorityJSONRequestBody defines body for SetJobPriority for application/json ContentType.
+type SetJobPriorityJSONRequestBody SetJobPriorityJSONBody
 
 // SetJobStatusJSONRequestBody defines body for SetJobStatus for application/json ContentType.
 type SetJobStatusJSONRequestBody SetJobStatusJSONBody

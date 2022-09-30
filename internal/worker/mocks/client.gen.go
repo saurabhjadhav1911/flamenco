@@ -756,6 +756,46 @@ func (mr *MockFlamencoClientMockRecorder) ScheduleTaskWithResponse(arg0 interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ScheduleTaskWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).ScheduleTaskWithResponse), varargs...)
 }
 
+// SetJobPriorityWithBodyWithResponse mocks base method.
+func (m *MockFlamencoClient) SetJobPriorityWithBodyWithResponse(arg0 context.Context, arg1, arg2 string, arg3 io.Reader, arg4 ...api.RequestEditorFn) (*api.SetJobPriorityResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2, arg3}
+	for _, a := range arg4 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SetJobPriorityWithBodyWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.SetJobPriorityResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetJobPriorityWithBodyWithResponse indicates an expected call of SetJobPriorityWithBodyWithResponse.
+func (mr *MockFlamencoClientMockRecorder) SetJobPriorityWithBodyWithResponse(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetJobPriorityWithBodyWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).SetJobPriorityWithBodyWithResponse), varargs...)
+}
+
+// SetJobPriorityWithResponse mocks base method.
+func (m *MockFlamencoClient) SetJobPriorityWithResponse(arg0 context.Context, arg1 string, arg2 api.SetJobPriorityJSONRequestBody, arg3 ...api.RequestEditorFn) (*api.SetJobPriorityResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2}
+	for _, a := range arg3 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SetJobPriorityWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.SetJobPriorityResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetJobPriorityWithResponse indicates an expected call of SetJobPriorityWithResponse.
+func (mr *MockFlamencoClientMockRecorder) SetJobPriorityWithResponse(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetJobPriorityWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).SetJobPriorityWithResponse), varargs...)
+}
+
 // SetJobStatusWithBodyWithResponse mocks base method.
 func (m *MockFlamencoClient) SetJobStatusWithBodyWithResponse(arg0 context.Context, arg1, arg2 string, arg3 io.Reader, arg4 ...api.RequestEditorFn) (*api.SetJobStatusResponse, error) {
 	m.ctrl.T.Helper()

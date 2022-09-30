@@ -16,6 +16,7 @@ Method | HTTP request | Description
 [**get_job_types**](JobsApi.md#get_job_types) | **GET** /api/v3/jobs/types | Get list of job types and their parameters.
 [**query_jobs**](JobsApi.md#query_jobs) | **POST** /api/v3/jobs/query | Fetch list of jobs.
 [**remove_job_blocklist**](JobsApi.md#remove_job_blocklist) | **DELETE** /api/v3/jobs/{job_id}/blocklist | Remove entries from a job blocklist.
+[**set_job_priority**](JobsApi.md#set_job_priority) | **POST** /api/v3/jobs/{job_id}/setpriority | 
 [**set_job_status**](JobsApi.md#set_job_status) | **POST** /api/v3/jobs/{job_id}/setstatus | 
 [**set_task_status**](JobsApi.md#set_task_status) | **POST** /api/v3/tasks/{task_id}/setstatus | 
 [**submit_job**](JobsApi.md#submit_job) | **POST** /api/v3/jobs | Submit a new job for Flamenco Manager to execute.
@@ -835,6 +836,76 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **204** | Request accepted, entries have been removed. |  -  |
+**0** | Unexpected error. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **set_job_priority**
+> set_job_priority(job_id, job_priority_change)
+
+
+
+### Example
+
+
+```python
+import time
+import flamenco.manager
+from flamenco.manager.api import jobs_api
+from flamenco.manager.model.error import Error
+from flamenco.manager.model.job_priority_change import JobPriorityChange
+from pprint import pprint
+# Defining the host is optional and defaults to http://localhost
+# See configuration.py for a list of all supported configuration parameters.
+configuration = flamenco.manager.Configuration(
+    host = "http://localhost"
+)
+
+
+# Enter a context with an instance of the API client
+with flamenco.manager.ApiClient() as api_client:
+    # Create an instance of the API class
+    api_instance = jobs_api.JobsApi(api_client)
+    job_id = "job_id_example" # str | 
+    job_priority_change = JobPriorityChange(
+        priority=0,
+    ) # JobPriorityChange | The new priority.
+
+    # example passing only required values which don't have defaults set
+    try:
+        api_instance.set_job_priority(job_id, job_priority_change)
+    except flamenco.manager.ApiException as e:
+        print("Exception when calling JobsApi->set_job_priority: %s\n" % e)
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **job_id** | **str**|  |
+ **job_priority_change** | [**JobPriorityChange**](JobPriorityChange.md)| The new priority. |
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**204** | Priority change was accepted. |  -  |
+**422** | The requested priority is not acceptable. |  -  |
 **0** | Unexpected error. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

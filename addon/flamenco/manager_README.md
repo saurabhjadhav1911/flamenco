@@ -38,6 +38,7 @@ from flamenco.manager.model.error import Error
 from flamenco.manager.model.job import Job
 from flamenco.manager.model.job_blocklist import JobBlocklist
 from flamenco.manager.model.job_last_rendered_image_info import JobLastRenderedImageInfo
+from flamenco.manager.model.job_priority_change import JobPriorityChange
 from flamenco.manager.model.job_status_change import JobStatusChange
 from flamenco.manager.model.job_tasks_summary import JobTasksSummary
 from flamenco.manager.model.jobs_query import JobsQuery
@@ -85,6 +86,7 @@ Class | Method | HTTP request | Description
 *JobsApi* | [**get_job_types**](flamenco/manager/docs/JobsApi.md#get_job_types) | **GET** /api/v3/jobs/types | Get list of job types and their parameters.
 *JobsApi* | [**query_jobs**](flamenco/manager/docs/JobsApi.md#query_jobs) | **POST** /api/v3/jobs/query | Fetch list of jobs.
 *JobsApi* | [**remove_job_blocklist**](flamenco/manager/docs/JobsApi.md#remove_job_blocklist) | **DELETE** /api/v3/jobs/{job_id}/blocklist | Remove entries from a job blocklist.
+*JobsApi* | [**set_job_priority**](flamenco/manager/docs/JobsApi.md#set_job_priority) | **POST** /api/v3/jobs/{job_id}/setpriority | 
 *JobsApi* | [**set_job_status**](flamenco/manager/docs/JobsApi.md#set_job_status) | **POST** /api/v3/jobs/{job_id}/setstatus | 
 *JobsApi* | [**set_task_status**](flamenco/manager/docs/JobsApi.md#set_task_status) | **POST** /api/v3/tasks/{task_id}/setstatus | 
 *JobsApi* | [**submit_job**](flamenco/manager/docs/JobsApi.md#submit_job) | **POST** /api/v3/jobs | Submit a new job for Flamenco Manager to execute.
@@ -139,6 +141,7 @@ Class | Method | HTTP request | Description
  - [JobBlocklistEntry](flamenco/manager/docs/JobBlocklistEntry.md)
  - [JobLastRenderedImageInfo](flamenco/manager/docs/JobLastRenderedImageInfo.md)
  - [JobMetadata](flamenco/manager/docs/JobMetadata.md)
+ - [JobPriorityChange](flamenco/manager/docs/JobPriorityChange.md)
  - [JobSettings](flamenco/manager/docs/JobSettings.md)
  - [JobStatus](flamenco/manager/docs/JobStatus.md)
  - [JobStatusChange](flamenco/manager/docs/JobStatusChange.md)
