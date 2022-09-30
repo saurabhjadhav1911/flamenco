@@ -31,6 +31,7 @@ type PersistenceService interface {
 	StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.AuthoredJob) error
 	// FetchJob fetches a single job, without fetching its tasks.
 	FetchJob(ctx context.Context, jobID string) (*persistence.Job, error)
+	SaveJobPriority(ctx context.Context, job *persistence.Job) error
 	// FetchTask fetches the given task and the accompanying job.
 	FetchTask(ctx context.Context, taskID string) (*persistence.Task, error)
 	FetchTaskFailureList(context.Context, *persistence.Task) ([]*persistence.Worker, error)
@@ -97,6 +98,7 @@ var _ TaskStateMachine = (*task_state_machine.StateMachine)(nil)
 type ChangeBroadcaster interface {
 	// BroadcastNewJob sends a 'new job' notification to all SocketIO clients.
 	BroadcastNewJob(jobUpdate api.SocketIOJobUpdate)
+	BroadcastJobUpdate(jobUpdate api.SocketIOJobUpdate)
 	BroadcastLastRenderedImage(update api.SocketIOLastRenderedUpdate)
 
 	// Note that there is no BroadcastNewTask. The 'new job' broadcast is sent

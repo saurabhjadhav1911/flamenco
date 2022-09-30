@@ -178,6 +178,53 @@ func (f *Flamenco) SetJobStatus(e echo.Context, jobID string) error {
 	return e.NoContent(http.StatusNoContent)
 }
 
+// SetJobPriority is used by the web interface to change a job's priority.
+func (f *Flamenco) SetJobPriority(e echo.Context, jobID string) error {
+	logger := requestLogger(e)
+	ctx := e.Request().Context()
+
+	logger = logger.With().Str("job", jobID).Logger()
+
+	var prioChange api.SetJobPriorityJSONRequestBody
+	if err := e.Bind(&prioChange); err != nil {
+		logger.Warn().Err(err).Msg("bad request received")
+		return sendAPIError(e, http.StatusBadRequest, "invalid format")
+	}
+
+	dbJob, err := f.persist.FetchJob(ctx, jobID)
+	if err != nil {
+		if errors.Is(err, persistence.ErrJobNotFound) {
+			return sendAPIError(e, http.StatusNotFound, "no such job")
+		}
+		logger.Error().Err(err).Msg("error fetching job")
+		return sendAPIError(e, http.StatusInternalServerError, "error fetching job")
+	}
+
+	logger = logger.With().
+		Str("jobName", dbJob.Name).
+		Int("prioCurrent", dbJob.Priority).
+		Int("prioRequested", prioChange.Priority).
+		Logger()
+	logger.Info().Msg("job priority change requested")
+
+	// From here on, the request can be handled even when the client disconnects.
+	bgCtx, bgCtxCancel := bgContext()
+	defer bgCtxCancel()
+
+	dbJob.Priority = prioChange.Priority
+	err = f.persist.SaveJobPriority(bgCtx, dbJob)
+	if err != nil {
+		logger.Error().Err(err).Msg("error changing job priority")
+		return sendAPIError(e, http.StatusInternalServerError, "unexpected error changing job priority")
+	}
+
+	// Broadcast this change to the SocketIO clients.
+	jobUpdate := webupdates.NewJobUpdate(dbJob)
+	f.broadcaster.BroadcastJobUpdate(jobUpdate)
+
+	return e.NoContent(http.StatusNoContent)
+}
+
 // SetTaskStatus is used by the web interface to change a task's status.
 func (f *Flamenco) SetTaskStatus(e echo.Context, taskID string) error {
 	logger := requestLogger(e)

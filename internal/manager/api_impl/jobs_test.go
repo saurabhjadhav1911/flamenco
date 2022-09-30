@@ -353,6 +353,67 @@ func TestSetJobStatus_happy(t *testing.T) {
 	assertResponseNoContent(t, echoCtx)
 }
 
+func TestSetJobPrio_nonexistentJob(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	jobID := "18a9b096-d77e-438c-9be2-74397038298b"
+	prioUpdate := api.JobPriorityChange{Priority: 47}
+
+	mf.persistence.EXPECT().FetchJob(gomock.Any(), jobID).Return(nil, persistence.ErrJobNotFound)
+
+	// Do the call.
+	echoCtx := mf.prepareMockedJSONRequest(prioUpdate)
+	err := mf.flamenco.SetJobStatus(echoCtx, jobID)
+	assert.NoError(t, err)
+
+	assertResponseAPIError(t, echoCtx, http.StatusNotFound, "no such job")
+}
+
+func TestSetJobPrio(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	jobID := "18a9b096-d77e-438c-9be2-74397038298b"
+	prioUpdate := api.JobPriorityChange{Priority: 47}
+	dbJob := persistence.Job{
+		UUID:     jobID,
+		Name:     "test job",
+		Priority: 50,
+		Settings: persistence.StringInterfaceMap{},
+		Metadata: persistence.StringStringMap{},
+	}
+
+	echoCtx := mf.prepareMockedJSONRequest(prioUpdate)
+
+	// Set up expectations.
+	ctx := echoCtx.Request().Context()
+	mf.persistence.EXPECT().FetchJob(ctx, jobID).Return(&dbJob, nil).AnyTimes()
+	jobWithNewPrio := dbJob
+	jobWithNewPrio.Priority = 47
+	mf.persistence.EXPECT().SaveJobPriority(gomock.Not(ctx), &jobWithNewPrio)
+
+	// Expect the change to be broadcast over SocketIO.
+	expectUpdate := api.SocketIOJobUpdate{
+		Id:           dbJob.UUID,
+		Name:         &dbJob.Name,
+		RefreshTasks: false,
+		Priority:     prioUpdate.Priority,
+		Status:       dbJob.Status,
+		Updated:      dbJob.UpdatedAt,
+	}
+	mf.broadcaster.EXPECT().BroadcastJobUpdate(expectUpdate)
+
+	err := mf.flamenco.SetJobPriority(echoCtx, jobID)
+	assert.NoError(t, err)
+
+	assertResponseNoContent(t, echoCtx)
+}
+
 func TestSetJobStatusFailedToRequeueing(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

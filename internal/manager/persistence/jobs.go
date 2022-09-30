@@ -234,6 +234,17 @@ func (db *DB) SaveJobStatus(ctx context.Context, j *Job) error {
 	return nil
 }
 
+// SaveJobPriority saves the job's Priority field.
+func (db *DB) SaveJobPriority(ctx context.Context, j *Job) error {
+	tx := db.gormDB.WithContext(ctx).
+		Model(j).
+		Updates(Job{Priority: j.Priority})
+	if tx.Error != nil {
+		return jobError(tx.Error, "saving job priority")
+	}
+	return nil
+}
+
 func (db *DB) FetchTask(ctx context.Context, taskUUID string) (*Task, error) {
 	dbTask := Task{}
 	tx := db.gormDB.WithContext(ctx).

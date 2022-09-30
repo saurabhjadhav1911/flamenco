@@ -319,6 +319,20 @@ func (mr *MockPersistenceServiceMockRecorder) RemoveFromJobBlocklist(arg0, arg1,
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveFromJobBlocklist", reflect.TypeOf((*MockPersistenceService)(nil).RemoveFromJobBlocklist), arg0, arg1, arg2, arg3)
 }
 
+// SaveJobPriority mocks base method.
+func (m *MockPersistenceService) SaveJobPriority(arg0 context.Context, arg1 *persistence.Job) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveJobPriority", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveJobPriority indicates an expected call of SaveJobPriority.
+func (mr *MockPersistenceServiceMockRecorder) SaveJobPriority(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveJobPriority", reflect.TypeOf((*MockPersistenceService)(nil).SaveJobPriority), arg0, arg1)
+}
+
 // SaveTask mocks base method.
 func (m *MockPersistenceService) SaveTask(arg0 context.Context, arg1 *persistence.Task) error {
 	m.ctrl.T.Helper()
@@ -482,6 +496,18 @@ func NewMockChangeBroadcaster(ctrl *gomock.Controller) *MockChangeBroadcaster {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockChangeBroadcaster) EXPECT() *MockChangeBroadcasterMockRecorder {
 	return m.recorder
+}
+
+// BroadcastJobUpdate mocks base method.
+func (m *MockChangeBroadcaster) BroadcastJobUpdate(arg0 api.SocketIOJobUpdate) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "BroadcastJobUpdate", arg0)
+}
+
+// BroadcastJobUpdate indicates an expected call of BroadcastJobUpdate.
+func (mr *MockChangeBroadcasterMockRecorder) BroadcastJobUpdate(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BroadcastJobUpdate", reflect.TypeOf((*MockChangeBroadcaster)(nil).BroadcastJobUpdate), arg0)
 }
 
 // BroadcastLastRenderedImage mocks base method.

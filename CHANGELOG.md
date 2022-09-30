@@ -7,6 +7,7 @@ bugs in actually-released versions.
 ## 3.1 - in development
 
 - Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked.
+- Add API operation to change the priority of an existing job.
 
 ## 3.0 - released 2022-09-12
 
