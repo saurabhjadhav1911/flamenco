@@ -757,6 +757,35 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /api/v3/jobs/{job_id}/setpriority:
+    summary: Request a priority change for the given job.
+    post:
+      operationId: setJobPriority
+      tags: [jobs]
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        description: The new priority.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobPriorityChange"
+      responses:
+        "204":
+          description: Priority change was accepted.
+        "422":
+          description: The requested priority is not acceptable.
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/v3/jobs/{job_id}/tasks:
     summary: Access tasks of this job.
     get:
@@ -1750,6 +1779,15 @@ components:
           type: string
           description: The reason for this status change.
       required: [status, reason]
+
+    JobPriorityChange:
+      type: object
+      properties:
+        priority:
+          type: integer
+          minimum: 0
+          maximum: 100
+      required: [priority]
 
     TaskStatusChange:
       type: object
