@@ -150,19 +150,16 @@ export default {
       // updateData() will only overwrite properties that are actually set on
       // jobUpdate, and leave the rest as-is.
       if (this.tabulator.initialized) {
-        this.tabulator.updateData([jobUpdate])
-          .then(this.sortData)
-          .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
-      }
-      this._refreshAvailableStatuses();
-    },
-    processNewJob(jobUpdate) {
-      if (this.tabulator.initialized) {
-        this.tabulator.addData([jobUpdate])
-          .then(this.sortData)
-          .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
-      }
+        const row = this.tabulator.rowManager.findRow(jobUpdate.id);
 
+        let promise = null;
+        if (row) promise = this.tabulator.updateData([jobUpdate]);
+        else promise = this.tabulator.addData([jobUpdate]);
+
+        promise
+          .then(this.sortData)
+          .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
+      }
       this._refreshAvailableStatuses();
     },
 

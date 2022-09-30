@@ -146,10 +146,7 @@ export default {
       this.jobs.setIsJobless(false);
 
       if (this.$refs.jobsTable) {
-        if (jobUpdate.previous_status)
-          this.$refs.jobsTable.processJobUpdate(jobUpdate);
-        else
-          this.$refs.jobsTable.processNewJob(jobUpdate);
+        this.$refs.jobsTable.processJobUpdate(jobUpdate);
       }
       if (this.jobID != jobUpdate.id)
         return;
