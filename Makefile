@@ -299,8 +299,9 @@ release-package-linux:
 	$(MAKE) -s flamenco-manager-without-webapp GOOS=linux GOARCH=amd64
 	$(MAKE) -s flamenco-worker GOOS=linux GOARCH=amd64
 	$(MAKE) -s tools-linux
-	mkdir -p dist/${RELEASE_PACKAGE_LINUX_BASE}
-	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-linux* dist/${RELEASE_PACKAGE_LINUX_BASE}
+	mkdir -p dist/${RELEASE_PACKAGE_LINUX_BASE}/tools
+	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_LINUX_BASE}
+	cp tools/*-linux* dist/${RELEASE_PACKAGE_LINUX_BASE}/tools
 	cd dist; tar zcvf ${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_LINUX_BASE}
 	rm -rf dist/${RELEASE_PACKAGE_LINUX_BASE}
 	@echo "Done! Created ${RELEASE_PACKAGE_LINUX}"
@@ -312,8 +313,9 @@ release-package-darwin:
 	$(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=amd64
 	$(MAKE) -s flamenco-worker GOOS=darwin GOARCH=amd64
 	$(MAKE) -s tools-darwin
-	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_BASE}
-	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} tools/*-darwin* dist/${RELEASE_PACKAGE_DARWIN_BASE}
+	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
+	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_DARWIN_BASE}
+	cp tools/*-darwin* dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
 	cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_BASE}
 	rm -rf dist/${RELEASE_PACKAGE_DARWIN_BASE}
 	@echo "Done! Created ${RELEASE_PACKAGE_DARWIN}"
