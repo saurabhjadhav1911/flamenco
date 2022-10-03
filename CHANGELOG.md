@@ -8,6 +8,12 @@ bugs in actually-released versions.
 
 - Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked.
 - Add API operation to change the priority of an existing job.
+- Fix FFmpeg packaging issue, which caused the Worker to not find the bundled FFmpeg executable.
+- Less dramatic logging when Blender cannot be found by the Worker on startup.
+  This just means that the Manager has to tell the Worker which Blender to use,
+  which is perfectly fine.
+- Fix error in sleep scheduler when shutting down the Manager.
+
 
 ## 3.0 - released 2022-09-12
 
