@@ -62,6 +62,8 @@ class Packer(submodules.pack.Packer):  # type: ignore
         return self.shaman_transferrer
 
     def _make_target_path(self, target: str) -> PurePath:
+        # For Shaman it doesn't matter where on the system the files will go,
+        # so just use the root path to have something absolute.
         return PurePosixPath("/")
 
     @property
