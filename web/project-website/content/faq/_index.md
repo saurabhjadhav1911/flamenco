@@ -37,6 +37,14 @@ file][workercfg].
 [workercfg]: {{< ref "usage/worker-configuration" >}}
 
 
+## Can I change the paths/names of the rendered files?
+
+Where Flamenco places the rendered files is determined by the job type. You can
+create [your own custom job type][jobtypes] to change this. With that, you can
+even add your own custom job settings like a sequence identifier and use that to
+determine the location of rendered files.
+
+
 ## Can I use the Compositor to output multiple EXR files?
 
 This is possible with Flamenco, but it takes a bit of work. It's not managed by
