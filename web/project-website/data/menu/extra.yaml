@@ -6,8 +6,8 @@ header:
   - name: Quickstart
     ref: /usage/quickstart
     external: false
-  - name: Development
-    ref: /development/getting-started
+  - name: FAQ
+    ref: /faq
     external: false
   - name: Get Involved
     ref: /development/get-involved
