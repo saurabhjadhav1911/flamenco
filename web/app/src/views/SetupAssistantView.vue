@@ -76,7 +76,7 @@
         <p>
           Using services like Dropbox, Syncthing, or ownCloud for
           this is not recommended, as Flamenco can't coordinate data synchronization.
-          <a href="https://flamenco.blender.org/usage/getting-started/">Learn more</a>.
+          <a href="https://flamenco.blender.org/usage/shared-storage/">Learn more</a>.
         </p>
 
         <input
@@ -110,7 +110,7 @@
         <p v-if="autoFoundBlenders.length === 0">
           Provide a path to a Blender executable accessible by all Workers.
           <br/><br/>
-          If your rendering setup features operating systems different form the one you are currently using,
+          If your rendering setup features operating systems different from the one you are currently using,
           you can manually set up the other paths later.
         </p>
 
