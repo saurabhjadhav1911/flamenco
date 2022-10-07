@@ -93,6 +93,34 @@ func TestProcess(t *testing.T) {
 
 }
 
+func TestProcessTiff(t *testing.T) {
+	ou, mocks, finish := mockedOutputUploader(t)
+	defer finish()
+
+	taskID := "094d98ba-d6e2-4765-a10b-70533604a952"
+	filename := "command_ffmpeg_test_files/frame-1.tiff"
+
+	item := TaskOutput{
+		TaskID:   taskID,
+		Filename: filename,
+	}
+
+	{
+		// Test happy response from Manager.
+		response := api.TaskOutputProducedResponse{
+			HTTPResponse: &http.Response{
+				Status:     "202 Accepted",
+				StatusCode: http.StatusAccepted,
+			},
+		}
+		mocks.client.EXPECT().TaskOutputProducedWithBodyWithResponse(
+			mocks.ctx, taskID, "image/jpeg", gomock.Any()).
+			Return(&response, nil)
+
+		ou.process(mocks.ctx, item)
+	}
+}
+
 type outputUploaderTestMocks struct {
 	client    *mocks.MockFlamencoClient
 	ctx       context.Context

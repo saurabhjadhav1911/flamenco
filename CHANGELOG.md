@@ -13,6 +13,7 @@ bugs in actually-released versions.
   This just means that the Manager has to tell the Worker which Blender to use,
   which is perfectly fine.
 - Fix error in sleep scheduler when shutting down the Manager.
+- Workers can now decode TIFF files to generate previews.
 
 
 ## 3.0 - released 2022-09-12
