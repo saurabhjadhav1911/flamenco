@@ -6,15 +6,14 @@ bugs in actually-released versions.
 
 ## 3.1 - in development
 
-- Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked.
-- Add API operation to change the priority of an existing job.
-- Fix FFmpeg packaging issue, which caused the Worker to not find the bundled FFmpeg executable.
-- Less dramatic logging when Blender cannot be found by the Worker on startup.
-  This just means that the Manager has to tell the Worker which Blender to use,
-  which is perfectly fine.
-- Fix error in sleep scheduler when shutting down the Manager.
-- Workers can now decode TIFF files to generate previews.
-- Fix error submitting to Shaman storage from a Windows machine.
+- Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked ([50ec5f4f360c](https://developer.blender.org/rF50ec5f4f360ce7cb467f95de31a34200f4942047)).
+- Add API operation to change the priority of an existing job([07f0b38e8a9f](https://developer.blender.org/rF07f0b38e8a9f0e7ea303adc2608ae5265ec7e075), [85d53de1f99f](https://developer.blender.org/rF85d53de1f99f0ccb904dc7c140a75bf4b96b326b)).
+- Fix FFmpeg packaging issue, which caused the Worker to not find the bundled FFmpeg executable ([1abeb71f570f](https://developer.blender.org/rF1abeb71f570ff978c2ff81bf6fd9851b86cc7be7)).
+- Less dramatic logging when Blender cannot be found by the Worker on startup ([161a7f7cb381](https://developer.blender.org/rF161a7f7cb38190bd34757e74ffc22ac0e068fa5f), [759a94e49b21](https://developer.blender.org/rF759a94e49b21b32405237be978146a826dd53a73)).
+  This just means that the Manager has to tell the Worker which Blender to use, which is perfectly fine.
+- Fix error in sleep scheduler when shutting down the Manager ([59655ea770f6](https://developer.blender.org/rF59655ea770f667a579e7a85cf3afc7d8b33d239e)).
+- Workers can now decode TIFF files to generate previews ([a95e8781cf94](https://developer.blender.org/rFa95e8781cf94663b3d6a41745c102586e066bb85)).
+- Fix error submitting to Shaman storage from a Windows machine ([0bc0a7ac9b68](https://developer.blender.org/rF0bc0a7ac9b688d1174862e568f327053d05427b4)).
 
 
 ## 3.0 - released 2022-09-12
