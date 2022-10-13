@@ -14,6 +14,7 @@ bugs in actually-released versions.
   which is perfectly fine.
 - Fix error in sleep scheduler when shutting down the Manager.
 - Workers can now decode TIFF files to generate previews.
+- Fix error submitting to Shaman storage from a Windows machine.
 
 
 ## 3.0 - released 2022-09-12
