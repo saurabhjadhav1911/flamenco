@@ -3,8 +3,9 @@
 
 import logging
 import random
+import platform
 from collections import deque
-from pathlib import Path, PurePath, PurePosixPath
+from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from typing import TYPE_CHECKING, Optional, Any, Iterable, Iterator
 
 from . import cache, submodules
@@ -62,9 +63,7 @@ class Packer(submodules.pack.Packer):  # type: ignore
         return self.shaman_transferrer
 
     def _make_target_path(self, target: str) -> PurePath:
-        # For Shaman it doesn't matter where on the system the files will go,
-        # so just use the root path to have something absolute.
-        return PurePosixPath("/")
+        return _root_path()
 
     @property
     def output_path(self) -> PurePath:
@@ -209,7 +208,7 @@ class Transferrer(submodules.transfer.FileTransferer):  # type: ignore
             try:
                 checksum = cache.compute_cached_checksum(src)
                 filesize = src.stat().st_size
-                relpath = str(submodules.bpathlib.strip_root(dst))
+                relpath = str(_root_path_strip(dst))
 
                 filespec = ShamanFileSpec(
                     sha=checksum,
@@ -491,3 +490,32 @@ def make_file_specs_regular_list(
 ) -> list[_ShamanFileSpec]:
     """Convert hashable filespecs into a list of real ones."""
     return [make_file_spec_regular(spec) for spec in hashable_specs]
+
+
+def _root_path() -> PurePath:
+    """Return an arbitrary root path for the current platform.
+
+    When packing, BAT needs to know the "target path", and for Shaman use this
+    is kind of irrelevant. Any path will do, as long as it's absolute.
+    """
+
+    if platform.system() == "Windows":
+        # A path on Windows can only be absolute if it has a drive letter. The
+        # letter itself doesn't matter, as it'll only be used to compute
+        # relative paths between various files rooted here.
+        return PureWindowsPath("X:/")
+    return PurePosixPath("/")
+
+def _root_path_strip(path: PurePath) -> PurePosixPath:
+    """Strip off the leading / (POSIX) and drive letter (Windows).
+
+    Note that this is limited to paths of the current platform. In other words,
+    a `PurePosixPath('X:/path/to/file')` will be returned as-is, as it's
+    considered relative on a POSIX platform. This is not an issue as this
+    function is just meant to strip off the platform-specific root path returned
+    by `_root_path()`.
+    """
+
+    if path.is_absolute():
+        return PurePosixPath(*path.parts[1:])
+    return PurePosixPath(path)
