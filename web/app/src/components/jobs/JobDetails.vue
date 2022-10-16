@@ -42,7 +42,7 @@
           <dd>{{ jobType ? jobType.label : jobData.type }}</dd>
 
           <dt class="field-priority" title="Priority">Priority</dt>
-          <dd>{{ jobData.priority }}</dd>
+          <dd><PopoverEditableJobPriority :jobId="jobData.id" :priority="jobData.priority" /></dd>
 
           <dt class="field-created" title="Created">Created</dt>
           <dd>{{ datetime.relativeTime(jobData.created) }}</dd>
@@ -73,6 +73,7 @@ import LastRenderedImage from '@/components/jobs/LastRenderedImage.vue'
 import Blocklist from './Blocklist.vue'
 import TabItem from '@/components/TabItem.vue'
 import TabsWrapper from '@/components/TabsWrapper.vue'
+import PopoverEditableJobPriority from '@/components/PopoverEditableJobPriority.vue'
 import { copyElementText } from '@/clipboard';
 
 export default {
@@ -87,6 +88,7 @@ export default {
     TabItem,
     TabsWrapper,
     Blocklist,
+    PopoverEditableJobPriority,
   },
   data() {
     return {
