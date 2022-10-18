@@ -4,7 +4,7 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
-## 3.1 - in development
+## 3.1 - released 2022-10-18
 
 - Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked ([50ec5f4f360c](https://developer.blender.org/rF50ec5f4f360ce7cb467f95de31a34200f4942047)).
 - Allow changing the priority of an existing job (API: [07f0b38e8a9f](https://developer.blender.org/rF07f0b38e8a9f0e7ea303adc2608ae5265ec7e075), [85d53de1f99f](https://developer.blender.org/rF85d53de1f99f0ccb904dc7c140a75bf4b96b326b), Web: [4389b60197a0](https://developer.blender.org/rF4389b60197a07c9b64b63f1d111679a3104ab60a), [080a63df6a5b](https://developer.blender.org/rF080a63df6a5b1a95e05eeea3c66d3a41fa431e82)).
