@@ -1,13 +1,9 @@
 <template>
   <div class="popover-container">
-    <span
-      @click="togglePopover"
-      class="popover-toggle"
-      title="Set priority for this job">
+    <span @click="togglePopover" class="popover-toggle" title="Set priority for this job">
       {{ priority }}
     </span>
     <div v-show="showPopover" class="popover">
-    <!-- <div class="popover"> -->
       <div class="popover-header">
         <span>Job Priority</span>
         <button @click="togglePopover">&#10006;</button>
@@ -20,7 +16,6 @@
         Range 1-100.
       </div>
       <div class="popover-error" v-if="errorMessage">
-      <!-- <div class="popover-error"> -->
         <span>{{ errorMessage }}</span>
       </div>
     </div>
