@@ -7,7 +7,7 @@ bugs in actually-released versions.
 ## 3.1 - in development
 
 - Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked ([50ec5f4f360c](https://developer.blender.org/rF50ec5f4f360ce7cb467f95de31a34200f4942047)).
-- Add API operation to change the priority of an existing job([07f0b38e8a9f](https://developer.blender.org/rF07f0b38e8a9f0e7ea303adc2608ae5265ec7e075), [85d53de1f99f](https://developer.blender.org/rF85d53de1f99f0ccb904dc7c140a75bf4b96b326b)).
+- Allow changing the priority of an existing job (API: [07f0b38e8a9f](https://developer.blender.org/rF07f0b38e8a9f0e7ea303adc2608ae5265ec7e075), [85d53de1f99f](https://developer.blender.org/rF85d53de1f99f0ccb904dc7c140a75bf4b96b326b), Web: [4389b60197a0](https://developer.blender.org/rF4389b60197a07c9b64b63f1d111679a3104ab60a), [080a63df6a5b](https://developer.blender.org/rF080a63df6a5b1a95e05eeea3c66d3a41fa431e82)).
 - Fix FFmpeg packaging issue, which caused the Worker to not find the bundled FFmpeg executable ([1abeb71f570f](https://developer.blender.org/rF1abeb71f570ff978c2ff81bf6fd9851b86cc7be7)).
 - Less dramatic logging when Blender cannot be found by the Worker on startup ([161a7f7cb381](https://developer.blender.org/rF161a7f7cb38190bd34757e74ffc22ac0e068fa5f), [759a94e49b21](https://developer.blender.org/rF759a94e49b21b32405237be978146a826dd53a73)).
   This just means that the Manager has to tell the Worker which Blender to use, which is perfectly fine.
