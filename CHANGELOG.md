@@ -4,6 +4,11 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
+## 3.2 - in development
+
+- When rendering EXR files, use Blender's preview JPEG files to generate the preview video ([43bc22f10fae](https://developer.blender.org/rF43bc22f10fae0fcaed6a4a3b3ace1be617193e21)).
+
+
 ## 3.1 - released 2022-10-18
 
 - Web interface: make the worker IP address clickable; it will be copied to the clipboard when clicked ([50ec5f4f360c](https://developer.blender.org/rF50ec5f4f360ce7cb467f95de31a34200f4942047)).
