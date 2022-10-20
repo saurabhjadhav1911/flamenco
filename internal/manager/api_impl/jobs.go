@@ -3,6 +3,7 @@ package api_impl
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math"
@@ -76,25 +77,10 @@ func (f *Flamenco) SubmitJob(e echo.Context) error {
 	logger.Info().Msg("new Flamenco job received")
 
 	ctx := e.Request().Context()
-	submittedJob := api.SubmittedJob(job)
-
-	// Replace the special "manager" platform with the Manager's actual platform.
-	if submittedJob.SubmitterPlatform == "manager" {
-		submittedJob.SubmitterPlatform = runtime.GOOS
-	}
-
-	if submittedJob.TypeEtag == nil || *submittedJob.TypeEtag == "" {
-		logger.Warn().Msg("job submitted without job type etag, refresh the job types in the Blender add-on")
-	}
-
-	// Before compiling the job, replace the two-way variables. This ensures all
-	// the tasks also use those.
-	replaceTwoWayVariables(f.config, &submittedJob)
-
-	authoredJob, err := f.jobCompiler.Compile(ctx, submittedJob)
+	authoredJob, err := f.compileSubmittedJob(ctx, logger, api.SubmittedJob(job))
 	switch {
 	case errors.Is(err, job_compilers.ErrJobTypeBadEtag):
-		logger.Warn().Err(err).Msg("rejecting submitted job because its settings are outdated, refresh the job type")
+		logger.Info().Err(err).Msg("rejecting submitted job because its settings are outdated, refresh the job type")
 		return sendAPIError(e, http.StatusPreconditionFailed, "rejecting job because its settings are outdated, refresh the job type")
 	case err != nil:
 		logger.Warn().Err(err).Msg("error compiling job")
@@ -123,6 +109,55 @@ func (f *Flamenco) SubmitJob(e echo.Context) error {
 
 	apiJob := jobDBtoAPI(dbJob)
 	return e.JSON(http.StatusOK, apiJob)
+}
+
+func (f *Flamenco) SubmitJobCheck(e echo.Context) error {
+	logger := requestLogger(e)
+
+	var job api.SubmitJobCheckJSONRequestBody
+	if err := e.Bind(&job); err != nil {
+		logger.Warn().Err(err).Msg("bad request received")
+		return sendAPIError(e, http.StatusBadRequest, "invalid format")
+	}
+
+	logger = logger.With().
+		Str("type", job.Type).
+		Str("name", job.Name).
+		Logger()
+	logger.Info().Msg("checking Flamenco job")
+
+	ctx := e.Request().Context()
+	submittedJob := api.SubmittedJob(job)
+	_, err := f.compileSubmittedJob(ctx, logger, submittedJob)
+	switch {
+	case errors.Is(err, job_compilers.ErrJobTypeBadEtag):
+		logger.Warn().Err(err).Msg("rejecting submitted job because its settings are outdated, refresh the job type")
+		return sendAPIError(e, http.StatusPreconditionFailed, "rejecting job because its settings are outdated, refresh the job type")
+	case err != nil:
+		logger.Warn().Err(err).Msg("error compiling job")
+		// TODO: make this a more specific error object for this API call.
+		return sendAPIError(e, http.StatusBadRequest, err.Error())
+	}
+
+	return e.NoContent(http.StatusNoContent)
+}
+
+// compileSubmittedJob performs some processing of the job and compiles it.
+func (f *Flamenco) compileSubmittedJob(ctx context.Context, logger zerolog.Logger, submittedJob api.SubmittedJob) (*job_compilers.AuthoredJob, error) {
+	// Replace the special "manager" platform with the Manager's actual platform.
+	if submittedJob.SubmitterPlatform == "manager" {
+		submittedJob.SubmitterPlatform = runtime.GOOS
+	}
+
+	if submittedJob.TypeEtag == nil || *submittedJob.TypeEtag == "" {
+		logger.Warn().Msg("job submitted without job type etag, refresh the job types in the Blender add-on")
+	}
+
+	// Before compiling the job, replace the two-way variables. This ensures all
+	// the tasks also use those.
+	replaceTwoWayVariables(f.config, &submittedJob)
+
+	return f.jobCompiler.Compile(ctx, submittedJob)
 }
 
 // SetJobStatus is used by the web interface to change a job's status.
