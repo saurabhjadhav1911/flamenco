@@ -550,7 +550,7 @@ func (f *Flamenco) MayWorkerRun(e echo.Context, taskID string) error {
 
 // mayWorkerRun checks the worker and the task, to see if this worker may keep running this task.
 func mayWorkerRun(worker *persistence.Worker, dbTask *persistence.Task) api.MayKeepRunning {
-	if worker.StatusRequested != "" {
+	if worker.StatusRequested != "" && !worker.LazyStatusRequest {
 		return api.MayKeepRunning{
 			Reason:                "worker status change requested",
 			StatusChangeRequested: true,

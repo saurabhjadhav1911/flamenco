@@ -465,7 +465,7 @@ func TestMayWorkerRun(t *testing.T) {
 	// Expect the worker to be marked as 'seen' regardless of whether it may run
 	// its current task or not, so equal to the number of calls to
 	// `MayWorkerRun()` below.
-	mf.persistence.EXPECT().WorkerSeen(gomock.Any(), &worker).Times(4)
+	mf.persistence.EXPECT().WorkerSeen(gomock.Any(), &worker).Times(5)
 
 	// Test: unhappy, task unassigned
 	{
@@ -517,6 +517,22 @@ func TestMayWorkerRun(t *testing.T) {
 			MayKeepRunning:        false,
 			Reason:                "worker status change requested",
 			StatusChangeRequested: true,
+		})
+	}
+
+	// Test: happy, assigned and runnable; worker should go to bed after task is finished.
+	{
+		// Expect a 'touch' of the task.
+		mf.persistence.EXPECT().TaskTouchedByWorker(gomock.Any(), &task).Return(nil)
+
+		worker.StatusChangeRequest(api.WorkerStatusAsleep, true)
+		echo := prepareRequest()
+		task.WorkerID = &worker.ID
+		task.Status = api.TaskStatusActive
+		err := mf.flamenco.MayWorkerRun(echo, task.UUID)
+		assert.NoError(t, err)
+		assertResponseJSON(t, echo, http.StatusOK, api.MayKeepRunning{
+			MayKeepRunning: true,
 		})
 	}
 }

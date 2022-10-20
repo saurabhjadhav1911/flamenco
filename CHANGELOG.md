@@ -7,6 +7,7 @@ bugs in actually-released versions.
 ## 3.2 - in development
 
 - When rendering EXR files, use Blender's preview JPEG files to generate the preview video ([43bc22f10fae](https://developer.blender.org/rF43bc22f10fae0fcaed6a4a3b3ace1be617193e21)).
+- Fix issue where workers would switch immediately on a state change request, even if it was of the "after task is finished" kind.
 
 
 ## 3.1 - released 2022-10-18
