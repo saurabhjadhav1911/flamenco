@@ -95,6 +95,19 @@ def submit_job(job: _SubmittedJob, api_client: _ApiClient) -> _Job:
     return response
 
 
+def submit_job_check(job: _SubmittedJob, api_client: _ApiClient) -> None:
+    """Check the given job at Flamenco Manager to see if it is acceptable."""
+    from flamenco.manager import ApiClient
+    from flamenco.manager.api import jobs_api
+    from flamenco.manager.models import SubmittedJob, Job
+
+    assert isinstance(job, SubmittedJob), "got %s" % type(job)
+    assert isinstance(api_client, ApiClient), "got %s" % type(api_client)
+
+    job_api_instance = jobs_api.JobsApi(api_client)
+    job_api_instance.submit_job_check(job)
+
+
 def is_file_inside_job_storage(context: bpy.types.Context, blendfile: Path) -> bool:
     """Check whether current blend file is inside the storage path.
 
