@@ -125,7 +125,7 @@ function authorCreateVideoTask(settings, renderDir) {
 
     const stem = path.stem(settings.blendfile).replace('.flamenco', '');
     const outfile = path.join(renderDir, `${stem}-${settings.frames}.mp4`);
-    const outfileExt = settings.image_file_extension;
+    const outfileExt = settings.has_previews ? ".jpg" : settings.image_file_extension;
 
     const task = author.Task('preview-video', 'ffmpeg');
     const command = author.Command("frames-to-video", {
