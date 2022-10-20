@@ -40,6 +40,9 @@ type ServerInterface interface {
 	// Submit a new job for Flamenco Manager to execute.
 	// (POST /api/v3/jobs)
 	SubmitJob(ctx echo.Context) error
+	// Submit a new job for Flamenco Manager to check.
+	// (POST /api/v3/jobs/check)
+	SubmitJobCheck(ctx echo.Context) error
 	// Get the URL that serves the last-rendered images.
 	// (GET /api/v3/jobs/last-rendered)
 	FetchGlobalLastRenderedInfo(ctx echo.Context) error
@@ -261,6 +264,15 @@ func (w *ServerInterfaceWrapper) SubmitJob(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.SubmitJob(ctx)
+	return err
+}
+
+// SubmitJobCheck converts echo context to params.
+func (w *ServerInterfaceWrapper) SubmitJobCheck(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.SubmitJobCheck(ctx)
 	return err
 }
 
@@ -837,6 +849,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/api/v3/configuration/shared-storage/:audience/:platform", wrapper.GetSharedStorage)
 	router.GET(baseURL+"/api/v3/configuration/variables/:audience/:platform", wrapper.GetVariables)
 	router.POST(baseURL+"/api/v3/jobs", wrapper.SubmitJob)
+	router.POST(baseURL+"/api/v3/jobs/check", wrapper.SubmitJobCheck)
 	router.GET(baseURL+"/api/v3/jobs/last-rendered", wrapper.FetchGlobalLastRenderedInfo)
 	router.POST(baseURL+"/api/v3/jobs/query", wrapper.QueryJobs)
 	router.GET(baseURL+"/api/v3/jobs/type/:typeName", wrapper.GetJobType)

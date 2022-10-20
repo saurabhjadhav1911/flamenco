@@ -90,6 +90,7 @@ Class | Method | HTTP request | Description
 *JobsApi* | [**set_job_status**](flamenco/manager/docs/JobsApi.md#set_job_status) | **POST** /api/v3/jobs/{job_id}/setstatus | 
 *JobsApi* | [**set_task_status**](flamenco/manager/docs/JobsApi.md#set_task_status) | **POST** /api/v3/tasks/{task_id}/setstatus | 
 *JobsApi* | [**submit_job**](flamenco/manager/docs/JobsApi.md#submit_job) | **POST** /api/v3/jobs | Submit a new job for Flamenco Manager to execute.
+*JobsApi* | [**submit_job_check**](flamenco/manager/docs/JobsApi.md#submit_job_check) | **POST** /api/v3/jobs/check | Submit a new job for Flamenco Manager to check.
 *MetaApi* | [**check_blender_exe_path**](flamenco/manager/docs/MetaApi.md#check_blender_exe_path) | **POST** /api/v3/configuration/check/blender | Validate a CLI command for use as way to start Blender
 *MetaApi* | [**check_shared_storage_path**](flamenco/manager/docs/MetaApi.md#check_shared_storage_path) | **POST** /api/v3/configuration/check/shared-storage | Validate a path for use as shared storage.
 *MetaApi* | [**find_blender_exe_path**](flamenco/manager/docs/MetaApi.md#find_blender_exe_path) | **GET** /api/v3/configuration/check/blender | Find one or more CLI commands for use as way to start Blender

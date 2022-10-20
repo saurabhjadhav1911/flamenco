@@ -127,6 +127,11 @@ type ClientInterface interface {
 
 	SubmitJob(ctx context.Context, body SubmitJobJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// SubmitJobCheck request with any body
+	SubmitJobCheckWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	SubmitJobCheck(ctx context.Context, body SubmitJobCheckJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// FetchGlobalLastRenderedInfo request
 	FetchGlobalLastRenderedInfo(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -405,6 +410,30 @@ func (c *Client) SubmitJobWithBody(ctx context.Context, contentType string, body
 
 func (c *Client) SubmitJob(ctx context.Context, body SubmitJobJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewSubmitJobRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SubmitJobCheckWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSubmitJobCheckRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SubmitJobCheck(ctx context.Context, body SubmitJobCheckJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSubmitJobCheckRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1295,6 +1324,46 @@ func NewSubmitJobRequestWithBody(server string, contentType string, body io.Read
 	}
 
 	operationPath := fmt.Sprintf("/api/v3/jobs")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewSubmitJobCheckRequest calls the generic SubmitJobCheck builder with application/json body
+func NewSubmitJobCheckRequest(server string, body SubmitJobCheckJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSubmitJobCheckRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewSubmitJobCheckRequestWithBody generates requests for SubmitJobCheck with any type of body
+func NewSubmitJobCheckRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/jobs/check")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2700,6 +2769,11 @@ type ClientWithResponsesInterface interface {
 
 	SubmitJobWithResponse(ctx context.Context, body SubmitJobJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitJobResponse, error)
 
+	// SubmitJobCheck request with any body
+	SubmitJobCheckWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SubmitJobCheckResponse, error)
+
+	SubmitJobCheckWithResponse(ctx context.Context, body SubmitJobCheckJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitJobCheckResponse, error)
+
 	// FetchGlobalLastRenderedInfo request
 	FetchGlobalLastRenderedInfoWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FetchGlobalLastRenderedInfoResponse, error)
 
@@ -3032,6 +3106,29 @@ func (r SubmitJobResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r SubmitJobResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type SubmitJobCheckResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON412      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r SubmitJobCheckResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SubmitJobCheckResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3942,6 +4039,23 @@ func (c *ClientWithResponses) SubmitJobWithResponse(ctx context.Context, body Su
 	return ParseSubmitJobResponse(rsp)
 }
 
+// SubmitJobCheckWithBodyWithResponse request with arbitrary body returning *SubmitJobCheckResponse
+func (c *ClientWithResponses) SubmitJobCheckWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SubmitJobCheckResponse, error) {
+	rsp, err := c.SubmitJobCheckWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSubmitJobCheckResponse(rsp)
+}
+
+func (c *ClientWithResponses) SubmitJobCheckWithResponse(ctx context.Context, body SubmitJobCheckJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitJobCheckResponse, error) {
+	rsp, err := c.SubmitJobCheck(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSubmitJobCheckResponse(rsp)
+}
+
 // FetchGlobalLastRenderedInfoWithResponse request returning *FetchGlobalLastRenderedInfoResponse
 func (c *ClientWithResponses) FetchGlobalLastRenderedInfoWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FetchGlobalLastRenderedInfoResponse, error) {
 	rsp, err := c.FetchGlobalLastRenderedInfo(ctx, reqEditors...)
@@ -4620,6 +4734,39 @@ func ParseSubmitJobResponse(rsp *http.Response) (*SubmitJobResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 412:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON412 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseSubmitJobCheckResponse parses an HTTP response from a SubmitJobCheckWithResponse call
+func ParseSubmitJobCheckResponse(rsp *http.Response) (*SubmitJobCheckResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SubmitJobCheckResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 412:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {

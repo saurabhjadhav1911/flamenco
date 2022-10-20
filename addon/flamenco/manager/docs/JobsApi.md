@@ -20,6 +20,7 @@ Method | HTTP request | Description
 [**set_job_status**](JobsApi.md#set_job_status) | **POST** /api/v3/jobs/{job_id}/setstatus | 
 [**set_task_status**](JobsApi.md#set_task_status) | **POST** /api/v3/tasks/{task_id}/setstatus | 
 [**submit_job**](JobsApi.md#submit_job) | **POST** /api/v3/jobs | Submit a new job for Flamenco Manager to execute.
+[**submit_job_check**](JobsApi.md#submit_job_check) | **POST** /api/v3/jobs/check | Submit a new job for Flamenco Manager to check.
 
 
 # **fetch_global_last_rendered_info**
@@ -1126,6 +1127,83 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Job was succesfully compiled into individual tasks. |  -  |
+**412** | The given job type etag does not match the job type etag on the Manager. This is likely due to the client caching the job type for too long.  |  -  |
+**0** | Error message |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **submit_job_check**
+> submit_job_check(submitted_job)
+
+Submit a new job for Flamenco Manager to check.
+
+### Example
+
+
+```python
+import time
+import flamenco.manager
+from flamenco.manager.api import jobs_api
+from flamenco.manager.model.submitted_job import SubmittedJob
+from flamenco.manager.model.error import Error
+from pprint import pprint
+# Defining the host is optional and defaults to http://localhost
+# See configuration.py for a list of all supported configuration parameters.
+configuration = flamenco.manager.Configuration(
+    host = "http://localhost"
+)
+
+
+# Enter a context with an instance of the API client
+with flamenco.manager.ApiClient() as api_client:
+    # Create an instance of the API class
+    api_instance = jobs_api.JobsApi(api_client)
+    submitted_job = SubmittedJob(
+        name="name_example",
+        type="type_example",
+        type_etag="type_etag_example",
+        priority=50,
+        settings=JobSettings(),
+        metadata=JobMetadata(
+            key="key_example",
+        ),
+        submitter_platform="submitter_platform_example",
+    ) # SubmittedJob | Job to check
+
+    # example passing only required values which don't have defaults set
+    try:
+        # Submit a new job for Flamenco Manager to check.
+        api_instance.submit_job_check(submitted_job)
+    except flamenco.manager.ApiException as e:
+        print("Exception when calling JobsApi->submit_job_check: %s\n" % e)
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **submitted_job** | [**SubmittedJob**](SubmittedJob.md)| Job to check |
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**204** | Job was succesfully compiled into individual tasks. The job and tasks have NOT been stored in the database, though. |  -  |
 **412** | The given job type etag does not match the job type etag on the Manager. This is likely due to the client caching the job type for too long.  |  -  |
 **0** | Error message |  -  |
 

@@ -792,6 +792,9 @@ type SaveSetupAssistantConfigJSONBody SetupAssistantConfig
 // SubmitJobJSONBody defines parameters for SubmitJob.
 type SubmitJobJSONBody SubmittedJob
 
+// SubmitJobCheckJSONBody defines parameters for SubmitJobCheck.
+type SubmitJobCheckJSONBody SubmittedJob
+
 // QueryJobsJSONBody defines parameters for QueryJobs.
 type QueryJobsJSONBody JobsQuery
 
@@ -851,6 +854,9 @@ type SaveSetupAssistantConfigJSONRequestBody SaveSetupAssistantConfigJSONBody
 
 // SubmitJobJSONRequestBody defines body for SubmitJob for application/json ContentType.
 type SubmitJobJSONRequestBody SubmitJobJSONBody
+
+// SubmitJobCheckJSONRequestBody defines body for SubmitJobCheck for application/json ContentType.
+type SubmitJobCheckJSONRequestBody SubmitJobCheckJSONBody
 
 // QueryJobsJSONRequestBody defines body for QueryJobs for application/json ContentType.
 type QueryJobsJSONRequestBody QueryJobsJSONBody

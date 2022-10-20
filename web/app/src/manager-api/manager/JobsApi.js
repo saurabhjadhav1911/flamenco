@@ -786,4 +786,49 @@ export default class JobsApi {
     }
 
 
+    /**
+     * Submit a new job for Flamenco Manager to check.
+     * @param {module:model/SubmittedJob} submittedJob Job to check
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    submitJobCheckWithHttpInfo(submittedJob) {
+      let postBody = submittedJob;
+      // verify the required parameter 'submittedJob' is set
+      if (submittedJob === undefined || submittedJob === null) {
+        throw new Error("Missing the required parameter 'submittedJob' when calling submitJobCheck");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/api/v3/jobs/check', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Submit a new job for Flamenco Manager to check.
+     * @param {module:model/SubmittedJob} submittedJob Job to check
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    submitJobCheck(submittedJob) {
+      return this.submitJobCheckWithHttpInfo(submittedJob)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
 }
