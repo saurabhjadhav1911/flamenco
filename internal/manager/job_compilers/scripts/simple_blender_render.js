@@ -24,6 +24,8 @@ const JOB_TYPE = {
         { key: "format", type: "string", required: true, eval: "C.scene.render.image_settings.file_format", visible: "web" },
         { key: "image_file_extension", type: "string", required: true, eval: "C.scene.render.file_extension", visible: "hidden",
           description: "File extension used when rendering images" },
+        { key: "has_previews", type: "bool", required: false, eval: "C.scene.render.image_settings.use_preview", visible: "web",
+          description: "Whether Blender will render preview images."},
     ]
 };
 
@@ -112,7 +114,7 @@ function authorRenderTasks(settings, renderDir, renderOutput) {
 }
 
 function authorCreateVideoTask(settings, renderDir) {
-    if (ffmpegIncompatibleImageFormats.has(settings.format)) {
+    if (!settings.has_previews && ffmpegIncompatibleImageFormats.has(settings.format)) {
         print("Not authoring video task, FFmpeg-incompatible render output")
         return;
     }
