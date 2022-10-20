@@ -197,7 +197,7 @@ func TestReplaceTwoWayVariables(t *testing.T) {
 		replaced := varReplSubmittedJob()
 		replaced.Settings = nil
 		replaced.Metadata = nil
-		replaceTwoWayVariables(&c, replaced)
+		replaceTwoWayVariables(&c, &replaced)
 
 		assert.Equal(t, original.Type, replaced.Type, "two-way variable replacement shouldn't happen on the Type property")
 		assert.Equal(t, original.Name, replaced.Name, "two-way variable replacement shouldn't happen on the Name property")
@@ -211,7 +211,7 @@ func TestReplaceTwoWayVariables(t *testing.T) {
 	{
 		original := varReplSubmittedJob()
 		replaced := jsonWash(varReplSubmittedJob())
-		replaceTwoWayVariables(&c, replaced)
+		replaceTwoWayVariables(&c, &replaced)
 
 		expectSettings := map[string]interface{}{
 			"blender_cmd":           "{blender}",

@@ -89,7 +89,7 @@ func (f *Flamenco) SubmitJob(e echo.Context) error {
 
 	// Before compiling the job, replace the two-way variables. This ensures all
 	// the tasks also use those.
-	replaceTwoWayVariables(f.config, submittedJob)
+	replaceTwoWayVariables(f.config, &submittedJob)
 
 	authoredJob, err := f.jobCompiler.Compile(ctx, submittedJob)
 	switch {

@@ -77,7 +77,7 @@ func replaceTaskVariables(replacer VariableReplacer, task api.AssignedTask, work
 // `{render}/output.png`
 //
 // NOTE: this updates the job in place.
-func replaceTwoWayVariables(replacer VariableReplacer, job api.SubmittedJob) {
+func replaceTwoWayVariables(replacer VariableReplacer, job *api.SubmittedJob) {
 	feeder := make(chan string, 1)
 	receiver := make(chan string, 1)
 
