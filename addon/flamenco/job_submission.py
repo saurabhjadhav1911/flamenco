@@ -30,6 +30,7 @@ BLENDFILE_SETTING_KEY = "blendfile"
 
 log = logging.getLogger(__name__)
 
+
 def job_for_scene(scene: bpy.types.Scene) -> Optional[_SubmittedJob]:
     from flamenco.manager.models import SubmittedJob, JobMetadata
 

@@ -13,6 +13,7 @@ from typing import Iterator, Iterable
 _my_dir = Path(__file__).parent
 _log = logging.getLogger(__name__)
 
+
 def load_wheel(module_name: str, submodules: Iterable[str]) -> list[ModuleType]:
     """Loads modules from a wheel file 'module_name*.whl'.
 
@@ -46,8 +47,9 @@ def load_wheel(module_name: str, submodules: Iterable[str]) -> list[ModuleType]:
             loaded_modules.append(module)
             _log.info("Loaded %s from %s", modname, module.__file__)
 
-    assert len(loaded_modules) == len(to_load), \
-        f"expecting to load {len(to_load)} modules, but only have {len(loaded_modules)}: {loaded_modules}"
+    assert len(loaded_modules) == len(
+        to_load
+    ), f"expecting to load {len(to_load)} modules, but only have {len(loaded_modules)}: {loaded_modules}"
     return loaded_modules
 
 

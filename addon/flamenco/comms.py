@@ -128,7 +128,8 @@ def ping_manager(
     try:
         version: FlamencoVersion = meta_api.get_version()
         storage: SharedStorageLocation = meta_api.get_shared_storage(
-            "users", platform.system().lower())
+            "users", platform.system().lower()
+        )
     except ApiException as ex:
         error = "Manager cannot be reached: %s" % ex
     except MaxRetryError as ex:

@@ -596,5 +596,5 @@ def parse_api_error(api_client: _ApiClient, ex: _ApiException) -> _Error:
     response = MockResponse()
     response.data = ex.body
 
-    error: _Error = api_client.deserialize(response, (Error, ), True)
+    error: _Error = api_client.deserialize(response, (Error,), True)
     return error

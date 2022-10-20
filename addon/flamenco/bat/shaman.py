@@ -506,6 +506,7 @@ def _root_path() -> PurePath:
         return PureWindowsPath("X:/")
     return PurePosixPath("/")
 
+
 def _root_path_strip(path: PurePath) -> PurePosixPath:
     """Strip off the leading / (POSIX) and drive letter (Windows).
 
