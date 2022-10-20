@@ -24,7 +24,7 @@ const JOB_TYPE = {
         { key: "format", type: "string", required: true, eval: "C.scene.render.image_settings.file_format", visible: "web" },
         { key: "image_file_extension", type: "string", required: true, eval: "C.scene.render.file_extension", visible: "hidden",
           description: "File extension used when rendering images" },
-        { key: "has_previews", type: "bool", required: false, eval: "C.scene.render.image_settings.use_preview", visible: "web",
+        { key: "has_previews", type: "bool", required: false, eval: "C.scene.render.image_settings.use_preview", visible: "hidden",
           description: "Whether Blender will render preview images."},
     ]
 };
