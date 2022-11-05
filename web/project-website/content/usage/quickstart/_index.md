@@ -27,3 +27,10 @@ Curious about [what changed since the last major release][what-is-new]?
 
 [what-is-new]: {{< ref "what-is-new" >}}
 [download]: {{< ref "download" >}}
+
+## Blender Conference 2022 presentation
+
+In this presentation Sybren explains the use of Flamenco, and dives a bit deeper
+into the storage options and the custom job types.
+
+{{< youtube shIDWVSTGe4 >}}
