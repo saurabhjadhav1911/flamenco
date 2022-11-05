@@ -19,10 +19,6 @@ In broad terms, to render with Flamenco, follow these steps:
 
 {{< youtube O728EFaXuBk >}}
 
-## Setup Flamenco in 5 minutes on Linux and macOS
-
-Videos coming soon!
-
 Curious about [what changed since the last major release][what-is-new]?
 
 [what-is-new]: {{< ref "what-is-new" >}}
