@@ -161,6 +161,11 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             self.report({"WARNING"}, err)
             return {"CANCELLED"}
 
+        if not context.blend_data.filepath:
+            # The file path needs to be known before the file can be submitted.
+            self.report({"ERROR"}, "Please save your .blend file before submitting to Flamenco")
+            return {"CANCELLED"}
+
         filepath = self._save_blendfile(context)
 
         # Check the job with the Manager, to see if it would be accepted.
