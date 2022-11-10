@@ -114,7 +114,8 @@ function authorRenderTasks(settings, renderDir, renderOutput) {
 }
 
 function authorCreateVideoTask(settings, renderDir) {
-    if (!settings.has_previews && ffmpegIncompatibleImageFormats.has(settings.format)) {
+    const needsPreviews = ffmpegIncompatibleImageFormats.has(settings.format);
+    if (needsPreviews && !settings.has_previews) {
         print("Not authoring video task, FFmpeg-incompatible render output")
         return;
     }
@@ -125,7 +126,7 @@ function authorCreateVideoTask(settings, renderDir) {
 
     const stem = path.stem(settings.blendfile).replace('.flamenco', '');
     const outfile = path.join(renderDir, `${stem}-${settings.frames}.mp4`);
-    const outfileExt = settings.has_previews ? ".jpg" : settings.image_file_extension;
+    const outfileExt = needsPreviews ? ".jpg" : settings.image_file_extension;
 
     const task = author.Task('preview-video', 'ffmpeg');
     const command = author.Command("frames-to-video", {
