@@ -125,4 +125,4 @@ enable the race condition checker, and all other kinds of useful things.
 
 If you're interested in helping out with Flamenco development, please read [Get Involved!][get-involved]
 
-[get-involved]: {{ <ref "development/get-involved" >}}
+[get-involved]: {{<ref "development/get-involved" >}}
