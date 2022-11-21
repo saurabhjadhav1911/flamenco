@@ -9,6 +9,7 @@ Join the community on the [#flamenco channel][chat] of Blender Chat do discuss
 development topics. New faces are always welcome!
 
 {{< button size="large" relref="/development/getting-started" >}}Get Started Developing Flamenco{{< /button >}}
+{{< button size="large" ref="https://developer.blender.org/maniphest/task/edit/form/14/?tags=Flamenco" >}}Report a Bug{{< /button >}}
 
 If you want to know what kind of work can be done, take a look at the
 [workboard][workboard].
