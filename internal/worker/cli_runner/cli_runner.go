@@ -12,8 +12,9 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// The buffer size used to read stdout/stderr output from subprocesses.
-// Effectively this determines the maximum line length that can be handled.
+// The buffer size used to read stdout/stderr output from subprocesses, in
+// bytes. Effectively this determines the maximum line length that can be
+// handled in one go. Lines that are longer will be broken up.
 const StdoutBufferSize = 40 * 1024
 
 // CLIRunner is a wrapper around exec.CommandContext() to allow mocking.
@@ -60,6 +61,12 @@ func (cli *CLIRunner) RunWithTextOutput(
 	// of simply returning, because the function must be run to completion in
 	// order to wait for processes (and not create defunct ones).
 	var returnErr error = nil
+
+	// If a line longer than our buffer is received, it will be trimmed to the
+	// bufffer length. This means that it may not end on a valid character
+	// boundary. Any leftover bytes are collected here, and prepended to the next
+	// line.
+	leftovers := []byte{}
 readloop:
 	for {
 		lineBytes, isPrefix, readErr := reader.ReadLine()
@@ -73,12 +80,24 @@ readloop:
 			break readloop
 		}
 
+		// Prepend any leftovers from the previous line to the received bytes.
+		if len(leftovers) > 0 {
+			lineBytes = append(leftovers, lineBytes...)
+			leftovers = []byte{}
+		}
+		// Make sure long lines are broken on character boundaries.
+		lineBytes, leftovers = splitOnCharacterBoundary(lineBytes)
+
 		line := string(lineBytes)
 		if isPrefix {
+			prefix := []rune(line)
+			if len(prefix) > 256 {
+				prefix = prefix[:256]
+			}
 			logger.Warn().
-				Str("line", fmt.Sprintf("%s...", line[:256])).
-				Int("lineLength", len(line)).
-				Msg("unexpectedly long line read, truncating")
+				Str("line", fmt.Sprintf("%s...", string(prefix))).
+				Int("bytesRead", len(lineBytes)).
+				Msg("unexpectedly long line read, will be split up")
 		}
 
 		logger.Debug().Msg(line)
