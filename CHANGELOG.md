@@ -9,6 +9,7 @@ bugs in actually-released versions.
 - When rendering EXR files, use Blender's preview JPEG files to generate the preview video ([43bc22f10fae](https://developer.blender.org/rF43bc22f10fae0fcaed6a4a3b3ace1be617193e21)).
 - Fix issue where workers would switch immediately on a state change request, even if it was of the "after task is finished" kind.
 - Add-on: Do a "pre-submission check" before sending files to the farm. This should provide submission errors earlier in the process, without waiting for files to be collected.
+- Worker: better handling of long lines from Blender/FFmpeg, splitting them up at character boundaries.
 
 
 ## 3.1 - released 2022-10-18
