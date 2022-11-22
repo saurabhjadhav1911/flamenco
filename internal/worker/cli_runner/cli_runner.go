@@ -51,8 +51,8 @@ func (cli *CLIRunner) RunWithTextOutput(
 		return err
 	}
 
-	blenderPID := execCmd.Process.Pid
-	logger = logger.With().Int("pid", blenderPID).Logger()
+	subprocPID := execCmd.Process.Pid
+	logger = logger.With().Int("pid", subprocPID).Logger()
 
 	reader := bufio.NewReaderSize(outPipe, StdoutBufferSize)
 
@@ -105,7 +105,7 @@ readloop:
 			lineChannel <- line
 		}
 
-		if err := logChunker.Append(ctx, fmt.Sprintf("pid=%d > %s", blenderPID, line)); err != nil {
+		if err := logChunker.Append(ctx, fmt.Sprintf("pid=%d > %s", subprocPID, line)); err != nil {
 			returnErr = fmt.Errorf("appending log entry to log chunker: %w", err)
 			break readloop
 		}
