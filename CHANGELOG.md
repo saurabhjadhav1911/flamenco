@@ -10,7 +10,7 @@ bugs in actually-released versions.
 - Fix issue where workers would switch immediately on a state change request, even if it was of the "after task is finished" kind.
 - Add-on: Do a "pre-submission check" before sending files to the farm. This should provide submission errors earlier in the process, without waiting for files to be collected.
 - Worker: better handling of long lines from Blender/FFmpeg, splitting them up at character boundaries.
-
+- Manager: change SQLite parameters to have write-through-log journalling and less filesystem synchronisation. This reduces I/O load on the Manager.
 
 ## 3.1 - released 2022-10-18
 

@@ -97,6 +97,17 @@ func openDBWithConfig(dsn string, config *gorm.Config) (*DB, error) {
 		log.Error().Msg("SQLite database does not want to enable foreign keys, this may cause data loss")
 	}
 
+	// Write-ahead-log journal may improve writing speed.
+	log.Trace().Msg("enabling SQLite write-ahead-log journal mode")
+	if tx := gormDB.Exec("PRAGMA journal_mode = WAL"); tx.Error != nil {
+		return nil, fmt.Errorf("enabling SQLite write-ahead-log journal mode: %w", tx.Error)
+	}
+	// Switching from 'full' (default) to 'normal' sync may improve writing speed.
+	log.Trace().Msg("enabling SQLite 'normal' synchronisation")
+	if tx := gormDB.Exec("PRAGMA synchronous = normal"); tx.Error != nil {
+		return nil, fmt.Errorf("enabling SQLite 'normal' sync mode: %w", tx.Error)
+	}
+
 	db := DB{
 		gormDB: gormDB,
 	}
