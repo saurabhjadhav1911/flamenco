@@ -58,7 +58,7 @@ If you have this working, please [share your job compiler script with us][getinv
 [getinvolved]: {{< ref "development/get-involved" >}}
 
 
-# Can I use SyncThing, Dropbox, Google Drive, or other file syncing software?
+## Can I use SyncThing, Dropbox, Google Drive, or other file syncing software?
 
 Flamenco assumes that once a file has been written by one worker, it is
 immediately available to any other worker, like what you'd get with a NAS.
