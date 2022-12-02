@@ -11,6 +11,7 @@ bugs in actually-released versions.
 - Add-on: Do a "pre-submission check" before sending files to the farm. This should provide submission errors earlier in the process, without waiting for files to be collected.
 - Worker: better handling of long lines from Blender/FFmpeg, splitting them up at character boundaries.
 - Manager: change SQLite parameters to have write-through-log journalling and less filesystem synchronisation. This reduces I/O load on the Manager.
+- Add-on: Set Blender's experimental flag `use_all_linked_data_direct` to `True` on submitted files, to work around a shortcoming in BAT. See [Blender commit b8c7e93a6504](https://developer.blender.org/rBb8c7e93a6504833ee1e617523dfe2921c4fd0816) for the introduction of that flag.
 
 ## 3.1 - released 2022-10-18
 

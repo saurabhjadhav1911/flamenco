@@ -252,11 +252,15 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         We can compress, since this file won't be managed by SVN and doesn't need diffability.
         """
         render = context.scene.render
+        prefs = context.preferences
 
         # Remember settings we need to restore after saving.
         old_use_file_extension = render.use_file_extension
         old_use_overwrite = render.use_overwrite
         old_use_placeholder = render.use_placeholder
+        old_use_all_linked_data_direct = getattr(
+            prefs.experimental, "use_all_linked_data_direct", None
+        )
 
         # TODO: see about disabling the denoiser (like the old Blender Cloud addon did).
 
@@ -269,6 +273,17 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             render.use_overwrite = False
             render.use_placeholder = False
 
+            # To work around a shortcoming of BAT, ensure that all
+            # indirectly-linked data is still saved as directly-linked.
+            #
+            # See `133dde41bb5b: Improve handling of (in)direclty linked status
+            # for linked IDs` in Blender's Git repository.
+            if old_use_all_linked_data_direct is not None:
+                self.log.info(
+                    "Overriding prefs.experimental.use_all_linked_data_direct = True"
+                )
+                prefs.experimental.use_all_linked_data_direct = True
+
             filepath = Path(context.blend_data.filepath).with_suffix(".flamenco.blend")
             self.log.info("Saving copy to temporary file %s", filepath)
             bpy.ops.wm.save_as_mainfile(
@@ -280,6 +295,12 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             render.use_file_extension = old_use_file_extension
             render.use_overwrite = old_use_overwrite
             render.use_placeholder = old_use_placeholder
+
+            # Only restore if the property exists to begin with:
+            if old_use_all_linked_data_direct is not None:
+                prefs.experimental.use_all_linked_data_direct = (
+                    old_use_all_linked_data_direct
+                )
 
         return filepath
 
