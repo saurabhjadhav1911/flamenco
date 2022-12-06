@@ -30,16 +30,6 @@ variables:
 Whenever a Worker gets a task that contains `{blender}`, that'll be replaced by
 the appropriate value for that worker.
 
-{{< expand "Custom Job Types" >}}
-This documentation section focuses on pre-existing variables, `blender` and
-`blenderArgs`. There is nothing special about these. Apart from being part of
-Flamenco's default configuration, that is. When you go the more advanced route
-of creating your own [custom job types][jobtypes] you're free to create your own
-set of variables to suit your needs.
-
-[jobtypes]: {{< ref "usage/job-types" >}}
-{{< /expand >}}
-
 ## Platform
 
 **The goal of the variables system is to cater for different platforms.**
@@ -64,3 +54,13 @@ might be different from where users go to pick them up.
 - `users`: values are used when submitting jobs from Blender and showing them in
   the web interface.
 - `workers`: values that are used when sending tasks to workers.
+
+## Custom Job Types
+
+This documentation section focuses on pre-existing variables, `blender` and
+`blenderArgs`. There is nothing special about these. Apart from being part of
+Flamenco's default configuration, that is. When you go the more advanced route
+of creating your own [custom job types][jobtypes] you're free to create your own
+set of variables to suit your needs.
+
+[jobtypes]: {{< ref "usage/job-types" >}}
