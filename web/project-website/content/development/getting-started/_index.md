@@ -24,9 +24,9 @@ Most of Flamenco is made in Go.
 
 ## 2. Installing NodeJS
 
-The web UI is built with Vue, Bootstrap, and Socket.IO for communication with
-the backend. **NodeJS+Yarn** is used to collect all of those and build the
-frontend files.
+The web UI is built with [Vue.js](https://vuejs.org/), and Socket.IO for
+communication with the backend. **NodeJS+Yarn** is used to collect all of those
+and build the frontend files.
 
 {{< tabs "installing-nodejs" >}}
 {{< tab "Linux" >}}
