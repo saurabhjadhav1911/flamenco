@@ -40,7 +40,25 @@ on the platform. The variables system allows you to configure this.
 The platform can be `windows`, `linux`, or `darwin` for macOS. Other platforms
 are also allowed, if you happen to use them in your farm.
 
-## Audience
+## Two-way Variables for Mixed-platform Farms
+
+Variables are not just used to point to specific things, like `blender` above.
+They can also tell Flamenco that the path `/media/shared/flamenco` on Linux is
+the same as `S:\flamenco` on Windows, or `/Volumes/shared/flamenco` on macOS.
+This is documented further in [Two-way Variables for Multi-Platform Support][two-way].
+
+## Custom Job Types
+
+This documentation section focuses on pre-existing variables, `blender` and
+`blenderArgs`. There is nothing special about these. Apart from being part of
+Flamenco's default configuration, that is. When you go the more advanced route
+of creating your own [custom job types][jobtypes] you're free to create your own
+set of variables to suit your needs.
+
+[jobtypes]: {{< ref "usage/job-types" >}}
+[two-way]: {{< ref "usage/variables/multi-platform" >}}
+
+## Advanced: Audience
 
 The audience of a value is who that value is for: `workers`, `users`, or `all`
 if there is no difference in value for workers and users.
@@ -54,13 +72,3 @@ might be different from where users go to pick them up.
 - `users`: values are used when submitting jobs from Blender and showing them in
   the web interface.
 - `workers`: values that are used when sending tasks to workers.
-
-## Custom Job Types
-
-This documentation section focuses on pre-existing variables, `blender` and
-`blenderArgs`. There is nothing special about these. Apart from being part of
-Flamenco's default configuration, that is. When you go the more advanced route
-of creating your own [custom job types][jobtypes] you're free to create your own
-set of variables to suit your needs.
-
-[jobtypes]: {{< ref "usage/job-types" >}}
