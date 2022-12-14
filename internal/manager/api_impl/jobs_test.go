@@ -14,6 +14,7 @@ import (
 	"git.blender.org/flamenco/internal/manager/last_rendered"
 	"git.blender.org/flamenco/internal/manager/persistence"
 	"git.blender.org/flamenco/pkg/api"
+	"git.blender.org/flamenco/pkg/moremock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -408,7 +409,9 @@ func TestSetJobPrio_nonexistentJob(t *testing.T) {
 	jobID := "18a9b096-d77e-438c-9be2-74397038298b"
 	prioUpdate := api.JobPriorityChange{Priority: 47}
 
-	mf.persistence.EXPECT().FetchJob(gomock.Any(), jobID).Return(nil, persistence.ErrJobNotFound)
+	mf.persistence.EXPECT().
+		FetchJob(moremock.ContextWithDeadline(), jobID).
+		Return(nil, persistence.ErrJobNotFound)
 
 	// Do the call.
 	echoCtx := mf.prepareMockedJSONRequest(prioUpdate)
@@ -438,7 +441,7 @@ func TestSetJobPrio(t *testing.T) {
 
 	// Set up expectations.
 	ctx := echoCtx.Request().Context()
-	mf.persistence.EXPECT().FetchJob(ctx, jobID).Return(&dbJob, nil).AnyTimes()
+	mf.persistence.EXPECT().FetchJob(moremock.ContextWithDeadline(), jobID).Return(&dbJob, nil).AnyTimes()
 	jobWithNewPrio := dbJob
 	jobWithNewPrio.Priority = 47
 	mf.persistence.EXPECT().SaveJobPriority(gomock.Not(ctx), &jobWithNewPrio)
@@ -482,7 +485,7 @@ func TestSetJobStatusFailedToRequeueing(t *testing.T) {
 	// Set up expectations.
 	echoCtx := mf.prepareMockedJSONRequest(statusUpdate)
 	ctx := echoCtx.Request().Context()
-	mf.persistence.EXPECT().FetchJob(ctx, jobID).Return(&dbJob, nil)
+	mf.persistence.EXPECT().FetchJob(moremock.ContextWithDeadline(), jobID).Return(&dbJob, nil)
 	mf.stateMachine.EXPECT().JobStatusChange(ctx, &dbJob, statusUpdate.Status, "someone pushed a button")
 	mf.persistence.EXPECT().ClearFailureListOfJob(ctx, &dbJob)
 	mf.persistence.EXPECT().ClearJobBlocklist(ctx, &dbJob)

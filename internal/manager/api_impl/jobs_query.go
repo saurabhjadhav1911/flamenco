@@ -18,10 +18,8 @@ import (
 // to the HTTP client if it cannot. Returns `nil` in the latter case, and the
 // error returned can then be returned from the Echo handler function.
 func (f *Flamenco) fetchJob(e echo.Context, logger zerolog.Logger, jobID string) (*persistence.Job, error) {
-	// TODO: use a timeout for fetching jobs.
-	// ctx, cancel := context.WithTimeout(e.Request().Context(), fetchJobTimeout)
-	// defer cancel()
-	ctx := e.Request().Context()
+	ctx, cancel := context.WithTimeout(e.Request().Context(), fetchJobTimeout)
+	defer cancel()
 
 	if !uuid.IsValid(jobID) {
 		logger.Debug().Msg("invalid job ID received")
