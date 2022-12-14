@@ -2,34 +2,59 @@
 package api_impl
 
 import (
+	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog"
 
 	"git.blender.org/flamenco/internal/manager/persistence"
 	"git.blender.org/flamenco/internal/uuid"
 	"git.blender.org/flamenco/pkg/api"
 )
 
+// fetchJob fetches the job from the database, and sends the appropriate error
+// to the HTTP client if it cannot. Returns `nil` in the latter case, and the
+// error returned can then be returned from the Echo handler function.
+func (f *Flamenco) fetchJob(e echo.Context, logger zerolog.Logger, jobID string) (*persistence.Job, error) {
+	// TODO: use a timeout for fetching jobs.
+	// ctx, cancel := context.WithTimeout(e.Request().Context(), fetchJobTimeout)
+	// defer cancel()
+	ctx := e.Request().Context()
+
+	if !uuid.IsValid(jobID) {
+		logger.Debug().Msg("invalid job ID received")
+		return nil, sendAPIError(e, http.StatusBadRequest, "job ID not valid")
+	}
+
+	logger.Debug().Msg("fetching job")
+	dbJob, err := f.persist.FetchJob(ctx, jobID)
+	if err != nil {
+		switch {
+		case errors.Is(err, persistence.ErrJobNotFound):
+			return nil, sendAPIError(e, http.StatusNotFound, "no such job")
+		case errors.Is(err, context.DeadlineExceeded):
+			logger.Error().Err(err).Msg("timeout fetching job from database")
+			return nil, sendAPIError(e, http.StatusInternalServerError, "timeout fetching job from database")
+		default:
+			logger.Error().Err(err).Msg("error fetching job")
+			return nil, sendAPIError(e, http.StatusInternalServerError, "error fetching job")
+		}
+	}
+
+	return dbJob, nil
+}
+
 func (f *Flamenco) FetchJob(e echo.Context, jobID string) error {
 	logger := requestLogger(e).With().
 		Str("job", jobID).
 		Logger()
 
-	if !uuid.IsValid(jobID) {
-		logger.Debug().Msg("invalid job ID received")
-		return sendAPIError(e, http.StatusBadRequest, "job ID not valid")
-	}
-
-	logger.Debug().Msg("fetching job")
-
-	ctx := e.Request().Context()
-	dbJob, err := f.persist.FetchJob(ctx, jobID)
-	if err != nil {
-		logger.Warn().Err(err).Msg("cannot fetch job")
-		return sendAPIError(e, http.StatusNotFound, fmt.Sprintf("job %+v not found", jobID))
+	dbJob, err := f.fetchJob(e, logger, jobID)
+	if dbJob == nil {
+		// f.fetchJob already sent a response.
+		return err
 	}
 
 	apiJob := jobDBtoAPI(dbJob)

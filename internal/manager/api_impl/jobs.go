@@ -162,10 +162,9 @@ func (f *Flamenco) compileSubmittedJob(ctx context.Context, logger zerolog.Logge
 
 // SetJobStatus is used by the web interface to change a job's status.
 func (f *Flamenco) SetJobStatus(e echo.Context, jobID string) error {
-	logger := requestLogger(e)
-	ctx := e.Request().Context()
-
-	logger = logger.With().Str("job", jobID).Logger()
+	logger := requestLogger(e).With().
+		Str("job", jobID).
+		Logger()
 
 	var statusChange api.SetJobStatusJSONRequestBody
 	if err := e.Bind(&statusChange); err != nil {
@@ -173,13 +172,10 @@ func (f *Flamenco) SetJobStatus(e echo.Context, jobID string) error {
 		return sendAPIError(e, http.StatusBadRequest, "invalid format")
 	}
 
-	dbJob, err := f.persist.FetchJob(ctx, jobID)
-	if err != nil {
-		if errors.Is(err, persistence.ErrJobNotFound) {
-			return sendAPIError(e, http.StatusNotFound, "no such job")
-		}
-		logger.Error().Err(err).Msg("error fetching job")
-		return sendAPIError(e, http.StatusInternalServerError, "error fetching job")
+	dbJob, err := f.fetchJob(e, logger, jobID)
+	if dbJob == nil {
+		// f.fetchJob already sent a response.
+		return err
 	}
 
 	logger = logger.With().
@@ -189,6 +185,7 @@ func (f *Flamenco) SetJobStatus(e echo.Context, jobID string) error {
 		Logger()
 	logger.Info().Msg("job status change requested")
 
+	ctx := e.Request().Context()
 	err = f.stateMachine.JobStatusChange(ctx, dbJob, statusChange.Status, statusChange.Reason)
 	if err != nil {
 		logger.Error().Err(err).Msg("error changing job status")
@@ -215,10 +212,9 @@ func (f *Flamenco) SetJobStatus(e echo.Context, jobID string) error {
 
 // SetJobPriority is used by the web interface to change a job's priority.
 func (f *Flamenco) SetJobPriority(e echo.Context, jobID string) error {
-	logger := requestLogger(e)
-	ctx := e.Request().Context()
-
-	logger = logger.With().Str("job", jobID).Logger()
+	logger := requestLogger(e).With().
+		Str("job", jobID).
+		Logger()
 
 	var prioChange api.SetJobPriorityJSONRequestBody
 	if err := e.Bind(&prioChange); err != nil {
@@ -226,13 +222,10 @@ func (f *Flamenco) SetJobPriority(e echo.Context, jobID string) error {
 		return sendAPIError(e, http.StatusBadRequest, "invalid format")
 	}
 
-	dbJob, err := f.persist.FetchJob(ctx, jobID)
-	if err != nil {
-		if errors.Is(err, persistence.ErrJobNotFound) {
-			return sendAPIError(e, http.StatusNotFound, "no such job")
-		}
-		logger.Error().Err(err).Msg("error fetching job")
-		return sendAPIError(e, http.StatusInternalServerError, "error fetching job")
+	dbJob, err := f.fetchJob(e, logger, jobID)
+	if dbJob == nil {
+		// f.fetchJob already sent a response.
+		return err
 	}
 
 	logger = logger.With().
