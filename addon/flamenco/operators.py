@@ -451,13 +451,13 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         self.blendfile_on_farm = bpathlib.make_absolute(blendfile)
         self._submit_job(context)
 
-    def _prepare_job_for_submission(self, context: bpy.types.Context) -> None:
+    def _prepare_job_for_submission(self, context: bpy.types.Context) -> bool:
         """Prepare self.job for sending to Flamenco."""
 
         self.job = job_submission.job_for_scene(context.scene)
         if self.job is None:
             self.report({"ERROR"}, "Unable to create job")
-            return {"CANCELLED"}
+            return False
 
         propgroup = getattr(context.scene, "flamenco_job_settings", None)
         assert isinstance(propgroup, JobTypePropertyGroup), "did not expect %s" % (
@@ -469,6 +469,9 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             propgroup.job_type, self.job, self.blendfile_on_farm
         )
 
+
+        return True
+
     def _submit_job(self, context: bpy.types.Context) -> None:
         """Use the Flamenco API to submit the new Job."""
         assert self.job is not None
@@ -476,7 +479,8 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
 
         from flamenco.manager import ApiException
 
-        self._prepare_job_for_submission(context)
+        if not self._prepare_job_for_submission(context):
+            return
 
         api_client = self.get_api_client(context)
         try:
@@ -510,7 +514,9 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         """
         from flamenco.manager import ApiException
 
-        self._prepare_job_for_submission(context)
+        if not self._prepare_job_for_submission(context):
+            return False
+        assert self.job is not None
 
         api_client = self.get_api_client(context)
         try:
