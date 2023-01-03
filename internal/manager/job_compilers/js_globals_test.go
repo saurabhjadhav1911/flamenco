@@ -42,6 +42,12 @@ func TestFrameChunkerHappyExtraWhitespace(t *testing.T) {
 	assert.Equal(t, []string{"1-4", "5-8", "9,10,20,21", "22-25", "40"}, chunks)
 }
 
+func TestFrameChunkerUnhappy(t *testing.T) {
+	_, err := jsFrameChunker(" 1 10", 4)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "1 10")
+}
+
 func TestFrameRangeExplode(t *testing.T) {
 	frames, err := frameRangeExplode("1..10,20..25,40")
 	assert.NoError(t, err)

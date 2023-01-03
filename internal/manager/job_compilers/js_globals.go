@@ -41,7 +41,7 @@ type ErrInvalidRange struct {
 
 func (e ErrInvalidRange) Error() string {
 	if e.err != nil {
-		return fmt.Sprintf("invalid range \"%v\":  %s (%s)", e.Range, e.Message, e.Error())
+		return fmt.Sprintf("invalid range \"%v\":  %s (%s)", e.Range, e.Message, e.err.Error())
 	}
 	return fmt.Sprintf("invalid range \"%v\": %s", e.Range, e.Message)
 }
