@@ -1592,6 +1592,7 @@ components:
             be interpreted as "the Manager's platform". This is mostly to make
             test/debug scripts easier, as they can use a static document on all
             platforms.
+        "storage": { $ref: "#/components/schemas/JobStorageInfo" }
       required: [name, type, priority, submitter_platform]
       example:
         type: "simple-blender-render"
@@ -1649,6 +1650,19 @@ components:
         "user.name": Sybren Stüvel
         "user.email": sybren@blender.org
         "project": "Sprite Fright"
+
+    JobStorageInfo:
+      type: object
+      description: >
+        Storage info of a job, which Flamenco can use to remove job-related
+        files when necessary.
+      properties:
+        "shaman_checkout_id":
+          type: string
+          description: >
+            'Checkout ID' used when creating the Shaman checkout for this job.
+            Aids in removing the checkout directory when the job is removed from
+            Flamenco.
 
     JobsQuery:
       type: object
