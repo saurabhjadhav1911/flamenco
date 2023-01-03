@@ -1,5 +1,7 @@
 *.exe
 *.sqlite
+*.sqlite-shm
+*.sqlite-wal
 *.db
 *.blend[0-9]
 *.flamenco.blend
