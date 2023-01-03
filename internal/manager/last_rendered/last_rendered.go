@@ -15,7 +15,7 @@ import (
 
 const (
 	// MaxImageSizeBytes is the maximum size in bytes allowed for to-be-processed images.
-	MaxImageSizeBytes int64 = 10 * 1024 * 1024
+	MaxImageSizeBytes int64 = 25 * 1024 * 1024
 
 	// queueSize determines how many images can be queued in memory before rejecting
 	// new requests to process.
