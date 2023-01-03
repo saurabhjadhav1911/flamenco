@@ -13,6 +13,9 @@ bugs in actually-released versions.
 - Manager: change SQLite parameters to have write-through-log journalling and less filesystem synchronisation. This reduces I/O load on the Manager.
 - Add-on: Set Blender's experimental flag `use_all_linked_data_direct` to `True` on submitted files, to work around a shortcoming in BAT. See [Blender commit b8c7e93a6504](https://developer.blender.org/rBb8c7e93a6504833ee1e617523dfe2921c4fd0816) for the introduction of that flag.
 - Bump the bundled Blender Asset Tracer (BAT) to version 1.15.
+- Increase preview image file size from 10 MB to 25 MB. Even though the Worker can down-scale render output before sending to the Manager as preview, they could still be larger than the limit of 10 MB.
+- Fix a crash of the Manager when using an invalid frame range (`1 10` for example, instead of `1-10` or `1,10`)
+
 
 ## 3.1 - released 2022-10-18
 
