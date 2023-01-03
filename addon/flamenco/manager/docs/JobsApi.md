@@ -1090,6 +1090,9 @@ with flamenco.manager.ApiClient() as api_client:
             key="key_example",
         ),
         submitter_platform="submitter_platform_example",
+        storage=JobStorageInfo(
+            shaman_checkout_id="shaman_checkout_id_example",
+        ),
     ) # SubmittedJob | Job to submit
 
     # example passing only required values which don't have defaults set
@@ -1168,6 +1171,9 @@ with flamenco.manager.ApiClient() as api_client:
             key="key_example",
         ),
         submitter_platform="submitter_platform_example",
+        storage=JobStorageInfo(
+            shaman_checkout_id="shaman_checkout_id_example",
+        ),
     ) # SubmittedJob | Job to check
 
     # example passing only required values which don't have defaults set

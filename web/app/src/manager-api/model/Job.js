@@ -14,6 +14,7 @@
 import ApiClient from '../ApiClient';
 import JobAllOf from './JobAllOf';
 import JobStatus from './JobStatus';
+import JobStorageInfo from './JobStorageInfo';
 import SubmittedJob from './SubmittedJob';
 
 /**
@@ -93,6 +94,9 @@ class Job {
             if (data.hasOwnProperty('submitter_platform')) {
                 obj['submitter_platform'] = ApiClient.convertToType(data['submitter_platform'], 'String');
             }
+            if (data.hasOwnProperty('storage')) {
+                obj['storage'] = JobStorageInfo.constructFromObject(data['storage']);
+            }
             if (data.hasOwnProperty('id')) {
                 obj['id'] = ApiClient.convertToType(data['id'], 'String');
             }
@@ -153,6 +157,11 @@ Job.prototype['metadata'] = undefined;
  * @member {String} submitter_platform
  */
 Job.prototype['submitter_platform'] = undefined;
+
+/**
+ * @member {module:model/JobStorageInfo} storage
+ */
+Job.prototype['storage'] = undefined;
 
 /**
  * UUID of the Job
@@ -217,6 +226,10 @@ SubmittedJob.prototype['metadata'] = undefined;
  * @member {String} submitter_platform
  */
 SubmittedJob.prototype['submitter_platform'] = undefined;
+/**
+ * @member {module:model/JobStorageInfo} storage
+ */
+SubmittedJob.prototype['storage'] = undefined;
 // Implement JobAllOf interface:
 /**
  * UUID of the Job

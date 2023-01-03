@@ -32,6 +32,7 @@ import JobLastRenderedImageInfo from './model/JobLastRenderedImageInfo';
 import JobPriorityChange from './model/JobPriorityChange';
 import JobStatus from './model/JobStatus';
 import JobStatusChange from './model/JobStatusChange';
+import JobStorageInfo from './model/JobStorageInfo';
 import JobTasksSummary from './model/JobTasksSummary';
 import JobsQuery from './model/JobsQuery';
 import JobsQueryResult from './model/JobsQueryResult';
@@ -240,6 +241,12 @@ export {
      * @property {module:model/JobStatusChange}
      */
     JobStatusChange,
+
+    /**
+     * The JobStorageInfo model constructor.
+     * @property {module:model/JobStorageInfo}
+     */
+    JobStorageInfo,
 
     /**
      * The JobTasksSummary model constructor.

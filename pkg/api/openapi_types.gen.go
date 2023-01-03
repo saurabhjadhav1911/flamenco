@@ -325,6 +325,12 @@ type JobStatusChange struct {
 	Status JobStatus `json:"status"`
 }
 
+// Storage info of a job, which Flamenco can use to remove job-related files when necessary.
+type JobStorageInfo struct {
+	// 'Checkout ID' used when creating the Shaman checkout for this job. Aids in removing the checkout directory when the job is removed from Flamenco.
+	ShamanCheckoutId *string `json:"shaman_checkout_id,omitempty"`
+}
+
 // Simplified list of tasks of a job. Contains all tasks, but not all info of each task.
 type JobTasksSummary struct {
 	Tasks *[]TaskSummary `json:"tasks,omitempty"`
@@ -605,6 +611,9 @@ type SubmittedJob struct {
 	Name     string       `json:"name"`
 	Priority int          `json:"priority"`
 	Settings *JobSettings `json:"settings,omitempty"`
+
+	// Storage info of a job, which Flamenco can use to remove job-related files when necessary.
+	Storage *JobStorageInfo `json:"storage,omitempty"`
 
 	// Operating system of the submitter. This is used to recognise two-way variables. This should be a lower-case version of the platform, like "linux", "windows", "darwin", "openbsd", etc. Should be ompatible with Go's `runtime.GOOS`; run `go tool dist list` to get a list of possible platforms.
 	// As a special case, the platform "manager" can be given, which will be interpreted as "the Manager's platform". This is mostly to make test/debug scripts easier, as they can use a static document on all platforms.

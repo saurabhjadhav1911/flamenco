@@ -32,8 +32,10 @@ from flamenco.manager.exceptions import ApiAttributeError
 def lazy_import():
     from flamenco.manager.model.job_metadata import JobMetadata
     from flamenco.manager.model.job_settings import JobSettings
+    from flamenco.manager.model.job_storage_info import JobStorageInfo
     globals()['JobMetadata'] = JobMetadata
     globals()['JobSettings'] = JobSettings
+    globals()['JobStorageInfo'] = JobStorageInfo
 
 
 class SubmittedJob(ModelNormal):
@@ -96,6 +98,7 @@ class SubmittedJob(ModelNormal):
             'type_etag': (str,),  # noqa: E501
             'settings': (JobSettings,),  # noqa: E501
             'metadata': (JobMetadata,),  # noqa: E501
+            'storage': (JobStorageInfo,),  # noqa: E501
         }
 
     @cached_property
@@ -111,6 +114,7 @@ class SubmittedJob(ModelNormal):
         'type_etag': 'type_etag',  # noqa: E501
         'settings': 'settings',  # noqa: E501
         'metadata': 'metadata',  # noqa: E501
+        'storage': 'storage',  # noqa: E501
     }
 
     read_only_vars = {
@@ -163,6 +167,7 @@ class SubmittedJob(ModelNormal):
             type_etag (str): Hash of the job type, copied from the `AvailableJobType.etag` property of the job type. The job will be rejected if this field doesn't match the actual job type on the Manager. This prevents job submission with old settings, after the job compiler script has been updated. If this field is ommitted, the check is bypassed. . [optional]  # noqa: E501
             settings (JobSettings): [optional]  # noqa: E501
             metadata (JobMetadata): [optional]  # noqa: E501
+            storage (JobStorageInfo): [optional]  # noqa: E501
         """
 
         priority = kwargs.get('priority', 50)
@@ -258,6 +263,7 @@ class SubmittedJob(ModelNormal):
             type_etag (str): Hash of the job type, copied from the `AvailableJobType.etag` property of the job type. The job will be rejected if this field doesn't match the actual job type on the Manager. This prevents job submission with old settings, after the job compiler script has been updated. If this field is ommitted, the check is bypassed. . [optional]  # noqa: E501
             settings (JobSettings): [optional]  # noqa: E501
             metadata (JobMetadata): [optional]  # noqa: E501
+            storage (JobStorageInfo): [optional]  # noqa: E501
         """
 
         priority = kwargs.get('priority', 50)

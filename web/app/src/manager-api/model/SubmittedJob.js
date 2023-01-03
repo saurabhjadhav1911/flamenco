@@ -12,6 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
+import JobStorageInfo from './JobStorageInfo';
 
 /**
  * The SubmittedJob model module.
@@ -77,6 +78,9 @@ class SubmittedJob {
             if (data.hasOwnProperty('submitter_platform')) {
                 obj['submitter_platform'] = ApiClient.convertToType(data['submitter_platform'], 'String');
             }
+            if (data.hasOwnProperty('storage')) {
+                obj['storage'] = JobStorageInfo.constructFromObject(data['storage']);
+            }
         }
         return obj;
     }
@@ -122,6 +126,11 @@ SubmittedJob.prototype['metadata'] = undefined;
  * @member {String} submitter_platform
  */
 SubmittedJob.prototype['submitter_platform'] = undefined;
+
+/**
+ * @member {module:model/JobStorageInfo} storage
+ */
+SubmittedJob.prototype['storage'] = undefined;
 
 
 

@@ -32,6 +32,7 @@ from flamenco.manager.model.job_priority_change import JobPriorityChange
 from flamenco.manager.model.job_settings import JobSettings
 from flamenco.manager.model.job_status import JobStatus
 from flamenco.manager.model.job_status_change import JobStatusChange
+from flamenco.manager.model.job_storage_info import JobStorageInfo
 from flamenco.manager.model.job_tasks_summary import JobTasksSummary
 from flamenco.manager.model.jobs_query import JobsQuery
 from flamenco.manager.model.jobs_query_result import JobsQueryResult
