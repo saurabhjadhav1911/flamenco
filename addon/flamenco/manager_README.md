@@ -59,13 +59,13 @@ configuration = flamenco.manager.Configuration(
 with flamenco.manager.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = jobs_api.JobsApi(api_client)
-    
+    job_id = "job_id_example" # str | 
+
     try:
-        # Get the URL that serves the last-rendered images.
-        api_response = api_instance.fetch_global_last_rendered_info()
-        pprint(api_response)
+        # Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet). 
+        api_instance.delete_job(job_id)
     except flamenco.manager.ApiException as e:
-        print("Exception when calling JobsApi->fetch_global_last_rendered_info: %s\n" % e)
+        print("Exception when calling JobsApi->delete_job: %s\n" % e)
 ```
 
 ## Documentation for API Endpoints
@@ -74,6 +74,7 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*JobsApi* | [**delete_job**](flamenco\manager\docs/JobsApi.md#delete_job) | **DELETE** /api/v3/jobs/{job_id} | Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet). 
 *JobsApi* | [**fetch_global_last_rendered_info**](flamenco\manager\docs/JobsApi.md#fetch_global_last_rendered_info) | **GET** /api/v3/jobs/last-rendered | Get the URL that serves the last-rendered images.
 *JobsApi* | [**fetch_job**](flamenco\manager\docs/JobsApi.md#fetch_job) | **GET** /api/v3/jobs/{job_id} | Fetch info about the job.
 *JobsApi* | [**fetch_job_blocklist**](flamenco\manager\docs/JobsApi.md#fetch_job_blocklist) | **GET** /api/v3/jobs/{job_id}/blocklist | Fetch the list of workers that are blocked from doing certain task types on this job.

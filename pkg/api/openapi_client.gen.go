@@ -146,6 +146,9 @@ type ClientInterface interface {
 	// GetJobTypes request
 	GetJobTypes(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteJob request
+	DeleteJob(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// FetchJob request
 	FetchJob(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -494,6 +497,18 @@ func (c *Client) GetJobType(ctx context.Context, typeName string, reqEditors ...
 
 func (c *Client) GetJobTypes(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetJobTypesRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteJob(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteJobRequest(c.Server, jobId)
 	if err != nil {
 		return nil, err
 	}
@@ -1504,6 +1519,40 @@ func NewGetJobTypesRequest(server string) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewDeleteJobRequest generates requests for DeleteJob
+func NewDeleteJobRequest(server string, jobId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "job_id", runtime.ParamLocationPath, jobId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/jobs/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -2788,6 +2837,9 @@ type ClientWithResponsesInterface interface {
 	// GetJobTypes request
 	GetJobTypesWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobTypesResponse, error)
 
+	// DeleteJob request
+	DeleteJobWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*DeleteJobResponse, error)
+
 	// FetchJob request
 	FetchJobWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*FetchJobResponse, error)
 
@@ -3218,6 +3270,28 @@ func (r GetJobTypesResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetJobTypesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteJobResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteJobResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteJobResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4100,6 +4174,15 @@ func (c *ClientWithResponses) GetJobTypesWithResponse(ctx context.Context, reqEd
 	return ParseGetJobTypesResponse(rsp)
 }
 
+// DeleteJobWithResponse request returning *DeleteJobResponse
+func (c *ClientWithResponses) DeleteJobWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*DeleteJobResponse, error) {
+	rsp, err := c.DeleteJob(ctx, jobId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteJobResponse(rsp)
+}
+
 // FetchJobWithResponse request returning *FetchJobResponse
 func (c *ClientWithResponses) FetchJobWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*FetchJobResponse, error) {
 	rsp, err := c.FetchJob(ctx, jobId, reqEditors...)
@@ -4891,6 +4974,32 @@ func ParseGetJobTypesResponse(rsp *http.Response) (*GetJobTypesResponse, error) 
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteJobResponse parses an HTTP response from a DeleteJobWithResponse call
+func ParseDeleteJobResponse(rsp *http.Response) (*DeleteJobResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteJobResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 

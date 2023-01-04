@@ -4,6 +4,7 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**delete_job**](JobsApi.md#delete_job) | **DELETE** /api/v3/jobs/{job_id} | Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet). 
 [**fetch_global_last_rendered_info**](JobsApi.md#fetch_global_last_rendered_info) | **GET** /api/v3/jobs/last-rendered | Get the URL that serves the last-rendered images.
 [**fetch_job**](JobsApi.md#fetch_job) | **GET** /api/v3/jobs/{job_id} | Fetch info about the job.
 [**fetch_job_blocklist**](JobsApi.md#fetch_job_blocklist) | **GET** /api/v3/jobs/{job_id}/blocklist | Fetch the list of workers that are blocked from doing certain task types on this job.
@@ -22,6 +23,71 @@ Method | HTTP request | Description
 [**submit_job**](JobsApi.md#submit_job) | **POST** /api/v3/jobs | Submit a new job for Flamenco Manager to execute.
 [**submit_job_check**](JobsApi.md#submit_job_check) | **POST** /api/v3/jobs/check | Submit a new job for Flamenco Manager to check.
 
+
+# **delete_job**
+> delete_job(job_id)
+
+Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet). 
+
+### Example
+
+
+```python
+import time
+import flamenco.manager
+from flamenco.manager.api import jobs_api
+from flamenco.manager.model.error import Error
+from pprint import pprint
+# Defining the host is optional and defaults to http://localhost
+# See configuration.py for a list of all supported configuration parameters.
+configuration = flamenco.manager.Configuration(
+    host = "http://localhost"
+)
+
+
+# Enter a context with an instance of the API client
+with flamenco.manager.ApiClient() as api_client:
+    # Create an instance of the API class
+    api_instance = jobs_api.JobsApi(api_client)
+    job_id = "job_id_example" # str | 
+
+    # example passing only required values which don't have defaults set
+    try:
+        # Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet). 
+        api_instance.delete_job(job_id)
+    except flamenco.manager.ApiException as e:
+        print("Exception when calling JobsApi->delete_job: %s\n" % e)
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **job_id** | **str**|  |
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**204** | Default response, deletion has been triggered. |  -  |
+**0** | Unexpected error. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **fetch_global_last_rendered_info**
 > JobLastRenderedImageInfo fetch_global_last_rendered_info()

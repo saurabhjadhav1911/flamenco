@@ -774,10 +774,10 @@ class Endpoint(object):
         Example:
 
         api_instance = JobsApi()
-        api_instance.fetch_global_last_rendered_info  # this is an instance of the class Endpoint
-        api_instance.fetch_global_last_rendered_info()  # this invokes api_instance.fetch_global_last_rendered_info.__call__()
+        api_instance.delete_job  # this is an instance of the class Endpoint
+        api_instance.delete_job()  # this invokes api_instance.delete_job.__call__()
         which then invokes the callable functions stored in that endpoint at
-        api_instance.fetch_global_last_rendered_info.callable or self.callable in this class
+        api_instance.delete_job.callable or self.callable in this class
 
         """
         return self.callable(self, *args, **kwargs)

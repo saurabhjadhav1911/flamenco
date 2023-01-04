@@ -50,6 +50,52 @@ export default class JobsApi {
 
 
     /**
+     * Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet). 
+     * @param {String} jobId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    deleteJobWithHttpInfo(jobId) {
+      let postBody = null;
+      // verify the required parameter 'jobId' is set
+      if (jobId === undefined || jobId === null) {
+        throw new Error("Missing the required parameter 'jobId' when calling deleteJob");
+      }
+
+      let pathParams = {
+        'job_id': jobId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/api/v3/jobs/{job_id}', 'DELETE',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet). 
+     * @param {String} jobId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    deleteJob(jobId) {
+      return this.deleteJobWithHttpInfo(jobId)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
      * Get the URL that serves the last-rendered images.
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/JobLastRenderedImageInfo} and HTTP response
      */

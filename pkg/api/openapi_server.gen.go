@@ -55,6 +55,9 @@ type ServerInterface interface {
 	// Get list of job types and their parameters.
 	// (GET /api/v3/jobs/types)
 	GetJobTypes(ctx echo.Context) error
+	// Request deletion this job, including its tasks and any log files. The actual deletion may happen in the background. No job files will be deleted (yet).
+	// (DELETE /api/v3/jobs/{job_id})
+	DeleteJob(ctx echo.Context, jobId string) error
 	// Fetch info about the job.
 	// (GET /api/v3/jobs/{job_id})
 	FetchJob(ctx echo.Context, jobId string) error
@@ -316,6 +319,22 @@ func (w *ServerInterfaceWrapper) GetJobTypes(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.GetJobTypes(ctx)
+	return err
+}
+
+// DeleteJob converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteJob(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "job_id" -------------
+	var jobId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "job_id", runtime.ParamLocationPath, ctx.Param("job_id"), &jobId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter job_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteJob(ctx, jobId)
 	return err
 }
 
@@ -854,6 +873,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/api/v3/jobs/query", wrapper.QueryJobs)
 	router.GET(baseURL+"/api/v3/jobs/type/:typeName", wrapper.GetJobType)
 	router.GET(baseURL+"/api/v3/jobs/types", wrapper.GetJobTypes)
+	router.DELETE(baseURL+"/api/v3/jobs/:job_id", wrapper.DeleteJob)
 	router.GET(baseURL+"/api/v3/jobs/:job_id", wrapper.FetchJob)
 	router.DELETE(baseURL+"/api/v3/jobs/:job_id/blocklist", wrapper.RemoveJobBlocklist)
 	router.GET(baseURL+"/api/v3/jobs/:job_id/blocklist", wrapper.FetchJobBlocklist)
