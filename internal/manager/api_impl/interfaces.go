@@ -15,6 +15,7 @@ import (
 
 	"git.blender.org/flamenco/internal/manager/config"
 	"git.blender.org/flamenco/internal/manager/job_compilers"
+	"git.blender.org/flamenco/internal/manager/job_deleter"
 	"git.blender.org/flamenco/internal/manager/last_rendered"
 	"git.blender.org/flamenco/internal/manager/persistence"
 	"git.blender.org/flamenco/internal/manager/sleep_scheduler"
@@ -25,7 +26,7 @@ import (
 )
 
 // Generate mock implementations of these interfaces.
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/api_impl_mock.gen.go -package mocks git.blender.org/flamenco/internal/manager/api_impl PersistenceService,ChangeBroadcaster,JobCompiler,LogStorage,ConfigService,TaskStateMachine,Shaman,LastRendered,LocalStorage,WorkerSleepScheduler
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/api_impl_mock.gen.go -package mocks git.blender.org/flamenco/internal/manager/api_impl PersistenceService,ChangeBroadcaster,JobCompiler,LogStorage,ConfigService,TaskStateMachine,Shaman,LastRendered,LocalStorage,WorkerSleepScheduler,JobDeleter
 
 type PersistenceService interface {
 	StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.AuthoredJob) error
@@ -197,6 +198,9 @@ type Shaman interface {
 	// return early when another client finishes uploading the exact same file, to
 	// prevent double uploads.
 	FileStore(ctx context.Context, file io.ReadCloser, checksum string, filesize int64, canDefer bool, originalFilename string) error
+
+	// EraseCheckout deletes the symlinks and the directory structure that makes up the checkout.
+	EraseCheckout(checkoutID string) error
 }
 
 var _ Shaman = (*shaman.Server)(nil)
@@ -216,3 +220,9 @@ type WorkerSleepScheduler interface {
 }
 
 var _ WorkerSleepScheduler = (*sleep_scheduler.SleepScheduler)(nil)
+
+type JobDeleter interface {
+	QueueJobDeletion(ctx context.Context, job *persistence.Job) error
+}
+
+var _ JobDeleter = (*job_deleter.Service)(nil)

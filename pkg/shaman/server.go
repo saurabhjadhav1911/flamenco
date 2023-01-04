@@ -36,6 +36,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var ErrDoesNotExist = checkout.ErrDoesNotExist
+
 // Server represents a Shaman Server.
 type Server struct {
 	config config.Config
@@ -152,4 +154,9 @@ func (s *Server) FileStore(ctx context.Context, file io.ReadCloser, checksum str
 	// TODO: Maybe translate this error into something that can be understood by
 	// the caller without relying on types declared in the `fileserver` package?
 	return err
+}
+
+// EraseCheckout deletes the symlinks and the directory structure that makes up the checkout.
+func (s *Server) EraseCheckout(checkoutID string) error {
+	return s.checkoutMan.EraseCheckout(checkoutID)
 }

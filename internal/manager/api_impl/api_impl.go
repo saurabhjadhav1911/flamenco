@@ -27,6 +27,7 @@ type Flamenco struct {
 	lastRender     LastRendered
 	localStorage   LocalStorage
 	sleepScheduler WorkerSleepScheduler
+	jobDeleter     JobDeleter
 
 	// The task scheduler can be locked to prevent multiple Workers from getting
 	// the same task. It is also used for certain other queries, like
@@ -53,6 +54,7 @@ func NewFlamenco(
 	lr LastRendered,
 	localStorage LocalStorage,
 	wss WorkerSleepScheduler,
+	jd JobDeleter,
 ) *Flamenco {
 	return &Flamenco{
 		jobCompiler:    jc,
@@ -66,6 +68,7 @@ func NewFlamenco(
 		lastRender:     lr,
 		localStorage:   localStorage,
 		sleepScheduler: wss,
+		jobDeleter:     jd,
 
 		done: make(chan struct{}),
 	}

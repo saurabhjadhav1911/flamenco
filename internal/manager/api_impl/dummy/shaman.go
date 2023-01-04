@@ -33,3 +33,6 @@ func (ds *DummyShaman) FileStoreCheck(ctx context.Context, checksum string, file
 func (ds *DummyShaman) FileStore(ctx context.Context, file io.ReadCloser, checksum string, filesize int64, canDefer bool, originalFilename string) error {
 	return ErrDummyShaman
 }
+func (ds *DummyShaman) EraseCheckout(checkoutID string) error {
+	return ErrDummyShaman
+}

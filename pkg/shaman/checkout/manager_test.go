@@ -23,6 +23,7 @@
 package checkout
 
 import (
+	"context"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -30,6 +31,7 @@ import (
 	"testing"
 	"time"
 
+	"git.blender.org/flamenco/pkg/api"
 	"git.blender.org/flamenco/pkg/shaman/config"
 	"git.blender.org/flamenco/pkg/shaman/filestore"
 	"github.com/stretchr/testify/assert"
@@ -96,4 +98,55 @@ func TestPrepareCheckout(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEqual(t, requestedCheckoutPath, resolved.RelativePath)
 	assert.True(t, strings.HasPrefix(resolved.RelativePath, requestedCheckoutPath+"-"))
+}
+
+func TestEraseCheckout(t *testing.T) {
+	manager, cleanup := createTestManager()
+	defer cleanup()
+	ctx := context.Background()
+
+	filestore.LinkTestFileStore(manager.fileStore.BasePath())
+
+	// Create a few checkouts to test with.
+	checkout1 := api.ShamanCheckout{
+		CheckoutPath: "á hausinn á þér",
+		Files: []api.ShamanFileSpec{
+			{Sha: "590c148428d5c35fab3ebad2f3365bb469ab9c531b60831f3e826c472027a0b9", Size: 3367, Path: "subdir/replacer.py"},
+			{Sha: "80b749c27b2fef7255e7e7b3c2029b03b31299c75ff1f1c72732081c70a713a3", Size: 7488, Path: "feed.py"},
+			{Sha: "914853599dd2c351ab7b82b219aae6e527e51518a667f0ff32244b0c94c75688", Size: 486, Path: "httpstuff.py"},
+			{Sha: "d6fc7289b5196cc96748ea72f882a22c39b8833b457fe854ef4c03a01f5db0d3", Size: 7217, Path: "много ликова.py"},
+		},
+	}
+	checkoutID1, err := manager.Checkout(ctx, checkout1)
+	require.NoError(t, err)
+
+	checkout2 := checkout1
+	checkout2.CheckoutPath = "één ander pad"
+	checkoutID2, err := manager.Checkout(ctx, checkout2)
+	require.NoError(t, err)
+
+	// Check that removing one works, without deleting the other.
+	require.NoError(t, manager.EraseCheckout(checkoutID1))
+
+	checkoutPath1, err := manager.pathForCheckout(checkoutID1)
+	require.NoError(t, err)
+	checkoutPath2, err := manager.pathForCheckout(checkoutID2)
+	require.NoError(t, err)
+
+	assert.NoDirExists(t, checkoutPath1.absolutePath, "actual checkout path should have been erased")
+	assert.DirExists(t, checkoutPath2.absolutePath, "the other checkout path should have been kept")
+	assert.DirExists(t, manager.fileStore.StoragePath(), "Shaman storage path should be kept")
+
+	// Check that non-checkout paths should be refused.
+	require.Error(t, manager.EraseCheckout(manager.fileStore.BasePath()))
+}
+
+func TestEraseCheckoutNonExisting(t *testing.T) {
+	manager, cleanup := createTestManager()
+	defer cleanup()
+
+	filestore.LinkTestFileStore(manager.fileStore.BasePath())
+
+	// Erasing a non-existing checkout should return a specific error.
+	require.Error(t, manager.EraseCheckout("não existe"))
 }

@@ -27,6 +27,7 @@ import (
 	"git.blender.org/flamenco/internal/manager/api_impl/dummy"
 	"git.blender.org/flamenco/internal/manager/config"
 	"git.blender.org/flamenco/internal/manager/job_compilers"
+	"git.blender.org/flamenco/internal/manager/job_deleter"
 	"git.blender.org/flamenco/internal/manager/last_rendered"
 	"git.blender.org/flamenco/internal/manager/local_storage"
 	"git.blender.org/flamenco/internal/manager/persistence"
@@ -144,6 +145,11 @@ func runFlamencoManager() bool {
 	// go persist.PeriodicMaintenanceLoop(mainCtx)
 
 	timeService := clock.New()
+	compiler, err := job_compilers.Load(timeService)
+	if err != nil {
+		log.Fatal().Err(err).Msg("error loading job compilers")
+	}
+
 	webUpdater := webupdates.New()
 
 	localStorage := local_storage.NewNextToExe(configService.Get().LocalManagerStoragePath)
@@ -154,8 +160,13 @@ func runFlamencoManager() bool {
 	lastRender := last_rendered.New(localStorage)
 
 	shamanServer := buildShamanServer(configService, isFirstRun)
-	flamenco := buildFlamencoAPI(timeService, configService, persist, taskStateMachine,
-		shamanServer, logStorage, webUpdater, lastRender, localStorage, sleepScheduler)
+	jobDeleter := job_deleter.NewService(persist, localStorage, webUpdater, shamanServer)
+
+	flamenco := api_impl.NewFlamenco(
+		compiler, persist, webUpdater, logStorage, configService,
+		taskStateMachine, shamanServer, timeService, lastRender,
+		localStorage, sleepScheduler, jobDeleter)
+
 	e := buildWebService(flamenco, persist, ssdp, webUpdater, urls, localStorage)
 
 	timeoutChecker := timeout_checker.New(
@@ -222,6 +233,13 @@ func runFlamencoManager() bool {
 		sleepScheduler.Run(mainCtx)
 	}()
 
+	// Run the Job Deleter.
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		jobDeleter.Run(mainCtx)
+	}()
+
 	// Log the URLs last, hopefully that makes them more visible / encouraging to go to for users.
 	go func() {
 		time.Sleep(100 * time.Millisecond)
@@ -243,29 +261,6 @@ func runFlamencoManager() bool {
 	log.Info().Bool("willRestart", doRestart).Msg("Flamenco Manager service shut down")
 
 	return doRestart
-}
-
-func buildFlamencoAPI(
-	timeService clock.Clock,
-	configService *config.Service,
-	persist *persistence.DB,
-	taskStateMachine *task_state_machine.StateMachine,
-	shamanServer api_impl.Shaman,
-	logStorage *task_logs.Storage,
-	webUpdater *webupdates.BiDirComms,
-	lastRender *last_rendered.LastRenderedProcessor,
-	localStorage local_storage.StorageInfo,
-	sleepScheduler *sleep_scheduler.SleepScheduler,
-) *api_impl.Flamenco {
-	compiler, err := job_compilers.Load(timeService)
-	if err != nil {
-		log.Fatal().Err(err).Msg("error loading job compilers")
-	}
-	flamenco := api_impl.NewFlamenco(
-		compiler, persist, webUpdater, logStorage, configService,
-		taskStateMachine, shamanServer, timeService, lastRender,
-		localStorage, sleepScheduler)
-	return flamenco
 }
 
 func buildShamanServer(configService *config.Service, isFirstRun bool) api_impl.Shaman {

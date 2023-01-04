@@ -160,6 +160,40 @@ func (f *Flamenco) compileSubmittedJob(ctx context.Context, logger zerolog.Logge
 	return f.jobCompiler.Compile(ctx, submittedJob)
 }
 
+// DeleteJob marks the job as "deletion requested" so that the job deletion
+// service can actually delete it.
+func (f *Flamenco) DeleteJob(e echo.Context, jobID string) error {
+	logger := requestLogger(e).With().
+		Str("job", jobID).
+		Logger()
+
+	dbJob, err := f.fetchJob(e, logger, jobID)
+	if dbJob == nil {
+		// f.fetchJob already sent a response.
+		return err
+	}
+
+	logger = logger.With().
+		Str("currentstatus", string(dbJob.Status)).
+		Logger()
+	logger.Info().Msg("job deletion requested")
+
+	// All the required info is known, this can keep running even when the client
+	// disconnects.
+	ctx := context.Background()
+	err = f.jobDeleter.QueueJobDeletion(ctx, dbJob)
+	switch {
+	case persistence.ErrIsDBBusy(err):
+		logger.Error().AnErr("cause", err).Msg("database too busy to queue job deletion")
+		return sendAPIErrorDBBusy(e, "too busy to queue job deletion, try again later")
+	case err != nil:
+		logger.Error().AnErr("cause", err).Msg("error queueing job deletion")
+		return sendAPIError(e, http.StatusInternalServerError, "error queueing job deletion")
+	default:
+		return e.NoContent(http.StatusNoContent)
+	}
+}
+
 // SetJobStatus is used by the web interface to change a job's status.
 func (f *Flamenco) SetJobStatus(e echo.Context, jobID string) error {
 	logger := requestLogger(e).With().

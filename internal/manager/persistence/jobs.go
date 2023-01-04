@@ -4,6 +4,7 @@ package persistence
 
 import (
 	"context"
+	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
@@ -31,11 +32,18 @@ type Job struct {
 	Settings StringInterfaceMap `gorm:"type:jsonb"`
 	Metadata StringStringMap    `gorm:"type:jsonb"`
 
+	DeleteRequestedAt sql.NullTime
+
 	Storage JobStorageInfo `gorm:"embedded;embeddedPrefix:storage_"`
 }
 
 type StringInterfaceMap map[string]interface{}
 type StringStringMap map[string]string
+
+// DeleteRequested returns whether deletion of this job was requested.
+func (j *Job) DeleteRequested() bool {
+	return j.DeleteRequestedAt.Valid
+}
 
 // JobStorageInfo contains info about where the job files are stored. It is
 // intended to be used when removing a job, which may include the removal of its
@@ -202,7 +210,8 @@ func (db *DB) StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.Au
 // FetchJob fetches a single job, without fetching its tasks.
 func (db *DB) FetchJob(ctx context.Context, jobUUID string) (*Job, error) {
 	dbJob := Job{}
-	findResult := db.gormDB.WithContext(ctx).First(&dbJob, "uuid = ?", jobUUID)
+	findResult := db.gormDB.WithContext(ctx).
+		First(&dbJob, "uuid = ?", jobUUID)
 	if findResult.Error != nil {
 		return nil, jobError(findResult.Error, "fetching job")
 	}
@@ -220,6 +229,41 @@ func (db *DB) DeleteJob(ctx context.Context, jobUUID string) error {
 		return jobError(tx.Error, "deleting job")
 	}
 	return nil
+}
+
+// RequestJobDeletion sets the job's "DeletionRequestedAt" field to "now".
+func (db *DB) RequestJobDeletion(ctx context.Context, j *Job) error {
+	j.DeleteRequestedAt.Time = db.gormDB.NowFunc()
+	j.DeleteRequestedAt.Valid = true
+	tx := db.gormDB.WithContext(ctx).
+		Model(j).
+		Updates(Job{DeleteRequestedAt: j.DeleteRequestedAt})
+	if tx.Error != nil {
+		return jobError(tx.Error, "deleting job")
+	}
+	return nil
+}
+
+func (db *DB) FetchJobsDeletionRequested(ctx context.Context) ([]string, error) {
+	var jobs []*Job
+
+	tx := db.gormDB.WithContext(ctx).
+		Model(&Job{}).
+		Select("UUID").
+		Where("delete_requested_at is not NULL").
+		Order("delete_requested_at").
+		Scan(&jobs)
+
+	if tx.Error != nil {
+		return nil, jobError(tx.Error, "fetching jobs marked for deletion")
+	}
+
+	uuids := make([]string, len(jobs))
+	for i := range jobs {
+		uuids[i] = jobs[i].UUID
+	}
+
+	return uuids, nil
 }
 
 func (db *DB) FetchJobsInStatus(ctx context.Context, jobStatuses ...api.JobStatus) ([]*Job, error) {

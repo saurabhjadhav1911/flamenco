@@ -39,6 +39,11 @@ import (
 	"git.blender.org/flamenco/pkg/shaman/touch"
 )
 
+var (
+	// ErrDoesNotExist is returned by EraseCheckout().
+	ErrDoesNotExist = errors.New("checkout does not exist")
+)
+
 // Manager creates checkouts and provides info about missing files.
 type Manager struct {
 	checkoutBasePath string
@@ -161,9 +166,19 @@ func (m *Manager) PrepareCheckout(requestedCheckoutPath string) (ResolvedCheckou
 }
 
 // EraseCheckout removes the checkout directory structure identified by the ID.
+// Returns ErrDoesNotExist if the checkout with this ID does not exist.
 func (m *Manager) EraseCheckout(checkoutID string) error {
 	checkoutPaths, err := m.pathForCheckout(checkoutID)
 	if err != nil {
+		return err
+	}
+	_, err = os.Stat(checkoutPaths.absolutePath)
+	switch {
+	case err == nil:
+		break
+	case errors.Is(err, os.ErrNotExist):
+		return ErrDoesNotExist
+	default:
 		return err
 	}
 

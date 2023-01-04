@@ -804,3 +804,31 @@ func TestFetchGlobalLastRenderedInfo(t *testing.T) {
 	}
 
 }
+
+func TestDeleteJob(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	jobID := "18a9b096-d77e-438c-9be2-74397038298b"
+	dbJob := persistence.Job{
+		Model:    persistence.Model{ID: 47},
+		UUID:     jobID,
+		Name:     "test job",
+		Status:   api.JobStatusFailed,
+		Settings: persistence.StringInterfaceMap{},
+		Metadata: persistence.StringStringMap{},
+	}
+
+	// Set up expectations.
+	echoCtx := mf.prepareMockedRequest(nil)
+	mf.persistence.EXPECT().FetchJob(moremock.ContextWithDeadline(), jobID).Return(&dbJob, nil)
+	mf.jobDeleter.EXPECT().QueueJobDeletion(gomock.Any(), &dbJob)
+
+	// Do the call.
+	err := mf.flamenco.DeleteJob(echoCtx, jobID)
+	assert.NoError(t, err)
+
+	assertResponseNoContent(t, echoCtx)
+}

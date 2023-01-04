@@ -3,6 +3,8 @@ package local_storage
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -37,21 +39,44 @@ func (si StorageInfo) ForJob(jobUUID string) string {
 	return filepath.Join(si.rootPath, relPathForJob(jobUUID))
 }
 
-// Erase removes the entire storage directory from disk.
-func (si StorageInfo) Erase() error {
-	// A few safety measures before erasing the planet.
-	if si.rootPath == "" {
-		return fmt.Errorf("%+v.Erase(): refusing to erase empty directory", si)
-	}
-	if crosspath.IsRoot(si.rootPath) {
-		return fmt.Errorf("%+v.Erase(): refusing to erase root directory", si)
-	}
-	if home, found := os.LookupEnv("HOME"); found && home == si.rootPath {
-		return fmt.Errorf("%+v.Erase(): refusing to erase home directory %s", si, home)
+func (si StorageInfo) RemoveJobStorage(ctx context.Context, jobUUID string) error {
+	path := si.ForJob(jobUUID)
+	log.Info().Str("path", path).Msg("erasing manager-local job storage directory")
+
+	if err := removeDirectory(path); err != nil {
+		return fmt.Errorf("unable to erase %q: %w", path, err)
 	}
 
-	log.Debug().Str("path", si.rootPath).Msg("erasing storage directory")
-	return os.RemoveAll(si.rootPath)
+	// The path should be in some intermediate path
+	// (`root/intermediate/job-uuid`), which might need removing if it's empty.
+	intermediate := filepath.Dir(path)
+	if intermediate == si.rootPath {
+		// There is no intermediate dir for jobless situations. Or maybe the rest of
+		// the code changed since this function was written. Regardless of the
+		// reason, this function shouldn't remove the local storage root.
+		return nil
+	}
+
+	if err := os.Remove(intermediate); err != nil {
+		// This is absolutely fine, as it'll happen when the directory is not empty
+		// and thus shouldn't be removed anyway.
+		log.Trace().
+			Str("job", jobUUID).
+			Str("path", intermediate).
+			AnErr("cause", err).
+			Msg("RemoveJobStorage() could not remove intermediate directory, this is fine")
+	}
+	return nil
+}
+
+// Erase removes the entire storage directory from disk.
+func (si StorageInfo) Erase() error {
+	log.Info().Str("path", si.rootPath).Msg("erasing storage directory")
+
+	if err := removeDirectory(si.rootPath); err != nil {
+		return fmt.Errorf("unable to erase %q: %w", si.rootPath, err)
+	}
+	return nil
 }
 
 // MustErase removes the entire storage directory from disk, and panics if it
@@ -96,4 +121,21 @@ func getSuitableStorageRoot() string {
 
 	// Fall back to "." if all else fails.
 	return "."
+}
+
+// removeDirectory removes the given path, but only if it is not a root path and
+// not the user's home directory.
+func removeDirectory(path string) error {
+	if path == "" {
+		return fmt.Errorf("refusing to erase empty directory path (%q)", path)
+	}
+	if crosspath.IsRoot(path) {
+		return errors.New("refusing to erase root directory")
+	}
+	if home, found := os.LookupEnv("HOME"); found && home == path {
+		return errors.New("refusing to erase home directory")
+	}
+
+	log.Debug().Str("path", path).Msg("erasing directory")
+	return os.RemoveAll(path)
 }

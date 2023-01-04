@@ -101,6 +101,84 @@ func TestDeleteJob(t *testing.T) {
 	tx = db.gormDB.Model(&Task{}).Count(&numTasks)
 	assert.NoError(t, tx.Error)
 	assert.Equal(t, int64(0), numTasks, "tasks should have been deleted along with their job")
+
+	// TODO: test that blocklist entries and task dependencies are gone too.
+}
+
+func TestRequestJobDeletion(t *testing.T) {
+	ctx, close, db, job1, authoredJob1 := jobTasksTestFixtures(t)
+	defer close()
+
+	// Create another job, to see it's not touched by deleting the first one.
+	authoredJob2 := duplicateJobAndTasks(authoredJob1)
+	persistAuthoredJob(t, ctx, db, authoredJob2)
+
+	mockNow := time.Now()
+	db.gormDB.NowFunc = func() time.Time { return mockNow }
+
+	err := db.RequestJobDeletion(ctx, job1)
+	assert.NoError(t, err)
+	assert.True(t, job1.DeleteRequested())
+	assert.True(t, job1.DeleteRequestedAt.Valid)
+	assert.Equal(t, job1.DeleteRequestedAt.Time, mockNow)
+
+	dbJob1, err := db.FetchJob(ctx, job1.UUID)
+	assert.NoError(t, err)
+	assert.True(t, job1.DeleteRequested())
+	assert.True(t, dbJob1.DeleteRequestedAt.Valid)
+	assert.WithinDuration(t, mockNow, dbJob1.DeleteRequestedAt.Time, time.Second)
+
+	// Other jobs shouldn't be touched.
+	dbJob2, err := db.FetchJob(ctx, authoredJob2.JobID)
+	assert.NoError(t, err)
+	assert.False(t, dbJob2.DeleteRequested())
+	assert.False(t, dbJob2.DeleteRequestedAt.Valid)
+}
+
+func TestFetchJobsDeletionRequested(t *testing.T) {
+	ctx, close, db, job1, authoredJob1 := jobTasksTestFixtures(t)
+	defer close()
+
+	now := time.Now()
+	db.gormDB.NowFunc = func() time.Time { return now }
+
+	authoredJob2 := duplicateJobAndTasks(authoredJob1)
+	job2 := persistAuthoredJob(t, ctx, db, authoredJob2)
+	authoredJob3 := duplicateJobAndTasks(authoredJob1)
+	job3 := persistAuthoredJob(t, ctx, db, authoredJob3)
+	authoredJob4 := duplicateJobAndTasks(authoredJob1)
+	persistAuthoredJob(t, ctx, db, authoredJob4)
+
+	// Ensure different requests get different timestamps,
+	// out of chronological order.
+	timestamps := []time.Time{
+		// timestamps for 'delete requested at' and 'updated at'
+		now.Add(-3 * time.Second), now.Add(-3 * time.Second),
+		now.Add(-1 * time.Second), now.Add(-1 * time.Second),
+		now.Add(-5 * time.Second), now.Add(-5 * time.Second),
+	}
+	currentTimestampIndex := 0
+	db.gormDB.NowFunc = func() time.Time {
+		now := timestamps[currentTimestampIndex]
+		currentTimestampIndex++
+		return now
+	}
+
+	err := db.RequestJobDeletion(ctx, job1)
+	assert.NoError(t, err)
+	err = db.RequestJobDeletion(ctx, job2)
+	assert.NoError(t, err)
+	err = db.RequestJobDeletion(ctx, job3)
+	assert.NoError(t, err)
+
+	actualUUIDs, err := db.FetchJobsDeletionRequested(ctx)
+	assert.NoError(t, err)
+	assert.Len(t, actualUUIDs, 3, "3 out of 4 jobs were marked for deletion")
+
+	// Expect UUIDs in chronological order of deletion requests, so that the
+	// oldest request is handled first.
+	expectUUIDs := []string{job3.UUID, job1.UUID, job2.UUID}
+	assert.Equal(t, expectUUIDs, actualUUIDs)
 }
 
 func TestJobHasTasksInStatus(t *testing.T) {

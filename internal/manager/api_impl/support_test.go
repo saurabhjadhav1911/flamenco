@@ -36,6 +36,7 @@ type mockedFlamenco struct {
 	lastRender     *mocks.MockLastRendered
 	localStorage   *mocks.MockLocalStorage
 	sleepScheduler *mocks.MockWorkerSleepScheduler
+	jobDeleter     *mocks.MockJobDeleter
 
 	// Place for some tests to store a temporary directory.
 	tempdir string
@@ -52,6 +53,7 @@ func newMockedFlamenco(mockCtrl *gomock.Controller) mockedFlamenco {
 	lr := mocks.NewMockLastRendered(mockCtrl)
 	localStore := mocks.NewMockLocalStorage(mockCtrl)
 	wss := mocks.NewMockWorkerSleepScheduler(mockCtrl)
+	jd := mocks.NewMockJobDeleter(mockCtrl)
 
 	clock := clock.NewMock()
 	mockedNow, err := time.Parse(time.RFC3339, "2022-06-09T11:14:41+02:00")
@@ -60,7 +62,7 @@ func newMockedFlamenco(mockCtrl *gomock.Controller) mockedFlamenco {
 	}
 	clock.Set(mockedNow)
 
-	f := NewFlamenco(jc, ps, cb, logStore, cs, sm, sha, clock, lr, localStore, wss)
+	f := NewFlamenco(jc, ps, cb, logStore, cs, sm, sha, clock, lr, localStore, wss, jd)
 
 	return mockedFlamenco{
 		flamenco:       f,
@@ -75,6 +77,7 @@ func newMockedFlamenco(mockCtrl *gomock.Controller) mockedFlamenco {
 		lastRender:     lr,
 		localStorage:   localStore,
 		sleepScheduler: wss,
+		jobDeleter:     jd,
 	}
 }
 

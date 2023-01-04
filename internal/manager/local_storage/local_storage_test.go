@@ -3,12 +3,14 @@ package local_storage
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewNextToExe(t *testing.T) {
@@ -55,4 +57,52 @@ func TestErase(t *testing.T) {
 
 	assert.NoError(t, si.Erase())
 	assert.NoDirExists(t, si.rootPath, "Erase() should erase the root path, and everything in it")
+}
+
+func TestRemoveJobStorage(t *testing.T) {
+	si := NewNextToExe("task-logs")
+
+	jobUUID := "08e126ef-d773-468b-8bab-19a8213cf2ff"
+	jobPath := si.ForJob(jobUUID)
+	assert.NoDirExists(t, jobPath, "getting a path should not create it")
+
+	assert.NoError(t, os.MkdirAll(jobPath, os.ModePerm))
+	assert.DirExists(t, jobPath, "os.MkdirAll is borked")
+
+	taskFile := filepath.Join(jobPath, "task-07c33f32-b345-4da9-8834-9c91532cd97e.txt")
+	assert.NoError(t, os.WriteFile(taskFile, []byte("dummy task log"), 0o777))
+
+	assert.NoError(t, si.RemoveJobStorage(context.Background(), jobUUID))
+	assert.NoDirExists(t, jobPath, "RemoveJobStorage() should erase the entire job-specific storage dir, and everything in it")
+
+	// See if the test assumption (that job dir is in another sub-dir of the root,
+	// `root/job-xxyy/xxyyzzblablabla`) still holds.
+	intermediate := filepath.Dir(jobPath)
+	require.NotEqual(t, si.rootPath, intermediate,
+		"Expected job path %s to be in child directory of root %s", jobPath, si.rootPath)
+
+	assert.NoDirExists(t, intermediate, "RemoveJobStorage() should remove empty intermediate paths")
+	assert.DirExists(t, si.rootPath, "RemoveJobStorage() should keep the root path")
+}
+
+func TestRemoveJobStorageWithoutJobUUID(t *testing.T) {
+	si := NewNextToExe("task-logs")
+
+	jobPath := si.ForJob("")
+	assert.NoDirExists(t, jobPath, "getting a path should not create it")
+
+	assert.NoError(t, os.MkdirAll(jobPath, os.ModePerm))
+	assert.DirExists(t, jobPath, "os.MkdirAll is borked")
+
+	taskFile := filepath.Join(jobPath, "task-07c33f32-b345-4da9-8834-9c91532cd97e.txt")
+	assert.NoError(t, os.WriteFile(taskFile, []byte("dummy task log"), 0o777))
+
+	assert.NoError(t, si.RemoveJobStorage(context.Background(), ""))
+	assert.NoDirExists(t, jobPath, "RemoveJobStorage() should erase the entire job-specific storage dir, and everything in it")
+
+	// See if the test assumption (that a jobless dir is directly inside the root) still holds.
+	intermediate := filepath.Dir(jobPath)
+	require.Equal(t, si.rootPath, intermediate,
+		"Expected job path %s to be a direct child of root %s", jobPath, si.rootPath)
+	assert.DirExists(t, si.rootPath, "RemoveJobStorage() should keep the root path")
 }
