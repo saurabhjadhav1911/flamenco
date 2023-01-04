@@ -722,6 +722,27 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Job" }
+    delete:
+      operationId: deleteJob
+      summary: >
+        Request deletion this job, including its tasks and any log files.
+        The actual deletion may happen in the background.
+        No job files will be deleted (yet).
+      tags: [jobs]
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Default response, deletion has been triggered.
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /api/v3/jobs/{job_id}/last-rendered:
     summary: Obtain info about the last-rendered images for this job.
