@@ -556,6 +556,12 @@ func jobDBtoAPI(dbJob *persistence.Job) api.Job {
 	apiJob.Settings = &api.JobSettings{AdditionalProperties: dbJob.Settings}
 	apiJob.Metadata = &api.JobMetadata{AdditionalProperties: dbJob.Metadata}
 
+	if dbJob.Storage.ShamanCheckoutID != "" {
+		apiJob.Storage = &api.JobStorageInfo{
+			ShamanCheckoutId: &dbJob.Storage.ShamanCheckoutID,
+		}
+	}
+
 	return apiJob
 }
 

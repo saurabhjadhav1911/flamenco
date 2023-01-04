@@ -2,7 +2,7 @@
 """BAT packing interface for Flamenco."""
 
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Optional, Any
 import logging
 import queue
@@ -48,6 +48,9 @@ class MsgProgress(Message):
 @dataclass
 class MsgDone(Message):
     output_path: Path
+    """Path of the submitted blend file, relative to the Shaman checkout root."""
+    actual_checkout_path: PurePosixPath
+    """Shaman checkout path, i.e. the root of the job files, relative to the Shaman checkout root."""
     missing_files: list[Path]
 
 
@@ -163,7 +166,11 @@ class PackThread(threading.Thread):
             log.debug("done")
             self._set_bat_status("DONE")
 
-            msg = MsgDone(self.packer.output_path, self.packer.missing_files)
+            msg = MsgDone(
+                self.packer.output_path,
+                self.packer.actual_checkout_path,
+                self.packer.missing_files,
+            )
             self.queue.put(msg)
 
     def _set_bat_status(self, status: str) -> None:

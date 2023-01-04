@@ -30,10 +30,20 @@ type Job struct {
 
 	Settings StringInterfaceMap `gorm:"type:jsonb"`
 	Metadata StringStringMap    `gorm:"type:jsonb"`
+
+	Storage JobStorageInfo `gorm:"embedded;embeddedPrefix:storage_"`
 }
 
 type StringInterfaceMap map[string]interface{}
 type StringStringMap map[string]string
+
+// JobStorageInfo contains info about where the job files are stored. It is
+// intended to be used when removing a job, which may include the removal of its
+// files.
+type JobStorageInfo struct {
+	// ShamanCheckoutID is only set when the job was actually using Shaman storage.
+	ShamanCheckoutID string `gorm:"type:varchar(255);default:''"`
+}
 
 type Task struct {
 	Model
@@ -122,6 +132,9 @@ func (db *DB) StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.Au
 			Priority: authoredJob.Priority,
 			Settings: StringInterfaceMap(authoredJob.Settings),
 			Metadata: StringStringMap(authoredJob.Metadata),
+			Storage: JobStorageInfo{
+				ShamanCheckoutID: authoredJob.Storage.ShamanCheckoutID,
+			},
 		}
 
 		if err := tx.Create(&dbJob).Error; err != nil {

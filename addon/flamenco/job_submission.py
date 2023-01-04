@@ -80,6 +80,15 @@ def set_blend_file(
     job.settings[BLENDFILE_SETTING_KEY] = str(blendfile)
 
 
+def set_shaman_checkout_id(job: _SubmittedJob, checkout_id: PurePosixPath) -> None:
+    from flamenco.manager.models import JobStorageInfo
+
+    # The job.storage attribute doesn't even exist if it's not set.
+    if getattr(job, "storage", None) is None:
+        job.storage = JobStorageInfo()
+    job.storage.shaman_checkout_id = checkout_id.as_posix()
+
+
 def submit_job(job: _SubmittedJob, api_client: _ApiClient) -> _Job:
     """Send the given job to Flamenco Manager."""
     from flamenco.manager import ApiClient

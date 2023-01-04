@@ -123,6 +123,10 @@ func (s *Service) Compile(ctx context.Context, sj api.SubmittedJob) (*AuthoredJo
 		}
 	}
 
+	if sj.Storage != nil && sj.Storage.ShamanCheckoutId != nil {
+		aj.Storage.ShamanCheckoutID = *sj.Storage.ShamanCheckoutId
+	}
+
 	compiler, err := vm.getCompileJob()
 	if err != nil {
 		return nil, err

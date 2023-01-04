@@ -26,12 +26,14 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
 	"git.blender.org/flamenco/pkg/shaman/config"
 	"git.blender.org/flamenco/pkg/shaman/filestore"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func createTestManager() (*Manager, func()) {
@@ -76,4 +78,22 @@ func TestSymlinkToCheckout(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, stat.Mode()&os.ModeType == os.ModeSymlink,
 		"%v should be a symlink", symlinkPath)
+}
+
+func TestPrepareCheckout(t *testing.T) {
+	manager, cleanup := createTestManager()
+	defer cleanup()
+
+	requestedCheckoutPath := "some-path/that is/unique/at first"
+
+	// On first call, this path should be unique.
+	resolved, err := manager.PrepareCheckout(requestedCheckoutPath)
+	require.NoError(t, err)
+	assert.Equal(t, requestedCheckoutPath, resolved.RelativePath)
+
+	// At the second call, it already exists and thus should be altered with a random suffix.
+	resolved, err = manager.PrepareCheckout(requestedCheckoutPath)
+	require.NoError(t, err)
+	assert.NotEqual(t, requestedCheckoutPath, resolved.RelativePath)
+	assert.True(t, strings.HasPrefix(resolved.RelativePath, requestedCheckoutPath+"-"))
 }

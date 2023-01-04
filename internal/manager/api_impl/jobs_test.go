@@ -242,6 +242,83 @@ func TestSubmitJobWithEtag(t *testing.T) {
 	}
 }
 
+func TestSubmitJobWithShamanCheckoutID(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+	worker := testWorker()
+
+	submittedJob := api.SubmittedJob{
+		Name:              "поднео посао",
+		Type:              "test",
+		Priority:          50,
+		SubmitterPlatform: worker.Platform,
+		Storage: &api.JobStorageInfo{
+			ShamanCheckoutId: ptr("Весы/Синтел"),
+		},
+	}
+
+	mf.expectConvertTwoWayVariables(t,
+		config.VariableAudienceWorkers,
+		config.VariablePlatform(worker.Platform),
+		map[string]string{},
+	)
+
+	// Expect the job compiler to be called.
+	authoredJob := job_compilers.AuthoredJob{
+		JobID:    "afc47568-bd9d-4368-8016-e91d945db36d",
+		Name:     submittedJob.Name,
+		JobType:  submittedJob.Type,
+		Priority: submittedJob.Priority,
+		Status:   api.JobStatusUnderConstruction,
+		Created:  mf.clock.Now(),
+
+		Storage: job_compilers.JobStorageInfo{
+			ShamanCheckoutID: "Весы/Синтел",
+		},
+	}
+	mf.jobCompiler.EXPECT().Compile(gomock.Any(), submittedJob).Return(&authoredJob, nil)
+
+	// Expect the job to be saved with 'queued' status:
+	queuedJob := authoredJob
+	queuedJob.Status = api.JobStatusQueued
+
+	mf.persistence.EXPECT().StoreAuthoredJob(gomock.Any(), queuedJob).Return(nil)
+
+	// Expect the job to be fetched from the database again:
+	dbJob := persistence.Job{
+		UUID:     queuedJob.JobID,
+		Name:     queuedJob.Name,
+		JobType:  queuedJob.JobType,
+		Priority: queuedJob.Priority,
+		Status:   queuedJob.Status,
+		Settings: persistence.StringInterfaceMap{},
+		Metadata: persistence.StringStringMap{},
+		Storage: persistence.JobStorageInfo{
+			ShamanCheckoutID: "Весы/Синтел",
+		},
+	}
+	mf.persistence.EXPECT().FetchJob(gomock.Any(), queuedJob.JobID).Return(&dbJob, nil)
+
+	// Expect the new job to be broadcast.
+	jobUpdate := api.SocketIOJobUpdate{
+		Id:       dbJob.UUID,
+		Name:     &dbJob.Name,
+		Priority: dbJob.Priority,
+		Status:   dbJob.Status,
+		Type:     dbJob.JobType,
+		Updated:  dbJob.UpdatedAt,
+	}
+	mf.broadcaster.EXPECT().BroadcastNewJob(jobUpdate)
+
+	// Do the call.
+	echoCtx := mf.prepareMockedJSONRequest(submittedJob)
+	requestWorkerStore(echoCtx, &worker)
+	err := mf.flamenco.SubmitJob(echoCtx)
+	assert.NoError(t, err)
+}
+
 func TestGetJobTypeHappy(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

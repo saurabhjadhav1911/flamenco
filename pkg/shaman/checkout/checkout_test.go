@@ -24,7 +24,7 @@ func TestCheckout(t *testing.T) {
 			{Sha: "590c148428d5c35fab3ebad2f3365bb469ab9c531b60831f3e826c472027a0b9", Size: 3367, Path: "subdir/replacer.py"},
 			{Sha: "80b749c27b2fef7255e7e7b3c2029b03b31299c75ff1f1c72732081c70a713a3", Size: 7488, Path: "feed.py"},
 			{Sha: "914853599dd2c351ab7b82b219aae6e527e51518a667f0ff32244b0c94c75688", Size: 486, Path: "httpstuff.py"},
-			{Sha: "d6fc7289b5196cc96748ea72f882a22c39b8833b457fe854ef4c03a01f5db0d3", Size: 7217, Path: "filesystemstuff.py"},
+			{Sha: "d6fc7289b5196cc96748ea72f882a22c39b8833b457fe854ef4c03a01f5db0d3", Size: 7217, Path: "много ликова.py"},
 		},
 	}
 
@@ -38,7 +38,7 @@ func TestCheckout(t *testing.T) {
 	assert.FileExists(t, filepath.Join(coPath, "subdir", "replacer.py"))
 	assert.FileExists(t, filepath.Join(coPath, "feed.py"))
 	assert.FileExists(t, filepath.Join(coPath, "httpstuff.py"))
-	assert.FileExists(t, filepath.Join(coPath, "filesystemstuff.py"))
+	assert.FileExists(t, filepath.Join(coPath, "много ликова.py"))
 
 	storePath := manager.fileStore.StoragePath()
 	assertLinksTo(t, filepath.Join(coPath, "subdir", "replacer.py"),
@@ -47,7 +47,7 @@ func TestCheckout(t *testing.T) {
 		filepath.Join(storePath, "80", "b749c27b2fef7255e7e7b3c2029b03b31299c75ff1f1c72732081c70a713a3", "7488.blob"))
 	assertLinksTo(t, filepath.Join(coPath, "httpstuff.py"),
 		filepath.Join(storePath, "91", "4853599dd2c351ab7b82b219aae6e527e51518a667f0ff32244b0c94c75688", "486.blob"))
-	assertLinksTo(t, filepath.Join(coPath, "filesystemstuff.py"),
+	assertLinksTo(t, filepath.Join(coPath, "много ликова.py"),
 		filepath.Join(storePath, "d6", "fc7289b5196cc96748ea72f882a22c39b8833b457fe854ef4c03a01f5db0d3", "7217.blob"))
 }
 

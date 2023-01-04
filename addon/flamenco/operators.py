@@ -130,6 +130,8 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
     bl_options = {"REGISTER"}  # No UNDO.
 
     blendfile_on_farm: Optional[PurePosixPath] = None
+    actual_shaman_checkout_path: Optional[PurePosixPath] = None
+
     job_name: bpy.props.StringProperty(name="Job Name")  # type: ignore
     job: Optional[_SubmittedJob] = None
     temp_blendfile: Optional[Path] = None
@@ -377,6 +379,19 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
 
         return PurePosixPath(pack_target_file.as_posix())
 
+    def _shaman_checkout_path(self) -> PurePosixPath:
+        """Construct the Shaman checkout path, aka Shaman Checkout ID.
+
+        Note that this may not be the actually used checkout ID, as that will be
+        made unique to this job by Flamenco Manager. That will be stored in
+        self.actual_shaman_checkout_path after the Shaman checkout is actually
+        done.
+        """
+        assert self.job is not None
+
+        # TODO: get project name from preferences/GUI and insert that here too.
+        return PurePosixPath(f"{self.job.name}")
+
     def _bat_pack_shaman(self, context: bpy.types.Context, blendfile: Path) -> None:
         """Use the Manager's Shaman API to submit the BAT pack.
 
@@ -390,9 +405,6 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         assert self.job is not None
         self.log.info("Sending BAT pack to Shaman")
 
-        # TODO: get project name from preferences/GUI and insert that here too.
-        checkout_root = PurePosixPath(f"{self.job.name}")
-
         self.packthread = bat_interface.copy(
             base_blendfile=blendfile,
             project=blendfile.parent,  # TODO: get from preferences/GUI.
@@ -402,7 +414,7 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             packer_class=bat_shaman.Packer,
             packer_kwargs=dict(
                 api_client=self.get_api_client(context),
-                checkout_path=checkout_root,
+                checkout_path=self._shaman_checkout_path(),
             ),
         )
 
@@ -422,6 +434,7 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
                 # resolve to the job storage directory.
                 self.blendfile_on_farm = PurePosixPath("{jobs}") / msg.output_path
 
+            self.actual_shaman_checkout_path = msg.actual_checkout_path
             self._submit_job(context)
             return self._quit(context)
 
@@ -449,6 +462,10 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         # The blend file is contained in the job storage path, no need to
         # copy anything.
         self.blendfile_on_farm = bpathlib.make_absolute(blendfile)
+
+        # No Shaman is involved when using the file directly.
+        self.actual_shaman_checkout_path = None
+
         self._submit_job(context)
 
     def _prepare_job_for_submission(self, context: bpy.types.Context) -> bool:
@@ -466,9 +483,16 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         propgroup.eval_hidden_settings_of_job(context, self.job)
 
         job_submission.set_blend_file(
-            propgroup.job_type, self.job, self.blendfile_on_farm
+            propgroup.job_type,
+            self.job,
+            # self.blendfile_on_farm is None when we're just checking the job.
+            self.blendfile_on_farm or "dummy-for-job-check.blend",
         )
 
+        if self.actual_shaman_checkout_path:
+            job_submission.set_shaman_checkout_id(
+                self.job, self.actual_shaman_checkout_path
+            )
 
         return True
 

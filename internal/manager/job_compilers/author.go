@@ -30,12 +30,17 @@ type AuthoredJob struct {
 
 	Settings JobSettings
 	Metadata JobMetadata
+	Storage  JobStorageInfo
 
 	Tasks []AuthoredTask
 }
 
 type JobSettings map[string]interface{}
 type JobMetadata map[string]string
+
+type JobStorageInfo struct {
+	ShamanCheckoutID string
+}
 
 type AuthoredTask struct {
 	// Tasks already get their UUID in the authoring stage. This makes it simpler

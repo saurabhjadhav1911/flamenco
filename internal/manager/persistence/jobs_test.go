@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/net/context"
 
 	"git.blender.org/flamenco/internal/manager/job_compilers"
@@ -37,6 +38,7 @@ func TestStoreAuthoredJob(t *testing.T) {
 	assert.Equal(t, api.JobStatusUnderConstruction, fetchedJob.Status)
 	assert.EqualValues(t, map[string]interface{}(job.Settings), fetchedJob.Settings)
 	assert.EqualValues(t, map[string]string(job.Metadata), fetchedJob.Metadata)
+	assert.Equal(t, "", fetchedJob.Storage.ShamanCheckoutID)
 
 	// Fetch tasks of job.
 	var dbJob Job
@@ -54,6 +56,23 @@ func TestStoreAuthoredJob(t *testing.T) {
 	assert.Equal(t, api.TaskStatusQueued, tasks[0].Status)
 	assert.Equal(t, api.TaskStatusQueued, tasks[1].Status)
 	assert.Equal(t, api.TaskStatusQueued, tasks[2].Status)
+}
+
+func TestStoreAuthoredJobWithShamanCheckoutID(t *testing.T) {
+	ctx, cancel, db := persistenceTestFixtures(t, 1*time.Second)
+	defer cancel()
+
+	job := createTestAuthoredJobWithTasks()
+	job.Storage.ShamanCheckoutID = "één/twee"
+
+	err := db.StoreAuthoredJob(ctx, job)
+	require.NoError(t, err)
+
+	fetchedJob, err := db.FetchJob(ctx, job.JobID)
+	require.NoError(t, err)
+	require.NotNil(t, fetchedJob)
+
+	assert.Equal(t, job.Storage.ShamanCheckoutID, fetchedJob.Storage.ShamanCheckoutID)
 }
 
 func TestDeleteJob(t *testing.T) {

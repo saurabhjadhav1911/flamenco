@@ -54,7 +54,7 @@ type ResolvedCheckoutInfo struct {
 	// The absolute path on our filesystem.
 	absolutePath string
 	// The path relative to the Manager.checkoutBasePath. This is what was
-	// received from the client.
+	// received from the client, updated to be unique.
 	RelativePath string
 }
 
@@ -104,14 +104,14 @@ func (m *Manager) pathForCheckout(requestedCheckoutPath string) (ResolvedCheckou
 
 // PrepareCheckout creates the root directory for a specific checkout.
 // Returns the path relative to the checkout root directory.
-func (m *Manager) PrepareCheckout(checkoutPath string) (ResolvedCheckoutInfo, error) {
+func (m *Manager) PrepareCheckout(requestedCheckoutPath string) (ResolvedCheckoutInfo, error) {
 	// This function checks the filesystem and tries to ensure uniqueness, so it's
 	// important that it doesn't run simultaneously in parallel threads.
 	m.checkoutUniquenessMutex.Lock()
 	defer m.checkoutUniquenessMutex.Unlock()
 
 	var lastErr error
-	attemptCheckoutPath := checkoutPath
+	attemptCheckoutPath := requestedCheckoutPath
 
 	// Just try 10 different random suffixes. If that still doesn't work, fail.
 	for try := 0; try < 10; try++ {
@@ -122,7 +122,7 @@ func (m *Manager) PrepareCheckout(checkoutPath string) (ResolvedCheckoutInfo, er
 
 		logger := log.With().
 			Str("absolutePath", checkoutPaths.absolutePath).
-			Str("checkoutPath", checkoutPath).
+			Str("checkoutPath", requestedCheckoutPath).
 			Logger()
 
 		if stat, err := os.Stat(checkoutPaths.absolutePath); !errors.Is(err, fs.ErrNotExist) {
@@ -130,13 +130,13 @@ func (m *Manager) PrepareCheckout(checkoutPath string) (ResolvedCheckoutInfo, er
 				// No error stat'ing this path, indicating it's an existing checkout.
 				lastErr = ErrCheckoutAlreadyExists
 				if stat.IsDir() {
-					logger.Debug().Msg("shaman: checkout path exists")
+					logger.Debug().Msg("shaman: checkout path exists, going to add a random suffix")
 				} else {
 					logger.Warn().Msg("shaman: checkout path exists but is not a directory")
 				}
 
 				// Retry with (another) random suffix.
-				attemptCheckoutPath = fmt.Sprintf("%s-%s", checkoutPath, randomisedToken())
+				attemptCheckoutPath = fmt.Sprintf("%s-%s", requestedCheckoutPath, randomisedToken())
 				continue
 			}
 			// If it's any other error, it's really a problem on our side. Don't retry.
@@ -150,7 +150,10 @@ func (m *Manager) PrepareCheckout(checkoutPath string) (ResolvedCheckoutInfo, er
 			continue
 		}
 
-		logger.Info().Str("relPath", checkoutPaths.RelativePath).Msg("shaman: created checkout directory")
+		log.Debug().
+			Str("requestedPath", requestedCheckoutPath).
+			Str("actualPath", checkoutPaths.RelativePath).
+			Msg("shaman: created checkout directory")
 		return checkoutPaths, nil
 	}
 

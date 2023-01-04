@@ -69,12 +69,21 @@ class Packer(submodules.pack.Packer):  # type: ignore
     def output_path(self) -> PurePath:
         """The path of the packed blend file in the target directory."""
         assert self._output_path is not None
-        assert self.shaman_transferrer is not None
 
-        checkout_root = PurePosixPath(self.shaman_transferrer.checkout_path)
         rel_output = self._output_path.relative_to(self._target_path)
-        out_path: PurePath = checkout_root / rel_output
+        out_path: PurePath = self.actual_checkout_path / rel_output
         return out_path
+
+    @property
+    def actual_checkout_path(self) -> PurePosixPath:
+        """The actual Shaman checkout path.
+
+        Only valid after packing is complete. Shaman ensures that the checkout
+        is unique, and thus the actual path can be different than the requested
+        one.
+        """
+        assert self.shaman_transferrer is not None
+        return PurePosixPath(self.shaman_transferrer.checkout_path)
 
     def execute(self):
         try:
