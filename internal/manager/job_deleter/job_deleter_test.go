@@ -28,6 +28,8 @@ func TestQueueJobDeletion(t *testing.T) {
 	s, finish, mocks := jobDeleterTestFixtures(t)
 	defer finish()
 
+	mocks.broadcaster.EXPECT().BroadcastJobUpdate(gomock.Any()).Times(3)
+
 	job1 := &persistence.Job{UUID: "2f7d910f-08a6-4b0f-8ecb-b3946939ed1b"}
 	mocks.persist.EXPECT().RequestJobDeletion(mocks.ctx, job1)
 	assert.NoError(t, s.QueueJobDeletion(mocks.ctx, job1))
@@ -107,7 +109,7 @@ func TestDeleteJobWithoutShaman(t *testing.T) {
 	// Mock that everything went OK.
 	mocks.storage.EXPECT().RemoveJobStorage(mocks.ctx, jobUUID)
 	mocks.persist.EXPECT().DeleteJob(mocks.ctx, jobUUID)
-	// TODO: mocks.broadcaster.EXPECT().BroadcastJobUpdate(...)
+	mocks.broadcaster.EXPECT().BroadcastJobUpdate(gomock.Any())
 	assert.NoError(t, s.deleteJob(mocks.ctx, jobUUID))
 }
 
@@ -158,7 +160,7 @@ func TestDeleteJobWithShaman(t *testing.T) {
 	mocks.shaman.EXPECT().EraseCheckout(shamanCheckoutID)
 	mocks.storage.EXPECT().RemoveJobStorage(mocks.ctx, jobUUID)
 	mocks.persist.EXPECT().DeleteJob(mocks.ctx, jobUUID)
-	// TODO: mocks.broadcaster.EXPECT().BroadcastJobUpdate(...)
+	mocks.broadcaster.EXPECT().BroadcastJobUpdate(gomock.Any())
 	assert.NoError(t, s.deleteJob(mocks.ctx, jobUUID))
 }
 

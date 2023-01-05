@@ -17,6 +17,8 @@ import (
 	"time"
 
 	"git.blender.org/flamenco/internal/manager/persistence"
+	"git.blender.org/flamenco/internal/manager/webupdates"
+	"git.blender.org/flamenco/pkg/api"
 	"git.blender.org/flamenco/pkg/shaman"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -67,6 +69,10 @@ func (s *Service) QueueJobDeletion(ctx context.Context, job *persistence.Job) er
 		return fmt.Errorf("requesting job deletion: %w", err)
 	}
 
+	// Broadcast that this job was queued for deleted.
+	jobUpdate := webupdates.NewJobUpdate(job)
+	s.changeBroadcaster.BroadcastJobUpdate(jobUpdate)
+
 	// Let the Run() goroutine know this job is ready for deletion.
 	select {
 	case s.queue <- job.UUID:
@@ -75,6 +81,15 @@ func (s *Service) QueueJobDeletion(ctx context.Context, job *persistence.Job) er
 		logger.Debug().Msg("job deleter: job deletion queue is full")
 	}
 	return nil
+}
+
+func (s *Service) WhatWouldBeDeleted(job *persistence.Job) api.JobDeletionInfo {
+	logger := log.With().Str("job", job.UUID).Logger()
+	logger.Info().Msg("job deleter: checking what job deletion would do")
+
+	return api.JobDeletionInfo{
+		ShamanCheckout: s.canDeleteShamanCheckout(logger, job),
+	}
 }
 
 // Run processes the queue of deletion requests. It starts by building up a
@@ -142,13 +157,39 @@ func (s *Service) deleteJob(ctx context.Context, jobUUID string) error {
 		return err
 	}
 
-	// TODO: broadcast that this job was deleted.
+	// Broadcast that this job was deleted. This only contains the UUID and the
+	// "was deleted" flag, because there's nothing else left. And I don't want to
+	// do a full database query for something we'll delete anyway.
+	wasDeleted := true
+	jobUpdate := api.SocketIOJobUpdate{
+		Id:         jobUUID,
+		WasDeleted: &wasDeleted,
+	}
+	s.changeBroadcaster.BroadcastJobUpdate(jobUpdate)
 
 	logger.Info().Msg("job deleter: job removal complete")
 	return nil
 }
 
+func (s *Service) canDeleteShamanCheckout(logger zerolog.Logger, job *persistence.Job) bool {
+	// NOTE: Keep this logic and the deleteShamanCheckout() function in sync.
+	if !s.shaman.IsEnabled() {
+		logger.Debug().Msg("job deleter: Shaman not enabled, cannot delete job files")
+		return false
+	}
+
+	checkoutID := job.Storage.ShamanCheckoutID
+	if checkoutID == "" {
+		logger.Debug().Msg("job deleter: job was not created with Shaman (or before Flamenco v3.2), cannot delete job files")
+		return false
+	}
+
+	return true
+}
+
 func (s *Service) deleteShamanCheckout(ctx context.Context, logger zerolog.Logger, jobUUID string) error {
+	// NOTE: Keep this logic and the canDeleteShamanCheckout() function in sync.
+
 	if !s.shaman.IsEnabled() {
 		logger.Debug().Msg("job deleter: Shaman not enabled, skipping job file deletion")
 		return nil

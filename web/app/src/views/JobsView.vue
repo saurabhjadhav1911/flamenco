@@ -1,6 +1,7 @@
 <template>
   <div class="col col-1">
-    <jobs-table ref="jobsTable" :activeJobID="jobID" @tableRowClicked="onTableJobClicked" />
+    <jobs-table ref="jobsTable" :activeJobID="jobID" @tableRowClicked="onTableJobClicked"
+      @activeJobDeleted="onActiveJobDeleted" />
   </div>
   <div class="col col-2 job-details-column" id="col-job-details">
     <get-the-addon v-if="jobs.isJobless" />
@@ -116,6 +117,9 @@ export default {
     onTableTaskClicked(rowData) {
       this._routeToTask(rowData.id);
     },
+    onActiveJobDeleted(deletedJobUUID) {
+      this._routeToJobOverview();
+    },
 
     onSelectedTaskChanged(taskSummary) {
       if (!taskSummary) { // There is no active task.
@@ -148,7 +152,7 @@ export default {
       if (this.$refs.jobsTable) {
         this.$refs.jobsTable.processJobUpdate(jobUpdate);
       }
-      if (this.jobID != jobUpdate.id)
+      if (this.jobID != jobUpdate.id || jobUpdate.was_deleted)
         return;
 
       this._fetchJob(this.jobID);
@@ -187,6 +191,13 @@ export default {
       this.$refs.jobDetails.refreshLastRenderedImage(lastRenderedUpdate);
     },
 
+    /**
+     * Send to the job overview page, i.e. job view without active job.
+     */
+    _routeToJobOverview() {
+      const route = { name: 'jobs' };
+      this.$router.push(route);
+    },
     /**
      * @param {string} jobID job ID to navigate to, can be empty string for "no active job".
      */

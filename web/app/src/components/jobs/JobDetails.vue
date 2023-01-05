@@ -39,10 +39,12 @@
           <dd class="field-status-label" :class="'status-' + jobData.status">{{ jobData.status }}</dd>
 
           <dt class="field-type" title="Type">Type</dt>
-          <dd>{{ jobType ? jobType.label : jobData.type }}</dd>
+          <dd>{{ jobType? jobType.label : jobData.type }}</dd>
 
           <dt class="field-priority" title="Priority">Priority</dt>
-          <dd><PopoverEditableJobPriority :jobId="jobData.id" :priority="jobData.priority" /></dd>
+          <dd>
+            <PopoverEditableJobPriority :jobId="jobData.id" :priority="jobData.priority" />
+          </dd>
 
           <dt class="field-created" title="Created">Created</dt>
           <dd>{{ datetime.relativeTime(jobData.created) }}</dd>
@@ -140,6 +142,8 @@ export default {
   },
   watch: {
     jobData(newJobData) {
+      // This can be called when moving from "a job" to "no job", in which case there is no ID.
+      if (!newJobData || !newJobData.id) return;
       this._refreshJobSettings(newJobData);
     },
   },

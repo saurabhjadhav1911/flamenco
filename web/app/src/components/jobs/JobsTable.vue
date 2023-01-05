@@ -1,7 +1,7 @@
 <template>
   <h2 class="column-title">Jobs</h2>
   <div class="btn-bar-group">
-    <job-actions-bar />
+    <job-actions-bar :activeJobID="jobs.activeJobID" />
     <div class="align-right">
       <status-filter-bar :availableStatuses="availableStatuses" :activeStatuses="shownStatuses"
         @click="toggleStatusFilter" />
@@ -26,7 +26,7 @@ import StatusFilterBar from '@/components/StatusFilterBar.vue'
 export default {
   name: 'JobsTable',
   props: ["activeJobID"],
-  emits: ["tableRowClicked"],
+  emits: ["tableRowClicked", "activeJobDeleted"],
   components: {
     JobActionsBar, StatusFilterBar,
   },
@@ -151,18 +151,27 @@ export default {
     processJobUpdate(jobUpdate) {
       // updateData() will only overwrite properties that are actually set on
       // jobUpdate, and leave the rest as-is.
-      if (this.tabulator.initialized) {
-        const row = this.tabulator.rowManager.findRow(jobUpdate.id);
+      if (!this.tabulator.initialized) {
+        return;
+      }
+      const row = this.tabulator.rowManager.findRow(jobUpdate.id);
 
-        let promise = null;
+      let promise = null;
+      if (jobUpdate.was_deleted) {
+        if (row) promise = row.delete();
+        else promise = Promise.resolve();
+        promise.finally(() => { this.$emit("activeJobDeleted", jobUpdate.id); });
+      }
+      else {
         if (row) promise = this.tabulator.updateData([jobUpdate]);
         else promise = this.tabulator.addData([jobUpdate]);
-
-        promise
-          .then(this.sortData)
-          .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
       }
-      this._refreshAvailableStatuses();
+
+      promise
+        .then(this.sortData)
+        .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
+        .then(this._refreshAvailableStatuses)
+        ;
     },
 
     onRowClick(event, row) {

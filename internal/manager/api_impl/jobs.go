@@ -194,6 +194,26 @@ func (f *Flamenco) DeleteJob(e echo.Context, jobID string) error {
 	}
 }
 
+func (f *Flamenco) DeleteJobWhatWouldItDo(e echo.Context, jobID string) error {
+	logger := requestLogger(e).With().
+		Str("job", jobID).
+		Logger()
+
+	dbJob, err := f.fetchJob(e, logger, jobID)
+	if dbJob == nil {
+		// f.fetchJob already sent a response.
+		return err
+	}
+
+	logger = logger.With().
+		Str("currentstatus", string(dbJob.Status)).
+		Logger()
+	logger.Info().Msg("checking what job deletion would do")
+
+	deletionInfo := f.jobDeleter.WhatWouldBeDeleted(dbJob)
+	return e.JSON(http.StatusOK, deletionInfo)
+}
+
 // SetJobStatus is used by the web interface to change a job's status.
 func (f *Flamenco) SetJobStatus(e echo.Context, jobID string) error {
 	logger := requestLogger(e).With().

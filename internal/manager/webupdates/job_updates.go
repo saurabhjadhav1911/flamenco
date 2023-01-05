@@ -21,6 +21,11 @@ func NewJobUpdate(job *persistence.Job) api.SocketIOJobUpdate {
 		Type:     job.JobType,
 		Priority: job.Priority,
 	}
+
+	if job.DeleteRequestedAt.Valid {
+		jobUpdate.DeleteRequestedAt = &job.DeleteRequestedAt.Time
+	}
+
 	return jobUpdate
 }
 

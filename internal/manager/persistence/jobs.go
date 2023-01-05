@@ -216,6 +216,9 @@ func (db *DB) FetchJob(ctx context.Context, jobUUID string) (*Job, error) {
 	if findResult.Error != nil {
 		return nil, jobError(findResult.Error, "fetching job")
 	}
+	if dbJob.ID == 0 {
+		return nil, ErrJobNotFound
+	}
 
 	return &dbJob, nil
 }

@@ -15,6 +15,8 @@ bugs in actually-released versions.
 - Bump the bundled Blender Asset Tracer (BAT) to version 1.15.
 - Increase preview image file size from 10 MB to 25 MB. Even though the Worker can down-scale render output before sending to the Manager as preview, they could still be larger than the limit of 10 MB.
 - Fix a crash of the Manager when using an invalid frame range (`1 10` for example, instead of `1-10` or `1,10`)
+- Make it possible to delete jobs. The job and its tasks are removed from Flamenco, including last-rendered images and logs. The input files (i.e. the to-be-rendered blend files and their dependencies) will only be removed if [the Shaman system](https://flamenco.blender.org/usage/shared-storage/shaman/) was used AND if the job was submitted with Flamenco 3.2 or newer.
+
 
 
 ## 3.1 - released 2022-10-18
