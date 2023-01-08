@@ -276,6 +276,9 @@ type Job struct {
 	// Creation timestamp
 	Created time.Time `json:"created"`
 
+	// If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager.
+	DeleteRequestedAt *time.Time `json:"delete_requested_at,omitempty"`
+
 	// UUID of the Job
 	Id     string    `json:"id"`
 	Status JobStatus `json:"status"`

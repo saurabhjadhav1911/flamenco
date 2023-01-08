@@ -112,6 +112,9 @@ class Job {
             if (data.hasOwnProperty('activity')) {
                 obj['activity'] = ApiClient.convertToType(data['activity'], 'String');
             }
+            if (data.hasOwnProperty('delete_requested_at')) {
+                obj['delete_requested_at'] = ApiClient.convertToType(data['delete_requested_at'], 'Date');
+            }
         }
         return obj;
     }
@@ -192,6 +195,12 @@ Job.prototype['status'] = undefined;
  */
 Job.prototype['activity'] = undefined;
 
+/**
+ * If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager. 
+ * @member {Date} delete_requested_at
+ */
+Job.prototype['delete_requested_at'] = undefined;
+
 
 // Implement SubmittedJob interface:
 /**
@@ -255,6 +264,11 @@ JobAllOf.prototype['status'] = undefined;
  * @member {String} activity
  */
 JobAllOf.prototype['activity'] = undefined;
+/**
+ * If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager. 
+ * @member {Date} delete_requested_at
+ */
+JobAllOf.prototype['delete_requested_at'] = undefined;
 
 
 

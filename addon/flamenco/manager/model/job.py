@@ -110,6 +110,7 @@ class Job(ModelComposed):
             'settings': (JobSettings,),  # noqa: E501
             'metadata': (JobMetadata,),  # noqa: E501
             'storage': (JobStorageInfo,),  # noqa: E501
+            'delete_requested_at': (datetime,),  # noqa: E501
         }
 
     @cached_property
@@ -131,6 +132,7 @@ class Job(ModelComposed):
         'settings': 'settings',  # noqa: E501
         'metadata': 'metadata',  # noqa: E501
         'storage': 'storage',  # noqa: E501
+        'delete_requested_at': 'delete_requested_at',  # noqa: E501
     }
 
     read_only_vars = {
@@ -185,6 +187,7 @@ class Job(ModelComposed):
             settings (JobSettings): [optional]  # noqa: E501
             metadata (JobMetadata): [optional]  # noqa: E501
             storage (JobStorageInfo): [optional]  # noqa: E501
+            delete_requested_at (datetime): If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager. . [optional]  # noqa: E501
         """
 
         priority = kwargs.get('priority', 50)
@@ -298,6 +301,7 @@ class Job(ModelComposed):
             settings (JobSettings): [optional]  # noqa: E501
             metadata (JobMetadata): [optional]  # noqa: E501
             storage (JobStorageInfo): [optional]  # noqa: E501
+            delete_requested_at (datetime): If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager. . [optional]  # noqa: E501
         """
 
         priority = kwargs.get('priority', 50)
