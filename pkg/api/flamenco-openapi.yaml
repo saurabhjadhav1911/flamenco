@@ -1656,6 +1656,12 @@ components:
             activity:
               type: string
               description: Description of the last activity on this job.
+            delete_requested_at:
+              type: string
+              format: date-time
+              description: >
+                If job deletion was requested, this is the timestamp at which
+                that request was stored on Flamenco Manager.
           required: [id, created, updated, status, activity]
 
     JobSettings:
