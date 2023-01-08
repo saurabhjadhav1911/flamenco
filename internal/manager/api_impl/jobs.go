@@ -595,6 +595,9 @@ func jobDBtoAPI(dbJob *persistence.Job) api.Job {
 			ShamanCheckoutId: &dbJob.Storage.ShamanCheckoutID,
 		}
 	}
+	if dbJob.DeleteRequestedAt.Valid {
+		apiJob.DeleteRequestedAt = &dbJob.DeleteRequestedAt.Time
+	}
 
 	return apiJob
 }

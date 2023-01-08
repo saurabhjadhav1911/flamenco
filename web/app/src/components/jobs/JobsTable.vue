@@ -76,7 +76,9 @@ export default {
       rowFormatter(row) {
         const data = row.getData();
         const isActive = (data.id === vueComponent.activeJobID);
-        row.getElement().classList.toggle("active-row", isActive);
+        const classList = row.getElement().classList;
+        classList.toggle("active-row", isActive);
+        classList.toggle("deletion-requested", !!data.delete_requested_at);
       },
       initialSort: [
         { column: "updated", dir: "desc" },

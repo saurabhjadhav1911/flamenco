@@ -620,6 +620,11 @@ button:focus,
   font-weight: bold;
 }
 
+.tabulator-row.deletion-requested * {
+  text-decoration: line-through red 1px;
+  color: var(--color-text-muted);
+}
+
 span.state-transition-arrow {
   display: inline-block;
   font-weight: bold;

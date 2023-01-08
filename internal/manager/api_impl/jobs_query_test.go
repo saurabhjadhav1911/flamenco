@@ -2,6 +2,7 @@
 package api_impl
 
 import (
+	"database/sql"
 	"net/http"
 	"testing"
 	"time"
@@ -32,10 +33,23 @@ func TestQueryJobs(t *testing.T) {
 		},
 	}
 
+	deletionRequestedAt := time.Now()
+	deletionQueuedJob := persistence.Job{
+		UUID:     "d912ac69-de48-48ba-8028-35d82cb41451",
+		Name:     "уходить",
+		JobType:  "test",
+		Priority: 75,
+		Status:   api.JobStatusCompleted,
+		DeleteRequestedAt: sql.NullTime{
+			Time:  deletionRequestedAt,
+			Valid: true,
+		},
+	}
+
 	echoCtx := mf.prepareMockedRequest(nil)
 	ctx := echoCtx.Request().Context()
 	mf.persistence.EXPECT().QueryJobs(ctx, api.JobsQuery{}).
-		Return([]*persistence.Job{&activeJob}, nil)
+		Return([]*persistence.Job{&activeJob, &deletionQueuedJob}, nil)
 
 	err := mf.flamenco.QueryJobs(echoCtx)
 	assert.NoError(t, err)
@@ -56,6 +70,18 @@ func TestQueryJobs(t *testing.T) {
 				},
 				Id:     "afc47568-bd9d-4368-8016-e91d945db36d",
 				Status: api.JobStatusActive,
+			},
+			{
+				SubmittedJob: api.SubmittedJob{
+					Name:     "уходить",
+					Type:     "test",
+					Priority: 75,
+					Settings: &api.JobSettings{},
+					Metadata: &api.JobMetadata{},
+				},
+				Id:                "d912ac69-de48-48ba-8028-35d82cb41451",
+				Status:            api.JobStatusCompleted,
+				DeleteRequestedAt: &deletionRequestedAt,
 			},
 		},
 	}

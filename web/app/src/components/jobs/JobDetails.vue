@@ -47,8 +47,14 @@
           <dt class="field-created" title="Created">Created</dt>
           <dd>{{ datetime.relativeTime(jobData.created) }}</dd>
 
-          <dt class="field-updated" title="Updated">Updated</dt>
-          <dd>{{ datetime.relativeTime(jobData.updated) }}</dd>
+          <template v-if="isDeleteRequested">
+            <dt class="field-delete-requested-at" title="delete-requested-at">Delete Request</dt>
+            <dd>{{ datetime.relativeTime(jobData.delete_requested_at) }}</dd>
+          </template>
+          <template v-else>
+            <dt class="field-updated" title="Updated">Updated</dt>
+            <dd>{{ datetime.relativeTime(jobData.updated) }}</dd>
+          </template>
 
           <dt class="field-activity" title="Activity">Activity</dt>
           <dd>{{ jobData.activity }}</dd>
@@ -118,6 +124,9 @@ export default {
     },
     hasSettings() {
       return this.jobData && !objectEmpty(this.settingsToDisplay);
+    },
+    isDeleteRequested() {
+      return this.jobData && !!this.jobData.delete_requested_at;
     },
     settingsToDisplay() {
       if (!this.showAllSettings) {
