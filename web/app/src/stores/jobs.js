@@ -74,6 +74,16 @@ export const useJobs = defineStore('jobs', {
      */
     cancelJobs() { return this._setJobStatus("cancel-requested"); },
     requeueJobs() { return this._setJobStatus("requeueing"); },
+    deleteJobs() {
+      if (!this.activeJobID) {
+        console.warn(`deleteJobs() impossible, no active job ID`);
+        return new Promise((resolve, reject) => {
+          reject("No job selected, unable to delete");
+        });
+      }
+
+      return jobsAPI.deleteJob(this.activeJobID);
+    },
 
     // Internal methods.
 

@@ -2,7 +2,7 @@
   <div class="btn-bar jobs">
     <button class="btn cancel" :disabled="!jobs.canCancel" v-on:click="onButtonCancel">Cancel Job</button>
     <button class="btn requeue" :disabled="!jobs.canRequeue" v-on:click="onButtonRequeue">Requeue</button>
-    <!-- <button class="action delete dangerous" :disabled="!jobs.canDelete" v-on:click="onButtonDelete">Delete</button> -->
+    <button class="action delete dangerous" :disabled="!jobs.canDelete" v-on:click="onButtonDelete">Delete</button>
   </div>
 </template>
 
@@ -20,8 +20,14 @@ export default {
   },
   methods: {
     onButtonDelete() {
-      return this._handleJobActionPromise(
-        this.jobs.deleteJobs(), "marked for deletion");
+      return this.jobs.deleteJobs()
+        .then(() => {
+          this.notifs.add("job marked for deletion");
+        })
+        .catch((error) => {
+          const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
+          this.notifs.add(`Error: ${errorMsg}`);
+        })
     },
     onButtonCancel() {
       return this._handleJobActionPromise(
@@ -53,4 +59,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
