@@ -12,6 +12,57 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestQueryJobs(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	activeJob := persistence.Job{
+		UUID:     "afc47568-bd9d-4368-8016-e91d945db36d",
+		Name:     "работа",
+		JobType:  "test",
+		Priority: 50,
+		Status:   api.JobStatusActive,
+		Settings: persistence.StringInterfaceMap{
+			"result": "/render/frames/exploding.kittens",
+		},
+		Metadata: persistence.StringStringMap{
+			"project": "/projects/exploding-kittens",
+		},
+	}
+
+	echoCtx := mf.prepareMockedRequest(nil)
+	ctx := echoCtx.Request().Context()
+	mf.persistence.EXPECT().QueryJobs(ctx, api.JobsQuery{}).
+		Return([]*persistence.Job{&activeJob}, nil)
+
+	err := mf.flamenco.QueryJobs(echoCtx)
+	assert.NoError(t, err)
+
+	expectedJobs := api.JobsQueryResult{
+		Jobs: []api.Job{
+			{
+				SubmittedJob: api.SubmittedJob{
+					Name:     "работа",
+					Type:     "test",
+					Priority: 50,
+					Settings: &api.JobSettings{AdditionalProperties: map[string]interface{}{
+						"result": "/render/frames/exploding.kittens",
+					}},
+					Metadata: &api.JobMetadata{AdditionalProperties: map[string]string{
+						"project": "/projects/exploding-kittens",
+					}},
+				},
+				Id:     "afc47568-bd9d-4368-8016-e91d945db36d",
+				Status: api.JobStatusActive,
+			},
+		},
+	}
+
+	assertResponseJSON(t, echoCtx, http.StatusOK, expectedJobs)
+}
+
 func TestFetchTask(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
