@@ -211,7 +211,8 @@ func (db *DB) StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.Au
 func (db *DB) FetchJob(ctx context.Context, jobUUID string) (*Job, error) {
 	dbJob := Job{}
 	findResult := db.gormDB.WithContext(ctx).
-		First(&dbJob, "uuid = ?", jobUUID)
+		Limit(1).
+		Find(&dbJob, "uuid = ?", jobUUID)
 	if findResult.Error != nil {
 		return nil, jobError(findResult.Error, "fetching job")
 	}
