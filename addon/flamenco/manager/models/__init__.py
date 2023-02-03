@@ -26,6 +26,7 @@ from flamenco.manager.model.job import Job
 from flamenco.manager.model.job_all_of import JobAllOf
 from flamenco.manager.model.job_blocklist import JobBlocklist
 from flamenco.manager.model.job_blocklist_entry import JobBlocklistEntry
+from flamenco.manager.model.job_deletion_info import JobDeletionInfo
 from flamenco.manager.model.job_last_rendered_image_info import JobLastRenderedImageInfo
 from flamenco.manager.model.job_metadata import JobMetadata
 from flamenco.manager.model.job_priority_change import JobPriorityChange

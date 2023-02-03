@@ -18,6 +18,7 @@ import AvailableJobTypes from '../model/AvailableJobTypes';
 import Error from '../model/Error';
 import Job from '../model/Job';
 import JobBlocklistEntry from '../model/JobBlocklistEntry';
+import JobDeletionInfo from '../model/JobDeletionInfo';
 import JobLastRenderedImageInfo from '../model/JobLastRenderedImageInfo';
 import JobPriorityChange from '../model/JobPriorityChange';
 import JobStatusChange from '../model/JobStatusChange';
@@ -89,6 +90,52 @@ export default class JobsApi {
      */
     deleteJob(jobId) {
       return this.deleteJobWithHttpInfo(jobId)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * Get info about what would be deleted when deleting this job. The job itself, its logs, and the last-rendered images will always be deleted. The job files are only deleted conditionally, and this operation can be used to figure that out. 
+     * @param {String} jobId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/JobDeletionInfo} and HTTP response
+     */
+    deleteJobWhatWouldItDoWithHttpInfo(jobId) {
+      let postBody = null;
+      // verify the required parameter 'jobId' is set
+      if (jobId === undefined || jobId === null) {
+        throw new Error("Missing the required parameter 'jobId' when calling deleteJobWhatWouldItDo");
+      }
+
+      let pathParams = {
+        'job_id': jobId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = JobDeletionInfo;
+      return this.apiClient.callApi(
+        '/api/v3/jobs/{job_id}/what-would-delete-do', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Get info about what would be deleted when deleting this job. The job itself, its logs, and the last-rendered images will always be deleted. The job files are only deleted conditionally, and this operation can be used to figure that out. 
+     * @param {String} jobId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/JobDeletionInfo}
+     */
+    deleteJobWhatWouldItDo(jobId) {
+      return this.deleteJobWhatWouldItDoWithHttpInfo(jobId)
         .then(function(response_and_data) {
           return response_and_data.data;
         });

@@ -85,6 +85,12 @@ class SocketIOJobUpdate {
             if (data.hasOwnProperty('refresh_tasks')) {
                 obj['refresh_tasks'] = ApiClient.convertToType(data['refresh_tasks'], 'Boolean');
             }
+            if (data.hasOwnProperty('delete_requested_at')) {
+                obj['delete_requested_at'] = ApiClient.convertToType(data['delete_requested_at'], 'Date');
+            }
+            if (data.hasOwnProperty('was_deleted')) {
+                obj['was_deleted'] = ApiClient.convertToType(data['was_deleted'], 'Boolean');
+            }
         }
         return obj;
     }
@@ -136,6 +142,18 @@ SocketIOJobUpdate.prototype['priority'] = 50;
  * @member {Boolean} refresh_tasks
  */
 SocketIOJobUpdate.prototype['refresh_tasks'] = undefined;
+
+/**
+ * If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager. 
+ * @member {Date} delete_requested_at
+ */
+SocketIOJobUpdate.prototype['delete_requested_at'] = undefined;
+
+/**
+ * When a job was just deleted, this is set to `true`. If this is specified, only the 'id' field is set, the rest will be empty. 
+ * @member {Boolean} was_deleted
+ */
+SocketIOJobUpdate.prototype['was_deleted'] = undefined;
 
 
 

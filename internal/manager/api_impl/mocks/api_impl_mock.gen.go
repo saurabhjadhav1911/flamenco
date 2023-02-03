@@ -1270,3 +1270,17 @@ func (mr *MockJobDeleterMockRecorder) QueueJobDeletion(arg0, arg1 interface{}) *
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueJobDeletion", reflect.TypeOf((*MockJobDeleter)(nil).QueueJobDeletion), arg0, arg1)
 }
+
+// WhatWouldBeDeleted mocks base method.
+func (m *MockJobDeleter) WhatWouldBeDeleted(arg0 *persistence.Job) api.JobDeletionInfo {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WhatWouldBeDeleted", arg0)
+	ret0, _ := ret[0].(api.JobDeletionInfo)
+	return ret0
+}
+
+// WhatWouldBeDeleted indicates an expected call of WhatWouldBeDeleted.
+func (mr *MockJobDeleterMockRecorder) WhatWouldBeDeleted(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WhatWouldBeDeleted", reflect.TypeOf((*MockJobDeleter)(nil).WhatWouldBeDeleted), arg0)
+}

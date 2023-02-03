@@ -28,6 +28,7 @@ import FlamencoVersion from './model/FlamencoVersion';
 import Job from './model/Job';
 import JobAllOf from './model/JobAllOf';
 import JobBlocklistEntry from './model/JobBlocklistEntry';
+import JobDeletionInfo from './model/JobDeletionInfo';
 import JobLastRenderedImageInfo from './model/JobLastRenderedImageInfo';
 import JobPriorityChange from './model/JobPriorityChange';
 import JobStatus from './model/JobStatus';
@@ -217,6 +218,12 @@ export {
      * @property {module:model/JobBlocklistEntry}
      */
     JobBlocklistEntry,
+
+    /**
+     * The JobDeletionInfo model constructor.
+     * @property {module:model/JobDeletionInfo}
+     */
+    JobDeletionInfo,
 
     /**
      * The JobLastRenderedImageInfo model constructor.

@@ -297,6 +297,12 @@ type JobBlocklistEntry struct {
 	WorkerName *string `json:"worker_name,omitempty"`
 }
 
+// Info about what will be deleted when this job is deleted.
+type JobDeletionInfo struct {
+	// Whether the Shaman checkout directory will be removed along with the job.
+	ShamanCheckout bool `json:"shaman_checkout"`
+}
+
 // Enough information for a client to piece together different strings to form a host-relative URL to the last-rendered image. To construct the URL, concatenate "{base}/{one of the suffixes}".
 type JobLastRenderedImageInfo struct {
 	Base     string   `json:"base"`
@@ -515,6 +521,9 @@ type SharedStorageLocation struct {
 
 // Subset of a Job, sent over SocketIO when a job changes. For new jobs, `previous_status` will be excluded.
 type SocketIOJobUpdate struct {
+	// If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager.
+	DeleteRequestedAt *time.Time `json:"delete_requested_at,omitempty"`
+
 	// UUID of the Job
 	Id string `json:"id"`
 
@@ -530,6 +539,9 @@ type SocketIOJobUpdate struct {
 
 	// Timestamp of last update
 	Updated time.Time `json:"updated"`
+
+	// When a job was just deleted, this is set to `true`. If this is specified, only the 'id' field is set, the rest will be empty.
+	WasDeleted *bool `json:"was_deleted,omitempty"`
 }
 
 // Indicator that the last-rendered image of this job was updated.

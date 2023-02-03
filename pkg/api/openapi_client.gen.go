@@ -176,6 +176,9 @@ type ClientInterface interface {
 	// FetchJobTasks request
 	FetchJobTasks(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteJobWhatWouldItDo request
+	DeleteJobWhatWouldItDo(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ShamanCheckout request with any body
 	ShamanCheckoutWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -629,6 +632,18 @@ func (c *Client) SetJobStatus(ctx context.Context, jobId string, body SetJobStat
 
 func (c *Client) FetchJobTasks(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewFetchJobTasksRequest(c.Server, jobId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteJobWhatWouldItDo(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteJobWhatWouldItDoRequest(c.Server, jobId)
 	if err != nil {
 		return nil, err
 	}
@@ -1837,6 +1852,40 @@ func NewFetchJobTasksRequest(server string, jobId string) (*http.Request, error)
 	return req, nil
 }
 
+// NewDeleteJobWhatWouldItDoRequest generates requests for DeleteJobWhatWouldItDo
+func NewDeleteJobWhatWouldItDoRequest(server string, jobId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "job_id", runtime.ParamLocationPath, jobId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/jobs/%s/what-would-delete-do", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewShamanCheckoutRequest calls the generic ShamanCheckout builder with application/json body
 func NewShamanCheckoutRequest(server string, body ShamanCheckoutJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2867,6 +2916,9 @@ type ClientWithResponsesInterface interface {
 	// FetchJobTasks request
 	FetchJobTasksWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*FetchJobTasksResponse, error)
 
+	// DeleteJobWhatWouldItDo request
+	DeleteJobWhatWouldItDoWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*DeleteJobWhatWouldItDoResponse, error)
+
 	// ShamanCheckout request with any body
 	ShamanCheckoutWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ShamanCheckoutResponse, error)
 
@@ -3448,6 +3500,28 @@ func (r FetchJobTasksResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r FetchJobTasksResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteJobWhatWouldItDoResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *JobDeletionInfo
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteJobWhatWouldItDoResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteJobWhatWouldItDoResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4268,6 +4342,15 @@ func (c *ClientWithResponses) FetchJobTasksWithResponse(ctx context.Context, job
 		return nil, err
 	}
 	return ParseFetchJobTasksResponse(rsp)
+}
+
+// DeleteJobWhatWouldItDoWithResponse request returning *DeleteJobWhatWouldItDoResponse
+func (c *ClientWithResponses) DeleteJobWhatWouldItDoWithResponse(ctx context.Context, jobId string, reqEditors ...RequestEditorFn) (*DeleteJobWhatWouldItDoResponse, error) {
+	rsp, err := c.DeleteJobWhatWouldItDo(ctx, jobId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteJobWhatWouldItDoResponse(rsp)
 }
 
 // ShamanCheckoutWithBodyWithResponse request with arbitrary body returning *ShamanCheckoutResponse
@@ -5196,6 +5279,32 @@ func ParseFetchJobTasksResponse(rsp *http.Response) (*FetchJobTasksResponse, err
 			return nil, err
 		}
 		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteJobWhatWouldItDoResponse parses an HTTP response from a DeleteJobWhatWouldItDoWithResponse call
+func ParseDeleteJobWhatWouldItDoResponse(rsp *http.Response) (*DeleteJobWhatWouldItDoResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteJobWhatWouldItDoResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest JobDeletionInfo
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	}
 
