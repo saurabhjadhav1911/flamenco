@@ -744,6 +744,28 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /api/v3/jobs/{job_id}/what-would-delete-do:
+    summary: Get info about what would be deleted when deleting this job.
+    get:
+      operationId: deleteJobWhatWouldItDo
+      summary: >
+        Get info about what would be deleted when deleting this job. The job
+        itself, its logs, and the last-rendered images will always be deleted.
+        The job files are only deleted conditionally, and this operation can be
+        used to figure that out.
+      tags: [jobs]
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Job deletion info
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/JobDeletionInfo" }
+
   /api/v3/jobs/{job_id}/last-rendered:
     summary: Obtain info about the last-rendered images for this job.
     get:
@@ -1691,6 +1713,15 @@ components:
             Aids in removing the checkout directory when the job is removed from
             Flamenco.
 
+    JobDeletionInfo:
+      type: object
+      description: Info about what will be deleted when this job is deleted.
+      properties:
+        "shaman_checkout":
+          type: boolean
+          description: Whether the Shaman checkout directory will be removed along with the job.
+      required: ["shaman_checkout"]
+
     JobsQuery:
       type: object
       properties:
@@ -2041,6 +2072,19 @@ components:
             Indicates that the client should refresh all the job's tasks. This
             is sent for mass updates, where updating each individual task would
             generate too many updates to be practical.
+
+        # Deletion-related info:
+        "delete_requested_at":
+          type: string
+          format: date-time
+          description: >
+            If job deletion was requested, this is the timestamp at which
+            that request was stored on Flamenco Manager.
+        "was_deleted":
+          type: boolean
+          description: >
+            When a job was just deleted, this is set to `true`.
+            If this is specified, only the 'id' field is set, the rest will be empty.
       required: [id, updated, status, type, priority, refresh_tasks]
 
     SocketIOTaskUpdate:
