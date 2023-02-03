@@ -25,10 +25,19 @@
             margin: 0;
             background: #fafafa;
         }
-    </style>
+        div#back-to-flamenco {
+            float: right;
+        }
+        div#back-to-flamenco a {
+            padding: 0.5em 2em 0.5em 0.5em;
+            text-decoration: none;
+            font-weight: bold;
+        }
+  </style>
 </head>
 
 <body>
+    <div id="back-to-flamenco"><a href="/">← Back to Flamenco</a></div>
     <div id="swagger-ui"></div>
 
     <script src="./swagger-ui-bundle.js" charset="UTF-8">
@@ -49,7 +58,7 @@
                 plugins: [
                     SwaggerUIBundle.plugins.DownloadUrl
                 ],
-                layout: "StandaloneLayout"
+                layout: "BaseLayout",
             });
             // End Swagger UI call region
 
