@@ -10,6 +10,7 @@
 /flamenco-worker
 /flamenco-manager_race
 /flamenco-worker_race
+/shaman-checkout-id-setter
 /stresser
 /addon-packer
 flamenco-manager.yaml

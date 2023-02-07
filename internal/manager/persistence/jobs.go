@@ -306,6 +306,17 @@ func (db *DB) SaveJobPriority(ctx context.Context, j *Job) error {
 	return nil
 }
 
+// SaveJobStorageInfo saves the job's Storage field.
+func (db *DB) SaveJobStorageInfo(ctx context.Context, j *Job) error {
+	tx := db.gormDB.WithContext(ctx).
+		Model(j).
+		Updates(Job{Storage: j.Storage})
+	if tx.Error != nil {
+		return jobError(tx.Error, "saving job storage")
+	}
+	return nil
+}
+
 func (db *DB) FetchTask(ctx context.Context, taskUUID string) (*Task, error) {
 	dbTask := Task{}
 	tx := db.gormDB.WithContext(ctx).
