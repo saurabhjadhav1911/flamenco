@@ -41,7 +41,7 @@ func (si StorageInfo) ForJob(jobUUID string) string {
 
 func (si StorageInfo) RemoveJobStorage(ctx context.Context, jobUUID string) error {
 	path := si.ForJob(jobUUID)
-	log.Info().Str("path", path).Msg("erasing manager-local job storage directory")
+	log.Debug().Str("path", path).Msg("erasing manager-local job storage directory")
 
 	if err := removeDirectory(path); err != nil {
 		return fmt.Errorf("unable to erase %q: %w", path, err)
