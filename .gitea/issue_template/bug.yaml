@@ -1,0 +1,33 @@
+name: Bug Report
+about: File a bug report
+labels:
+  - "type::Report"
+  - "status::Needs Triage"
+  - "priority::Normal"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Instructions
+        First time reporting? See [tips](https://wiki.blender.org/wiki/Process/Bug_Reports).
+
+        * Include your system information below.
+        * If there are multiple bugs, make multiple bug reports.
+
+  - type: textarea
+    id: body
+    attributes:
+      label: "Description"
+      hide_label: true
+      value: |
+        **System Information**
+        Operating System(s):
+
+        **Flamenco Version**
+        Is Broken:   <!-- the Flamenco version you have this issue with. -->
+        Worked OK:   <!-- the version that still worked ok, if this worked before. -->
+
+        **Short description of error**
+
+        **Exact steps for others to reproduce the error**
+        <!-- Include steps to reproduce the issue, and make sure you describe both what is happening and what you expected to happen. -->
