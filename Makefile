@@ -80,6 +80,10 @@ flamenco-manager_race:
 flamenco-worker_race:
 	CGO_ENABLED=1 go build -race -o $@ -v ${BUILD_FLAGS} ${PKG}/cmd/flamenco-worker
 
+.PHONY: shaman-checkout-id-setter
+shaman-checkout-id-setter:
+	go build -v ${BUILD_FLAGS} ${PKG}/cmd/shaman-checkout-id-setter
+
 webapp:
 	yarn --cwd web/app install
 
