@@ -137,6 +137,7 @@ func runFlamencoManager() bool {
 
 	// Construct the services.
 	persist := openDB(*configService)
+	defer persist.Close()
 
 	// Disabled for now. `VACUUM` locks the database, which means that other
 	// queries can fail with a "database is locked (5) (SQLITE_BUSY)" error. This

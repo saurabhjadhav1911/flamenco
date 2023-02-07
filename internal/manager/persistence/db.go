@@ -149,3 +149,12 @@ func (db *DB) vacuum() {
 		log.Error().Err(tx.Error).Msg("error vacuuming database")
 	}
 }
+
+// Close closes the connection to the database.
+func (db *DB) Close() error {
+	sqldb, err := db.gormDB.DB()
+	if err != nil {
+		return err
+	}
+	return sqldb.Close()
+}
