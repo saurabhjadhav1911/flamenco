@@ -75,6 +75,39 @@ func TestStoreAuthoredJobWithShamanCheckoutID(t *testing.T) {
 	assert.Equal(t, job.Storage.ShamanCheckoutID, fetchedJob.Storage.ShamanCheckoutID)
 }
 
+func TestSaveJobStorageInfo(t *testing.T) {
+	// Test that saving job storage info doesn't count as "update".
+	// This is necessary for `cmd/shaman-checkout-id-setter` to do its work quietly.
+	ctx, cancel, db := persistenceTestFixtures(t, 1*time.Second)
+	defer cancel()
+
+	startTime := time.Date(2023, time.February, 7, 15, 0, 0, 0, time.Local)
+	mockNow := startTime
+	db.gormDB.NowFunc = func() time.Time { return mockNow }
+
+	authoredJob := createTestAuthoredJobWithTasks()
+	err := db.StoreAuthoredJob(ctx, authoredJob)
+	require.NoError(t, err)
+
+	dbJob, err := db.FetchJob(ctx, authoredJob.JobID)
+	require.NoError(t, err)
+	assert.NotNil(t, dbJob)
+	assert.EqualValues(t, startTime, dbJob.UpdatedAt)
+
+	// Move the clock forward.
+	updateTime := time.Date(2023, time.February, 7, 15, 10, 0, 0, time.Local)
+	mockNow = updateTime
+
+	// Save the storage info.
+	dbJob.Storage.ShamanCheckoutID = "shaman/checkout/id"
+	require.NoError(t, db.SaveJobStorageInfo(ctx, dbJob))
+
+	// Check that the UpdatedAt field wasn't touched.
+	updatedJob, err := db.FetchJob(ctx, authoredJob.JobID)
+	require.NoError(t, err)
+	assert.Equal(t, startTime, updatedJob.UpdatedAt, "SaveJobStorageInfo should not touch UpdatedAt")
+}
+
 func TestDeleteJob(t *testing.T) {
 	ctx, cancel, db := persistenceTestFixtures(t, 1*time.Second)
 	defer cancel()

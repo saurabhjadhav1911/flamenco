@@ -307,9 +307,12 @@ func (db *DB) SaveJobPriority(ctx context.Context, j *Job) error {
 }
 
 // SaveJobStorageInfo saves the job's Storage field.
+// NOTE: this function does NOT update the job's `UpdatedAt` field. This is
+// necessary for `cmd/shaman-checkout-id-setter` to do its work quietly.
 func (db *DB) SaveJobStorageInfo(ctx context.Context, j *Job) error {
 	tx := db.gormDB.WithContext(ctx).
 		Model(j).
+		Omit("UpdatedAt").
 		Updates(Job{Storage: j.Storage})
 	if tx.Error != nil {
 		return jobError(tx.Error, "saving job storage")
