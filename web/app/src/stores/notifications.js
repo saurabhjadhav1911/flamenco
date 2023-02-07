@@ -42,9 +42,17 @@ export const useNotifs = defineStore('notifications', {
      * @param {API.SocketIOJobUpdate} jobUpdate Job update received via SocketIO.
      */
     addJobUpdate(jobUpdate) {
-      let msg = `Job ${jobUpdate.name}`;
-      if (jobUpdate.previous_status && jobUpdate.previous_status != jobUpdate.status) {
+      let msg = "Job";
+      if (jobUpdate.name) msg += ` ${jobUpdate.name}`;
+      if (jobUpdate.was_deleted) {
+        msg += " was deleted";
+      }
+      else if (jobUpdate.previous_status && jobUpdate.previous_status != jobUpdate.status) {
         msg += ` changed status ${jobUpdate.previous_status} ➜ ${jobUpdate.status}`;
+      }
+      else {
+        // Don't bother logging just "Job" + its name, as it conveys no info.
+        return;
       }
       this.add(msg)
     },
