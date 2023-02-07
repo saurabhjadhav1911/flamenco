@@ -9,7 +9,7 @@ the top-right corner of Flamenco's web interface. The definition itself can be
 found in [pkg/api/flamenco-openapi.yaml][OAPI-YAML] in the source code.
 
 [OAPI]: https://swagger.io/specification/
-[OAPI-YAML]: https://developer.blender.org/diffusion/F/browse/main/pkg/api/flamenco-openapi.yaml
+[OAPI-YAML]: https://projects.blender.org/studio/flamenco/src/branch/main/pkg/api/flamenco-openapi.yaml
 
 ## Using the API
 

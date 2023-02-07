@@ -24,4 +24,4 @@ Compared to version 2, Flamenco 3:
 
 The more interesting changes between Flamenco 3 versions are listed in the [changelog][changelog].
 
-[changelog]: https://developer.blender.org/diffusion/F/browse/main/CHANGELOG.md
+[changelog]: https://projects.blender.org/studio/flamenco/src/branch/main/CHANGELOG.md

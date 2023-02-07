@@ -62,7 +62,7 @@ Your data is yours, and yours alone.
 ### Robust Technology
 
 The core of Flamenco is build using Go and SQLite. Check out the sources on
-[developer.blender.org](https://developer.blender.org/project/profile/58/).
+[projects.blender.org](https://projects.blender.org/studio/flamenco).
 
 <--->
 

@@ -19,7 +19,7 @@ themselves. If you do, please [report a bug][bug].
 
 [twovars]: {{< ref "usage/variables/multi-platform" >}}
 [studio]: https://studio.blender.org/
-[bug]: https://developer.blender.org/maniphest/task/edit/form/14/?tags=Flamenco
+[bug]: https://projects.blender.org/studio/flamenco/issues/new?template=.gitea%2fissue_template%2fbug.yaml
 
 
 ## My Worker cannot find my Manager, what do I do?

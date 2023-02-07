@@ -30,15 +30,15 @@ afresh with the following steps:
    be upgraded.
 
 Read the beta announcement at the [Blender Studio blog][blog].<br>
-Please report any issue at [developer.blender.org][bugs].
+Please report any issue at [project.blender.org][bugs].
 
 [blog]: https://studio.blender.org/blog/announcing-flamenco-3-beta/
-[bugs]: https://developer.blender.org/project/profile/58/
+[bugs]: https://projects.blender.org/studio/flamenco/issues/new?template=.gitea%2fissue_template%2fbug.yaml
 {{< /hint >}}
 
 
 ## License
 
 Flamenco is Free and Open Source software, available under the
-[GNU General Public License](https://developer.blender.org/diffusion/F/browse/main/LICENSE).<br>
-Download the source code at [developer.blender.org](https://developer.blender.org/diffusion/F/).
+[GNU General Public License](https://projects.blender.org/studio/flamenco/src/branch/main/LICENSE).<br>
+Download the source code at [projects.blender.org](https://projects.blender.org/studio/flamenco).
