@@ -87,7 +87,7 @@ func main() {
 			continue
 		}
 
-		logger.Debug().Msg("processing job")
+		logger.Trace().Msg("processing job")
 
 		// Find the 'blendfile' setting.
 		blendfile, ok := job.Settings["blendfile"].(string)
@@ -120,7 +120,7 @@ func main() {
 		logger = logger.With().Str("checkoutID", checkoutID).Logger()
 
 		// Store it on the job.
-		logger.Info().Msg("updating job")
+		logger.Debug().Msg("updating job")
 		job.Storage.ShamanCheckoutID = checkoutID
 		if err := persist.SaveJobStorageInfo(ctx, job); err != nil {
 			logger.Error().Err(err).Msg("error saving job to the database")
