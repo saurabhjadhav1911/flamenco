@@ -1,0 +1,4 @@
+# Mark generated files as such.
+/addon/flamenco/manager/** linguist-generated=true
+/web/app/src/manager-api/** linguist-generated=true
+**/*.gen.go linguist-generated=true
