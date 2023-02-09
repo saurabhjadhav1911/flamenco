@@ -23,11 +23,6 @@ var skipWorkersInStatus = map[api.WorkerStatus]bool{
 	api.WorkerStatusError: true,
 }
 
-// ErrWorkerNotFound is returned when the owning Worker of a sleep schedule cannot be found.
-// This can happen when a Worker has been soft-deleted, which doesn't
-// automatically trigger the deletion of the foreign key constraints.
-var ErrWorkerNotFound = errors.New("worker not found")
-
 // SleepScheduler manages wake/sleep cycles of Workers.
 type SleepScheduler struct {
 	clock       clock.Clock
@@ -224,10 +219,13 @@ func (ss *SleepScheduler) checkSchedule(ctx context.Context, schedule *persisten
 	switch {
 	case errors.Is(ctx.Err(), context.Canceled):
 		// Manager is shutting down, this is fine.
-	case errors.Is(err, ErrWorkerNotFound):
+	case errors.Is(err, persistence.ErrWorkerNotFound):
 		// This schedule's worker cannot be found. That's fine, it could have been
 		// soft-deleted (and thus foreign key constraints don't trigger deletion of
 		// the sleep schedule).
+		log.Debug().
+			Uint("worker", schedule.WorkerID).
+			Msg("sleep scheduler: sleep schedule's owning worker cannot be found; not applying the schedule")
 	case err != nil:
 		log.Error().
 			Err(err).
