@@ -8,8 +8,8 @@ public, read-only access. The 2nd one can be used if you have commit rights to
 the project.
 
 ```
-git clone git://git.blender.org/flamenco.git
-git clone git@git.blender.org:flamenco.git
+git clone https://projects.blender.org/studio/flamenco.git
+git clone git@projects.blender.org:studio/flamenco.git
 ```
 
 Then follow the steps below to get everything up & running.
