@@ -9,6 +9,7 @@ import (
 	"git.blender.org/flamenco/internal/uuid"
 	"git.blender.org/flamenco/pkg/api"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFetchWorkerSleepSchedule(t *testing.T) {
@@ -103,6 +104,11 @@ func TestFetchSleepScheduleWorker(t *testing.T) {
 		assert.Equal(t, linuxWorker.ID, dbSchedule.Worker.ID)
 		assert.Equal(t, linuxWorker.UUID, dbSchedule.Worker.UUID)
 	}
+
+	// Deleting the Worker should result in a specific error when fetching the schedule again.
+	require.NoError(t, db.DeleteWorker(ctx, linuxWorker.UUID))
+	assert.ErrorIs(t, db.FetchSleepScheduleWorker(ctx, dbSchedule), ErrWorkerNotFound)
+	assert.Nil(t, dbSchedule.Worker)
 }
 
 func TestSetWorkerSleepSchedule(t *testing.T) {

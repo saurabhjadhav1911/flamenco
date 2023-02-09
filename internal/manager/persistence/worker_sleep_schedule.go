@@ -92,9 +92,15 @@ func (db *DB) SetWorkerSleepScheduleNextCheck(ctx context.Context, schedule *Sle
 // FetchSleepScheduleWorker sets the given schedule's `Worker` pointer.
 func (db *DB) FetchSleepScheduleWorker(ctx context.Context, schedule *SleepSchedule) error {
 	var worker Worker
-	tx := db.gormDB.WithContext(ctx).First(&worker, schedule.WorkerID)
+	tx := db.gormDB.WithContext(ctx).Limit(1).Find(&worker, schedule.WorkerID)
 	if tx.Error != nil {
 		return workerError(tx.Error, "finding worker by their sleep schedule")
+	}
+	if worker.ID == 0 {
+		// Worker was not found. It could be that the worker was soft-deleted, which
+		// keeps the schedule around in the database.
+		schedule.Worker = nil
+		return ErrWorkerNotFound
 	}
 	schedule.Worker = &worker
 	return nil
