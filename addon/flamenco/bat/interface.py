@@ -48,10 +48,10 @@ class MsgProgress(Message):
 @dataclass
 class MsgDone(Message):
     output_path: Path
-    """Path of the submitted blend file, relative to the Shaman checkout root."""
-    actual_checkout_path: PurePosixPath
     """Shaman checkout path, i.e. the root of the job files, relative to the Shaman checkout root."""
     missing_files: list[Path]
+    """Path of the submitted blend file, relative to the Shaman checkout root."""
+    actual_checkout_path: Optional[PurePosixPath] = None
 
 
 # MyPy doesn't understand the way BAT subpackages are imported.
@@ -168,8 +168,8 @@ class PackThread(threading.Thread):
 
             msg = MsgDone(
                 self.packer.output_path,
-                self.packer.actual_checkout_path,
                 self.packer.missing_files,
+                getattr(self.packer, "actual_checkout_path", None),
             )
             self.queue.put(msg)
 
