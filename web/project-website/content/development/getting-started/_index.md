@@ -18,7 +18,7 @@ Then follow the steps below to get everything up & running.
 
 Most of Flamenco is made in Go.
 
-1. Install [Go 1.18 or newer](https://go.dev/).
+1. Install [Go 1.20 or newer](https://go.dev/).
 2. Optional: set the environment variable `GOPATH` to where you want Go to put its packages. Go will use `$HOME/go` by default.
 3. Ensure `$GOPATH/bin` is included in your `$PATH` environment variable. Run `go env GOPATH` if you're not sure what path to use.
 
