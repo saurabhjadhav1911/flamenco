@@ -1,4 +1,5 @@
 # Mark generated files as such.
 /addon/flamenco/manager/** linguist-generated=true
+/addon/flamenco/manager_README.md linguist-generated=true
 /web/app/src/manager-api/** linguist-generated=true
 **/*.gen.go linguist-generated=true
