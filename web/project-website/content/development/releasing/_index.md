@@ -20,5 +20,6 @@ Replace `${VERSION}` with the actual version number.
 6. `make release-package`
 7. Check that the files in `dist/` are there and have a non-zero size.
 8. `make publish-release-packages` to upload the packages to the website.
-9. `make project-website` to generate and publish the new website.
-10. `git push && git push --tags`
+9. Update `web/project-website/data/flamenco.yaml` for the new version.
+10. `make project-website` to generate and publish the new website.
+11. `git push && git push --tags`
