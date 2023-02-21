@@ -231,7 +231,16 @@ export default {
           // Forward the full job to Tabulator, so that that gets updated too.
           this.$refs.jobsTable.processJobUpdate(job);
           this._recalcTasksTableHeight();
-        });
+        })
+        .catch((err) => {
+          if (err.status == 404) {
+            // It can happen that a job cannot be found, for example when it was asynchronously deleted.
+            this.jobs.deselectAllJobs();
+            return;
+          }
+          console.log(`Unable to fetch job ${jobID}:`, err);
+        })
+        ;
     },
 
     /**
