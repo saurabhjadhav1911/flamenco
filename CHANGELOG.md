@@ -4,7 +4,7 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
-## 3.2 - in development
+## 3.2 - released 2023-02-21
 
 - When rendering EXR files, use Blender's preview JPEG files to generate the preview video ([43bc22f10fae](https://developer.blender.org/rF43bc22f10fae0fcaed6a4a3b3ace1be617193e21)).
 - Fix issue where workers would switch immediately on a state change request, even if it was of the "after task is finished" kind.
