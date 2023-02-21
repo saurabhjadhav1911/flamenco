@@ -226,6 +226,12 @@ export default {
       }
 
       const tableHeight = availableHeight - tableContainer.offsetTop;
+      if (this.tabulator.element.clientHeight == tableHeight) {
+        // Setting the height on a tabulator triggers all kinds of things, so
+        // don't do if it not necessary.
+        return;
+      }
+
       this.tabulator.setHeight(tableHeight);
     },
   }
