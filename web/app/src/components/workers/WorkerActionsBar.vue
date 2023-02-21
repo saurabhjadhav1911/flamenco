@@ -6,11 +6,7 @@
     </option>
     <option v-for="(action, key) in WORKER_ACTIONS" :value="key">{{ action.label }}</option>
   </select>
-  <button
-      :disabled="!canPerformAction"
-      class="btn"
-      @click.prevent="performWorkerAction"
-      >Apply</button>
+  <button :disabled="!canPerformAction" class="btn" @click.prevent="performWorkerAction">Apply</button>
 </template>
 
 <script setup>
@@ -18,46 +14,46 @@ import { computed, ref } from 'vue'
 import { useWorkers } from '@/stores/workers';
 import { useNotifs } from '@/stores/notifications';
 import { WorkerMgtApi, WorkerStatusChangeRequest } from '@/manager-api';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 
 /* Freeze to prevent Vue.js from creating getters & setters all over this object.
  * We don't need it to be tracked, as it won't be changed anyway. */
 const WORKER_ACTIONS = Object.freeze({
-    offline_lazy: {
-        label: 'Shut Down (after task is finished)',
-        icon: '✝',
-        title: 'Shut down the worker after the current task finishes. The worker may automatically restart.',
-        target_status: 'offline',
-        lazy: true,
-    },
-    offline_immediate: {
-        label: 'Shut Down (immediately)',
-        icon: '✝!',
-        title: 'Immediately shut down the worker. It may automatically restart.',
-        target_status: 'offline',
-        lazy: false,
-    },
-    asleep_lazy: {
-        label: 'Send to Sleep (after task is finished)',
-        icon: '😴',
-        title: 'Let the worker sleep after finishing this task.',
-        target_status: 'asleep',
-        lazy: true,
-    },
-    asleep_immediate: {
-        label: 'Send to Sleep (immediately)',
-        icon: '😴!',
-        title: 'Let the worker sleep immediately.',
-        target_status: 'asleep',
-        lazy: false,
-    },
-    wakeup: {
-        label: 'Wake Up',
-        icon: '😃',
-        title: 'Wake the worker up. A sleeping worker can take a minute to respond.',
-        target_status: 'awake',
-        lazy: false,
-    },
+  offline_lazy: {
+    label: 'Shut Down (after task is finished)',
+    icon: '✝',
+    title: 'Shut down the worker after the current task finishes. The worker may automatically restart.',
+    target_status: 'offline',
+    lazy: true,
+  },
+  offline_immediate: {
+    label: 'Shut Down (immediately)',
+    icon: '✝!',
+    title: 'Immediately shut down the worker. It may automatically restart.',
+    target_status: 'offline',
+    lazy: false,
+  },
+  asleep_lazy: {
+    label: 'Send to Sleep (after task is finished)',
+    icon: '😴',
+    title: 'Let the worker sleep after finishing this task.',
+    target_status: 'asleep',
+    lazy: true,
+  },
+  asleep_immediate: {
+    label: 'Send to Sleep (immediately)',
+    icon: '😴!',
+    title: 'Let the worker sleep immediately.',
+    target_status: 'asleep',
+    lazy: false,
+  },
+  wakeup: {
+    label: 'Wake Up',
+    icon: '😃',
+    title: 'Wake the worker up. A sleeping worker can take a minute to respond.',
+    target_status: 'awake',
+    lazy: false,
+  },
 });
 
 const selectedAction = ref('');
@@ -73,7 +69,7 @@ function performWorkerAction() {
     return;
   }
 
-  const api = new WorkerMgtApi(apiClient);
+  const api = new WorkerMgtApi(getAPIClient());
   const action = WORKER_ACTIONS[selectedAction.value];
   const statuschange = new WorkerStatusChangeRequest(action.target_status, action.lazy);
   console.log("Requesting worker status change", statuschange);

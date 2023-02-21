@@ -73,7 +73,7 @@
 import * as datetime from "@/datetime";
 import { JobsApi } from '@/manager-api';
 import { backendURL } from '@/urls';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { useNotifs } from "@/stores/notifications";
 import LinkWorker from '@/components/LinkWorker.vue';
 import { copyElementText } from '@/clipboard';
@@ -90,7 +90,7 @@ export default {
     return {
       datetime: datetime, // So that the template can access it.
       copyElementText: copyElementText,
-      jobsApi: new JobsApi(apiClient),
+      jobsApi: new JobsApi(getAPIClient()),
       notifs: useNotifs(),
     };
   },

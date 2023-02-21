@@ -17,7 +17,7 @@ const DEFAULT_FLAMENCO_NAME = "Flamenco";
 const DEFAULT_FLAMENCO_VERSION = "unknown";
 import ApiSpinner from '@/components/ApiSpinner.vue'
 import { MetaApi } from "@/manager-api";
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 
 export default {
   name: 'SetupAssistant',
@@ -35,7 +35,7 @@ export default {
   methods: {
     // TODO: also call this when SocketIO reconnects.
     fetchManagerInfo() {
-      const metaAPI = new MetaApi(apiClient);
+      const metaAPI = new MetaApi(getAPIClient());
       metaAPI.getVersion().then((version) => {
         this.flamencoName = version.name;
         this.flamencoVersion = version.version;

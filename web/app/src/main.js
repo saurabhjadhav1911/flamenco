@@ -7,7 +7,8 @@ import SetupAssistant from '@/SetupAssistant.vue'
 import autoreload from '@/autoreloader'
 import router from '@/router/index'
 import setupAssistantRouter from '@/router/setup-assistant'
-import { ApiClient, MetaApi } from "@/manager-api";
+import { MetaApi } from "@/manager-api";
+import { newBareAPIClient } from "@/api-client";
 import * as urls from '@/urls'
 
 // Ensure Tabulator can find `luxon`, which it needs for sorting by
@@ -42,7 +43,7 @@ function setupAssistantMode() {
 /* This cannot use the client from '@/stores/api-query-count', as that would
  * require Pinia, which is unavailable until the app is actually started. And to
  * know which app to start, this API call needs to return data. */
-const apiClient = new ApiClient(urls.api());;
+const apiClient = newBareAPIClient();
 const metaAPI = new MetaApi(apiClient);
 metaAPI.getConfiguration()
   .then((config) => {

@@ -9,7 +9,7 @@
 import { reactive, ref, watch } from 'vue'
 import { api } from '@/urls';
 import { JobsApi, JobLastRenderedImageInfo, SocketIOLastRenderedUpdate } from '@/manager-api';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 
 const props = defineProps([
   /* The job UUID to show renders for, or some false-y value if renders from all
@@ -27,7 +27,7 @@ const cssClasses = reactive({
   'nothing-rendered-yet': true,
 })
 
-const jobsApi = new JobsApi(apiClient);
+const jobsApi = new JobsApi(getAPIClient());
 
 /**
  * Fetches the last-rendered info for the given job, then updates the <img> tag for it.

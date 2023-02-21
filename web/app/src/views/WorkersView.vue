@@ -7,8 +7,7 @@
   </div>
   <footer class="app-footer">
     <notification-bar />
-    <update-listener ref="updateListener" mainSubscription="allWorkers"
-      @workerUpdate="onSIOWorkerUpdate"
+    <update-listener ref="updateListener" mainSubscription="allWorkers" @workerUpdate="onSIOWorkerUpdate"
       @sioReconnected="onSIOReconnected" @sioDisconnected="onSIODisconnected" />
   </footer>
 </template>
@@ -17,6 +16,7 @@
 .col-workers-list {
   grid-area: col-1;
 }
+
 .col-workers-2 {
   grid-area: col-2;
 }
@@ -26,7 +26,7 @@
 import { WorkerMgtApi } from '@/manager-api';
 import { useNotifs } from '@/stores/notifications'
 import { useWorkers } from '@/stores/workers';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 
 import NotificationBar from '@/components/footer/NotificationBar.vue'
 import UpdateListener from '@/components/UpdateListener.vue'
@@ -45,7 +45,7 @@ export default {
   data: () => ({
     workers: useWorkers(),
     notifs: useNotifs(),
-    api: new WorkerMgtApi(apiClient),
+    api: new WorkerMgtApi(getAPIClient()),
   }),
   mounted() {
     window.workersView = this;

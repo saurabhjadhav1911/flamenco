@@ -3,7 +3,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import { useTaskLog } from '@/stores/tasklog'
 import { useTasks } from '@/stores/tasks'
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { JobsApi } from '@/manager-api';
 
 const taskLog = useTaskLog();
@@ -59,7 +59,7 @@ function _fetchLogTail(taskID) {
 
   if (!taskID) return;
 
-  const jobsAPI = new JobsApi(apiClient);
+  const jobsAPI = new JobsApi(getAPIClient());
   return jobsAPI.fetchTaskLogTail(taskID)
     .then((logTail) => {
       taskLog.addChunk(logTail);

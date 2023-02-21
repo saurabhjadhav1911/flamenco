@@ -17,7 +17,7 @@ import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import * as datetime from "@/datetime";
 import * as API from '@/manager-api'
 import { indicator } from '@/statusindicator';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { useJobs } from '@/stores/jobs';
 
 import JobActionsBar from '@/components/jobs/JobActionsBar.vue'
@@ -130,7 +130,7 @@ export default {
       this.fetchAllJobs();
     },
     fetchAllJobs() {
-      const jobsApi = new API.JobsApi(apiClient);
+      const jobsApi = new API.JobsApi(getAPIClient());
       const jobsQuery = {};
       this.jobs.isJobless = false;
       jobsApi.queryJobs(jobsQuery).then(this.onJobsFetched, function (error) {

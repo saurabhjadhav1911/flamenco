@@ -123,7 +123,7 @@ import { useNotifs } from '@/stores/notifications'
 
 import * as datetime from "@/datetime";
 import { WorkerMgtApi, WorkerSleepSchedule } from '@/manager-api';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { workerStatus } from "../../statusindicator";
 import LinkWorkerTask from '@/components/LinkWorkerTask.vue';
 import SwitchCheckbox from '@/components/SwitchCheckbox.vue';
@@ -140,7 +140,7 @@ export default {
   data() {
     return {
       datetime: datetime, // So that the template can access it.
-      api: new WorkerMgtApi(apiClient),
+      api: new WorkerMgtApi(getAPIClient()),
       workerStatusHTML: "",
       workerSleepSchedule: this.defaultWorkerSleepSchedule(),
       isScheduleEditing: false,

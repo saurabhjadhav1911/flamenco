@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { JobsApi } from '@/manager-api';
 import LinkWorker from '@/components/LinkWorker.vue';
 import { watch, onMounted, inject, ref, nextTick } from 'vue'
@@ -35,7 +35,7 @@ import { watch, onMounted, inject, ref, nextTick } from 'vue'
 const props = defineProps(['jobID']);
 const emit = defineEmits(['reshuffled'])
 
-const jobsApi = new JobsApi(apiClient);
+const jobsApi = new JobsApi(getAPIClient());
 const isVisible = inject("isVisible");
 const isFetching = ref(false);
 const errorMsg = ref("");

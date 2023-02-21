@@ -39,7 +39,7 @@ import { useJobs } from '@/stores/jobs';
 import { useTasks } from '@/stores/tasks';
 import { useNotifs } from '@/stores/notifications'
 import { useTaskLog } from '@/stores/tasklog'
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 
 import FooterPopup from '@/components/footer/FooterPopup.vue'
 import GetTheAddon from '@/components/GetTheAddon.vue'
@@ -127,7 +127,7 @@ export default {
         return;
       }
 
-      const jobsAPI = new API.JobsApi(apiClient);
+      const jobsAPI = new API.JobsApi(getAPIClient());
       jobsAPI.fetchTask(taskSummary.id)
         .then((task) => {
           this.tasks.setActiveTask(task);
@@ -225,7 +225,7 @@ export default {
         return;
       }
 
-      const jobsAPI = new API.JobsApi(apiClient);
+      const jobsAPI = new API.JobsApi(getAPIClient());
       return jobsAPI.fetchJob(jobID)
         .then((job) => {
           this.jobs.setActiveJob(job);
@@ -254,7 +254,7 @@ export default {
         return;
       }
 
-      const jobsAPI = new API.JobsApi(apiClient);
+      const jobsAPI = new API.JobsApi(getAPIClient());
       return jobsAPI.fetchTask(taskID)
         .then((task) => {
           this.tasks.setActiveTask(task);

@@ -18,7 +18,7 @@
 <script>
 import { useJobs } from '@/stores/jobs';
 import { useNotifs } from '@/stores/notifications';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { JobsApi } from '@/manager-api';
 import { JobDeletionInfo } from '@/manager-api';
 
@@ -31,7 +31,7 @@ export default {
   data: () => ({
     jobs: useJobs(),
     notifs: useNotifs(),
-    jobsAPI: new JobsApi(apiClient),
+    jobsAPI: new JobsApi(getAPIClient()),
 
     deleteInfo: null,
   }),

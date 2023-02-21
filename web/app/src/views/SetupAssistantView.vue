@@ -2,38 +2,28 @@
   <div class="setup-container">
     <h1>Flamenco Setup Assistant</h1>
     <ul class="progress">
-      <li
-        v-for="step in totalSetupSteps" :key="step"
-        @click="jumpToStep(step)"
-        :class="{
-          current: step == currentSetupStep,
-          done: step < overallSetupStep,
-          done_previously: (step < overallSetupStep && currentSetupStep > step),
-          done_and_current: step == currentSetupStep && (step < overallSetupStep || step == 1),
-          disabled: step > overallSetupStep,
-        }"
-        >
+      <li v-for="step in totalSetupSteps" :key="step" @click="jumpToStep(step)" :class="{
+        current: step == currentSetupStep,
+        done: step < overallSetupStep,
+        done_previously: (step < overallSetupStep && currentSetupStep > step),
+        done_and_current: step == currentSetupStep && (step < overallSetupStep || step == 1),
+        disabled: step > overallSetupStep,
+      }">
         <span></span>
       </li>
       <div class="progress-bar"></div>
     </ul>
     <div class="setup-step step-welcome">
 
-      <step-item
-        v-show="currentSetupStep == 1"
-        @next-clicked="nextStep"
-        :is-next-clickable="true"
-        :is-back-visible="false"
-        title="Welcome!"
-        next-label="Let's go"
-      >
+      <step-item v-show="currentSetupStep == 1" @next-clicked="nextStep" :is-next-clickable="true"
+        :is-back-visible="false" title="Welcome!" next-label="Let's go">
         <p>
           This setup assistant will guide you through the initial configuration of Flamenco. You will be up
           and running in a few minutes!
         </p>
         <p>Before we start, here is a quick overview of the Flamenco architecture.</p>
 
-        <img src="@/assets/architecture.png" alt="Flamenco architecture"/>
+        <img src="@/assets/architecture.png" alt="Flamenco architecture" />
 
         <p>The illustration shows the key components and how they interact together:</p>
         <ul>
@@ -41,26 +31,24 @@
             <strong>Manager</strong>: This application. It coordinates all the activity.
           </li>
           <li>
-            <strong>Worker</strong>: A workstation or dedicated rendering machine. It executes the tasks assigned by the Manager.
+            <strong>Worker</strong>: A workstation or dedicated rendering machine. It executes the tasks assigned by the
+            Manager.
           </li>
           <li>
-            <strong>Shared Storage</strong>: A location accessible by the Manager and the Workers, where the files to be rendered should be saved.
+            <strong>Shared Storage</strong>: A location accessible by the Manager and the Workers, where the files to be
+            rendered should be saved.
           </li>
           <li>
             <strong>Blender Add-on</strong>: This is needed to connect to the Manager and submit a job from Blender.
           </li>
         </ul>
         <p>More information is available on the online documentation at
-          <a href="https://flamenco.blender.org">flamenco.blender.org</a>.</p>
+          <a href="https://flamenco.blender.org">flamenco.blender.org</a>.
+        </p>
       </step-item>
 
-      <step-item
-        v-show="currentSetupStep == 2"
-        @next-clicked="nextStepAfterCheckSharedStoragePath"
-        @back-clicked="prevStep"
-        :is-next-clickable="sharedStoragePath.length > 0"
-        title="Shared Storage"
-      >
+      <step-item v-show="currentSetupStep == 2" @next-clicked="nextStepAfterCheckSharedStoragePath"
+        @back-clicked="prevStep" :is-next-clickable="sharedStoragePath.length > 0" title="Shared Storage">
         <p>Specify a path (or drive) where you want to store your Flamenco data.</p>
         <p>
           The location of the shared storage should be accessible by Flamenco Manager and by the Workers.
@@ -79,37 +67,26 @@
           <a href="https://flamenco.blender.org/usage/shared-storage/">Learn more</a>.
         </p>
 
-        <input
-          v-model="sharedStoragePath"
-          @keyup.enter="nextStepAfterCheckSharedStoragePath"
-          type="text"
-          placeholder="Path to shared storage"
-          :class="{
+        <input v-model="sharedStoragePath" @keyup.enter="nextStepAfterCheckSharedStoragePath" type="text"
+          placeholder="Path to shared storage" :class="{
             'is-invalid': (sharedStorageCheckResult != null) && !sharedStorageCheckResult.is_usable
-          }"
-        >
-        <p v-if="sharedStorageCheckResult != null"
-          :class="{
-            'check-ok': sharedStorageCheckResult.is_usable,
-            'check-failed': !sharedStorageCheckResult.is_usable
           }">
+        <p v-if="sharedStorageCheckResult != null" :class="{
+          'check-ok': sharedStorageCheckResult.is_usable,
+          'check-failed': !sharedStorageCheckResult.is_usable
+        }">
           {{ sharedStorageCheckResult.cause }}
         </p>
       </step-item>
 
-      <step-item
-        v-show="currentSetupStep == 3"
-        @next-clicked="nextStepAfterCheckBlenderExePath"
-        @back-clicked="prevStep"
-        :is-next-clickable="selectedBlender != null || customBlenderExe != (null || '')"
-        title="Blender"
-      >
+      <step-item v-show="currentSetupStep == 3" @next-clicked="nextStepAfterCheckBlenderExePath" @back-clicked="prevStep"
+        :is-next-clickable="selectedBlender != null || customBlenderExe != (null || '')" title="Blender">
 
         <div v-if="isBlenderExeFinding" class="is-in-progress">Looking for Blender installs...</div>
 
         <p v-if="autoFoundBlenders.length === 0">
           Provide a path to a Blender executable accessible by all Workers.
-          <br/><br/>
+          <br /><br />
           If your rendering setup features operating systems different from the one you are currently using,
           you can manually set up the other paths later.
         </p>
@@ -119,23 +96,16 @@
         <fieldset v-if="autoFoundBlenders.length >= 1">
           <label v-if="autoFoundBlenderPathEnvvar" for="blender-path_envvar">
             <div>
-              <input
-                v-model="selectedBlender"
-                :value="autoFoundBlenderPathEnvvar"
-                id="blender-path_envvar"
-                name="blender"
+              <input v-model="selectedBlender" :value="autoFoundBlenderPathEnvvar" id="blender-path_envvar" name="blender"
                 type="radio">
-                {{ sourceLabels[autoFoundBlenderPathEnvvar.source] }}
+              {{ sourceLabels[autoFoundBlenderPathEnvvar.source] }}
             </div>
             <div class="setup-path-command">
               <span class="path">
-                {{autoFoundBlenderPathEnvvar.path}}
+                {{ autoFoundBlenderPathEnvvar.path }}
               </span>
-              <span
-                aria-label="Console output when running with --version"
-                class="command-preview"
-                data-microtip-position="top"
-                role="tooltip">
+              <span aria-label="Console output when running with --version" class="command-preview"
+                data-microtip-position="top" role="tooltip">
                 {{ autoFoundBlenderPathEnvvar.cause }}
               </span>
             </div>
@@ -143,23 +113,16 @@
 
           <label v-if="autoFoundBlenderFileAssociation" for="blender-file_association">
             <div>
-              <input
-                v-model="selectedBlender"
-                :value="autoFoundBlenderFileAssociation"
-                id="blender-file_association"
-                name="blender"
-                type="radio">
-                {{ sourceLabels[autoFoundBlenderFileAssociation.source] }}
+              <input v-model="selectedBlender" :value="autoFoundBlenderFileAssociation" id="blender-file_association"
+                name="blender" type="radio">
+              {{ sourceLabels[autoFoundBlenderFileAssociation.source] }}
             </div>
             <div class="setup-path-command">
               <span class="path">
-                {{autoFoundBlenderFileAssociation.path}}
+                {{ autoFoundBlenderFileAssociation.path }}
               </span>
-              <span
-                aria-label="Console output when running with --version"
-                class="command-preview"
-                data-microtip-position="top"
-                role="tooltip">
+              <span aria-label="Console output when running with --version" class="command-preview"
+                data-microtip-position="top" role="tooltip">
                 {{ autoFoundBlenderFileAssociation.cause }}
               </span>
             </div>
@@ -167,24 +130,15 @@
 
           <label for="blender-input_path">
             <div>
-              <input
-                type="radio"
-                v-model="selectedBlender"
-                name="blender"
-                :value="blenderFromInputPath"
-                id="blender-input_path"
-                >
+              <input type="radio" v-model="selectedBlender" name="blender" :value="blenderFromInputPath"
+                id="blender-input_path">
               {{ sourceLabels['input_path'] }}
             </div>
             <div>
-              <input
-                v-model="customBlenderExe"
-                @keyup.enter="nextStepAfterCheckBlenderExePath"
+              <input v-model="customBlenderExe" @keyup.enter="nextStepAfterCheckBlenderExePath"
                 @focus="selectedBlender = null"
-                :class="{'is-invalid': blenderExeCheckResult != null && !blenderExeCheckResult.is_usable}"
-                type="text"
-                placeholder="Path to Blender"
-              >
+                :class="{ 'is-invalid': blenderExeCheckResult != null && !blenderExeCheckResult.is_usable }" type="text"
+                placeholder="Path to Blender">
               <p v-if="isBlenderExeChecking" class="is-in-progress">Checking...</p>
               <p v-if="blenderExeCheckResult != null && !blenderExeCheckResult.is_usable" class="check-failed">
                 {{ blenderExeCheckResult.cause }}</p>
@@ -193,13 +147,9 @@
         </fieldset>
 
         <div v-if="autoFoundBlenders.length === 0">
-          <input
-            v-model="customBlenderExe"
-            @keyup.enter="nextStepAfterCheckBlenderExePath"
-            :class="{'is-invalid': blenderExeCheckResult != null && !blenderExeCheckResult.is_usable}"
-            type="text"
-            placeholder="Path to Blender executable"
-          >
+          <input v-model="customBlenderExe" @keyup.enter="nextStepAfterCheckBlenderExePath"
+            :class="{ 'is-invalid': blenderExeCheckResult != null && !blenderExeCheckResult.is_usable }" type="text"
+            placeholder="Path to Blender executable">
 
           <p v-if="isBlenderExeChecking" class="is-in-progress">Checking...</p>
           <p v-if="blenderExeCheckResult != null && !blenderExeCheckResult.is_usable" class="check-failed">
@@ -207,14 +157,8 @@
         </div>
       </step-item>
 
-      <step-item
-        v-show="currentSetupStep == 4"
-        @next-clicked="confirmSetupAssistant"
-        @back-clicked="prevStep"
-        next-label="Confirm"
-        title="Review"
-        :is-next-clickable="setupConfirmIsClickable"
-      >
+      <step-item v-show="currentSetupStep == 4" @next-clicked="confirmSetupAssistant" @back-clicked="prevStep"
+        next-label="Confirm" title="Review" :is-next-clickable="setupConfirmIsClickable">
         <div v-if="isConfigComplete">
           <p>This is the configuration that will be used by Flamenco:</p>
           <dl>
@@ -253,7 +197,7 @@ import NotificationBar from '@/components/footer/NotificationBar.vue'
 import UpdateListener from '@/components/UpdateListener.vue'
 import StepItem from '@/components/steps/StepItem.vue';
 import { MetaApi, PathCheckInput, SetupAssistantConfig } from "@/manager-api";
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 
 export default {
   name: 'SetupAssistantView',
@@ -265,7 +209,7 @@ export default {
   data: () => ({
     sharedStoragePath: "",
     sharedStorageCheckResult: null, // api.PathCheckResult
-    metaAPI: new MetaApi(apiClient),
+    metaAPI: new MetaApi(getAPIClient()),
 
     allBlenders: [], // combination of autoFoundBlenders and blenderExeCheckResult.
 
@@ -458,7 +402,6 @@ export default {
 }
 </script>
 <style>
-
 .step-welcome ul {
   padding-left: var(--spacer-xl);
   margin-bottom: var(--spacer-xl);
@@ -517,7 +460,8 @@ export default {
 }
 
 .progress-bar {
-  --width-each-segment: calc(100% / calc(v-bind('totalSetupSteps') - 1)); /* Substract 1 because the first step has no progress. */
+  --width-each-segment: calc(100% / calc(v-bind('totalSetupSteps') - 1));
+  /* Substract 1 because the first step has no progress. */
   --progress-bar-width-at-current-step: calc(var(--width-each-segment) * calc(v-bind('currentSetupStep') - 1));
 
   position: absolute;

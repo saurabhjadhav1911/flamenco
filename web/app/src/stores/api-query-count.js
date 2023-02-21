@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { ApiClient } from "@/manager-api";
-import * as urls from '@/urls'
 
 /**
  * Keep track of running API queries.
@@ -42,5 +41,3 @@ export class CountingApiClient extends ApiClient {
       });
   }
 }
-
-export const apiClient = new CountingApiClient(urls.api());;

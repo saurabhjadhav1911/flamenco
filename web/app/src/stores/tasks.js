@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 
 import * as API from '@/manager-api';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 
 
-const jobsAPI = new API.JobsApi(apiClient);
+const jobsAPI = new API.JobsApi(getAPIClient());
 
 // 'use' prefix is idiomatic for Pinia stores.
 // See https://pinia.vuejs.org/core-concepts/

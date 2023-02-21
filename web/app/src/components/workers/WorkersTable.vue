@@ -19,7 +19,7 @@
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import { WorkerMgtApi } from '@/manager-api'
 import { indicator, workerStatus } from '@/statusindicator';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { useWorkers } from '@/stores/workers';
 
 import StatusFilterBar from '@/components/StatusFilterBar.vue'
@@ -117,7 +117,7 @@ export default {
       this.fetchAllWorkers();
     },
     fetchAllWorkers() {
-      const api = new WorkerMgtApi(apiClient);
+      const api = new WorkerMgtApi(getAPIClient());
       api.fetchWorkers().then(this.onWorkersFetched, function (error) {
         // TODO: error handling.
         console.error(error);

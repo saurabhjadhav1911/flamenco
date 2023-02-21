@@ -26,7 +26,7 @@
 
 <script>
 import * as API from '@/manager-api';
-import { apiClient } from '@/stores/api-query-count';
+import { getAPIClient } from "@/api-client";
 import { backendURL } from '@/urls';
 
 import ApiSpinner from '@/components/ApiSpinner.vue'
@@ -51,7 +51,7 @@ export default {
   methods: {
     // TODO: also call this when SocketIO reconnects.
     fetchManagerInfo() {
-      const metaAPI = new API.MetaApi(apiClient);
+      const metaAPI = new API.MetaApi(getAPIClient());
       metaAPI.getVersion().then((version) => {
         this.flamencoName = version.name;
         this.flamencoVersion = version.version;
