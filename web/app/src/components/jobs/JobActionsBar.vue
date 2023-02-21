@@ -98,7 +98,6 @@ export default {
      * @param { JobDeletionInfo } deleteInfo
      */
     _showDeleteJobPopup(deleteInfo) {
-      console.log("deleteInfo", deleteInfo);
       this.deleteInfo = deleteInfo;
     },
 

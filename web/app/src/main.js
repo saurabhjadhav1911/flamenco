@@ -25,7 +25,6 @@ autoreload();
 const pinia = createPinia()
 
 function normalMode() {
-  console.log("Flamenco is starting in normal operation mode");
   const app = createApp(App)
   app.use(pinia)
   app.use(router)
