@@ -152,8 +152,9 @@ export default {
       if (this.$refs.jobsTable) {
         this.$refs.jobsTable.processJobUpdate(jobUpdate);
       }
-      if (this.jobID != jobUpdate.id || jobUpdate.was_deleted)
+      if (this.jobID != jobUpdate.id || jobUpdate.was_deleted) {
         return;
+      }
 
       this._fetchJob(this.jobID);
       if (jobUpdate.refresh_tasks) {
