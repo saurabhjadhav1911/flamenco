@@ -24,6 +24,7 @@ var ApplicationGitHash = "set-during-build"
 // that only supports strings.
 var ReleaseCycle string = "set-during-build"
 
+const releaseCycleReleaseCandidate = "rc"
 const releaseCycleRelease = "release"
 
 // FormattedApplicationInfo returns the application name & version as single string.
@@ -39,9 +40,10 @@ func UserAgent() string {
 // ExtendedVersion returns the application version, and includes the Git hash if
 // this is not a release version. See `IsReleaseVersion`.
 func ExtendedVersion() string {
-	if ReleaseCycle == releaseCycleRelease {
+	switch ReleaseCycle {
+	case releaseCycleRelease, releaseCycleReleaseCandidate:
 		return ApplicationVersion
+	default:
+		return fmt.Sprintf("%s-%s", ApplicationVersion, ApplicationGitHash)
 	}
-
-	return fmt.Sprintf("%s-%s", ApplicationVersion, ApplicationGitHash)
 }
