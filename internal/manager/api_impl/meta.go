@@ -221,7 +221,7 @@ func (f *Flamenco) FindBlenderExePath(e echo.Context) error {
 func (f *Flamenco) CheckBlenderExePath(e echo.Context) error {
 	logger := requestLogger(e)
 
-	var toCheck api.CheckSharedStoragePathJSONBody
+	var toCheck api.CheckBlenderExePathJSONBody
 	if err := e.Bind(&toCheck); err != nil {
 		logger.Warn().Err(err).Msg("bad request received")
 		return sendAPIError(e, http.StatusBadRequest, "invalid format")
