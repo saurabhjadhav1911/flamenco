@@ -126,13 +126,17 @@ func (s *Service) queuePendingDeletions(ctx context.Context) {
 		return
 	}
 
+	numDeletionsQueued := len(jobUUIDs)
 queueLoop:
-	for _, jobUUID := range jobUUIDs {
+	for index, jobUUID := range jobUUIDs {
 		select {
 		case s.queue <- jobUUID:
 			log.Debug().Str("job", jobUUID).Msg("job deleter: job queued for deletion")
 		case <-time.After(100 * time.Millisecond):
-			log.Info().Msg("job deleter: job deletion queue is full")
+			numRemaining := numDeletionsQueued - index
+			log.Info().
+				Int("deletionsRemaining", numRemaining).
+				Msg("job deleter: job deletion queue is full, remaining deletions will be picked up later")
 			break queueLoop
 		}
 	}
