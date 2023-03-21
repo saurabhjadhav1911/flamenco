@@ -28,7 +28,13 @@ import (
 // memory at a time. This is variable to allow unit testing with lower limits.
 var jobDeletionQueueSize = defaultJobDeletionQueueSize
 
-const defaultJobDeletionQueueSize = 100
+const (
+	defaultJobDeletionQueueSize = 100
+
+	// jobDeletionCheckInterval determines how often the database is checked for
+	// jobs that have been requested to be deleted.
+	jobDeletionCheckInterval = 1 * time.Minute
+)
 
 // Service can mark jobs as "deletion requested", as well as delete those jobs
 // in a background goroutine.
@@ -106,7 +112,7 @@ func (s *Service) Run(ctx context.Context) {
 			return
 		case jobUUID := <-s.queue:
 			s.deleteJob(ctx, jobUUID)
-		case <-time.After(1 * time.Minute):
+		case <-time.After(jobDeletionCheckInterval):
 			// Inspect the database to see if there was anything marked for deletion
 			// without getting into our queue. This can happen when lots of jobs are
 			// queued in quick succession, as then the queue channel gets full.
@@ -135,7 +141,9 @@ queueLoop:
 		case <-time.After(100 * time.Millisecond):
 			numRemaining := numDeletionsQueued - index
 			log.Info().
+				Int("deletionsQueued", len(s.queue)).
 				Int("deletionsRemaining", numRemaining).
+				Stringer("checkInterval", jobDeletionCheckInterval).
 				Msg("job deleter: job deletion queue is full, remaining deletions will be picked up later")
 			break queueLoop
 		}
@@ -150,13 +158,13 @@ func (s *Service) deleteJob(ctx context.Context, jobUUID string) error {
 		return err
 	}
 
-	logger.Info().Msg("job deleter: removing logs, last-rendered images, etc.")
+	logger.Debug().Msg("job deleter: removing logs, last-rendered images, etc.")
 	if err := s.storage.RemoveJobStorage(ctx, jobUUID); err != nil {
 		logger.Error().Err(err).Msg("job deleter: error removing job logs, job deletion aborted")
 		return err
 	}
 
-	logger.Info().Msg("job deleter: removing job from database")
+	logger.Debug().Msg("job deleter: removing job from database")
 	if err := s.persist.DeleteJob(ctx, jobUUID); err != nil {
 		logger.Error().Err(err).Msg("job deleter: unable to remove job from database")
 		return err
