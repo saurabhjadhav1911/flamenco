@@ -8,7 +8,7 @@ RELEASE_CYCLE := alpha
 # _GIT_DESCRIPTION_OR_TAG is either something like '16-123abc' (when we're 16
 # commits since the last tag) or it's something like `v3.0-beta2` (when exactly
 # on a tagged version).
-_GIT_DESCRIPTION_OR_TAG := $(subst v${VERSION}-,,$(shell git describe --dirty --always))
+_GIT_DESCRIPTION_OR_TAG := $(subst v${VERSION}-,,$(shell git describe --tag --dirty --always))
 # In the above cases, GITHASH is either `16-123abc` (in the same case above) or
 # `123abc` (when the tag matches the current commit exactly) or `dirty` (when
 # the tag matches the current commit exactly, and there are subsequent
