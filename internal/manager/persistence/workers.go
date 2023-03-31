@@ -16,7 +16,7 @@ type Worker struct {
 	Model
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 
-	UUID   string `gorm:"type:char(36);default:'';unique;index;default:''"`
+	UUID   string `gorm:"type:char(36);default:'';unique;index"`
 	Secret string `gorm:"type:varchar(255);default:''"`
 	Name   string `gorm:"type:varchar(64);default:''"`
 
