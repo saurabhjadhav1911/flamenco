@@ -33,8 +33,12 @@ func (f *Flamenco) RegisterWorker(e echo.Context) error {
 	}
 
 	// TODO: validate the request, should at least have non-empty name, secret, and platform.
-
-	logger.Info().Str("name", req.Name).Msg("registering new worker")
+	workerUUID := uuid.New()
+	logger = logger.With().
+		Str("name", req.Name).
+		Str("uuid", workerUUID).
+		Logger()
+	logger.Info().Msg("registering new worker")
 
 	hashedPassword, err := passwordHasher.GenerateHashedPassword([]byte(req.Secret))
 	if err != nil {
@@ -43,7 +47,7 @@ func (f *Flamenco) RegisterWorker(e echo.Context) error {
 	}
 
 	dbWorker := persistence.Worker{
-		UUID:               uuid.New(),
+		UUID:               workerUUID,
 		Name:               req.Name,
 		Secret:             string(hashedPassword),
 		Platform:           req.Platform,
