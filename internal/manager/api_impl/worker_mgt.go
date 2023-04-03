@@ -17,7 +17,7 @@ func (f *Flamenco) FetchWorkers(e echo.Context) error {
 	logger := requestLogger(e)
 	dbWorkers, err := f.persist.FetchWorkers(e.Request().Context())
 	if err != nil {
-		logger.Error().Err(err).Msg("error fetching all workers")
+		logger.Error().Err(err).Msg("fetching all workers")
 		return sendAPIError(e, http.StatusInternalServerError, "error fetching workers: %v", err)
 	}
 
@@ -47,13 +47,13 @@ func (f *Flamenco) FetchWorker(e echo.Context, workerUUID string) error {
 		return sendAPIError(e, http.StatusNotFound, "worker %q not found", workerUUID)
 	}
 	if err != nil {
-		logger.Error().Err(err).Msg("error fetching worker")
+		logger.Error().Err(err).Msg("fetching worker")
 		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker: %v", err)
 	}
 
 	dbTask, err := f.persist.FetchWorkerTask(ctx, dbWorker)
 	if err != nil {
-		logger.Error().Err(err).Msg("error fetching task assigned to worker")
+		logger.Error().Err(err).Msg("fetching task assigned to worker")
 		return sendAPIError(e, http.StatusInternalServerError, "error fetching task assigned to worker: %v", err)
 	}
 
@@ -91,14 +91,14 @@ func (f *Flamenco) DeleteWorker(e echo.Context, workerUUID string) error {
 		return sendAPIError(e, http.StatusNotFound, "worker %q not found", workerUUID)
 	}
 	if err != nil {
-		logger.Error().Err(err).Msg("error fetching worker for deletion")
+		logger.Error().Err(err).Msg("fetching worker for deletion")
 		return sendAPIError(e, http.StatusInternalServerError,
 			"error fetching worker for deletion: %v", err)
 	}
 
 	err = f.stateMachine.RequeueActiveTasksOfWorker(ctx, worker, "worker is being deleted")
 	if err != nil {
-		logger.Error().Err(err).Msg("error requeueing tasks before deleting worker")
+		logger.Error().Err(err).Msg("requeueing tasks before deleting worker")
 		return sendAPIError(e, http.StatusInternalServerError,
 			"error requeueing tasks before deleting worker: %v", err)
 	}
@@ -110,7 +110,7 @@ func (f *Flamenco) DeleteWorker(e echo.Context, workerUUID string) error {
 		return sendAPIError(e, http.StatusNotFound, "worker %q not found", workerUUID)
 	}
 	if err != nil {
-		logger.Error().Err(err).Msg("error deleting worker")
+		logger.Error().Err(err).Msg("deleting worker")
 		return sendAPIError(e, http.StatusInternalServerError, "error deleting worker: %v", err)
 	}
 	logger.Info().Msg("deleted worker")
@@ -150,7 +150,7 @@ func (f *Flamenco) RequestWorkerStatusChange(e echo.Context, workerUUID string) 
 		return sendAPIError(e, http.StatusNotFound, "worker %q not found", workerUUID)
 	}
 	if err != nil {
-		logger.Error().Err(err).Msg("error fetching worker")
+		logger.Error().Err(err).Msg("fetching worker")
 		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker: %v", err)
 	}
 
@@ -171,7 +171,7 @@ func (f *Flamenco) RequestWorkerStatusChange(e echo.Context, workerUUID string) 
 
 	// Store the status change.
 	if err := f.persist.SaveWorker(e.Request().Context(), dbWorker); err != nil {
-		logger.Error().Err(err).Msg("error saving worker after status change request")
+		logger.Error().Err(err).Msg("saving worker after status change request")
 		return sendAPIError(e, http.StatusInternalServerError, "error saving worker: %v", err)
 	}
 
