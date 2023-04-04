@@ -108,17 +108,16 @@ func (db *DB) WorkersLeftToRun(ctx context.Context, job *Job, taskType string) (
 		Select("uuid").
 		Where("id not in (?)", blockedWorkers)
 
-	if job.WorkerClusterID != nil {
-		// Count workers not in any cluster + workers in the job's cluster.
-		clusterless := db.gormDB.
-			Table("worker_cluster_membership").
-			Select("worker_id")
+	if job.WorkerClusterID == nil {
+		// Count all workers, so no extra restrictions are necessary.
+	} else {
+		// Only count workers in the job's cluster.
 		jobCluster := db.gormDB.
 			Table("worker_cluster_membership").
 			Select("worker_id").
 			Where("worker_cluster_id = ?", *job.WorkerClusterID)
 		query = query.
-			Where("id not in (?) or id in (?)", clusterless, jobCluster)
+			Where("id in (?)", jobCluster)
 	}
 
 	// Find the workers NOT blocked.
