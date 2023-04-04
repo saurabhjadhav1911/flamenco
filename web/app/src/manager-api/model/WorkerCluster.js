@@ -23,12 +23,11 @@ class WorkerCluster {
      * Constructs a new <code>WorkerCluster</code>.
      * Cluster of workers. A job can optionally specify which cluster it should be limited to. Workers can be part of multiple clusters simultaneously. 
      * @alias module:model/WorkerCluster
-     * @param id {String} 
      * @param name {String} 
      */
-    constructor(id, name) { 
+    constructor(name) { 
         
-        WorkerCluster.initialize(this, id, name);
+        WorkerCluster.initialize(this, name);
     }
 
     /**
@@ -36,8 +35,7 @@ class WorkerCluster {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, id, name) { 
-        obj['id'] = id;
+    static initialize(obj, name) { 
         obj['name'] = name;
     }
 
@@ -69,6 +67,7 @@ class WorkerCluster {
 }
 
 /**
+ * UUID of the cluster. Can be ommitted when creating a new cluster, in which case a random UUID will be assigned. 
  * @member {String} id
  */
 WorkerCluster.prototype['id'] = undefined;

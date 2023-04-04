@@ -81,8 +81,8 @@ class WorkerCluster(ModelNormal):
                 and the value is attribute type.
         """
         return {
-            'id': (str,),  # noqa: E501
             'name': (str,),  # noqa: E501
+            'id': (str,),  # noqa: E501
             'description': (str,),  # noqa: E501
         }
 
@@ -92,8 +92,8 @@ class WorkerCluster(ModelNormal):
 
 
     attribute_map = {
-        'id': 'id',  # noqa: E501
         'name': 'name',  # noqa: E501
+        'id': 'id',  # noqa: E501
         'description': 'description',  # noqa: E501
     }
 
@@ -104,11 +104,10 @@ class WorkerCluster(ModelNormal):
 
     @classmethod
     @convert_js_args_to_python_args
-    def _from_openapi_data(cls, id, name, *args, **kwargs):  # noqa: E501
+    def _from_openapi_data(cls, name, *args, **kwargs):  # noqa: E501
         """WorkerCluster - a model defined in OpenAPI
 
         Args:
-            id (str):
             name (str):
 
         Keyword Args:
@@ -142,6 +141,7 @@ class WorkerCluster(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
+            id (str): UUID of the cluster. Can be ommitted when creating a new cluster, in which case a random UUID will be assigned. . [optional]  # noqa: E501
             description (str): [optional]  # noqa: E501
         """
 
@@ -170,7 +170,6 @@ class WorkerCluster(ModelNormal):
         self._configuration = _configuration
         self._visited_composed_classes = _visited_composed_classes + (self.__class__,)
 
-        self.id = id
         self.name = name
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
@@ -192,11 +191,10 @@ class WorkerCluster(ModelNormal):
     ])
 
     @convert_js_args_to_python_args
-    def __init__(self, id, name, *args, **kwargs):  # noqa: E501
+    def __init__(self, name, *args, **kwargs):  # noqa: E501
         """WorkerCluster - a model defined in OpenAPI
 
         Args:
-            id (str):
             name (str):
 
         Keyword Args:
@@ -230,6 +228,7 @@ class WorkerCluster(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
+            id (str): UUID of the cluster. Can be ommitted when creating a new cluster, in which case a random UUID will be assigned. . [optional]  # noqa: E501
             description (str): [optional]  # noqa: E501
         """
 
@@ -256,7 +255,6 @@ class WorkerCluster(ModelNormal):
         self._configuration = _configuration
         self._visited_composed_classes = _visited_composed_classes + (self.__class__,)
 
-        self.id = id
         self.name = name
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \

@@ -739,8 +739,10 @@ type Worker struct {
 // Cluster of workers. A job can optionally specify which cluster it should be limited to. Workers can be part of multiple clusters simultaneously.
 type WorkerCluster struct {
 	Description *string `json:"description,omitempty"`
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
+
+	// UUID of the cluster. Can be ommitted when creating a new cluster, in which case a random UUID will be assigned.
+	Id   *string `json:"id,omitempty"`
+	Name string  `json:"name"`
 }
 
 // Request to change which clusters this Worker is assigned to.
