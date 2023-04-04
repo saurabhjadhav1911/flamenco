@@ -34,7 +34,7 @@
       </dd>
     </dl>
 
-    <section class="worker-clusters" v-if="workers.clusters">
+    <section class="worker-clusters" v-if="workers.clusters && workers.clusters.length">
       <h3 class="sub-title">Clusters</h3>
       <ul>
         <li v-for="cluster in workers.clusters">
