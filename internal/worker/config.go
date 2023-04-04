@@ -22,7 +22,11 @@ var (
 	errURLWithoutHostName = errors.New("manager URL should contain a host name")
 )
 
-const (
+var (
+	// config- and credentialsFilename are used to specify where flamenco will
+	// write its config/credentials file. If the path is not absolute, it will
+	// use the flamenco binary location as the relative root path. These are not
+	// intended to be changed during runtime.
 	credentialsFilename = "flamenco-worker-credentials.yaml"
 	configFilename      = "flamenco-worker.yaml"
 )

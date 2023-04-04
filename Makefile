@@ -17,7 +17,7 @@ _GIT_DESCRIPTION_OR_TAG := $(subst v${VERSION}-,,$(shell git describe --tag --di
 # ${GITHASH}.
 GITHASH := $(subst v${VERSION},$(shell git rev-parse --short HEAD),${_GIT_DESCRIPTION_OR_TAG})
 
-LDFLAGS := -X ${PKG}/internal/appinfo.ApplicationVersion=${VERSION} \
+LDFLAGS := ${LDFLAGS} -X ${PKG}/internal/appinfo.ApplicationVersion=${VERSION} \
 	-X ${PKG}/internal/appinfo.ApplicationGitHash=${GITHASH} \
 	-X ${PKG}/internal/appinfo.ReleaseCycle=${RELEASE_CYCLE}
 BUILD_FLAGS = -ldflags="${LDFLAGS}"
