@@ -20,7 +20,9 @@ type Author struct {
 }
 
 type AuthoredJob struct {
-	JobID    string
+	JobID             string
+	WorkerClusterUUID string
+
 	Name     string
 	JobType  string
 	Priority int

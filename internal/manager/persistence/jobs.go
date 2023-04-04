@@ -35,6 +35,9 @@ type Job struct {
 	DeleteRequestedAt sql.NullTime
 
 	Storage JobStorageInfo `gorm:"embedded;embeddedPrefix:storage_"`
+
+	WorkerClusterID *uint
+	WorkerCluster   *WorkerCluster `gorm:"foreignkey:WorkerClusterID;references:ID;constraint:OnDelete:SET NULL"`
 }
 
 type StringInterfaceMap map[string]interface{}
@@ -145,6 +148,16 @@ func (db *DB) StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.Au
 			},
 		}
 
+		// Find and assign the worker cluster.
+		if authoredJob.WorkerClusterUUID != "" {
+			dbCluster, err := fetchWorkerCluster(tx, authoredJob.WorkerClusterUUID)
+			if err != nil {
+				return err
+			}
+			dbJob.WorkerClusterID = &dbCluster.ID
+			dbJob.WorkerCluster = dbCluster
+		}
+
 		if err := tx.Create(&dbJob).Error; err != nil {
 			return jobError(err, "storing job")
 		}
@@ -212,6 +225,7 @@ func (db *DB) FetchJob(ctx context.Context, jobUUID string) (*Job, error) {
 	dbJob := Job{}
 	findResult := db.gormDB.WithContext(ctx).
 		Limit(1).
+		Preload("WorkerCluster").
 		Find(&dbJob, "uuid = ?", jobUUID)
 	if findResult.Error != nil {
 		return nil, jobError(findResult.Error, "fetching job")

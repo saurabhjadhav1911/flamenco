@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"git.blender.org/flamenco/internal/manager/job_compilers"
 	"git.blender.org/flamenco/internal/uuid"
@@ -289,6 +290,69 @@ func TestPreviouslyFailed(t *testing.T) {
 	assert.Equal(t, att2.Name, task.Name, "the second task should have been chosen")
 }
 
+func TestWorkerClusterJobWithCluster(t *testing.T) {
+	ctx, cancel, db := persistenceTestFixtures(t, schedulerTestTimeout)
+	defer cancel()
+
+	// Create worker clusters:
+	cluster1 := WorkerCluster{UUID: "f0157623-4b14-4801-bee2-271dddab6309", Name: "Cluster 1"}
+	cluster2 := WorkerCluster{UUID: "2f71dba1-cf92-4752-8386-f5926affabd5", Name: "Cluster 2"}
+	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster1))
+	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster2))
+
+	// Create a worker in cluster1:
+	w := linuxWorker(t, db, func(w *Worker) {
+		w.Clusters = []*WorkerCluster{&cluster1}
+	})
+
+	{ // Test job with different cluster:
+		authTask := authorTestTask("the task", "blender")
+		job := authorTestJob("499cf0f8-e83d-4cb1-837a-df94789d07db", "simple-blender-render", authTask)
+		job.WorkerClusterUUID = cluster2.UUID
+		constructTestJob(ctx, t, db, job)
+
+		task, err := db.ScheduleTask(ctx, &w)
+		require.NoError(t, err)
+		assert.Nil(t, task, "job with different cluster should not be scheduled")
+	}
+
+	{ // Test job with matching cluster:
+		authTask := authorTestTask("the task", "blender")
+		job := authorTestJob("5d4c2321-0bb7-4c13-a9dd-32a2c0cd156e", "simple-blender-render", authTask)
+		job.WorkerClusterUUID = cluster1.UUID
+		constructTestJob(ctx, t, db, job)
+
+		task, err := db.ScheduleTask(ctx, &w)
+		require.NoError(t, err)
+		require.NotNil(t, task, "job with matching cluster should be scheduled")
+		assert.Equal(t, authTask.UUID, task.UUID)
+	}
+}
+
+func TestWorkerClusterJobWithoutCluster(t *testing.T) {
+	ctx, cancel, db := persistenceTestFixtures(t, schedulerTestTimeout)
+	defer cancel()
+
+	// Create worker cluster:
+	cluster1 := WorkerCluster{UUID: "f0157623-4b14-4801-bee2-271dddab6309", Name: "Cluster 1"}
+	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster1))
+
+	// Create a worker in cluster1:
+	w := linuxWorker(t, db, func(w *Worker) {
+		w.Clusters = []*WorkerCluster{&cluster1}
+	})
+
+	// Test cluster-less job:
+	authTask := authorTestTask("the task", "blender")
+	job := authorTestJob("b6a1d859-122f-4791-8b78-b943329a9989", "simple-blender-render", authTask)
+	constructTestJob(ctx, t, db, job)
+
+	task, err := db.ScheduleTask(ctx, &w)
+	require.NoError(t, err)
+	require.NotNil(t, task, "job without cluster should always be scheduled")
+	assert.Equal(t, authTask.UUID, task.UUID)
+}
+
 func TestBlocklisted(t *testing.T) {
 	ctx, cancel, db := persistenceTestFixtures(t, schedulerTestTimeout)
 	defer cancel()
@@ -383,13 +447,17 @@ func setTaskStatus(t *testing.T, db *DB, taskUUID string, status api.TaskStatus)
 	}
 }
 
-func linuxWorker(t *testing.T, db *DB) Worker {
+func linuxWorker(t *testing.T, db *DB, updaters ...func(worker *Worker)) Worker {
 	w := Worker{
 		UUID:               "b13b8322-3e96-41c3-940a-3d581008a5f8",
 		Name:               "Linux",
 		Platform:           "linux",
 		Status:             api.WorkerStatusAwake,
 		SupportedTaskTypes: "blender,ffmpeg,file-management,misc",
+	}
+
+	for _, updater := range updaters {
+		updater(&w)
 	}
 
 	err := db.gormDB.Save(&w).Error

@@ -103,13 +103,27 @@ func (db *DB) WorkersLeftToRun(ctx context.Context, job *Job, taskType string) (
 		Where("JB.job_id = ?", job.ID).
 		Where("JB.task_type = ?", taskType)
 
-	// Find the workers NOT blocked.
-	workers := []*Worker{}
-	tx := db.gormDB.WithContext(ctx).
+	query := db.gormDB.WithContext(ctx).
 		Model(&Worker{}).
 		Select("uuid").
-		Where("id not in (?)", blockedWorkers).
-		Scan(&workers)
+		Where("id not in (?)", blockedWorkers)
+
+	if job.WorkerClusterID != nil {
+		// Count workers not in any cluster + workers in the job's cluster.
+		clusterless := db.gormDB.
+			Table("worker_cluster_membership").
+			Select("worker_id")
+		jobCluster := db.gormDB.
+			Table("worker_cluster_membership").
+			Select("worker_id").
+			Where("worker_cluster_id = ?", *job.WorkerClusterID)
+		query = query.
+			Where("id not in (?) or id in (?)", clusterless, jobCluster)
+	}
+
+	// Find the workers NOT blocked.
+	workers := []*Worker{}
+	tx := query.Scan(&workers)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

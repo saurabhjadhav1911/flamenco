@@ -17,6 +17,7 @@ import (
 	"git.blender.org/flamenco/pkg/moremock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func ptr[T any](value T) *T {
@@ -317,6 +318,103 @@ func TestSubmitJobWithShamanCheckoutID(t *testing.T) {
 	requestWorkerStore(echoCtx, &worker)
 	err := mf.flamenco.SubmitJob(echoCtx)
 	assert.NoError(t, err)
+}
+
+func TestSubmitJobWithWorkerCluster(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+	worker := testWorker()
+
+	workerClusterUUID := "04435762-9dc8-4f13-80b7-643a6fa5b6fd"
+	cluster := persistence.WorkerCluster{
+		Model:       persistence.Model{ID: 47},
+		UUID:        workerClusterUUID,
+		Name:        "first cluster",
+		Description: "my first cluster",
+	}
+
+	submittedJob := api.SubmittedJob{
+		Name:              "поднео посао",
+		Type:              "test",
+		Priority:          50,
+		SubmitterPlatform: worker.Platform,
+		WorkerCluster:     &workerClusterUUID,
+	}
+
+	mf.expectConvertTwoWayVariables(t,
+		config.VariableAudienceWorkers,
+		config.VariablePlatform(worker.Platform),
+		map[string]string{},
+	)
+
+	// Expect the job compiler to be called.
+	authoredJob := job_compilers.AuthoredJob{
+		JobID:             "afc47568-bd9d-4368-8016-e91d945db36d",
+		WorkerClusterUUID: workerClusterUUID,
+
+		Name:     submittedJob.Name,
+		JobType:  submittedJob.Type,
+		Priority: submittedJob.Priority,
+		Status:   api.JobStatusUnderConstruction,
+		Created:  mf.clock.Now(),
+	}
+	mf.jobCompiler.EXPECT().Compile(gomock.Any(), submittedJob).Return(&authoredJob, nil)
+
+	// Expect the job to be saved with 'queued' status:
+	queuedJob := authoredJob
+	queuedJob.Status = api.JobStatusQueued
+	mf.persistence.EXPECT().StoreAuthoredJob(gomock.Any(), queuedJob).Return(nil)
+
+	// Expect the job to be fetched from the database again:
+	dbJob := persistence.Job{
+		Model: persistence.Model{
+			ID:        47,
+			CreatedAt: mf.clock.Now(),
+			UpdatedAt: mf.clock.Now(),
+		},
+		UUID:     queuedJob.JobID,
+		Name:     queuedJob.Name,
+		JobType:  queuedJob.JobType,
+		Priority: queuedJob.Priority,
+		Status:   queuedJob.Status,
+		Settings: persistence.StringInterfaceMap{},
+		Metadata: persistence.StringStringMap{},
+
+		WorkerClusterID: &cluster.ID,
+		WorkerCluster:   &cluster,
+	}
+	mf.persistence.EXPECT().FetchJob(gomock.Any(), queuedJob.JobID).Return(&dbJob, nil)
+
+	// Expect the new job to be broadcast.
+	jobUpdate := api.SocketIOJobUpdate{
+		Id:       dbJob.UUID,
+		Name:     &dbJob.Name,
+		Priority: dbJob.Priority,
+		Status:   dbJob.Status,
+		Type:     dbJob.JobType,
+		Updated:  dbJob.UpdatedAt,
+	}
+	mf.broadcaster.EXPECT().BroadcastNewJob(jobUpdate)
+
+	// Do the call.
+	echoCtx := mf.prepareMockedJSONRequest(submittedJob)
+	requestWorkerStore(echoCtx, &worker)
+	require.NoError(t, mf.flamenco.SubmitJob(echoCtx))
+
+	submittedJob.Metadata = new(api.JobMetadata)
+	submittedJob.Settings = new(api.JobSettings)
+	submittedJob.SubmitterPlatform = "" // Not persisted in the database.
+	assertResponseJSON(t, echoCtx, http.StatusOK, api.Job{
+		SubmittedJob:      submittedJob,
+		Id:                dbJob.UUID,
+		Created:           dbJob.CreatedAt,
+		Updated:           dbJob.UpdatedAt,
+		DeleteRequestedAt: nil,
+		Activity:          "",
+		Status:            api.JobStatusQueued,
+	})
 }
 
 func TestGetJobTypeHappy(t *testing.T) {

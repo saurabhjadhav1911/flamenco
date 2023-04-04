@@ -10,9 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"git.blender.org/flamenco/internal/uuid"
+	"git.blender.org/flamenco/pkg/api"
 	"github.com/glebarez/sqlite"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
 
@@ -86,4 +89,45 @@ func persistenceTestFixtures(t *testing.T, testContextTimeout time.Duration) (co
 	}
 
 	return ctx, cancel, db
+}
+
+type WorkerTestFixture struct {
+	db   *DB
+	ctx  context.Context
+	done func()
+
+	worker  *Worker
+	cluster *WorkerCluster
+}
+
+func workerTestFixtures(t *testing.T, testContextTimeout time.Duration) WorkerTestFixture {
+	ctx, cancel, db := persistenceTestFixtures(t, testContextTimeout)
+
+	w := Worker{
+		UUID:               uuid.New(),
+		Name:               "дрон",
+		Address:            "fe80::5054:ff:fede:2ad7",
+		Platform:           "linux",
+		Software:           "3.0",
+		Status:             api.WorkerStatusAwake,
+		SupportedTaskTypes: "blender,ffmpeg,file-management",
+	}
+
+	wc := WorkerCluster{
+		UUID:        uuid.New(),
+		Name:        "arbejdsklynge",
+		Description: "Worker cluster in Danish",
+	}
+
+	require.NoError(t, db.CreateWorker(ctx, &w))
+	require.NoError(t, db.CreateWorkerCluster(ctx, &wc))
+
+	return WorkerTestFixture{
+		db:   db,
+		ctx:  ctx,
+		done: cancel,
+
+		worker:  &w,
+		cluster: &wc,
+	}
 }

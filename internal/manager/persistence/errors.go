@@ -9,9 +9,10 @@ import (
 )
 
 var (
-	ErrJobNotFound    = PersistenceError{Message: "job not found", Err: gorm.ErrRecordNotFound}
-	ErrTaskNotFound   = PersistenceError{Message: "task not found", Err: gorm.ErrRecordNotFound}
-	ErrWorkerNotFound = PersistenceError{Message: "worker not found", Err: gorm.ErrRecordNotFound}
+	ErrJobNotFound           = PersistenceError{Message: "job not found", Err: gorm.ErrRecordNotFound}
+	ErrTaskNotFound          = PersistenceError{Message: "task not found", Err: gorm.ErrRecordNotFound}
+	ErrWorkerNotFound        = PersistenceError{Message: "worker not found", Err: gorm.ErrRecordNotFound}
+	ErrWorkerClusterNotFound = PersistenceError{Message: "worker cluster not found", Err: gorm.ErrRecordNotFound}
 )
 
 type PersistenceError struct {
@@ -37,6 +38,10 @@ func taskError(errorToWrap error, message string, msgArgs ...interface{}) error 
 
 func workerError(errorToWrap error, message string, msgArgs ...interface{}) error {
 	return wrapError(translateGormWorkerError(errorToWrap), message, msgArgs...)
+}
+
+func workerClusterError(errorToWrap error, message string, msgArgs ...interface{}) error {
+	return wrapError(translateGormWorkerClusterError(errorToWrap), message, msgArgs...)
 }
 
 func wrapError(errorToWrap error, message string, format ...interface{}) error {
@@ -77,6 +82,15 @@ func translateGormTaskError(gormError error) error {
 func translateGormWorkerError(gormError error) error {
 	if errors.Is(gormError, gorm.ErrRecordNotFound) {
 		return ErrWorkerNotFound
+	}
+	return gormError
+}
+
+// translateGormWorkerClusterError translates a Gorm error to a persistence layer error.
+// This helps to keep Gorm as "implementation detail" of the persistence layer.
+func translateGormWorkerClusterError(gormError error) error {
+	if errors.Is(gormError, gorm.ErrRecordNotFound) {
+		return ErrWorkerClusterNotFound
 	}
 	return gormError
 }

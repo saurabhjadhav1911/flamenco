@@ -141,6 +141,20 @@ func (mr *MockPersistenceServiceMockRecorder) CreateWorker(arg0, arg1 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorker", reflect.TypeOf((*MockPersistenceService)(nil).CreateWorker), arg0, arg1)
 }
 
+// CreateWorkerCluster mocks base method.
+func (m *MockPersistenceService) CreateWorkerCluster(arg0 context.Context, arg1 *persistence.WorkerCluster) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateWorkerCluster", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateWorkerCluster indicates an expected call of CreateWorkerCluster.
+func (mr *MockPersistenceServiceMockRecorder) CreateWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).CreateWorkerCluster), arg0, arg1)
+}
+
 // DeleteWorker mocks base method.
 func (m *MockPersistenceService) DeleteWorker(arg0 context.Context, arg1 string) error {
 	m.ctrl.T.Helper()
@@ -153,6 +167,20 @@ func (m *MockPersistenceService) DeleteWorker(arg0 context.Context, arg1 string)
 func (mr *MockPersistenceServiceMockRecorder) DeleteWorker(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorker", reflect.TypeOf((*MockPersistenceService)(nil).DeleteWorker), arg0, arg1)
+}
+
+// DeleteWorkerCluster mocks base method.
+func (m *MockPersistenceService) DeleteWorkerCluster(arg0 context.Context, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteWorkerCluster", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteWorkerCluster indicates an expected call of DeleteWorkerCluster.
+func (mr *MockPersistenceServiceMockRecorder) DeleteWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).DeleteWorkerCluster), arg0, arg1)
 }
 
 // FetchJob mocks base method.
@@ -228,6 +256,36 @@ func (m *MockPersistenceService) FetchWorker(arg0 context.Context, arg1 string) 
 func (mr *MockPersistenceServiceMockRecorder) FetchWorker(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorker", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorker), arg0, arg1)
+}
+
+// FetchWorkerCluster mocks base method.
+func (m *MockPersistenceService) FetchWorkerCluster(arg0 context.Context, arg1 string) (*persistence.WorkerCluster, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FetchWorkerCluster", arg0, arg1)
+	ret0, _ := ret[0].(*persistence.WorkerCluster)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FetchWorkerCluster indicates an expected call of FetchWorkerCluster.
+func (mr *MockPersistenceServiceMockRecorder) FetchWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorkerCluster), arg0, arg1)
+}
+
+// FetchWorkerClusters mocks base method.
+func (m *MockPersistenceService) FetchWorkerClusters(arg0 context.Context) ([]*persistence.WorkerCluster, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FetchWorkerClusters", arg0)
+	ret0, _ := ret[0].([]*persistence.WorkerCluster)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FetchWorkerClusters indicates an expected call of FetchWorkerClusters.
+func (mr *MockPersistenceServiceMockRecorder) FetchWorkerClusters(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerClusters", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorkerClusters), arg0)
 }
 
 // FetchWorkerTask mocks base method.
@@ -375,6 +433,20 @@ func (mr *MockPersistenceServiceMockRecorder) SaveWorker(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveWorker", reflect.TypeOf((*MockPersistenceService)(nil).SaveWorker), arg0, arg1)
 }
 
+// SaveWorkerCluster mocks base method.
+func (m *MockPersistenceService) SaveWorkerCluster(arg0 context.Context, arg1 *persistence.WorkerCluster) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveWorkerCluster", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveWorkerCluster indicates an expected call of SaveWorkerCluster.
+func (mr *MockPersistenceServiceMockRecorder) SaveWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).SaveWorkerCluster), arg0, arg1)
+}
+
 // SaveWorkerStatus mocks base method.
 func (m *MockPersistenceService) SaveWorkerStatus(arg0 context.Context, arg1 *persistence.Worker) error {
 	m.ctrl.T.Helper()
@@ -458,6 +530,20 @@ func (m *MockPersistenceService) WorkerSeen(arg0 context.Context, arg1 *persiste
 func (mr *MockPersistenceServiceMockRecorder) WorkerSeen(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WorkerSeen", reflect.TypeOf((*MockPersistenceService)(nil).WorkerSeen), arg0, arg1)
+}
+
+// WorkerSetClusters mocks base method.
+func (m *MockPersistenceService) WorkerSetClusters(arg0 context.Context, arg1 *persistence.Worker, arg2 []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WorkerSetClusters", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// WorkerSetClusters indicates an expected call of WorkerSetClusters.
+func (mr *MockPersistenceServiceMockRecorder) WorkerSetClusters(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WorkerSetClusters", reflect.TypeOf((*MockPersistenceService)(nil).WorkerSetClusters), arg0, arg1, arg2)
 }
 
 // WorkersLeftToRun mocks base method.

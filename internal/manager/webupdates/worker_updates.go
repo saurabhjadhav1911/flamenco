@@ -32,6 +32,8 @@ func NewWorkerUpdate(worker *persistence.Worker) api.SocketIOWorkerUpdate {
 		workerUpdate.LastSeen = &worker.LastSeenAt
 	}
 
+	// TODO: add cluster IDs.
+
 	return workerUpdate
 }
 

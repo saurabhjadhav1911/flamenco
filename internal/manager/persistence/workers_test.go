@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"git.blender.org/flamenco/internal/uuid"
 	"git.blender.org/flamenco/pkg/api"
@@ -316,4 +317,20 @@ func TestDeleteWorker(t *testing.T) {
 		assert.NotZero(t, fetchedTask.Worker.DeletedAt.Time)
 		assert.True(t, fetchedTask.Worker.DeletedAt.Valid)
 	}
+}
+
+func TestDeleteWorkerWithClusterAssigned(t *testing.T) {
+	f := workerTestFixtures(t, 1*time.Second)
+	defer f.done()
+
+	// Assign the worker.
+	require.NoError(t, f.db.WorkerSetClusters(f.ctx, f.worker, []string{f.cluster.UUID}))
+
+	// Delete the Worker.
+	require.NoError(t, f.db.DeleteWorker(f.ctx, f.worker.UUID))
+
+	// Check the Worker has been unassigned from the cluster.
+	cluster, err := f.db.FetchWorkerCluster(f.ctx, f.cluster.UUID)
+	require.NoError(t, err)
+	assert.Empty(t, cluster.Workers)
 }

@@ -114,18 +114,30 @@ func findTaskForWorker(tx *gorm.DB, w *Worker) (*Task, error) {
 	// a 'schedulable' status might have been assigned to a worker, representing
 	// the last worker to touch it -- it's not meant to indicate "ownership" of
 	// the task.
-	findTaskResult := tx.
-		Model(&task).
+	findTaskQuery := tx.Model(&task).
 		Joins("left join jobs on tasks.job_id = jobs.id").
 		Joins("left join task_failures TF on tasks.id = TF.task_id and TF.worker_id=?", w.ID).
-		Where("tasks.status in ?", schedulableTaskStatuses).   // Schedulable task statuses
-		Where("jobs.status in ?", schedulableJobStatuses).     // Schedulable job statuses
-		Where("tasks.type in ?", w.TaskTypes()).               // Supported task types
-		Where("tasks.id not in (?)", incompleteDepsQuery).     // Dependencies completed
-		Where("TF.worker_id is NULL").                         // Not failed before
-		Where("tasks.type not in (?)", blockedTaskTypesQuery). // Non-blocklisted
-		Order("jobs.priority desc").                           // Highest job priority
-		Order("tasks.priority desc").                          // Highest task priority
+		Where("tasks.status in ?", schedulableTaskStatuses).  // Schedulable task statuses
+		Where("jobs.status in ?", schedulableJobStatuses).    // Schedulable job statuses
+		Where("tasks.type in ?", w.TaskTypes()).              // Supported task types
+		Where("tasks.id not in (?)", incompleteDepsQuery).    // Dependencies completed
+		Where("TF.worker_id is NULL").                        // Not failed before
+		Where("tasks.type not in (?)", blockedTaskTypesQuery) // Non-blocklisted
+
+	if len(w.Clusters) > 0 {
+		// Worker is assigned to one or more clusters, so limit the available jobs
+		// to those that have no cluster, or overlap with the Worker's clusters.
+		clusterIDs := []uint{}
+		for _, cluster := range w.Clusters {
+			clusterIDs = append(clusterIDs, cluster.ID)
+		}
+		findTaskQuery = findTaskQuery.
+			Where("jobs.worker_cluster_id is NULL or worker_cluster_id in ?", clusterIDs)
+	}
+
+	findTaskResult := findTaskQuery.
+		Order("jobs.priority desc").  // Highest job priority
+		Order("tasks.priority desc"). // Highest task priority
 		Limit(1).
 		Preload("Job").
 		Find(&task)

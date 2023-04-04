@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"git.blender.org/flamenco/internal/manager/persistence"
 	"git.blender.org/flamenco/pkg/api"
@@ -258,5 +259,61 @@ func TestRequestWorkerStatusChangeRevert(t *testing.T) {
 	})
 	err := mf.flamenco.RequestWorkerStatusChange(echo, workerUUID)
 	assert.NoError(t, err)
+	assertResponseNoContent(t, echo)
+}
+
+func TestWorkerClusterCRUDHappyFlow(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	// Create a cluster.
+	UUID := "18d9234e-5135-458f-a1ba-a350c3d4e837"
+	apiCluster := api.WorkerCluster{
+		Id:          UUID,
+		Name:        "ʻO nā manu ʻino",
+		Description: ptr("Ke aloha"),
+	}
+	expectDBCluster := persistence.WorkerCluster{
+		UUID:        UUID,
+		Name:        apiCluster.Name,
+		Description: *apiCluster.Description,
+	}
+	mf.persistence.EXPECT().CreateWorkerCluster(gomock.Any(), &expectDBCluster)
+	// TODO: expect SocketIO broadcast of the cluster creation.
+	echo := mf.prepareMockedJSONRequest(apiCluster)
+	require.NoError(t, mf.flamenco.CreateWorkerCluster(echo))
+	assertResponseNoContent(t, echo)
+
+	// Fetch the cluster
+	mf.persistence.EXPECT().FetchWorkerCluster(gomock.Any(), UUID).Return(&expectDBCluster, nil)
+	echo = mf.prepareMockedRequest(nil)
+	require.NoError(t, mf.flamenco.FetchWorkerCluster(echo, UUID))
+	assertResponseJSON(t, echo, http.StatusOK, &apiCluster)
+
+	// Update & save.
+	newUUID := "60442762-83d3-4fc3-bf75-6ab5799cdbaa"
+	newAPICluster := api.WorkerCluster{
+		Id:   newUUID, // Intentionally change the UUID. This should just be ignored.
+		Name: "updated name",
+	}
+	expectNewDBCluster := persistence.WorkerCluster{
+		UUID:        UUID,
+		Name:        newAPICluster.Name,
+		Description: "",
+	}
+	// TODO: expect SocketIO broadcast of the cluster update.
+	mf.persistence.EXPECT().FetchWorkerCluster(gomock.Any(), UUID).Return(&expectDBCluster, nil)
+	mf.persistence.EXPECT().SaveWorkerCluster(gomock.Any(), &expectNewDBCluster)
+	echo = mf.prepareMockedJSONRequest(newAPICluster)
+	require.NoError(t, mf.flamenco.UpdateWorkerCluster(echo, UUID))
+	assertResponseNoContent(t, echo)
+
+	// Delete.
+	mf.persistence.EXPECT().DeleteWorkerCluster(gomock.Any(), UUID)
+	// TODO: expect SocketIO broadcast of the cluster deletion.
+	echo = mf.prepareMockedJSONRequest(newAPICluster)
+	require.NoError(t, mf.flamenco.DeleteWorkerCluster(echo, UUID))
 	assertResponseNoContent(t, echo)
 }

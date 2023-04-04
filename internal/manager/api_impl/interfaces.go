@@ -65,6 +65,14 @@ type PersistenceService interface {
 	RemoveFromJobBlocklist(ctx context.Context, jobUUID, workerUUID, taskType string) error
 	ClearJobBlocklist(ctx context.Context, job *persistence.Job) error
 
+	// Worker cluster management.
+	WorkerSetClusters(ctx context.Context, worker *persistence.Worker, clusterUUIDs []string) error
+	CreateWorkerCluster(ctx context.Context, cluster *persistence.WorkerCluster) error
+	FetchWorkerCluster(ctx context.Context, uuid string) (*persistence.WorkerCluster, error)
+	FetchWorkerClusters(ctx context.Context) ([]*persistence.WorkerCluster, error)
+	DeleteWorkerCluster(ctx context.Context, uuid string) error
+	SaveWorkerCluster(ctx context.Context, cluster *persistence.WorkerCluster) error
+
 	// WorkersLeftToRun returns a set of worker UUIDs that can run tasks of the given type on the given job.
 	WorkersLeftToRun(ctx context.Context, job *persistence.Job, taskType string) (map[string]bool, error)
 	// CountTaskFailuresOfWorker returns the number of task failures of this worker, on this particular job and task type.

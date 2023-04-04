@@ -618,6 +618,9 @@ func jobDBtoAPI(dbJob *persistence.Job) api.Job {
 	if dbJob.DeleteRequestedAt.Valid {
 		apiJob.DeleteRequestedAt = &dbJob.DeleteRequestedAt.Time
 	}
+	if dbJob.WorkerCluster != nil {
+		apiJob.WorkerCluster = &dbJob.WorkerCluster.UUID
+	}
 
 	return apiJob
 }

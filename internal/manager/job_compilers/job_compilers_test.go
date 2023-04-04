@@ -45,11 +45,12 @@ func exampleSubmittedJob() api.SubmittedJob {
 			"user.name":  "Sybren Stüvel",
 		}}
 	sj := api.SubmittedJob{
-		Name:     "3Д рендеринг",
-		Priority: 50,
-		Type:     "simple-blender-render",
-		Settings: &settings,
-		Metadata: &metadata,
+		Name:          "3Д рендеринг",
+		Priority:      50,
+		Type:          "simple-blender-render",
+		Settings:      &settings,
+		Metadata:      &metadata,
+		WorkerCluster: ptr("acce9983-e663-4210-b3cc-f7bfa629cb21"),
 	}
 	return sj
 }
@@ -79,6 +80,7 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 
 	// Properties should be copied as-is.
 	assert.Equal(t, sj.Name, aj.Name)
+	assert.Equal(t, *sj.WorkerCluster, aj.WorkerClusterUUID)
 	assert.Equal(t, sj.Type, aj.JobType)
 	assert.Equal(t, sj.Priority, aj.Priority)
 	assert.EqualValues(t, sj.Settings.AdditionalProperties, aj.Settings)
@@ -135,6 +137,35 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 		&aj.Tasks[0], &aj.Tasks[1], &aj.Tasks[2], &aj.Tasks[3],
 	}
 	assert.Equal(t, expectDeps, tVideo.Dependencies)
+}
+
+func TestJobWithoutCluster(t *testing.T) {
+	c := mockedClock(t)
+
+	s, err := Load(c)
+	require.NoError(t, err)
+
+	// Compiling a job should be really fast.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+
+	sj := exampleSubmittedJob()
+
+	// Try with nil WorkerCluster.
+	{
+		sj.WorkerCluster = nil
+		aj, err := s.Compile(ctx, sj)
+		require.NoError(t, err)
+		assert.Zero(t, aj.WorkerClusterUUID)
+	}
+
+	// Try with empty WorkerCluster.
+	{
+		sj.WorkerCluster = ptr("")
+		aj, err := s.Compile(ctx, sj)
+		require.NoError(t, err)
+		assert.Zero(t, aj.WorkerClusterUUID)
+	}
 }
 
 func TestSimpleBlenderRenderWindowsPaths(t *testing.T) {

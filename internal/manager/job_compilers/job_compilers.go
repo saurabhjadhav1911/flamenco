@@ -127,6 +127,10 @@ func (s *Service) Compile(ctx context.Context, sj api.SubmittedJob) (*AuthoredJo
 		aj.Storage.ShamanCheckoutID = *sj.Storage.ShamanCheckoutId
 	}
 
+	if sj.WorkerCluster != nil {
+		aj.WorkerClusterUUID = *sj.WorkerCluster
+	}
+
 	compiler, err := vm.getCompileJob()
 	if err != nil {
 		return nil, err
@@ -139,12 +143,13 @@ func (s *Service) Compile(ctx context.Context, sj api.SubmittedJob) (*AuthoredJo
 		Int("num_tasks", len(aj.Tasks)).
 		Str("name", aj.Name).
 		Str("jobtype", aj.JobType).
+		Str("job", aj.JobID).
 		Msg("job compiled")
 
 	return &aj, nil
 }
 
-//  ListJobTypes returns the list of available job types.
+// ListJobTypes returns the list of available job types.
 func (s *Service) ListJobTypes() api.AvailableJobTypes {
 	jobTypes := make([]api.AvailableJobType, 0)
 

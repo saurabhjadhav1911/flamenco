@@ -47,7 +47,7 @@ func TestFetchTimedOutTasks(t *testing.T) {
 		// tests that the expected task is returned.
 		assert.Equal(t, task.UUID, timedout[0].UUID)
 		assert.Equal(t, job, timedout[0].Job, "the job should be included in the result as well")
-		assert.Equal(t, w, timedout[0].Worker, "the worker should be included in the result as well")
+		assert.Equal(t, w.UUID, timedout[0].Worker.UUID, "the worker should be included in the result as well")
 	}
 }
 

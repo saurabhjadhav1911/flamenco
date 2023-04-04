@@ -676,7 +676,7 @@ func jobTasksTestFixtures(t *testing.T) (context.Context, context.CancelFunc, *D
 	return ctx, cancel, db, dbJob, authoredJob
 }
 
-func createWorker(ctx context.Context, t *testing.T, db *DB) *Worker {
+func createWorker(ctx context.Context, t *testing.T, db *DB, updaters ...func(*Worker)) *Worker {
 	w := Worker{
 		UUID:               "f0a123a9-ab05-4ce2-8577-94802cfe74a4",
 		Name:               "дрон",
@@ -685,6 +685,11 @@ func createWorker(ctx context.Context, t *testing.T, db *DB) *Worker {
 		Software:           "3.0",
 		Status:             api.WorkerStatusAwake,
 		SupportedTaskTypes: "blender,ffmpeg,file-management",
+		Clusters:           nil,
+	}
+
+	for _, updater := range updaters {
+		updater(&w)
 	}
 
 	err := db.CreateWorker(ctx, &w)

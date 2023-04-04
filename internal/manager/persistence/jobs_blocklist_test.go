@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // SPDX-License-Identifier: GPL-3.0-or-later
@@ -158,6 +159,71 @@ func TestWorkersLeftToRun(t *testing.T) {
 	if assert.NoError(t, err) {
 		assert.Equal(t, uuidMap(worker1, worker2), left)
 	}
+}
+
+func TestWorkersLeftToRunWithClusters(t *testing.T) {
+	ctx, cancel, db := persistenceTestFixtures(t, schedulerTestTimeout)
+	defer cancel()
+
+	// Create clusters.
+	cluster1 := WorkerCluster{UUID: "11157623-4b14-4801-bee2-271dddab6309", Name: "Cluster 1"}
+	cluster2 := WorkerCluster{UUID: "22257623-4b14-4801-bee2-271dddab6309", Name: "Cluster 2"}
+	cluster3 := WorkerCluster{UUID: "33357623-4b14-4801-bee2-271dddab6309", Name: "Cluster 3"}
+	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster1))
+	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster2))
+	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster3))
+
+	// Create a job in cluster1.
+	authoredJob := createTestAuthoredJobWithTasks()
+	authoredJob.WorkerClusterUUID = cluster1.UUID
+	job := persistAuthoredJob(t, ctx, db, authoredJob)
+
+	// Clusters 1 + 3
+	workerC13 := createWorker(ctx, t, db, func(w *Worker) {
+		w.UUID = "c13c1313-0000-1111-2222-333333333333"
+		w.Clusters = []*WorkerCluster{&cluster1, &cluster3}
+	})
+	// Cluster 1
+	workerC1 := createWorker(ctx, t, db, func(w *Worker) {
+		w.UUID = "c1c1c1c1-0000-1111-2222-333333333333"
+		w.Clusters = []*WorkerCluster{&cluster1}
+	})
+	// Cluster 2 worker, this one should never appear.
+	createWorker(ctx, t, db, func(w *Worker) {
+		w.UUID = "c2c2c2c2-0000-1111-2222-333333333333"
+		w.Clusters = []*WorkerCluster{&cluster2}
+	})
+	// No clusters, so should be able to run all.
+	workerCNone := createWorker(ctx, t, db, func(w *Worker) {
+		w.UUID = "00000000-0000-1111-2222-333333333333"
+		w.Clusters = nil
+	})
+
+	uuidMap := func(workers ...*Worker) map[string]bool {
+		theMap := map[string]bool{}
+		for _, worker := range workers {
+			theMap[worker.UUID] = true
+		}
+		return theMap
+	}
+
+	// All Cluster 1 workers + clusterless worker, no blocklist.
+	left, err := db.WorkersLeftToRun(ctx, job, "blender")
+	require.NoError(t, err)
+	assert.Equal(t, uuidMap(workerC13, workerC1, workerCNone), left)
+
+	// One worker blocked, two workers remain.
+	_ = db.AddWorkerToJobBlocklist(ctx, job, workerC1, "blender")
+	left, err = db.WorkersLeftToRun(ctx, job, "blender")
+	require.NoError(t, err)
+	assert.Equal(t, uuidMap(workerC13, workerCNone), left)
+
+	// All workers blocked.
+	_ = db.AddWorkerToJobBlocklist(ctx, job, workerC13, "blender")
+	_ = db.AddWorkerToJobBlocklist(ctx, job, workerCNone, "blender")
+	left, err = db.WorkersLeftToRun(ctx, job, "blender")
+	assert.NoError(t, err)
+	assert.Empty(t, left)
 }
 
 func TestCountTaskFailuresOfWorker(t *testing.T) {
