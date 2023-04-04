@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
 
+import { WorkerMgtApi } from '@/manager-api';
+import { getAPIClient } from "@/api-client";
+
 // 'use' prefix is idiomatic for Pinia stores.
 // See https://pinia.vuejs.org/core-concepts/
 export const useWorkers = defineStore('workers', {
@@ -11,6 +14,12 @@ export const useWorkers = defineStore('workers', {
      * @type {string}
      */
     activeWorkerID: "",
+
+    /** @type {API.WorkerCluster[]} */
+    clusters: [],
+
+    /* Mapping from cluster UUID to API.WorkerCluster. */
+    clustersByID: {},
   }),
   actions: {
     setActiveWorkerID(workerID) {
@@ -36,6 +45,24 @@ export const useWorkers = defineStore('workers', {
         activeWorker: null,
         activeWorkerID: "",
       });
+    },
+    /**
+     * Fetch the available worker clusters from the Manager.
+     *
+     * @returns a promise.
+     */
+    refreshClusters() {
+      const api = new WorkerMgtApi(getAPIClient());
+      return api.fetchWorkerClusters()
+        .then((resp) => {
+          this.clusters = resp.clusters;
+
+          let clustersByID = {};
+          for (let cluster of this.clusters) {
+            clustersByID[cluster.id] = cluster;
+          }
+          this.clustersByID = clustersByID;
+        })
     },
   },
 })

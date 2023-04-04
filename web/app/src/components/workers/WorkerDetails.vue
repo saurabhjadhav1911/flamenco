@@ -34,6 +34,20 @@
       </dd>
     </dl>
 
+    <section class="worker-clusters" v-if="workers.clusters">
+      <h3 class="sub-title">Clusters</h3>
+      <ul>
+        <li v-for="cluster in workers.clusters">
+          <switch-checkbox :isChecked="thisWorkerClusters[cluster.id]" :label="cluster.name" :title="cluster.description"
+            @switch-toggle="toggleWorkerCluster(cluster.id)">
+          </switch-checkbox>
+        </li>
+      </ul>
+      <p class="hint">
+        When a worker is assigned to one or more cluster, it will ignore jobs assigned to other clusters.
+      </p>
+    </section>
+
     <section class="sleep-schedule" :class="{ 'is-schedule-active': workerSleepSchedule.is_active }">
       <h3 class="sub-title">
         <switch-checkbox :isChecked="workerSleepSchedule.is_active" @switch-toggle="toggleWorkerSleepSchedule">
@@ -120,9 +134,10 @@
 
 <script>
 import { useNotifs } from '@/stores/notifications'
+import { useWorkers } from '@/stores/workers'
 
 import * as datetime from "@/datetime";
-import { WorkerMgtApi, WorkerSleepSchedule } from '@/manager-api';
+import { WorkerMgtApi, WorkerSleepSchedule, WorkerClusterChangeRequest } from '@/manager-api';
 import { getAPIClient } from "@/api-client";
 import { workerStatus } from "../../statusindicator";
 import LinkWorkerTask from '@/components/LinkWorkerTask.vue';
@@ -146,11 +161,19 @@ export default {
       isScheduleEditing: false,
       notifs: useNotifs(),
       copyElementText: copyElementText,
+      workers: useWorkers(),
+      thisWorkerClusters: {}, // Mapping from UUID to 'isAssigned' boolean.
     };
   },
   mounted() {
     // Allow testing from the JS console:
     window.workerDetailsVue = this;
+
+    this.workers.refreshClusters()
+      .catch((error) => {
+        const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
+        this.notifs.add(`Error: ${errorMsg}`);
+      });
   },
   watch: {
     workerData(newData, oldData) {
@@ -164,6 +187,8 @@ export default {
       if (((oldData && newData) && (oldData.id != newData.id)) || !oldData && newData) {
         this.fetchWorkerSleepSchedule();
       }
+
+      this.updateThisWorkerClusters(newData);
     },
   },
   computed: {
@@ -229,6 +254,41 @@ export default {
         return;
       }
       this.api.deleteWorker(this.workerData.id);
+    },
+    updateThisWorkerClusters(newWorkerData) {
+      if (!newWorkerData || !newWorkerData.clusters) {
+        this.thisWorkerClusters = {};
+        return;
+      }
+
+      const assignedClusters = newWorkerData.clusters.reduce(
+        (accu, cluster) => { accu[cluster.id] = true; return accu; },
+        {});
+      this.thisWorkerClusters = assignedClusters;
+    },
+    toggleWorkerCluster(clusterID) {
+      console.log("Toggled", clusterID);
+      this.thisWorkerClusters[clusterID] = !this.thisWorkerClusters[clusterID];
+      console.log("New assignment:", plain(this.thisWorkerClusters))
+
+      // Construct cluster change request.
+      const clusterIDs = [];
+      for (clusterID in this.thisWorkerClusters) {
+        // Values can exist and be set to 'false'.
+        const isAssigned = this.thisWorkerClusters[clusterID];
+        if (isAssigned) clusterIDs.push(clusterID);
+      }
+
+      // Send to the Manager.
+      const changeRequest = new WorkerClusterChangeRequest(clusterIDs);
+      this.api.setWorkerClusters(this.workerData.id, changeRequest)
+        .then(() => {
+          this.notifs.add('Cluster assignment updated');
+        })
+        .catch((error) => {
+          const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
+          this.notifs.add(`Error: ${errorMsg}`);
+        });
     },
   }
 };
@@ -304,5 +364,13 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.worker-clusters ul {
+  list-style: none;
+}
+
+.worker-clusters ul li {
+  margin-bottom: 0.25rem;
 }
 </style>

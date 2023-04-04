@@ -1,5 +1,5 @@
 <template>
-  <label>
+  <label :title="title">
     <span class="switch">
       <input type="checkbox" :checked="isChecked" @change="$emit('switchToggle')">
       <span class="slider round"></span>
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['isChecked', 'label']);
+const props = defineProps(['isChecked', 'label', 'title']);
 </script>
 
 <style scoped>

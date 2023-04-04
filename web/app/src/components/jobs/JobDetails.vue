@@ -32,6 +32,14 @@
           <dt class="field-name" title="ID">ID</dt>
           <dd><span @click="copyElementText" class="click-to-copy">{{ jobData.id }}</span></dd>
 
+          <template v-if="workerCluster">
+            <!-- TODO: fetch cluster name and show that instead, and allow editing of the cluster. -->
+            <dt class="field-name" title="Worker Cluster">Cluster</dt>
+            <dd :title="workerCluster.description"><span @click="copyElementData" class="click-to-copy"
+                :data-clipboard="workerCluster.id">{{
+                  workerCluster.name }}</span></dd>
+          </template>
+
           <dt class="field-name" title="Name">Name</dt>
           <dd>{{ jobData.name }}</dd>
 
@@ -82,7 +90,8 @@ import Blocklist from './Blocklist.vue'
 import TabItem from '@/components/TabItem.vue'
 import TabsWrapper from '@/components/TabsWrapper.vue'
 import PopoverEditableJobPriority from '@/components/PopoverEditableJobPriority.vue'
-import { copyElementText } from '@/clipboard';
+import { copyElementText, copyElementData } from '@/clipboard';
+import { useWorkers } from '@/stores/workers'
 
 export default {
   props: [
@@ -102,11 +111,13 @@ export default {
     return {
       datetime: datetime, // So that the template can access it.
       copyElementText: copyElementText,
+      copyElementData: copyElementData,
       simpleSettings: null, // Object with filtered job settings, or null if there is no job.
       jobsApi: new API.JobsApi(getAPIClient()),
       jobType: null, // API.AvailableJobType object for the current job type.
       jobTypeSettings: null, // Mapping from setting key to its definition in the job type.
       showAllSettings: false,
+      workers: useWorkers(),
     };
   },
   mounted() {
@@ -116,6 +127,12 @@ export default {
     if (!objectEmpty(this.jobData)) {
       this._refreshJobSettings(this.jobData);
     }
+
+    this.workers.refreshClusters()
+      .catch((error) => {
+        const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
+        this.notifs.add(`Error: ${errorMsg}`);
+      });
   },
   computed: {
     hasJobData() {
@@ -138,6 +155,10 @@ export default {
         return {};
       }
       return this.jobData.settings;
+    },
+    workerCluster() {
+      if (!this.jobData.worker_cluster) return undefined;
+      return this.workers.clustersByID[this.jobData.worker_cluster];
     },
   },
   watch: {

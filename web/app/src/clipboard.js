@@ -7,6 +7,7 @@
  */
 const flashAfterCopyDuration = 150;
 
+
 /**
  * Copy the inner text of an element to the clipboard.
  *
@@ -14,9 +15,24 @@ const flashAfterCopyDuration = 150;
  */
 export function copyElementText(clickEvent) {
   const sourceElement = clickEvent.target;
+  copyElementValue(sourceElement, sourceElement.innerText);
+}
+
+/**
+ * Copy the inner text of an element to the clipboard.
+ *
+ * @param {Event } clickEvent the click event that triggered this function call.
+ */
+export function copyElementData(clickEvent) {
+  const sourceElement = clickEvent.target;
+  window.sourceElement = sourceElement;
+  copyElementValue(sourceElement, sourceElement.dataset.clipboard);
+}
+
+function copyElementValue(sourceElement, value) {
   const inputElement = document.createElement("input");
   document.body.appendChild(inputElement);
-  inputElement.setAttribute("value", sourceElement.innerText);
+  inputElement.setAttribute("value", value);
   inputElement.select();
 
   // Note that the `navigator.clipboard` interface is only available when using
@@ -27,7 +43,6 @@ export function copyElementText(clickEvent) {
   document.execCommand("copy");
 
   document.body.removeChild(inputElement);
-
   flashElement(sourceElement);
 }
 
