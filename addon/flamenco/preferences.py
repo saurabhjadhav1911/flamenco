@@ -34,6 +34,12 @@ def _manager_url_updated(prefs, context):
     comms.ping_manager_with_report(context.window_manager, api_client, prefs)
 
 
+class WorkerCluster(bpy.types.PropertyGroup):
+    id: bpy.props.StringProperty(name="id")
+    name: bpy.props.StringProperty(name="Name")
+    description: bpy.props.StringProperty(name="Description")
+
+
 class FlamencoPreferences(bpy.types.AddonPreferences):
     bl_idname = "flamenco"
 
@@ -69,6 +75,13 @@ class FlamencoPreferences(bpy.types.AddonPreferences):
         options={"SKIP_SAVE"},
         description="Directory where blend files are stored when submitting them to Flamenco. This value is determined by Flamenco Manager",
         get=lambda prefs: prefs.job_storage,
+    )
+
+    worker_clusters: bpy.props.CollectionProperty(  # type: ignore
+        type=WorkerCluster,
+        name="Worker Clusters",
+        description="Cache for the worker clusters available on the configured Manager",
+        options={"HIDDEN"},
     )
 
     def draw(self, context: bpy.types.Context) -> None:
@@ -117,7 +130,10 @@ def manager_url(context: bpy.types.Context) -> str:
     return str(prefs.manager_url)
 
 
-classes = (FlamencoPreferences,)
+classes = (
+    WorkerCluster,
+    FlamencoPreferences,
+)
 _register, _unregister = bpy.utils.register_classes_factory(classes)
 
 

@@ -10,7 +10,7 @@ from urllib3.exceptions import HTTPError, MaxRetryError
 
 import bpy
 
-from . import job_types, job_submission, preferences
+from . import job_types, job_submission, preferences, worker_clusters
 from .job_types_propgroup import JobTypePropertyGroup
 from .bat.submodules import bpathlib
 
@@ -80,6 +80,37 @@ class FLAMENCO_OT_fetch_job_types(FlamencoOpMixin, bpy.types.Operator):
             scene.flamenco_job_type = old_job_type_name
 
         job_types.update_job_type_properties(scene)
+        return {"FINISHED"}
+
+
+class FLAMENCO_OT_fetch_worker_clusters(FlamencoOpMixin, bpy.types.Operator):
+    bl_idname = "flamenco.fetch_worker_clusters"
+    bl_label = "Fetch Worker Clusters"
+    bl_description = "Query Flamenco Manager to obtain the available worker clusters"
+
+    def execute(self, context: bpy.types.Context) -> set[str]:
+        api_client = self.get_api_client(context)
+
+        from flamenco.manager import ApiException
+
+        scene = context.scene
+        old_cluster = getattr(scene, "flamenco_worker_cluster", "")
+
+        try:
+            worker_clusters.refresh(context, api_client)
+        except ApiException as ex:
+            self.report({"ERROR"}, "Error getting job types: %s" % ex)
+            return {"CANCELLED"}
+        except MaxRetryError as ex:
+            # This is the common error, when for example the port number is
+            # incorrect and nothing is listening.
+            self.report({"ERROR"}, "Unable to reach Manager")
+            return {"CANCELLED"}
+
+        if old_cluster:
+            # TODO: handle cases where the old cluster no longer exists.
+            scene.flamenco_worker_cluster = old_cluster
+
         return {"FINISHED"}
 
 
@@ -165,7 +196,9 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
 
         if not context.blend_data.filepath:
             # The file path needs to be known before the file can be submitted.
-            self.report({"ERROR"}, "Please save your .blend file before submitting to Flamenco")
+            self.report(
+                {"ERROR"}, "Please save your .blend file before submitting to Flamenco"
+            )
             return {"CANCELLED"}
 
         filepath = self._save_blendfile(context)
@@ -633,6 +666,7 @@ class FLAMENCO3_OT_explore_file_path(bpy.types.Operator):
 
 classes = (
     FLAMENCO_OT_fetch_job_types,
+    FLAMENCO_OT_fetch_worker_clusters,
     FLAMENCO_OT_ping_manager,
     FLAMENCO_OT_eval_setting,
     FLAMENCO_OT_submit_job,

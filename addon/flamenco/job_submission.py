@@ -53,6 +53,11 @@ def job_for_scene(scene: bpy.types.Scene) -> Optional[_SubmittedJob]:
         submitter_platform=platform.system().lower(),
         type_etag=propgroup.job_type.etag,
     )
+
+    worker_cluster: str = getattr(scene, "flamenco_worker_cluster", "")
+    if worker_cluster and worker_cluster != "-":
+        job.worker_cluster = worker_cluster
+
     return job
 
 

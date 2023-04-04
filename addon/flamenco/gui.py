@@ -43,6 +43,11 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
         col.prop(context.scene, "flamenco_job_name", text="Job Name")
         col.prop(context.scene, "flamenco_job_priority", text="Priority")
 
+        # Worker cluster:
+        row = col.row(align=True)
+        row.prop(context.scene, "flamenco_worker_cluster", text="Cluster")
+        row.operator("flamenco.fetch_worker_clusters", text="", icon="FILE_REFRESH")
+
         layout.separator()
 
         col = layout.column()

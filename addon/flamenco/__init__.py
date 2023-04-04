@@ -19,7 +19,7 @@ from pathlib import Path
 
 __is_first_load = "operators" not in locals()
 if __is_first_load:
-    from . import operators, gui, job_types, comms, preferences
+    from . import operators, gui, job_types, comms, preferences, worker_clusters
 else:
     import importlib
 
@@ -28,6 +28,7 @@ else:
     job_types = importlib.reload(job_types)
     comms = importlib.reload(comms)
     preferences = importlib.reload(preferences)
+    worker_clusters = importlib.reload(worker_clusters)
 
 import bpy
 
@@ -145,6 +146,7 @@ def register() -> None:
     )
 
     preferences.register()
+    worker_clusters.register()
     operators.register()
     gui.register()
     job_types.register()
@@ -162,4 +164,5 @@ def unregister() -> None:
     job_types.unregister()
     gui.unregister()
     operators.unregister()
+    worker_clusters.unregister()
     preferences.unregister()
