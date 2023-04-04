@@ -38,6 +38,11 @@ func TestFetchDeleteClusters(t *testing.T) {
 	f := workerTestFixtures(t, 1*time.Second)
 	defer f.done()
 
+	// Single cluster was created by fixture.
+	has, err := f.db.HasWorkerClusters(f.ctx)
+	require.NoError(t, err)
+	assert.True(t, has, "expecting HasWorkerClusters to return true")
+
 	secondCluster := WorkerCluster{
 		UUID:        uuid.New(),
 		Name:        "arbeiderscluster",
@@ -57,6 +62,10 @@ func TestFetchDeleteClusters(t *testing.T) {
 	assert.Contains(t, allClusterIDs, f.cluster.UUID)
 	assert.Contains(t, allClusterIDs, secondCluster.UUID)
 
+	has, err = f.db.HasWorkerClusters(f.ctx)
+	require.NoError(t, err)
+	assert.True(t, has, "expecting HasWorkerClusters to return true")
+
 	// Test deleting the 2nd cluster.
 	require.NoError(t, f.db.DeleteWorkerCluster(f.ctx, secondCluster.UUID))
 
@@ -64,6 +73,12 @@ func TestFetchDeleteClusters(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, allClusters, 1)
 	assert.Equal(t, f.cluster.UUID, allClusters[0].UUID)
+
+	// Test deleting the 1st cluster.
+	require.NoError(t, f.db.DeleteWorkerCluster(f.ctx, f.cluster.UUID))
+	has, err = f.db.HasWorkerClusters(f.ctx)
+	require.NoError(t, err)
+	assert.False(t, has, "expecting HasWorkerClusters to return false")
 }
 
 func TestAssignUnassignWorkerClusters(t *testing.T) {

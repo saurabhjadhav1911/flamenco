@@ -26,13 +26,18 @@ func (db *DB) ScheduleTask(ctx context.Context, w *Worker) (*Task, error) {
 	logger := log.With().Str("worker", w.UUID).Logger()
 	logger.Trace().Msg("finding task for worker")
 
+	hasWorkerClusters, err := db.HasWorkerClusters(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// Run two queries in one transaction:
 	// 1. find task, and
 	// 2. assign the task to the worker.
 	var task *Task
 	txErr := db.gormDB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var err error
-		task, err = findTaskForWorker(tx, w)
+		task, err = findTaskForWorker(tx, w, hasWorkerClusters)
 		if err != nil {
 			if isDatabaseBusyError(err) {
 				logger.Trace().Err(err).Msg("database busy while finding task for worker")
@@ -79,7 +84,7 @@ func (db *DB) ScheduleTask(ctx context.Context, w *Worker) (*Task, error) {
 	return task, nil
 }
 
-func findTaskForWorker(tx *gorm.DB, w *Worker) (*Task, error) {
+func findTaskForWorker(tx *gorm.DB, w *Worker, checkWorkerClusters bool) (*Task, error) {
 	task := Task{}
 
 	// If a task is alreay active & assigned to this worker, return just that.
@@ -124,15 +129,22 @@ func findTaskForWorker(tx *gorm.DB, w *Worker) (*Task, error) {
 		Where("TF.worker_id is NULL").                        // Not failed before
 		Where("tasks.type not in (?)", blockedTaskTypesQuery) // Non-blocklisted
 
-	if len(w.Clusters) > 0 {
-		// Worker is assigned to one or more clusters, so limit the available jobs
-		// to those that have no cluster, or overlap with the Worker's clusters.
-		clusterIDs := []uint{}
-		for _, cluster := range w.Clusters {
-			clusterIDs = append(clusterIDs, cluster.ID)
+	if checkWorkerClusters {
+		// The system has one or more clusters, so limit the available jobs to those
+		// that have no cluster, or overlap with the Worker's clusters.
+		if len(w.Clusters) == 0 {
+			// Clusterless workers only get clusterless jobs.
+			findTaskQuery = findTaskQuery.
+				Where("jobs.worker_cluster_id is NULL")
+		} else {
+			// Clustered workers get clusterless jobs AND jobs of their own clusters.
+			clusterIDs := []uint{}
+			for _, cluster := range w.Clusters {
+				clusterIDs = append(clusterIDs, cluster.ID)
+			}
+			findTaskQuery = findTaskQuery.
+				Where("jobs.worker_cluster_id is NULL or worker_cluster_id in ?", clusterIDs)
 		}
-		findTaskQuery = findTaskQuery.
-			Where("jobs.worker_cluster_id is NULL or worker_cluster_id in ?", clusterIDs)
 	}
 
 	findTaskResult := findTaskQuery.

@@ -26,6 +26,18 @@ func (db *DB) CreateWorkerCluster(ctx context.Context, wc *WorkerCluster) error 
 	return nil
 }
 
+// HasWorkerClusters returns whether there are any clusters defined at all.
+func (db *DB) HasWorkerClusters(ctx context.Context) (bool, error) {
+	var count int64
+	tx := db.gormDB.WithContext(ctx).
+		Model(&WorkerCluster{}).
+		Count(&count)
+	if err := tx.Error; err != nil {
+		return false, workerClusterError(err, "counting worker clusters")
+	}
+	return count > 0, nil
+}
+
 func (db *DB) FetchWorkerCluster(ctx context.Context, uuid string) (*WorkerCluster, error) {
 	tx := db.gormDB.WithContext(ctx)
 	return fetchWorkerCluster(tx, uuid)

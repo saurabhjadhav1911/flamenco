@@ -301,8 +301,14 @@ func TestWorkerClusterJobWithCluster(t *testing.T) {
 	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster2))
 
 	// Create a worker in cluster1:
-	w := linuxWorker(t, db, func(w *Worker) {
+	workerC := linuxWorker(t, db, func(w *Worker) {
 		w.Clusters = []*WorkerCluster{&cluster1}
+	})
+
+	// Create a worker without cluster:
+	workerNC := linuxWorker(t, db, func(w *Worker) {
+		w.UUID = "c53f8f68-4149-4790-991c-ba73a326551e"
+		w.Clusters = nil
 	})
 
 	{ // Test job with different cluster:
@@ -311,7 +317,7 @@ func TestWorkerClusterJobWithCluster(t *testing.T) {
 		job.WorkerClusterUUID = cluster2.UUID
 		constructTestJob(ctx, t, db, job)
 
-		task, err := db.ScheduleTask(ctx, &w)
+		task, err := db.ScheduleTask(ctx, &workerC)
 		require.NoError(t, err)
 		assert.Nil(t, task, "job with different cluster should not be scheduled")
 	}
@@ -322,10 +328,14 @@ func TestWorkerClusterJobWithCluster(t *testing.T) {
 		job.WorkerClusterUUID = cluster1.UUID
 		constructTestJob(ctx, t, db, job)
 
-		task, err := db.ScheduleTask(ctx, &w)
+		task, err := db.ScheduleTask(ctx, &workerC)
 		require.NoError(t, err)
 		require.NotNil(t, task, "job with matching cluster should be scheduled")
 		assert.Equal(t, authTask.UUID, task.UUID)
+
+		task, err = db.ScheduleTask(ctx, &workerNC)
+		require.NoError(t, err)
+		assert.Nil(t, task, "job with cluster should not be scheduled for worker without cluster")
 	}
 }
 
@@ -338,8 +348,14 @@ func TestWorkerClusterJobWithoutCluster(t *testing.T) {
 	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster1))
 
 	// Create a worker in cluster1:
-	w := linuxWorker(t, db, func(w *Worker) {
+	workerC := linuxWorker(t, db, func(w *Worker) {
 		w.Clusters = []*WorkerCluster{&cluster1}
+	})
+
+	// Create a worker without cluster:
+	workerNC := linuxWorker(t, db, func(w *Worker) {
+		w.UUID = "c53f8f68-4149-4790-991c-ba73a326551e"
+		w.Clusters = nil
 	})
 
 	// Test cluster-less job:
@@ -347,9 +363,14 @@ func TestWorkerClusterJobWithoutCluster(t *testing.T) {
 	job := authorTestJob("b6a1d859-122f-4791-8b78-b943329a9989", "simple-blender-render", authTask)
 	constructTestJob(ctx, t, db, job)
 
-	task, err := db.ScheduleTask(ctx, &w)
+	task, err := db.ScheduleTask(ctx, &workerC)
 	require.NoError(t, err)
-	require.NotNil(t, task, "job without cluster should always be scheduled")
+	require.NotNil(t, task, "job without cluster should always be scheduled to worker in some cluster")
+	assert.Equal(t, authTask.UUID, task.UUID)
+
+	task, err = db.ScheduleTask(ctx, &workerNC)
+	require.NoError(t, err)
+	require.NotNil(t, task, "job without cluster should always be scheduled to worker without cluster")
 	assert.Equal(t, authTask.UUID, task.UUID)
 }
 
