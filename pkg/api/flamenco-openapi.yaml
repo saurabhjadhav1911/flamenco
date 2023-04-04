@@ -635,8 +635,11 @@ paths:
             schema:
               $ref: "#/components/schemas/WorkerCluster"
       responses:
-        "204":
-          description: The cluster was created.
+        "200":
+          description: The cluster was created. The created cluster is returned, so that the caller can know its UUID.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WorkerCluster" }
         default:
           description: Error message
           content:
@@ -2423,13 +2426,15 @@ components:
         "id":
           type: string
           format: uuid
+          description: >
+            UUID of the cluster. Can be ommitted when creating a new cluster, in
+            which case a random UUID will be assigned.
         "name":
           type: string
         "description":
           type: string
-      required: [id, name]
+      required: [name]
       example:
-        id: 4312d68c-ea6d-4566-9bf6-e9f09be48ceb
         name: GPU-EEVEE
         description: All workers that can do GPU rendering with EEVEE.
 
