@@ -43,8 +43,11 @@
           </switch-checkbox>
         </li>
       </ul>
-      <p class="hint">
-        When a worker is assigned to one or more cluster, it will ignore jobs assigned to other clusters.
+      <p class="hint" v-if="hasClustersAssigned">
+        This worker will only pick up jobs assigned to one of its clusters, and clusterless jobs.
+      </p>
+      <p class="hint" v-else>
+        This worker will only pick up clusterless jobs.
       </p>
     </section>
 
@@ -207,6 +210,10 @@ export default {
     workerSleepScheduleStatusLabel() {
       return this.workerSleepSchedule.is_active ? 'Enabled' : 'Disabled';
     },
+    hasClustersAssigned() {
+      const clusterIDs = this.getAssignedClusterIDs();
+      return clusterIDs && clusterIDs.length > 0;
+    }
   },
   methods: {
     fetchWorkerSleepSchedule() {
@@ -272,15 +279,10 @@ export default {
       console.log("New assignment:", plain(this.thisWorkerClusters))
 
       // Construct cluster change request.
-      const clusterIDs = [];
-      for (clusterID in this.thisWorkerClusters) {
-        // Values can exist and be set to 'false'.
-        const isAssigned = this.thisWorkerClusters[clusterID];
-        if (isAssigned) clusterIDs.push(clusterID);
-      }
+      const clusterIDs = this.getAssignedClusterIDs();
+      const changeRequest = new WorkerClusterChangeRequest(clusterIDs);
 
       // Send to the Manager.
-      const changeRequest = new WorkerClusterChangeRequest(clusterIDs);
       this.api.setWorkerClusters(this.workerData.id, changeRequest)
         .then(() => {
           this.notifs.add('Cluster assignment updated');
@@ -290,6 +292,15 @@ export default {
           this.notifs.add(`Error: ${errorMsg}`);
         });
     },
+    getAssignedClusterIDs() {
+      const clusterIDs = [];
+      for (let clusterID in this.thisWorkerClusters) {
+        // Values can exist and be set to 'false'.
+        const isAssigned = this.thisWorkerClusters[clusterID];
+        if (isAssigned) clusterIDs.push(clusterID);
+      }
+      return clusterIDs;
+    }
   }
 };
 </script>
