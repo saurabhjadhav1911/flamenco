@@ -352,8 +352,15 @@ func (f *Flamenco) CreateWorkerCluster(e echo.Context) error {
 	}
 
 	// Convert to persistence layer model.
+	var clusterUUID string
+	if apiCluster.Id != nil && *apiCluster.Id != "" {
+		clusterUUID = *apiCluster.Id
+	} else {
+		clusterUUID = uuid.New()
+	}
+
 	dbCluster := persistence.WorkerCluster{
-		UUID: apiCluster.Id,
+		UUID: clusterUUID,
 		Name: apiCluster.Name,
 	}
 	if apiCluster.Description != nil {
@@ -368,7 +375,7 @@ func (f *Flamenco) CreateWorkerCluster(e echo.Context) error {
 
 	// TODO: SocketIO broadcast of cluster creation.
 
-	return e.NoContent(http.StatusNoContent)
+	return e.JSON(http.StatusOK, workerClusterDBtoAPI(dbCluster))
 }
 
 func workerSummary(w persistence.Worker) api.WorkerSummary {
@@ -412,8 +419,10 @@ func workerDBtoAPI(w persistence.Worker) api.Worker {
 }
 
 func workerClusterDBtoAPI(wc persistence.WorkerCluster) api.WorkerCluster {
+	uuid := wc.UUID // Take a copy for safety.
+
 	apiCluster := api.WorkerCluster{
-		Id:   wc.UUID,
+		Id:   &uuid,
 		Name: wc.Name,
 	}
 	if len(wc.Description) > 0 {

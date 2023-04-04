@@ -271,7 +271,7 @@ func TestWorkerClusterCRUDHappyFlow(t *testing.T) {
 	// Create a cluster.
 	UUID := "18d9234e-5135-458f-a1ba-a350c3d4e837"
 	apiCluster := api.WorkerCluster{
-		Id:          UUID,
+		Id:          &UUID,
 		Name:        "ʻO nā manu ʻino",
 		Description: ptr("Ke aloha"),
 	}
@@ -284,7 +284,7 @@ func TestWorkerClusterCRUDHappyFlow(t *testing.T) {
 	// TODO: expect SocketIO broadcast of the cluster creation.
 	echo := mf.prepareMockedJSONRequest(apiCluster)
 	require.NoError(t, mf.flamenco.CreateWorkerCluster(echo))
-	assertResponseNoContent(t, echo)
+	assertResponseJSON(t, echo, http.StatusOK, &apiCluster)
 
 	// Fetch the cluster
 	mf.persistence.EXPECT().FetchWorkerCluster(gomock.Any(), UUID).Return(&expectDBCluster, nil)
@@ -295,7 +295,7 @@ func TestWorkerClusterCRUDHappyFlow(t *testing.T) {
 	// Update & save.
 	newUUID := "60442762-83d3-4fc3-bf75-6ab5799cdbaa"
 	newAPICluster := api.WorkerCluster{
-		Id:   newUUID, // Intentionally change the UUID. This should just be ignored.
+		Id:   &newUUID, // Intentionally change the UUID. This should just be ignored.
 		Name: "updated name",
 	}
 	expectNewDBCluster := persistence.WorkerCluster{
