@@ -15,6 +15,9 @@
 import ApiClient from "../ApiClient";
 import Error from '../model/Error';
 import Worker from '../model/Worker';
+import WorkerCluster from '../model/WorkerCluster';
+import WorkerClusterChangeRequest from '../model/WorkerClusterChangeRequest';
+import WorkerClusterList from '../model/WorkerClusterList';
 import WorkerList from '../model/WorkerList';
 import WorkerSleepSchedule from '../model/WorkerSleepSchedule';
 import WorkerStatusChangeRequest from '../model/WorkerStatusChangeRequest';
@@ -37,6 +40,51 @@ export default class WorkerMgtApi {
         this.apiClient = apiClient || ApiClient.instance;
     }
 
+
+
+    /**
+     * Create a new worker cluster.
+     * @param {module:model/WorkerCluster} workerCluster The worker cluster.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    createWorkerClusterWithHttpInfo(workerCluster) {
+      let postBody = workerCluster;
+      // verify the required parameter 'workerCluster' is set
+      if (workerCluster === undefined || workerCluster === null) {
+        throw new Error("Missing the required parameter 'workerCluster' when calling createWorkerCluster");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/api/v3/worker-mgt/clusters', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Create a new worker cluster.
+     * @param {module:model/WorkerCluster} workerCluster The worker cluster.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    createWorkerCluster(workerCluster) {
+      return this.createWorkerClusterWithHttpInfo(workerCluster)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
 
 
     /**
@@ -86,6 +134,52 @@ export default class WorkerMgtApi {
 
 
     /**
+     * Remove this worker cluster. This unassigns all workers from the cluster and removes it.
+     * @param {String} clusterId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    deleteWorkerClusterWithHttpInfo(clusterId) {
+      let postBody = null;
+      // verify the required parameter 'clusterId' is set
+      if (clusterId === undefined || clusterId === null) {
+        throw new Error("Missing the required parameter 'clusterId' when calling deleteWorkerCluster");
+      }
+
+      let pathParams = {
+        'cluster_id': clusterId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/api/v3/worker-mgt/cluster/{cluster_id}', 'DELETE',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Remove this worker cluster. This unassigns all workers from the cluster and removes it.
+     * @param {String} clusterId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    deleteWorkerCluster(clusterId) {
+      return this.deleteWorkerClusterWithHttpInfo(clusterId)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
      * Fetch info about the worker.
      * @param {String} workerId 
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/Worker} and HTTP response
@@ -125,6 +219,91 @@ export default class WorkerMgtApi {
      */
     fetchWorker(workerId) {
       return this.fetchWorkerWithHttpInfo(workerId)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * Get a single worker cluster.
+     * @param {String} clusterId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/WorkerCluster} and HTTP response
+     */
+    fetchWorkerClusterWithHttpInfo(clusterId) {
+      let postBody = null;
+      // verify the required parameter 'clusterId' is set
+      if (clusterId === undefined || clusterId === null) {
+        throw new Error("Missing the required parameter 'clusterId' when calling fetchWorkerCluster");
+      }
+
+      let pathParams = {
+        'cluster_id': clusterId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = WorkerCluster;
+      return this.apiClient.callApi(
+        '/api/v3/worker-mgt/cluster/{cluster_id}', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Get a single worker cluster.
+     * @param {String} clusterId 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/WorkerCluster}
+     */
+    fetchWorkerCluster(clusterId) {
+      return this.fetchWorkerClusterWithHttpInfo(clusterId)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * Get list of worker clusters.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/WorkerClusterList} and HTTP response
+     */
+    fetchWorkerClustersWithHttpInfo() {
+      let postBody = null;
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = WorkerClusterList;
+      return this.apiClient.callApi(
+        '/api/v3/worker-mgt/clusters', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Get list of worker clusters.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/WorkerClusterList}
+     */
+    fetchWorkerClusters() {
+      return this.fetchWorkerClustersWithHttpInfo()
         .then(function(response_and_data) {
           return response_and_data.data;
         });
@@ -266,6 +445,56 @@ export default class WorkerMgtApi {
 
     /**
      * @param {String} workerId 
+     * @param {module:model/WorkerClusterChangeRequest} workerClusterChangeRequest The list of cluster IDs this worker should be a member of.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    setWorkerClustersWithHttpInfo(workerId, workerClusterChangeRequest) {
+      let postBody = workerClusterChangeRequest;
+      // verify the required parameter 'workerId' is set
+      if (workerId === undefined || workerId === null) {
+        throw new Error("Missing the required parameter 'workerId' when calling setWorkerClusters");
+      }
+      // verify the required parameter 'workerClusterChangeRequest' is set
+      if (workerClusterChangeRequest === undefined || workerClusterChangeRequest === null) {
+        throw new Error("Missing the required parameter 'workerClusterChangeRequest' when calling setWorkerClusters");
+      }
+
+      let pathParams = {
+        'worker_id': workerId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/api/v3/worker-mgt/workers/{worker_id}/setclusters', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * @param {String} workerId 
+     * @param {module:model/WorkerClusterChangeRequest} workerClusterChangeRequest The list of cluster IDs this worker should be a member of.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    setWorkerClusters(workerId, workerClusterChangeRequest) {
+      return this.setWorkerClustersWithHttpInfo(workerId, workerClusterChangeRequest)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * @param {String} workerId 
      * @param {module:model/WorkerSleepSchedule} workerSleepSchedule The new sleep schedule.
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
      */
@@ -308,6 +537,58 @@ export default class WorkerMgtApi {
      */
     setWorkerSleepSchedule(workerId, workerSleepSchedule) {
       return this.setWorkerSleepScheduleWithHttpInfo(workerId, workerSleepSchedule)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
+     * Update an existing worker cluster.
+     * @param {String} clusterId 
+     * @param {module:model/WorkerCluster} workerCluster The updated worker cluster.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     */
+    updateWorkerClusterWithHttpInfo(clusterId, workerCluster) {
+      let postBody = workerCluster;
+      // verify the required parameter 'clusterId' is set
+      if (clusterId === undefined || clusterId === null) {
+        throw new Error("Missing the required parameter 'clusterId' when calling updateWorkerCluster");
+      }
+      // verify the required parameter 'workerCluster' is set
+      if (workerCluster === undefined || workerCluster === null) {
+        throw new Error("Missing the required parameter 'workerCluster' when calling updateWorkerCluster");
+      }
+
+      let pathParams = {
+        'cluster_id': clusterId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/api/v3/worker-mgt/cluster/{cluster_id}', 'PUT',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Update an existing worker cluster.
+     * @param {String} clusterId 
+     * @param {module:model/WorkerCluster} workerCluster The updated worker cluster.
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     */
+    updateWorkerCluster(clusterId, workerCluster) {
+      return this.updateWorkerClusterWithHttpInfo(clusterId, workerCluster)
         .then(function(response_and_data) {
           return response_and_data.data;
         });

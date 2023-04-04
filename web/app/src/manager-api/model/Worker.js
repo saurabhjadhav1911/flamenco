@@ -13,6 +13,7 @@
 
 import ApiClient from '../ApiClient';
 import WorkerAllOf from './WorkerAllOf';
+import WorkerCluster from './WorkerCluster';
 import WorkerStatus from './WorkerStatus';
 import WorkerStatusChangeRequest from './WorkerStatusChangeRequest';
 import WorkerSummary from './WorkerSummary';
@@ -101,6 +102,9 @@ class Worker {
             if (data.hasOwnProperty('task')) {
                 obj['task'] = WorkerTask.constructFromObject(data['task']);
             }
+            if (data.hasOwnProperty('clusters')) {
+                obj['clusters'] = ApiClient.convertToType(data['clusters'], [WorkerCluster]);
+            }
         }
         return obj;
     }
@@ -162,6 +166,12 @@ Worker.prototype['supported_task_types'] = undefined;
  */
 Worker.prototype['task'] = undefined;
 
+/**
+ * Clusters of which this Worker is a member.
+ * @member {Array.<module:model/WorkerCluster>} clusters
+ */
+Worker.prototype['clusters'] = undefined;
+
 
 // Implement WorkerSummary interface:
 /**
@@ -209,6 +219,11 @@ WorkerAllOf.prototype['supported_task_types'] = undefined;
  * @member {module:model/WorkerTask} task
  */
 WorkerAllOf.prototype['task'] = undefined;
+/**
+ * Clusters of which this Worker is a member.
+ * @member {Array.<module:model/WorkerCluster>} clusters
+ */
+WorkerAllOf.prototype['clusters'] = undefined;
 
 
 

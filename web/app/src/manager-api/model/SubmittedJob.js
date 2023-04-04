@@ -81,6 +81,9 @@ class SubmittedJob {
             if (data.hasOwnProperty('storage')) {
                 obj['storage'] = JobStorageInfo.constructFromObject(data['storage']);
             }
+            if (data.hasOwnProperty('worker_cluster')) {
+                obj['worker_cluster'] = ApiClient.convertToType(data['worker_cluster'], 'String');
+            }
         }
         return obj;
     }
@@ -131,6 +134,12 @@ SubmittedJob.prototype['submitter_platform'] = undefined;
  * @member {module:model/JobStorageInfo} storage
  */
 SubmittedJob.prototype['storage'] = undefined;
+
+/**
+ * Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job. 
+ * @member {String} worker_cluster
+ */
+SubmittedJob.prototype['worker_cluster'] = undefined;
 
 
 

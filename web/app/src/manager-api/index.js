@@ -73,6 +73,9 @@ import TaskUpdate from './model/TaskUpdate';
 import TaskWorker from './model/TaskWorker';
 import Worker from './model/Worker';
 import WorkerAllOf from './model/WorkerAllOf';
+import WorkerCluster from './model/WorkerCluster';
+import WorkerClusterChangeRequest from './model/WorkerClusterChangeRequest';
+import WorkerClusterList from './model/WorkerClusterList';
 import WorkerList from './model/WorkerList';
 import WorkerRegistration from './model/WorkerRegistration';
 import WorkerSignOn from './model/WorkerSignOn';
@@ -488,6 +491,24 @@ export {
      * @property {module:model/WorkerAllOf}
      */
     WorkerAllOf,
+
+    /**
+     * The WorkerCluster model constructor.
+     * @property {module:model/WorkerCluster}
+     */
+    WorkerCluster,
+
+    /**
+     * The WorkerClusterChangeRequest model constructor.
+     * @property {module:model/WorkerClusterChangeRequest}
+     */
+    WorkerClusterChangeRequest,
+
+    /**
+     * The WorkerClusterList model constructor.
+     * @property {module:model/WorkerClusterList}
+     */
+    WorkerClusterList,
 
     /**
      * The WorkerList model constructor.

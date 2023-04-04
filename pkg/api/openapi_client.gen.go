@@ -212,6 +212,25 @@ type ClientInterface interface {
 	// GetVersion request
 	GetVersion(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteWorkerCluster request
+	DeleteWorkerCluster(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// FetchWorkerCluster request
+	FetchWorkerCluster(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateWorkerCluster request with any body
+	UpdateWorkerClusterWithBody(ctx context.Context, clusterId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateWorkerCluster(ctx context.Context, clusterId string, body UpdateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// FetchWorkerClusters request
+	FetchWorkerClusters(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateWorkerCluster request with any body
+	CreateWorkerClusterWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateWorkerCluster(ctx context.Context, body CreateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// FetchWorkers request
 	FetchWorkers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -220,6 +239,11 @@ type ClientInterface interface {
 
 	// FetchWorker request
 	FetchWorker(ctx context.Context, workerId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SetWorkerClusters request with any body
+	SetWorkerClustersWithBody(ctx context.Context, workerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	SetWorkerClusters(ctx context.Context, workerId string, body SetWorkerClustersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RequestWorkerStatusChange request with any body
 	RequestWorkerStatusChangeWithBody(ctx context.Context, workerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -798,6 +822,90 @@ func (c *Client) GetVersion(ctx context.Context, reqEditors ...RequestEditorFn) 
 	return c.Client.Do(req)
 }
 
+func (c *Client) DeleteWorkerCluster(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteWorkerClusterRequest(c.Server, clusterId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) FetchWorkerCluster(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFetchWorkerClusterRequest(c.Server, clusterId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateWorkerClusterWithBody(ctx context.Context, clusterId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateWorkerClusterRequestWithBody(c.Server, clusterId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateWorkerCluster(ctx context.Context, clusterId string, body UpdateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateWorkerClusterRequest(c.Server, clusterId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) FetchWorkerClusters(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFetchWorkerClustersRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateWorkerClusterWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateWorkerClusterRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateWorkerCluster(ctx context.Context, body CreateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateWorkerClusterRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) FetchWorkers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewFetchWorkersRequest(c.Server)
 	if err != nil {
@@ -824,6 +932,30 @@ func (c *Client) DeleteWorker(ctx context.Context, workerId string, reqEditors .
 
 func (c *Client) FetchWorker(ctx context.Context, workerId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewFetchWorkerRequest(c.Server, workerId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetWorkerClustersWithBody(ctx context.Context, workerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetWorkerClustersRequestWithBody(c.Server, workerId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetWorkerClusters(ctx context.Context, workerId string, body SetWorkerClustersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetWorkerClustersRequest(c.Server, workerId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -2248,6 +2380,188 @@ func NewGetVersionRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewDeleteWorkerClusterRequest generates requests for DeleteWorkerCluster
+func NewDeleteWorkerClusterRequest(server string, clusterId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, clusterId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/worker-mgt/cluster/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewFetchWorkerClusterRequest generates requests for FetchWorkerCluster
+func NewFetchWorkerClusterRequest(server string, clusterId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, clusterId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/worker-mgt/cluster/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateWorkerClusterRequest calls the generic UpdateWorkerCluster builder with application/json body
+func NewUpdateWorkerClusterRequest(server string, clusterId string, body UpdateWorkerClusterJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateWorkerClusterRequestWithBody(server, clusterId, "application/json", bodyReader)
+}
+
+// NewUpdateWorkerClusterRequestWithBody generates requests for UpdateWorkerCluster with any type of body
+func NewUpdateWorkerClusterRequestWithBody(server string, clusterId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, clusterId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/worker-mgt/cluster/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewFetchWorkerClustersRequest generates requests for FetchWorkerClusters
+func NewFetchWorkerClustersRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/worker-mgt/clusters")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateWorkerClusterRequest calls the generic CreateWorkerCluster builder with application/json body
+func NewCreateWorkerClusterRequest(server string, body CreateWorkerClusterJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateWorkerClusterRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateWorkerClusterRequestWithBody generates requests for CreateWorkerCluster with any type of body
+func NewCreateWorkerClusterRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/worker-mgt/clusters")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewFetchWorkersRequest generates requests for FetchWorkers
 func NewFetchWorkersRequest(server string) (*http.Request, error) {
 	var err error
@@ -2339,6 +2653,53 @@ func NewFetchWorkerRequest(server string, workerId string) (*http.Request, error
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewSetWorkerClustersRequest calls the generic SetWorkerClusters builder with application/json body
+func NewSetWorkerClustersRequest(server string, workerId string, body SetWorkerClustersJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSetWorkerClustersRequestWithBody(server, workerId, "application/json", bodyReader)
+}
+
+// NewSetWorkerClustersRequestWithBody generates requests for SetWorkerClusters with any type of body
+func NewSetWorkerClustersRequestWithBody(server string, workerId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "worker_id", runtime.ParamLocationPath, workerId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/worker-mgt/workers/%s/setclusters", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2952,6 +3313,25 @@ type ClientWithResponsesInterface interface {
 	// GetVersion request
 	GetVersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetVersionResponse, error)
 
+	// DeleteWorkerCluster request
+	DeleteWorkerClusterWithResponse(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*DeleteWorkerClusterResponse, error)
+
+	// FetchWorkerCluster request
+	FetchWorkerClusterWithResponse(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*FetchWorkerClusterResponse, error)
+
+	// UpdateWorkerCluster request with any body
+	UpdateWorkerClusterWithBodyWithResponse(ctx context.Context, clusterId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateWorkerClusterResponse, error)
+
+	UpdateWorkerClusterWithResponse(ctx context.Context, clusterId string, body UpdateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateWorkerClusterResponse, error)
+
+	// FetchWorkerClusters request
+	FetchWorkerClustersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FetchWorkerClustersResponse, error)
+
+	// CreateWorkerCluster request with any body
+	CreateWorkerClusterWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateWorkerClusterResponse, error)
+
+	CreateWorkerClusterWithResponse(ctx context.Context, body CreateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateWorkerClusterResponse, error)
+
 	// FetchWorkers request
 	FetchWorkersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FetchWorkersResponse, error)
 
@@ -2960,6 +3340,11 @@ type ClientWithResponsesInterface interface {
 
 	// FetchWorker request
 	FetchWorkerWithResponse(ctx context.Context, workerId string, reqEditors ...RequestEditorFn) (*FetchWorkerResponse, error)
+
+	// SetWorkerClusters request with any body
+	SetWorkerClustersWithBodyWithResponse(ctx context.Context, workerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetWorkerClustersResponse, error)
+
+	SetWorkerClustersWithResponse(ctx context.Context, workerId string, body SetWorkerClustersJSONRequestBody, reqEditors ...RequestEditorFn) (*SetWorkerClustersResponse, error)
 
 	// RequestWorkerStatusChange request with any body
 	RequestWorkerStatusChangeWithBodyWithResponse(ctx context.Context, workerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RequestWorkerStatusChangeResponse, error)
@@ -3733,6 +4118,116 @@ func (r GetVersionResponse) StatusCode() int {
 	return 0
 }
 
+type DeleteWorkerClusterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteWorkerClusterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteWorkerClusterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type FetchWorkerClusterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *WorkerCluster
+}
+
+// Status returns HTTPResponse.Status
+func (r FetchWorkerClusterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r FetchWorkerClusterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateWorkerClusterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateWorkerClusterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateWorkerClusterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type FetchWorkerClustersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *WorkerClusterList
+}
+
+// Status returns HTTPResponse.Status
+func (r FetchWorkerClustersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r FetchWorkerClustersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateWorkerClusterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateWorkerClusterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateWorkerClusterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type FetchWorkersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3793,6 +4288,28 @@ func (r FetchWorkerResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r FetchWorkerResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type SetWorkerClustersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r SetWorkerClustersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SetWorkerClustersResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4458,6 +4975,67 @@ func (c *ClientWithResponses) GetVersionWithResponse(ctx context.Context, reqEdi
 	return ParseGetVersionResponse(rsp)
 }
 
+// DeleteWorkerClusterWithResponse request returning *DeleteWorkerClusterResponse
+func (c *ClientWithResponses) DeleteWorkerClusterWithResponse(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*DeleteWorkerClusterResponse, error) {
+	rsp, err := c.DeleteWorkerCluster(ctx, clusterId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteWorkerClusterResponse(rsp)
+}
+
+// FetchWorkerClusterWithResponse request returning *FetchWorkerClusterResponse
+func (c *ClientWithResponses) FetchWorkerClusterWithResponse(ctx context.Context, clusterId string, reqEditors ...RequestEditorFn) (*FetchWorkerClusterResponse, error) {
+	rsp, err := c.FetchWorkerCluster(ctx, clusterId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFetchWorkerClusterResponse(rsp)
+}
+
+// UpdateWorkerClusterWithBodyWithResponse request with arbitrary body returning *UpdateWorkerClusterResponse
+func (c *ClientWithResponses) UpdateWorkerClusterWithBodyWithResponse(ctx context.Context, clusterId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateWorkerClusterResponse, error) {
+	rsp, err := c.UpdateWorkerClusterWithBody(ctx, clusterId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateWorkerClusterResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateWorkerClusterWithResponse(ctx context.Context, clusterId string, body UpdateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateWorkerClusterResponse, error) {
+	rsp, err := c.UpdateWorkerCluster(ctx, clusterId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateWorkerClusterResponse(rsp)
+}
+
+// FetchWorkerClustersWithResponse request returning *FetchWorkerClustersResponse
+func (c *ClientWithResponses) FetchWorkerClustersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FetchWorkerClustersResponse, error) {
+	rsp, err := c.FetchWorkerClusters(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFetchWorkerClustersResponse(rsp)
+}
+
+// CreateWorkerClusterWithBodyWithResponse request with arbitrary body returning *CreateWorkerClusterResponse
+func (c *ClientWithResponses) CreateWorkerClusterWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateWorkerClusterResponse, error) {
+	rsp, err := c.CreateWorkerClusterWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateWorkerClusterResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateWorkerClusterWithResponse(ctx context.Context, body CreateWorkerClusterJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateWorkerClusterResponse, error) {
+	rsp, err := c.CreateWorkerCluster(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateWorkerClusterResponse(rsp)
+}
+
 // FetchWorkersWithResponse request returning *FetchWorkersResponse
 func (c *ClientWithResponses) FetchWorkersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FetchWorkersResponse, error) {
 	rsp, err := c.FetchWorkers(ctx, reqEditors...)
@@ -4483,6 +5061,23 @@ func (c *ClientWithResponses) FetchWorkerWithResponse(ctx context.Context, worke
 		return nil, err
 	}
 	return ParseFetchWorkerResponse(rsp)
+}
+
+// SetWorkerClustersWithBodyWithResponse request with arbitrary body returning *SetWorkerClustersResponse
+func (c *ClientWithResponses) SetWorkerClustersWithBodyWithResponse(ctx context.Context, workerId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetWorkerClustersResponse, error) {
+	rsp, err := c.SetWorkerClustersWithBody(ctx, workerId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetWorkerClustersResponse(rsp)
+}
+
+func (c *ClientWithResponses) SetWorkerClustersWithResponse(ctx context.Context, workerId string, body SetWorkerClustersJSONRequestBody, reqEditors ...RequestEditorFn) (*SetWorkerClustersResponse, error) {
+	rsp, err := c.SetWorkerClusters(ctx, workerId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetWorkerClustersResponse(rsp)
 }
 
 // RequestWorkerStatusChangeWithBodyWithResponse request with arbitrary body returning *RequestWorkerStatusChangeResponse
@@ -5594,6 +6189,136 @@ func ParseGetVersionResponse(rsp *http.Response) (*GetVersionResponse, error) {
 	return response, nil
 }
 
+// ParseDeleteWorkerClusterResponse parses an HTTP response from a DeleteWorkerClusterWithResponse call
+func ParseDeleteWorkerClusterResponse(rsp *http.Response) (*DeleteWorkerClusterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteWorkerClusterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseFetchWorkerClusterResponse parses an HTTP response from a FetchWorkerClusterWithResponse call
+func ParseFetchWorkerClusterResponse(rsp *http.Response) (*FetchWorkerClusterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &FetchWorkerClusterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WorkerCluster
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateWorkerClusterResponse parses an HTTP response from a UpdateWorkerClusterWithResponse call
+func ParseUpdateWorkerClusterResponse(rsp *http.Response) (*UpdateWorkerClusterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateWorkerClusterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseFetchWorkerClustersResponse parses an HTTP response from a FetchWorkerClustersWithResponse call
+func ParseFetchWorkerClustersResponse(rsp *http.Response) (*FetchWorkerClustersResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &FetchWorkerClustersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WorkerClusterList
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateWorkerClusterResponse parses an HTTP response from a CreateWorkerClusterWithResponse call
+func ParseCreateWorkerClusterResponse(rsp *http.Response) (*CreateWorkerClusterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateWorkerClusterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseFetchWorkersResponse parses an HTTP response from a FetchWorkersWithResponse call
 func ParseFetchWorkersResponse(rsp *http.Response) (*FetchWorkersResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
@@ -5666,6 +6391,32 @@ func ParseFetchWorkerResponse(rsp *http.Response) (*FetchWorkerResponse, error) 
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseSetWorkerClustersResponse parses an HTTP response from a SetWorkerClustersWithResponse call
+func ParseSetWorkerClustersResponse(rsp *http.Response) (*SetWorkerClustersResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SetWorkerClustersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 

@@ -12,6 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
+import WorkerCluster from './WorkerCluster';
 import WorkerTask from './WorkerTask';
 
 /**
@@ -66,6 +67,9 @@ class WorkerAllOf {
             if (data.hasOwnProperty('task')) {
                 obj['task'] = WorkerTask.constructFromObject(data['task']);
             }
+            if (data.hasOwnProperty('clusters')) {
+                obj['clusters'] = ApiClient.convertToType(data['clusters'], [WorkerCluster]);
+            }
         }
         return obj;
     }
@@ -94,6 +98,12 @@ WorkerAllOf.prototype['supported_task_types'] = undefined;
  * @member {module:model/WorkerTask} task
  */
 WorkerAllOf.prototype['task'] = undefined;
+
+/**
+ * Clusters of which this Worker is a member.
+ * @member {Array.<module:model/WorkerCluster>} clusters
+ */
+WorkerAllOf.prototype['clusters'] = undefined;
 
 
 

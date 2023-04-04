@@ -116,6 +116,46 @@ func (mr *MockFlamencoClientMockRecorder) CheckSharedStoragePathWithResponse(arg
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckSharedStoragePathWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).CheckSharedStoragePathWithResponse), varargs...)
 }
 
+// CreateWorkerClusterWithBodyWithResponse mocks base method.
+func (m *MockFlamencoClient) CreateWorkerClusterWithBodyWithResponse(arg0 context.Context, arg1 string, arg2 io.Reader, arg3 ...api.RequestEditorFn) (*api.CreateWorkerClusterResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2}
+	for _, a := range arg3 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateWorkerClusterWithBodyWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.CreateWorkerClusterResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateWorkerClusterWithBodyWithResponse indicates an expected call of CreateWorkerClusterWithBodyWithResponse.
+func (mr *MockFlamencoClientMockRecorder) CreateWorkerClusterWithBodyWithResponse(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorkerClusterWithBodyWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).CreateWorkerClusterWithBodyWithResponse), varargs...)
+}
+
+// CreateWorkerClusterWithResponse mocks base method.
+func (m *MockFlamencoClient) CreateWorkerClusterWithResponse(arg0 context.Context, arg1 api.CreateWorkerClusterJSONRequestBody, arg2 ...api.RequestEditorFn) (*api.CreateWorkerClusterResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CreateWorkerClusterWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.CreateWorkerClusterResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateWorkerClusterWithResponse indicates an expected call of CreateWorkerClusterWithResponse.
+func (mr *MockFlamencoClientMockRecorder) CreateWorkerClusterWithResponse(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorkerClusterWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).CreateWorkerClusterWithResponse), varargs...)
+}
+
 // DeleteJobWhatWouldItDoWithResponse mocks base method.
 func (m *MockFlamencoClient) DeleteJobWhatWouldItDoWithResponse(arg0 context.Context, arg1 string, arg2 ...api.RequestEditorFn) (*api.DeleteJobWhatWouldItDoResponse, error) {
 	m.ctrl.T.Helper()
@@ -154,6 +194,26 @@ func (mr *MockFlamencoClientMockRecorder) DeleteJobWithResponse(arg0, arg1 inter
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteJobWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).DeleteJobWithResponse), varargs...)
+}
+
+// DeleteWorkerClusterWithResponse mocks base method.
+func (m *MockFlamencoClient) DeleteWorkerClusterWithResponse(arg0 context.Context, arg1 string, arg2 ...api.RequestEditorFn) (*api.DeleteWorkerClusterResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteWorkerClusterWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.DeleteWorkerClusterResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteWorkerClusterWithResponse indicates an expected call of DeleteWorkerClusterWithResponse.
+func (mr *MockFlamencoClientMockRecorder) DeleteWorkerClusterWithResponse(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkerClusterWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).DeleteWorkerClusterWithResponse), varargs...)
 }
 
 // DeleteWorkerWithResponse mocks base method.
@@ -334,6 +394,46 @@ func (mr *MockFlamencoClientMockRecorder) FetchTaskWithResponse(arg0, arg1 inter
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchTaskWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).FetchTaskWithResponse), varargs...)
+}
+
+// FetchWorkerClusterWithResponse mocks base method.
+func (m *MockFlamencoClient) FetchWorkerClusterWithResponse(arg0 context.Context, arg1 string, arg2 ...api.RequestEditorFn) (*api.FetchWorkerClusterResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FetchWorkerClusterWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.FetchWorkerClusterResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FetchWorkerClusterWithResponse indicates an expected call of FetchWorkerClusterWithResponse.
+func (mr *MockFlamencoClientMockRecorder) FetchWorkerClusterWithResponse(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerClusterWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).FetchWorkerClusterWithResponse), varargs...)
+}
+
+// FetchWorkerClustersWithResponse mocks base method.
+func (m *MockFlamencoClient) FetchWorkerClustersWithResponse(arg0 context.Context, arg1 ...api.RequestEditorFn) (*api.FetchWorkerClustersResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0}
+	for _, a := range arg1 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FetchWorkerClustersWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.FetchWorkerClustersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FetchWorkerClustersWithResponse indicates an expected call of FetchWorkerClustersWithResponse.
+func (mr *MockFlamencoClientMockRecorder) FetchWorkerClustersWithResponse(arg0 interface{}, arg1 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0}, arg1...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerClustersWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).FetchWorkerClustersWithResponse), varargs...)
 }
 
 // FetchWorkerSleepScheduleWithResponse mocks base method.
@@ -916,6 +1016,46 @@ func (mr *MockFlamencoClientMockRecorder) SetTaskStatusWithResponse(arg0, arg1, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTaskStatusWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).SetTaskStatusWithResponse), varargs...)
 }
 
+// SetWorkerClustersWithBodyWithResponse mocks base method.
+func (m *MockFlamencoClient) SetWorkerClustersWithBodyWithResponse(arg0 context.Context, arg1, arg2 string, arg3 io.Reader, arg4 ...api.RequestEditorFn) (*api.SetWorkerClustersResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2, arg3}
+	for _, a := range arg4 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SetWorkerClustersWithBodyWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.SetWorkerClustersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetWorkerClustersWithBodyWithResponse indicates an expected call of SetWorkerClustersWithBodyWithResponse.
+func (mr *MockFlamencoClientMockRecorder) SetWorkerClustersWithBodyWithResponse(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetWorkerClustersWithBodyWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).SetWorkerClustersWithBodyWithResponse), varargs...)
+}
+
+// SetWorkerClustersWithResponse mocks base method.
+func (m *MockFlamencoClient) SetWorkerClustersWithResponse(arg0 context.Context, arg1 string, arg2 api.SetWorkerClustersJSONRequestBody, arg3 ...api.RequestEditorFn) (*api.SetWorkerClustersResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2}
+	for _, a := range arg3 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "SetWorkerClustersWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.SetWorkerClustersResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetWorkerClustersWithResponse indicates an expected call of SetWorkerClustersWithResponse.
+func (mr *MockFlamencoClientMockRecorder) SetWorkerClustersWithResponse(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetWorkerClustersWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).SetWorkerClustersWithResponse), varargs...)
+}
+
 // SetWorkerSleepScheduleWithBodyWithResponse mocks base method.
 func (m *MockFlamencoClient) SetWorkerSleepScheduleWithBodyWithResponse(arg0 context.Context, arg1, arg2 string, arg3 io.Reader, arg4 ...api.RequestEditorFn) (*api.SetWorkerSleepScheduleResponse, error) {
 	m.ctrl.T.Helper()
@@ -1274,6 +1414,46 @@ func (mr *MockFlamencoClientMockRecorder) TaskUpdateWithResponse(arg0, arg1, arg
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TaskUpdateWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).TaskUpdateWithResponse), varargs...)
+}
+
+// UpdateWorkerClusterWithBodyWithResponse mocks base method.
+func (m *MockFlamencoClient) UpdateWorkerClusterWithBodyWithResponse(arg0 context.Context, arg1, arg2 string, arg3 io.Reader, arg4 ...api.RequestEditorFn) (*api.UpdateWorkerClusterResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2, arg3}
+	for _, a := range arg4 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateWorkerClusterWithBodyWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.UpdateWorkerClusterResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateWorkerClusterWithBodyWithResponse indicates an expected call of UpdateWorkerClusterWithBodyWithResponse.
+func (mr *MockFlamencoClientMockRecorder) UpdateWorkerClusterWithBodyWithResponse(arg0, arg1, arg2, arg3 interface{}, arg4 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2, arg3}, arg4...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateWorkerClusterWithBodyWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).UpdateWorkerClusterWithBodyWithResponse), varargs...)
+}
+
+// UpdateWorkerClusterWithResponse mocks base method.
+func (m *MockFlamencoClient) UpdateWorkerClusterWithResponse(arg0 context.Context, arg1 string, arg2 api.UpdateWorkerClusterJSONRequestBody, arg3 ...api.RequestEditorFn) (*api.UpdateWorkerClusterResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2}
+	for _, a := range arg3 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateWorkerClusterWithResponse", varargs...)
+	ret0, _ := ret[0].(*api.UpdateWorkerClusterResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateWorkerClusterWithResponse indicates an expected call of UpdateWorkerClusterWithResponse.
+func (mr *MockFlamencoClientMockRecorder) UpdateWorkerClusterWithResponse(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateWorkerClusterWithResponse", reflect.TypeOf((*MockFlamencoClient)(nil).UpdateWorkerClusterWithResponse), varargs...)
 }
 
 // WorkerStateChangedWithBodyWithResponse mocks base method.

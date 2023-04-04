@@ -110,6 +110,21 @@ type ServerInterface interface {
 	// Get the Flamenco version of this Manager
 	// (GET /api/v3/version)
 	GetVersion(ctx echo.Context) error
+	// Remove this worker cluster. This unassigns all workers from the cluster and removes it.
+	// (DELETE /api/v3/worker-mgt/cluster/{cluster_id})
+	DeleteWorkerCluster(ctx echo.Context, clusterId string) error
+	// Get a single worker cluster.
+	// (GET /api/v3/worker-mgt/cluster/{cluster_id})
+	FetchWorkerCluster(ctx echo.Context, clusterId string) error
+	// Update an existing worker cluster.
+	// (PUT /api/v3/worker-mgt/cluster/{cluster_id})
+	UpdateWorkerCluster(ctx echo.Context, clusterId string) error
+	// Get list of worker clusters.
+	// (GET /api/v3/worker-mgt/clusters)
+	FetchWorkerClusters(ctx echo.Context) error
+	// Create a new worker cluster.
+	// (POST /api/v3/worker-mgt/clusters)
+	CreateWorkerCluster(ctx echo.Context) error
 	// Get list of workers.
 	// (GET /api/v3/worker-mgt/workers)
 	FetchWorkers(ctx echo.Context) error
@@ -119,6 +134,9 @@ type ServerInterface interface {
 	// Fetch info about the worker.
 	// (GET /api/v3/worker-mgt/workers/{worker_id})
 	FetchWorker(ctx echo.Context, workerId string) error
+
+	// (POST /api/v3/worker-mgt/workers/{worker_id}/setclusters)
+	SetWorkerClusters(ctx echo.Context, workerId string) error
 
 	// (POST /api/v3/worker-mgt/workers/{worker_id}/setstatus)
 	RequestWorkerStatusChange(ctx echo.Context, workerId string) error
@@ -643,6 +661,72 @@ func (w *ServerInterfaceWrapper) GetVersion(ctx echo.Context) error {
 	return err
 }
 
+// DeleteWorkerCluster converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteWorkerCluster(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "cluster_id" -------------
+	var clusterId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, ctx.Param("cluster_id"), &clusterId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cluster_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.DeleteWorkerCluster(ctx, clusterId)
+	return err
+}
+
+// FetchWorkerCluster converts echo context to params.
+func (w *ServerInterfaceWrapper) FetchWorkerCluster(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "cluster_id" -------------
+	var clusterId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, ctx.Param("cluster_id"), &clusterId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cluster_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.FetchWorkerCluster(ctx, clusterId)
+	return err
+}
+
+// UpdateWorkerCluster converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateWorkerCluster(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "cluster_id" -------------
+	var clusterId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, ctx.Param("cluster_id"), &clusterId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cluster_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.UpdateWorkerCluster(ctx, clusterId)
+	return err
+}
+
+// FetchWorkerClusters converts echo context to params.
+func (w *ServerInterfaceWrapper) FetchWorkerClusters(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.FetchWorkerClusters(ctx)
+	return err
+}
+
+// CreateWorkerCluster converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateWorkerCluster(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.CreateWorkerCluster(ctx)
+	return err
+}
+
 // FetchWorkers converts echo context to params.
 func (w *ServerInterfaceWrapper) FetchWorkers(ctx echo.Context) error {
 	var err error
@@ -681,6 +765,22 @@ func (w *ServerInterfaceWrapper) FetchWorker(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.FetchWorker(ctx, workerId)
+	return err
+}
+
+// SetWorkerClusters converts echo context to params.
+func (w *ServerInterfaceWrapper) SetWorkerClusters(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "worker_id" -------------
+	var workerId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "worker_id", runtime.ParamLocationPath, ctx.Param("worker_id"), &workerId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter worker_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.SetWorkerClusters(ctx, workerId)
 	return err
 }
 
@@ -910,9 +1010,15 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/api/v3/tasks/:task_id/logtail", wrapper.FetchTaskLogTail)
 	router.POST(baseURL+"/api/v3/tasks/:task_id/setstatus", wrapper.SetTaskStatus)
 	router.GET(baseURL+"/api/v3/version", wrapper.GetVersion)
+	router.DELETE(baseURL+"/api/v3/worker-mgt/cluster/:cluster_id", wrapper.DeleteWorkerCluster)
+	router.GET(baseURL+"/api/v3/worker-mgt/cluster/:cluster_id", wrapper.FetchWorkerCluster)
+	router.PUT(baseURL+"/api/v3/worker-mgt/cluster/:cluster_id", wrapper.UpdateWorkerCluster)
+	router.GET(baseURL+"/api/v3/worker-mgt/clusters", wrapper.FetchWorkerClusters)
+	router.POST(baseURL+"/api/v3/worker-mgt/clusters", wrapper.CreateWorkerCluster)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers", wrapper.FetchWorkers)
 	router.DELETE(baseURL+"/api/v3/worker-mgt/workers/:worker_id", wrapper.DeleteWorker)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers/:worker_id", wrapper.FetchWorker)
+	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/setclusters", wrapper.SetWorkerClusters)
 	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/setstatus", wrapper.RequestWorkerStatusChange)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers/:worker_id/sleep-schedule", wrapper.FetchWorkerSleepSchedule)
 	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/sleep-schedule", wrapper.SetWorkerSleepSchedule)

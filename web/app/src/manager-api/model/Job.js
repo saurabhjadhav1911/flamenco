@@ -97,6 +97,9 @@ class Job {
             if (data.hasOwnProperty('storage')) {
                 obj['storage'] = JobStorageInfo.constructFromObject(data['storage']);
             }
+            if (data.hasOwnProperty('worker_cluster')) {
+                obj['worker_cluster'] = ApiClient.convertToType(data['worker_cluster'], 'String');
+            }
             if (data.hasOwnProperty('id')) {
                 obj['id'] = ApiClient.convertToType(data['id'], 'String');
             }
@@ -165,6 +168,12 @@ Job.prototype['submitter_platform'] = undefined;
  * @member {module:model/JobStorageInfo} storage
  */
 Job.prototype['storage'] = undefined;
+
+/**
+ * Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job. 
+ * @member {String} worker_cluster
+ */
+Job.prototype['worker_cluster'] = undefined;
 
 /**
  * UUID of the Job
@@ -239,6 +248,11 @@ SubmittedJob.prototype['submitter_platform'] = undefined;
  * @member {module:model/JobStorageInfo} storage
  */
 SubmittedJob.prototype['storage'] = undefined;
+/**
+ * Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job. 
+ * @member {String} worker_cluster
+ */
+SubmittedJob.prototype['worker_cluster'] = undefined;
 // Implement JobAllOf interface:
 /**
  * UUID of the Job

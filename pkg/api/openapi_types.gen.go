@@ -638,6 +638,9 @@ type SubmittedJob struct {
 	// Hash of the job type, copied from the `AvailableJobType.etag` property of the job type. The job will be rejected if this field doesn't match the actual job type on the Manager. This prevents job submission with old settings, after the job compiler script has been updated.
 	// If this field is ommitted, the check is bypassed.
 	TypeEtag *string `json:"type_etag,omitempty"`
+
+	// Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job.
+	WorkerCluster *string `json:"worker_cluster,omitempty"`
 }
 
 // The task as it exists in the Manager database, i.e. before variable replacement.
@@ -719,6 +722,9 @@ type Worker struct {
 	// Embedded struct due to allOf(#/components/schemas/WorkerSummary)
 	WorkerSummary `yaml:",inline"`
 	// Embedded fields due to inline allOf schema
+	// Clusters of which this Worker is a member.
+	Clusters *[]WorkerCluster `json:"clusters,omitempty"`
+
 	// IP address of the Worker
 	IpAddress string `json:"ip_address"`
 
@@ -728,6 +734,23 @@ type Worker struct {
 
 	// Task assigned to a Worker.
 	Task *WorkerTask `json:"task,omitempty"`
+}
+
+// Cluster of workers. A job can optionally specify which cluster it should be limited to. Workers can be part of multiple clusters simultaneously.
+type WorkerCluster struct {
+	Description *string `json:"description,omitempty"`
+	Id          string  `json:"id"`
+	Name        string  `json:"name"`
+}
+
+// Request to change which clusters this Worker is assigned to.
+type WorkerClusterChangeRequest struct {
+	ClusterIds []string `json:"cluster_ids"`
+}
+
+// WorkerClusterList defines model for WorkerClusterList.
+type WorkerClusterList struct {
+	Clusters *[]WorkerCluster `json:"clusters,omitempty"`
 }
 
 // List of workers.
@@ -849,6 +872,15 @@ type ShamanFileStoreParams struct {
 // SetTaskStatusJSONBody defines parameters for SetTaskStatus.
 type SetTaskStatusJSONBody TaskStatusChange
 
+// UpdateWorkerClusterJSONBody defines parameters for UpdateWorkerCluster.
+type UpdateWorkerClusterJSONBody WorkerCluster
+
+// CreateWorkerClusterJSONBody defines parameters for CreateWorkerCluster.
+type CreateWorkerClusterJSONBody WorkerCluster
+
+// SetWorkerClustersJSONBody defines parameters for SetWorkerClusters.
+type SetWorkerClustersJSONBody WorkerClusterChangeRequest
+
 // RequestWorkerStatusChangeJSONBody defines parameters for RequestWorkerStatusChange.
 type RequestWorkerStatusChangeJSONBody WorkerStatusChangeRequest
 
@@ -902,6 +934,15 @@ type ShamanCheckoutRequirementsJSONRequestBody ShamanCheckoutRequirementsJSONBod
 
 // SetTaskStatusJSONRequestBody defines body for SetTaskStatus for application/json ContentType.
 type SetTaskStatusJSONRequestBody SetTaskStatusJSONBody
+
+// UpdateWorkerClusterJSONRequestBody defines body for UpdateWorkerCluster for application/json ContentType.
+type UpdateWorkerClusterJSONRequestBody UpdateWorkerClusterJSONBody
+
+// CreateWorkerClusterJSONRequestBody defines body for CreateWorkerCluster for application/json ContentType.
+type CreateWorkerClusterJSONRequestBody CreateWorkerClusterJSONBody
+
+// SetWorkerClustersJSONRequestBody defines body for SetWorkerClusters for application/json ContentType.
+type SetWorkerClustersJSONRequestBody SetWorkerClustersJSONBody
 
 // RequestWorkerStatusChangeJSONRequestBody defines body for RequestWorkerStatusChange for application/json ContentType.
 type RequestWorkerStatusChangeJSONRequestBody RequestWorkerStatusChangeJSONBody
