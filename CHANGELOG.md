@@ -8,7 +8,7 @@ bugs in actually-released versions.
 
 - Improve speed of queueing up >100 simultaneous job deletions.
 - Improve logging of job deletion.
-- Add Worker Cluster support. Workers can be members of any number of clusters. When assigned to a cluster, they will only work on jobs that are also assigned to that cluster. Jobs that do not have a cluster will be available to all workers, regardless of their cluster assignment. Another way to phrase this: a Worker will never pick up a job that is assigned to a cluster it is not part of.
+- Add Worker Cluster support. Workers can be members of any number of clusters. Workers will only work on jobs that are assigned to that cluster. Jobs that do not have a cluster will be available to all workers, regardless of their cluster assignment. As a result, clusterless workers will only work on clusterless jobs.
 
 
 ## 3.2 - released 2023-02-21
