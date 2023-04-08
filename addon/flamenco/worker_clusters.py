@@ -42,7 +42,7 @@ def _get_enum_items(self, context):
     prefs = preferences.get(context)
 
     _enum_items = [
-        ("-", "No Cluster", "No cluster assigned, any worker can handle this job"),
+        ("-", "All", "No specific cluster assigned, any worker can handle this job"),
     ]
     _enum_items.extend(
         (cluster.id, cluster.name, cluster.description)
