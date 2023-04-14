@@ -40,21 +40,30 @@ file][workercfg].
 ## Can I change the paths/names of the rendered files?
 
 Where Flamenco places the rendered files is determined by the job type. You can
-create [your own custom job type][jobtypes] to change this. With that, you can
+create [your own custom job type][jobtypes] or check the existing 
+[third-party job types][thirdpartyjobs] to change this. With that, you can
 even add your own custom job settings like a sequence identifier and use that to
 determine the location of rendered files.
 
 
-## Can I use the Compositor to output multiple EXR files?
+## Can I use the Compositor to output multiple EXR files or Passes?
 
-This is possible with Flamenco, but it takes a bit of work. It's not managed by
-Flamenco's default job types. You can create [your own custom job
-type][jobtypes] for this, though. With that, you have control over the arguments
-that get used before and/or after the filename on the CLI.
+This is possible with Flamenco, but it takes a bit of work. Although it's not
+managed by Flamenco's default job types, you can use a [custom job type][jobtypes] 
+for this. 
 
-If you have this working, please [share your job compiler script with us][getinvolved]!
+With that, you have control over the arguments that get used before and/or after
+the filename on the CLI.
+
+There are Flamenco jobs out there that support compositor nodes, 
+multi-platform, and multiple pass outputs. You can check our [third-party jobs
+section][thirdpartyjobs].
+
+If you wish to contribute to the project, you're invited to
+[get involved with Flamenco][getinvolved]!
 
 [jobtypes]: {{< ref "usage/job-types" >}}
+[thirdpartyjobs]: {{< ref "third-party-jobs" >}}
 [getinvolved]: {{< ref "development/get-involved" >}}
 
 
@@ -98,3 +107,21 @@ complex project, and relies on a lot of components
 ([source](https://www.opencue.io/docs/getting-started/)), whereas Flamenco is
 made for simplicity and use in small studios or at home, running on your own
 hardware.
+
+## Why do I get an Error Performing BAT Pack Message?
+
+As of yet, we've only encountered the issue below on Windows installations.
+
+```
+Error performing BAT pack: [WinError 267] The directory name is invalid:
+'C:\\The\\Path\\To\\Your\\Project.blend'
+```
+
+This is most likely some sort of incompatibility that occurs in some cases where
+you might be using linked assets from an asset library in your project.
+
+*To fix this you may attempt the following fix:*
+ * Go to **File -> External Data -> Make Paths Relative**
+ * Submit your job again.
+
+That should fix the issue.

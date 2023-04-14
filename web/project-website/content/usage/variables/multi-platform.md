@@ -25,8 +25,12 @@ The difference with regular variables is that regular variables are one-way:
 
 Two-way variables go both ways, as follows:
 
-- When submitting a job, values are replaced with variables.
+- When submitting a **job**, values **in the javascript jobs' command** are replaced
+with the corresponding variables as it's executed on the client.
 - When sending a task to a worker, variables are replaced with values again.
+
+*(Do keep in mind that if you perform changes to a job, you'll need to re-submit*
+*it.)*
 
 This may seem like a lot of unnecessary work. After all, why go through the
 trouble of replacing in one direction, when later the opposite is done? The

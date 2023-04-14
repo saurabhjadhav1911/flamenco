@@ -1,0 +1,20 @@
+<!-- For more info check the links below -->
+<!-- Lists: https://gohugo.io/templates/lists/ -->
+<!-- Taxonomy Templates: https://gohugo.io/templates/taxonomy-templates/ -->
+<!-- Page Variables: https://gohugo.io/variables/pages/ -->
+<!-- Cheers, Dylan -->
+
+<!-- This TOC Excludes the current section index and the current page -->
+
+<div>
+    {{ $current_page_title := .Page.Title }}
+    <ul>
+        {{ range .Page.CurrentSection.Data.Pages.ByWeight }}
+            {{ if ne .Page.Title $current_page_title }}
+            <li>
+                <a href="{{ .Permalink }}">{{ .LinkTitle }}</a>
+            </li>
+            {{ end }}
+        {{ end  }}
+    </ul>
+</div>
