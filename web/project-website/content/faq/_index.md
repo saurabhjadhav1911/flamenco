@@ -110,7 +110,9 @@ hardware.
 
 ## Why do I get an Error Performing BAT Pack Message?
 
-As of yet, we've only encountered the issue below on Windows installations.
+As of yet, we've only encountered the issue below on Windows installations. If
+you get this issue, please {{< flamenco/reportBugLink size="small" >}}let us
+know{{< /flamenco/reportBugLink >}} so that it can be properly investigated.
 
 ```
 Error performing BAT pack: [WinError 267] The directory name is invalid:
@@ -120,8 +122,7 @@ Error performing BAT pack: [WinError 267] The directory name is invalid:
 This is most likely some sort of incompatibility that occurs in some cases where
 you might be using linked assets from an asset library in your project.
 
-*To fix this you may attempt the following fix:*
- * Go to **File -> External Data -> Make Paths Relative**
- * Submit your job again.
+To work around this issue, try the following:
 
-That should fix the issue.
+ * In Blender, use File → External Data → Make Paths Relative.
+ * Submit your job again.
