@@ -3,18 +3,17 @@ title: Available Third-Party Jobs
 weight: 1
 ---
 
-This section contains third-party jobs for Flamenco submitted by the community.
-
-If you wish to contribute you might consider joining our 
+This section contains third-party job types for Flamenco. These have been
+submitted by the community. If you wish to contribute, consider joining the
 [Blender Chat channel][flamencochannel] and chime-in there.
 
-## How can I create my own Job?
+## How can I create my own Job Type?
 
-Check how to create a custom job in our [Job Types][jobtypes] section.
+This is described [Job Types][jobtypes]. It is recommended to use the
+[built-in scripts][built-in-scripts] as examples and adjust them from there.
 
-It's recommended to use the [built-in scripts][built-in-scripts] as examples and build from there.
+## Third-Party Job Types
 
-## Third-Party Job List
 {{< flamenco/toc-children >}}
 
 [jobtypes]: {{< ref "usage/job-types" >}}
