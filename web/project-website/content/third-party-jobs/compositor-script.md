@@ -1,42 +1,43 @@
 ---
-title: Compositor Nodes and Multi-Platform Storage Paths
+title: Compositor Nodes
 weight: 10
 ---
 
-Job maintained by: Dylan Blanqué
+*Job type documented and maintained by: [Dylan Blanqué][author].*
 
-If you need to use Blender's **Compositor** Nodes with *Flamenco*,
-a Python Script and a Flamenco Job have been contributed to the community.
+[author]: https://projects.blender.org/Dylan-Blanque
+
+{{< hint >}}
+
+This is a community-made job type. It may not reflect the same design as the
+rest of Flamenco, as it was made for a specific person to solve a specific need.
+
+{{< /hint >}}
+
+
+This job type updates Blender's compositor nodes to work with Flamenco.
 
 You'll need to do the following changes to support this workflow:
 
-(It's recommended to use a symbolic link to the git repo files)
+1. Download the [Flamenco Compositor Script ZIP file][compositorrepo] and extract it somewhere.
+2. Copy `startup_script.py` to the configured Blender File Folder in your shared storage.
+3. Copy `multi_pass_render.js` to the `scripts` folder in your Flamenco Manager installation folder (create it if it doesn't exist).
+4. Add these variables to your `flamenco-manager.yaml` file:
+    - `storagePath`: Your NAS path, multi-platform variable.
+    - `jobSubPath`: Where the jobs are stored inside `storagePath`.
+    - `renderSubpath`: Where the render output is stored inside `storagePath`.
+    - `deviceType`: Compute Device Type to force. Do not set the variable if you wish to use whatever is available.
+5. Submit your job from Blender with the corresponding Multi-Pass Job, it should
+whatever compositor nodes you have set and correct the paths where necessary.
 
-1. Clone the [Flamenco Compositor Script repository][compositorrepo]
-(you'll need to install **git**) or download the files manually to a directory
-in your Flamenco Manager/Server.
-```bash
-git clone https://github.com/dblanque/flamenco-compositor-script.git
-```
-2. Copy or make a symbolic link of the **startup_script.py** file.
-to the configured Blender File Folder in your *Network Attached Storage*.
-3. Copy or make a symbolic link of the multipass javascript job to the *scripts*
-folder in your Flamenco Manager Installation (Create it if it doesn't exist).
-4. Add and configure the required variables from the *example Manager YAML*
-*Config* to your Flamenco Manager YAML.
-    * **storagePath**   - Your NAS path, multi-platform variable.
-    * **jobSubPath**    - Where the jobs are stored inside storagePath.
-    * **renderSubpath** - Where the Render Output is stored inside storagePath.
-    * **deviceType**    - Compute Device Type to force *do not set the variable if*
-     *you wish to use whatever is available*
-5. Submit your job from a Blender Client with the corresponding Multi-Pass Job,
-it should whatever compositor nodes you have set and correct the paths where
-necessary.
+[compositorrepo]: https://github.com/dblanque/flamenco-compositor-script/archive/refs/heads/main.zip
 
-[compositorrepo]: https://github.com/dblanque/flamenco-compositor-script.git
+{{< hint type=warning >}}
+This has only been tested in an environment with [Shaman][shaman] enabled, but it should work without Shaman as well.
 
-**This has only been tested in an environment with Flamenco Manager and**
-**Shaman enabled, but it should work without Shaman as well.**
+[shaman]: {{< ref "/usage/shared-storage/shaman" >}}
+{{< /hint >}}
+
 
 # Example Configuration Flamenco Manager YAML
 
