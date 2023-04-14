@@ -40,7 +40,7 @@ file][workercfg].
 ## Can I change the paths/names of the rendered files?
 
 Where Flamenco places the rendered files is determined by the job type. You can
-create [your own custom job type][jobtypes] or check the existing 
+create [your own custom job type][jobtypes] or check the existing
 [third-party job types][thirdpartyjobs] to change this. With that, you can
 even add your own custom job settings like a sequence identifier and use that to
 determine the location of rendered files.
@@ -49,13 +49,13 @@ determine the location of rendered files.
 ## Can I use the Compositor to output multiple EXR files or Passes?
 
 This is possible with Flamenco, but it takes a bit of work. Although it's not
-managed by Flamenco's default job types, you can use a [custom job type][jobtypes] 
-for this. 
+managed by Flamenco's default job types, you can use a [custom job type][jobtypes]
+for this.
 
 With that, you have control over the arguments that get used before and/or after
 the filename on the CLI.
 
-There are Flamenco jobs out there that support compositor nodes, 
+There are Flamenco jobs out there that support compositor nodes,
 multi-platform, and multiple pass outputs. You can check our [third-party jobs
 section][thirdpartyjobs].
 

@@ -43,7 +43,7 @@ necessary.
 ```yaml
 # Configuration file for Flamenco.
 #
-# For an explanation of the fields, 
+# For an explanation of the fields,
 # refer to the original flamenco-manager-example.yaml
 
 _meta:
