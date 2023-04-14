@@ -115,3 +115,6 @@ enableRobotsTXT = true
   [params.geekdocContentLicense]
     name = "CC BY 4.0 - Blender Foundation"
     link = "https://creativecommons.org/licenses/by/4.0/"
+
+  [params.flamenco]
+    bugreportURL = "https://projects.blender.org/studio/flamenco/issues/new?template=.gitea%2fissue_template%2fbug.yaml"
