@@ -28,7 +28,7 @@ import (
 // configFilename is used to specify where flamenco will write its config file.
 // If the path is not absolute, it will use the flamenco binary location as the
 // relative root path. This is not intended to be changed during runtime.
-var	configFilename = "flamenco-manager.yaml"
+var configFilename = "flamenco-manager.yaml"
 
 const (
 	latestConfigVersion = 3

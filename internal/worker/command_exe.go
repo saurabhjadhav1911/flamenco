@@ -47,8 +47,9 @@ type TimeService interface {
 	Now() time.Time
 }
 
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/cli_runner.gen.go -package mocks git.blender.org/flamenco/internal/worker CommandLineRunner
 // CommandLineRunner is an interface around exec.CommandContext().
+//
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/cli_runner.gen.go -package mocks git.blender.org/flamenco/internal/worker CommandLineRunner
 type CommandLineRunner interface {
 	CommandContext(ctx context.Context, name string, arg ...string) *exec.Cmd
 	RunWithTextOutput(
