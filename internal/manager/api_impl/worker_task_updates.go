@@ -187,10 +187,25 @@ func (f *Flamenco) onTaskFailed(
 		Int("failedByWorkerCount", numFailed).
 		Int("threshold", threshold).
 		Logger()
-	if numFailed < threshold {
-		return f.softFailTask(ctx, logger, worker, task, numFailed)
+
+	if numFailed >= threshold {
+		return f.hardFailTask(ctx, logger, worker, task, numFailed)
 	}
-	return f.hardFailTask(ctx, logger, worker, task, numFailed)
+
+	numWorkers, err := f.numWorkersCapableOfRunningTask(ctx, task)
+	if err != nil {
+		return err
+	}
+
+	// If number of workers capable of running the failed task again is "1",
+	// that means we have no worker besides the one that actually failed the task.
+	// Because at this point in code the worker hasn't been registered as failing this task yet,
+	// and thus it is still counted.
+	// In such condition we should just fail the job itself.
+	if numWorkers <= 1 {
+		return f.failJobAfterCatastroficTaskFailure(ctx, logger, worker, task)
+	}
+	return f.softFailTask(ctx, logger, worker, task, numFailed)
 }
 
 // maybeBlocklistWorker potentially block-lists the Worker, and checks whether

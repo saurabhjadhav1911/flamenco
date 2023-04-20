@@ -134,6 +134,11 @@ func TestTaskUpdateFailed(t *testing.T) {
 		// This returns 1, which is less than the failure threshold -> soft failure expected.
 		mf.persistence.EXPECT().AddWorkerToTaskFailedList(gomock.Any(), &mockTask, &worker).Return(1, nil)
 
+		mf.persistence.EXPECT().WorkersLeftToRun(gomock.Any(), &mockJob, "misc").
+			Return(map[string]bool{"60453eec-5a26-43e9-9da2-d00506d492cc": true, "ce312357-29cd-4389-81ab-4d43e30945f8": true}, nil)
+		mf.persistence.EXPECT().FetchTaskFailureList(gomock.Any(), &mockTask).
+			Return([]*persistence.Worker{ /* It shouldn't matter whether the failing worker is here or not. */ }, nil)
+
 		// Expect soft failure.
 		mf.stateMachine.EXPECT().TaskStatusChange(gomock.Any(), &mockTask, api.TaskStatusSoftFailed)
 		mf.logStorage.EXPECT().WriteTimestamped(gomock.Any(), jobID, taskID,
@@ -220,9 +225,9 @@ func TestBlockingAfterFailure(t *testing.T) {
 	{
 		// Mimick that there is another worker to work on this task, so the job should continue happily.
 		mf.persistence.EXPECT().WorkersLeftToRun(gomock.Any(), &mockJob, "misc").
-			Return(map[string]bool{"60453eec-5a26-43e9-9da2-d00506d492cc": true}, nil)
+			Return(map[string]bool{"60453eec-5a26-43e9-9da2-d00506d492cc": true, "ce312357-29cd-4389-81ab-4d43e30945f8": true}, nil).Times(2)
 		mf.persistence.EXPECT().FetchTaskFailureList(gomock.Any(), &mockTask).
-			Return([]*persistence.Worker{ /* It shouldn't matter whether the failing worker is here or not. */ }, nil)
+			Return([]*persistence.Worker{ /* It shouldn't matter whether the failing worker is here or not. */ }, nil).Times(2)
 
 		// Expect the Worker to be added to the list of failed workers for this task.
 		// This returns 1, which is less than the failure threshold -> soft failure.
@@ -312,4 +317,70 @@ func TestBlockingAfterFailure(t *testing.T) {
 		assert.NoError(t, err)
 		assertResponseNoContent(t, echoCtx)
 	}
+}
+
+func TestJobFailureAfterWorkerTaskFailure(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+	worker := testWorker()
+
+	// Contruct the JSON request object
+	taskUpdate := api.TaskUpdateJSONRequestBody{
+		TaskStatus: ptr(api.TaskStatusFailed),
+	}
+
+	// Construct the task that's supposed to be updated.
+	taskID := "181eab68-1123-4790-93b1-94309a899411"
+	jobID := "e4719398-7cfa-4877-9bab-97c2d6c158b5"
+	mockJob := persistence.Job{UUID: jobID}
+	mockTask := persistence.Task{
+		UUID:     taskID,
+		Worker:   &worker,
+		WorkerID: &worker.ID,
+		Job:      &mockJob,
+		Activity: "pre-update activity",
+		Type:     "misc",
+	}
+
+	conf := config.Conf{
+		Base: config.Base{
+			TaskFailAfterSoftFailCount: 3,
+			BlocklistThreshold:         65535, // This test doesn't cover blocklisting.
+		},
+	}
+
+	mf.config.EXPECT().Get().Return(&conf).Times(2)
+
+	mf.persistence.EXPECT().FetchTask(gomock.Any(), taskID).Return(&mockTask, nil)
+
+	mf.persistence.EXPECT().TaskTouchedByWorker(gomock.Any(), &mockTask)
+	mf.persistence.EXPECT().WorkerSeen(gomock.Any(), &worker)
+
+	mf.persistence.EXPECT().CountTaskFailuresOfWorker(gomock.Any(), &mockJob, &worker, "misc").Return(0, nil)
+
+	mf.persistence.EXPECT().AddWorkerToTaskFailedList(gomock.Any(), &mockTask, &worker).Return(1, nil)
+
+	mf.persistence.EXPECT().WorkersLeftToRun(gomock.Any(), &mockJob, "misc").
+		Return(map[string]bool{"e7632d62-c3b8-4af0-9e78-01752928952c": true}, nil)
+	mf.persistence.EXPECT().FetchTaskFailureList(gomock.Any(), &mockTask).
+		Return([]*persistence.Worker{ /* It shouldn't matter whether the failing worker is here or not. */ }, nil)
+
+	// Expect hard failure of the task, because there are no workers left to perfom it.
+	mf.stateMachine.EXPECT().TaskStatusChange(gomock.Any(), &mockTask, api.TaskStatusFailed)
+	mf.logStorage.EXPECT().WriteTimestamped(gomock.Any(), jobID, taskID,
+		"Task failed by worker дрон (e7632d62-c3b8-4af0-9e78-01752928952c), Manager will fail the entire job "+
+			"as there are no more workers left for tasks of type \"misc\".")
+
+	// Expect failure of the job.
+	mf.stateMachine.EXPECT().
+		JobStatusChange(gomock.Any(), &mockJob, api.JobStatusFailed, "no more workers left to run tasks of type \"misc\"")
+
+	// Do the call
+	echoCtx := mf.prepareMockedJSONRequest(taskUpdate)
+	requestWorkerStore(echoCtx, &worker)
+	err := mf.flamenco.TaskUpdate(echoCtx, taskID)
+	assert.NoError(t, err)
+	assertResponseNoContent(t, echoCtx)
 }
