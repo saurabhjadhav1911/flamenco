@@ -15,6 +15,12 @@ Basically there are three approaches to this:
 
 Each is explained below.
 
+{{< hint type=Warning >}}
+On Windows, Flamenco **only supports drive letters** to indicate locations.
+Flamenco does **not** support UNC notation like `\\SERVER\share`. Mount the
+network share to a drive letter. The examples below use `S:` for this.
+{{< /hint >}}
+
 ## Work Directly on the Shared Storage
 
 Working directly in the shared storage is the simplest way to work with
