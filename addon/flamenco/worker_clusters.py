@@ -36,6 +36,10 @@ def refresh(context: bpy.types.Context, api_client: _ApiClient) -> None:
         rna_cluster.name = cluster.name
         rna_cluster.description = getattr(cluster, "description", "")
 
+    # Preferences have changed, so make sure that Blender saves them (assuming
+    # auto-save here).
+    context.preferences.is_dirty = True
+
 
 def _get_enum_items(self, context):
     global _enum_items
