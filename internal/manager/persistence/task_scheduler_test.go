@@ -16,6 +16,7 @@ import (
 )
 
 const schedulerTestTimeout = 100 * time.Millisecond
+const schedulerTestTimeoutlong = 5000 * time.Millisecond
 
 func TestNoTasks(t *testing.T) {
 	ctx, cancel, db := persistenceTestFixtures(t, schedulerTestTimeout)

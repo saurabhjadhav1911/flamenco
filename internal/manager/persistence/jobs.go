@@ -208,11 +208,19 @@ func (db *DB) StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.Au
 				}
 				deps[i] = depTask
 			}
-
-			dbTask.Dependencies = deps
-			subQuery := tx.Model(dbTask).Updates(Task{Dependencies: deps})
-			if subQuery.Error != nil {
-				return taskError(subQuery.Error, "unable to store dependencies of task %q", authoredTask.UUID)
+			dependenciesbatchsize := 1000
+			for j := 0; j < len(deps); j += dependenciesbatchsize {
+				end := j + dependenciesbatchsize
+				if end > len(deps) {
+					end = len(deps)
+				}
+				currentDeps := deps[j:end]
+				dbTask.Dependencies = currentDeps
+				tx.Model(&dbTask).Where("UUID = ?", dbTask.UUID)
+				subQuery := tx.Model(dbTask).Updates(Task{Dependencies: currentDeps})
+				if subQuery.Error != nil {
+					return taskError(subQuery.Error, "error with storing dependencies of task %q issue exists in dependencies %d to %d", authoredTask.UUID, j, end)
+				}
 			}
 		}
 
