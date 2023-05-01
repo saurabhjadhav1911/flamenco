@@ -126,3 +126,33 @@ enable the race condition checker, and all other kinds of useful things.
 If you're interested in helping out with Flamenco development, please read [Get Involved][get-involved]!
 
 [get-involved]: {{<ref "development/get-involved" >}}
+
+
+## Software Design
+
+The Flamenco software follows an **API-first** approach. All the functionality
+of Flamenco Manager is exposed via [the OpenAPI interface][openapi] ([more
+info](openapi-info)). The web interface is no exception; anything you can do
+with the web interface, you can do with any other OpenAPI client.
+
+- The API can be browsed by following the 'API' link in the top-right corner of
+  the Flamenco Manager web interface. That's a link to
+  `http://your.manager.address/api/v3/swagger-ui/`
+- The web interface, Flamenco Worker, and the Blender add-on are all using that
+  same API.
+
+[openapi]: https://projects.blender.org/studio/flamenco/src/branch/main/pkg/api/flamenco-openapi.yaml
+[openapi-info]: https://www.openapis.org/
+
+## New Features
+
+To add a new feature to Flamenco, these steps are recommended:
+
+1. Define which changes to the API are necessary, and update the [flamenco-openapi.yaml][openapi] file for this.
+1. Run `go generate ./pkg/...` to generate the OpenAPI Go code.
+1. Implement any new operations in a minimal way, so that the code compiles (but doesn't do anything else).
+1. Run `make generate` to regenerate all the code (so also the JavaScript and Python client, and Go mocks).
+1. Write unit tests that test the new functionality.
+1. Write the code necessary to make the unit tests pass.
+1. Now that you know how it can work, refactor to clean it up.
+1. Send in a pull request!
