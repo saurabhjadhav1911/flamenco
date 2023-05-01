@@ -23,21 +23,21 @@
 package touch
 
 import (
-	"syscall"
-	"unsafe"
+	"os"
+
+	"golang.org/x/sys/unix"
 )
 
-// touch is the same as syscall.utimes, but passes NULL as timestamp pointer (instead of a
-// pointer to a concrete time).
+// touch uses uni.UtimesNano() in order to pass the special 'now' timestamps
+// available in that package.
 func touch(path string) (err error) {
-	var _p0 *byte
-	_p0, err = syscall.BytePtrFromString(path)
-	if err != nil {
-		return
+	now := unix.Timespec{
+		Sec:  0,
+		Nsec: unix.UTIME_NOW,
 	}
-	_, _, e1 := syscall.Syscall(syscall.SYS_UTIMES, uintptr(unsafe.Pointer(_p0)), uintptr(0), 0)
-	if e1 != 0 {
-		err = syscall.Errno(e1)
+	utimes := []unix.Timespec{now, now}
+	if e := unix.UtimesNano(path, utimes); e != nil {
+		return &os.PathError{Op: "chtimes", Path: path, Err: e}
 	}
-	return
+	return nil
 }
