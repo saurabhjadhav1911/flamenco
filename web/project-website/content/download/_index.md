@@ -1,5 +1,6 @@
 ---
 title: Download
+weight: 2
 ---
 
 Download Flamenco for your platform here. Each download contains both Flamenco
