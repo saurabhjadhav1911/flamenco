@@ -10,7 +10,7 @@ executable, and served as static files via its web server.
 `static/emptyfile` exists just to make sure that `go:embed` inside `web_app.go`
 has something to work with, even before any static files have been built.
 
-# Running static flamenco.io site locally
+# Running static flamenco.blender.org site locally
 
 The [Flamenco website](https://flamenco.blender.org/) runs off of [Hugo](https://gohugo.io/).
 
