@@ -73,7 +73,7 @@
   --header-background: none;
   --header-font-color: #ffffff;
 
-  --body-background: #343a40;
+  --body-background: #1b1d1f;
   --body-font-color: #ced3d8;
 
   --mark-color: #ffab00;
@@ -99,7 +99,7 @@
     --header-background: none;
     --header-font-color: #ffffff;
 
-    --body-background: #343a40;
+    --body-background: #1a1d20;
     --body-font-color: #ced3d8;
 
     --mark-color: #ffab00;
@@ -111,7 +111,7 @@
     --link-color-visited: #8982c9;
 
     --accent-color: #2b3035;
-    --accent-color-lite: #3d454d;
+    --accent-color-lite: #272c31;
 
     --control-icons: #b2bac1;
 
@@ -164,4 +164,8 @@ body {
 
 .flamenco-download-link {
   font-family: var(--font-family-mono);
+}
+
+article p {
+  line-height: 28px;
 }
