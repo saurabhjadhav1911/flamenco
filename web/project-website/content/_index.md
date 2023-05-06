@@ -41,23 +41,25 @@ software. Development is supported by the Blender project.
 Flamenco consists of a few components and requires almost no configuration
 to be used in production.
 
-<--->
+{{< /columns >}}
+
+{{< columns >}}
 
 ### Easy Customization
 
 Designed to be customizable, Flamenco allows TDs to specify
 Job Types using the JavaScript language and seamlessly fit into the pipeline.
 
-{{< /columns >}}
-
-{{< columns >}}
+<--->
 
 ### Cross-platform and Self-hosted
 
 Flamenco runs on all major operating system, and is fully hosted on your own hardware.
 Your data is yours, and yours alone.
 
-<--->
+{{< /columns >}}
+
+{{< columns >}}
 
 ### Robust Technology
 

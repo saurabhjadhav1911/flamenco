@@ -3,6 +3,17 @@ title: Quickstart
 weight: 0
 ---
 
+What you need to run Flamenco is:
+
+- One or more computers to do the work, i.e. running **Flamenco Worker**. You'll
+  probably also want to install [Blender][blender] there.
+- A computer to run the central software, **Flamenco Manager**. This could be
+  one of the above computers, or a dedicated one.
+- A local network with **file sharing** already set up, so that the above
+  computers can all reach the same set of files.
+
+[blender]: https://www.blender.org/
+
 In broad terms, to render with Flamenco, follow these steps:
 
 1. [Download Flamenco][download].

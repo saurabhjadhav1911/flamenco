@@ -1,6 +1,8 @@
 ---
 title: Get Involved
 weight: 2
+geekdocNav: false
+geekdocHidden: true
 ---
 
 Flamenco is a Free and Open Source project, developed in public under the GPL license.

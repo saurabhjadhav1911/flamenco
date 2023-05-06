@@ -1,9 +1,12 @@
 ---
 header:
+  - name: About
+    ref: /about
+    external: false
   - name: Download
     ref: /download
     external: false
-  - name: Quickstart
+  - name: Documentation
     ref: /usage/quickstart
     external: false
   - name: FAQ

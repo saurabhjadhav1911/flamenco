@@ -1,6 +1,8 @@
 ---
 title: Download
 weight: 2
+geekdocNav: false
+geekdocHidden: true
 ---
 
 Download Flamenco for your platform here. Each download contains both Flamenco
