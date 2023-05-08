@@ -12,9 +12,9 @@ geekdocBreadcrumb: false
 Take control of your computing infrastructure and get things done.<br>
 Flamenco is used in production at [Blender Studio](https://studio.blender.org).
 
-{{< button size="large" relref="usage/quickstart/" >}}Quickstart{{< /button >}}
+{{< button class="btn-primary" size="large" relref="usage/quickstart/" >}}Quickstart{{< /button >}}
 
-{{< button size="large" relref="download" >}}Download Flamenco{{< /button >}}
+{{< button relref="download" class="btn-secondary" size="large" >}}Download Flamenco{{< /button >}}
 
 <--->
 

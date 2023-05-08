@@ -149,9 +149,21 @@ h3 {
   border: var(--button-border-color) 1px solid;
 }
 
+.gdoc-button.btn-primary a.gdoc-button__link {
+  color: #FFF !important;
+}
+
+.gdoc-button.btn-secondary {
+  background: transparent;
+  border: var(--button-border-color) 1px solid;
+}
+
+.gdoc-button.btn-secondary a.gdoc-button__link {
+  color: var(--button-border-color) !important;
+}
+
 .gdoc-button a {
   border-bottom: none;
-  color: #EEE !important;
 }
 
 .gdoc-search__input {
