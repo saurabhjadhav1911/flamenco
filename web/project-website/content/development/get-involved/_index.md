@@ -5,17 +5,39 @@ geekdocNav: false
 geekdocHidden: true
 ---
 
-Flamenco is a Free and Open Source project, developed in public under the GPL license.
+Flamenco is a Free and Open Source project, developed in public under the GPL
+license, and welcomes community contributions and enhancements.
 
-Join the community on the [#flamenco channel][chat] of Blender Chat do discuss
-development topics. New faces are always welcome!
+{{< columns >}}
 
-{{< button size="large" relref="/development/getting-started" >}}Get Started Developing Flamenco{{< /button >}}
-{{< flamenco/reportBugButton size="large" >}}
+## Using Flamenco
+Join the community on the [#flamenco channel][chat] of Blender Chat to discuss
+development topics. New faces are always welcome! Also, make sure you check out
+the [quickstart guide](/usage/quickstart/).
 
-If you want to know what kind of work can be done, take a look at the
-[workboard][workboard].
+[chat]: https://blender.chat/channel/flamenco
+
+<--->
+
+## Development
+You can get started with Flamenco development by following [the documentation]
+[dev-get-started], and  getting the sources at [projects.blender.org][project].
+If you want to know what kind of work can be done, take a look at the [workboard]
+[workboard].
 
 [project]: https://projects.blender.org/studio/flamenco
+[dev-get-started]: /development/getting-started
 [workboard]: https://projects.blender.org/studio/flamenco/issues
-[chat]: https://blender.chat/channel/flamenco
+
+{{</columns >}}
+
+{{<columns >}}
+## Report a Bug
+Did you find an issue or a bug in Flamenco? Please [report a bug][bug], it
+helps Flamenco to get better!
+
+[bug]: {{flamenco/reportBugButton}}
+
+<--->
+
+{{</columns >}}
