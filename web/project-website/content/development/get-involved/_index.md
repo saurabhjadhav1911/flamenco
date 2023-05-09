@@ -20,12 +20,10 @@ the [quickstart guide](/usage/quickstart/).
 <--->
 
 ## Development
-You can get started with Flamenco development by following [the documentation]
-[dev-get-started], and  getting the sources at [projects.blender.org][project].
-If you want to know what kind of work can be done, take a look at the [workboard]
-[workboard].
+You can get started with Flamenco development by following [the developer
+documentation][dev-get-started]. If you want to know what kind of work can be
+done, take a look at the [workboard][workboard].
 
-[project]: https://projects.blender.org/studio/flamenco
 [dev-get-started]: /development/getting-started
 [workboard]: https://projects.blender.org/studio/flamenco/issues
 
