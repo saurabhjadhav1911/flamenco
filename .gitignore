@@ -5,6 +5,7 @@
 *.db
 *.blend[0-9]
 *.flamenco.blend
+.env
 
 /flamenco-manager
 /flamenco-worker
