@@ -43,18 +43,6 @@ FFMPEG_VERSION=5.0.1
 TOOLS=./tools
 TOOLS_DOWNLOAD=./tools/download
 
-# For production deployments: check variables stored in .env
-.PHONY: check-environment
-check-environment:
-ifndef WEBSERVER_SSH
-	echo "WEBSERVER_SSH not found. Check .env or .env.example"
-	exit 1
-endif
-ifndef WEBSERVER_ROOT
-	echo "WEBSERVER_ROOT not found. Check .env or .env.example"
-	exit 1
-endif
-
 all: application
 
 # Install generators and build the software.
@@ -240,7 +228,7 @@ clean-webapp-static:
 	touch ${WEB_STATIC}/emptyfile
 
 project-website:
-	$(MAKE) check-environment
+	$(MAKE) -s check-environment
 	rm -rf web/project-website/public/
 	cd web/project-website; hugo --baseURL https://flamenco.blender.org/
 	rsync web/project-website/public/ ${WEBSERVER_SSH}:${WEBSERVER_ROOT}/ \
@@ -251,6 +239,19 @@ project-website:
 		--exclude .well-known/ \
 		--exclude .htaccess \
 		--delete-after
+
+# For production deployments: check variables stored in .env
+.PHONY: check-environment
+check-environment:
+ifndef WEBSERVER_SSH
+	@echo "WEBSERVER_SSH not found. Check .env or .env.example"
+	exit 1
+endif
+ifndef WEBSERVER_ROOT
+	@echo "WEBSERVER_ROOT not found. Check .env or .env.example"
+	exit 1
+endif
+
 
 # Download & install FFmpeg in the 'tools' directory for supported platforms.
 .PHONY: tools
@@ -350,7 +351,7 @@ release-package-windows:
 
 .PHONY: publish-release-packages
 publish-release-packages:
-	$(MAKE) check-environment
+	$(MAKE) -s check-environment
 	cd dist; sha256sum ${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_WINDOWS} > ${RELEASE_PACKAGE_SHAFILE}
 	cd dist; rsync -va \
 		${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_WINDOWS} ${RELEASE_PACKAGE_SHAFILE} \
