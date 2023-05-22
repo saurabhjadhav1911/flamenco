@@ -118,6 +118,14 @@ This means that you have to click on the little "Refresh" icon next to the job t
 <img src="job-types-refresh.webp" width="396" height="41">
 
 
+## Render jobs hang after the first chunk of frames, what's wrong?
+
+When rendering a chunk of frames, Flamenco waits until Blender quits. This
+signals Flamenco that it finished rendering. Sometimes an add-on prevents
+Blender from quitting, and thus Flamenco will think it is still doing something.
+Disable add-ons one-by-one to see which one is causing this issue.
+
+
 ## What does "command exited abnormally with code 1" mean?
 
 It means that the program (probably Blender) exited with an error status. Take a
