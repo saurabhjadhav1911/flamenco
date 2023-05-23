@@ -3,7 +3,7 @@ title: Job Types
 weight: 10
 ---
 
-Flamenco uses JavaScript files called *job compiler scripts* or two things. They
+Flamenco uses JavaScript files called *job compiler scripts* for two things. They
 
 - define a *job type*, with its own set of settings, and
 - convert a job of this type (like "*render this Blend file*") into concrete
