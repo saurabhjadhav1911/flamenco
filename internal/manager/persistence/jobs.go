@@ -600,9 +600,9 @@ func (db *DB) AddWorkerToTaskFailedList(ctx context.Context, t *Task, w *Worker)
 
 	// Integer literals are of type `int`, so that's just a bit nicer to work with
 	// than `int64`.
-	if numFailed64 > math.MaxUint32 {
+	if numFailed64 > math.MaxInt32 {
 		log.Warn().Int64("numFailed", numFailed64).Msg("number of failed workers is crazy high, something is wrong here")
-		return math.MaxUint32, tx.Error
+		return math.MaxInt32, tx.Error
 	}
 	return int(numFailed64), tx.Error
 }
