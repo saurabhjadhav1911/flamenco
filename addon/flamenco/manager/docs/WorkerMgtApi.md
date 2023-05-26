@@ -19,7 +19,7 @@ Method | HTTP request | Description
 
 
 # **create_worker_cluster**
-> create_worker_cluster(worker_cluster)
+> WorkerCluster create_worker_cluster(worker_cluster)
 
 Create a new worker cluster.
 
@@ -53,7 +53,8 @@ with flamenco.manager.ApiClient() as api_client:
     # example passing only required values which don't have defaults set
     try:
         # Create a new worker cluster.
-        api_instance.create_worker_cluster(worker_cluster)
+        api_response = api_instance.create_worker_cluster(worker_cluster)
+        pprint(api_response)
     except flamenco.manager.ApiException as e:
         print("Exception when calling WorkerMgtApi->create_worker_cluster: %s\n" % e)
 ```
@@ -67,7 +68,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**WorkerCluster**](WorkerCluster.md)
 
 ### Authorization
 
@@ -83,7 +84,7 @@ No authorization required
 
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**204** | The cluster was created. |  -  |
+**200** | The cluster was created. The created cluster is returned, so that the caller can know its UUID. |  -  |
 **0** | Error message |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

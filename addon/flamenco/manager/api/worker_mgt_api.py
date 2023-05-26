@@ -44,7 +44,7 @@ class WorkerMgtApi(object):
         self.api_client = api_client
         self.create_worker_cluster_endpoint = _Endpoint(
             settings={
-                'response_type': None,
+                'response_type': (WorkerCluster,),
                 'auth': [],
                 'endpoint_path': '/api/v3/worker-mgt/clusters',
                 'operation_id': 'create_worker_cluster',
@@ -691,7 +691,7 @@ class WorkerMgtApi(object):
             async_req (bool): execute request asynchronously
 
         Returns:
-            None
+            WorkerCluster
                 If the method is called asynchronously, returns the request
                 thread.
         """

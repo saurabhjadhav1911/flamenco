@@ -41,13 +41,6 @@ export default class JobStatus {
 
     
         /**
-         * value: "construction-failed"
-         * @const
-         */
-        "construction-failed" = "construction-failed";
-
-    
-        /**
          * value: "failed"
          * @const
          */
@@ -66,20 +59,6 @@ export default class JobStatus {
          * @const
          */
         "queued" = "queued";
-
-    
-        /**
-         * value: "archived"
-         * @const
-         */
-        "archived" = "archived";
-
-    
-        /**
-         * value: "archiving"
-         * @const
-         */
-        "archiving" = "archiving";
 
     
         /**

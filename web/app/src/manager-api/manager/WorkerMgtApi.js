@@ -45,7 +45,7 @@ export default class WorkerMgtApi {
     /**
      * Create a new worker cluster.
      * @param {module:model/WorkerCluster} workerCluster The worker cluster.
-     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing HTTP response
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/WorkerCluster} and HTTP response
      */
     createWorkerClusterWithHttpInfo(workerCluster) {
       let postBody = workerCluster;
@@ -66,7 +66,7 @@ export default class WorkerMgtApi {
       let authNames = [];
       let contentTypes = ['application/json'];
       let accepts = ['application/json'];
-      let returnType = null;
+      let returnType = WorkerCluster;
       return this.apiClient.callApi(
         '/api/v3/worker-mgt/clusters', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
@@ -77,7 +77,7 @@ export default class WorkerMgtApi {
     /**
      * Create a new worker cluster.
      * @param {module:model/WorkerCluster} workerCluster The worker cluster.
-     * @return {Promise} a {@link https://www.promisejs.org/|Promise}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/WorkerCluster}
      */
     createWorkerCluster(workerCluster) {
       return this.createWorkerClusterWithHttpInfo(workerCluster)

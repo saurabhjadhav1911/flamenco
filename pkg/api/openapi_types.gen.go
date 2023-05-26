@@ -59,17 +59,11 @@ const (
 const (
 	JobStatusActive JobStatus = "active"
 
-	JobStatusArchived JobStatus = "archived"
-
-	JobStatusArchiving JobStatus = "archiving"
-
 	JobStatusCancelRequested JobStatus = "cancel-requested"
 
 	JobStatusCanceled JobStatus = "canceled"
 
 	JobStatusCompleted JobStatus = "completed"
-
-	JobStatusConstructionFailed JobStatus = "construction-failed"
 
 	JobStatusFailed JobStatus = "failed"
 
