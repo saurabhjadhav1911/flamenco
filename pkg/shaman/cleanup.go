@@ -236,7 +236,9 @@ func (s *Server) gcDeleteOldFiles(doDryRun bool, oldFiles mtimeMap, logger zerol
 				pathLogger.Warn().Err(err).Msg("unable to stat to-be-deleted file")
 			}
 		} else if stat.ModTime().After(lastSeenModTime) {
-			pathLogger.Info().Msg("not deleting recently-touched file")
+			pathLogger.Info().
+				Stringer("modTime", stat.ModTime()).
+				Msg("not deleting recently-touched file")
 			continue
 		} else {
 			deletedBytes += stat.Size()

@@ -277,15 +277,16 @@ func touchFile(blobPath string) error {
 	if blobPath == "" {
 		return os.ErrInvalid
 	}
-	now := time.Now()
+	logger := log.With().Str("file", blobPath).Logger()
+	logger.Debug().Msg("shaman: touching file")
 
+	now := time.Now()
 	err := touch.Touch(blobPath)
 	if err != nil {
 		return err
 	}
 
-	duration := time.Now().Sub(now)
-	logger := log.With().Str("file", blobPath).Logger()
+	duration := time.Since(now)
 	if duration > 1*time.Second {
 		logger.Warn().Str("duration", duration.String()).Msg("done touching but took a long time")
 	}

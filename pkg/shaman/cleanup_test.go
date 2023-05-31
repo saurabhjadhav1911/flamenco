@@ -24,6 +24,7 @@ package shaman
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -44,7 +45,13 @@ func createTestShaman() (*Server, func()) {
 }
 
 func makeOld(shaman *Server, expectOld mtimeMap, relPath string) {
-	oldTime := time.Now().Add(-2 * shaman.config.GarbageCollect.MaxAge)
+	if shaman.config.GarbageCollect.MaxAge < 2 {
+		panic(fmt.Sprintf(
+			"shaman.config.GarbageCollect.MaxAge is unusably low: %v",
+			shaman.config.GarbageCollect.MaxAge))
+	}
+	age := -2 * shaman.config.GarbageCollect.MaxAge
+	oldTime := time.Now().Add(age)
 	absPath := filepath.Join(shaman.config.FileStorePath(), relPath)
 
 	err := os.Chtimes(absPath, oldTime, oldTime)
@@ -57,7 +64,22 @@ func makeOld(shaman *Server, expectOld mtimeMap, relPath string) {
 	if err != nil {
 		panic(err)
 	}
-	expectOld[absPath] = stat.ModTime()
+	osModTime := stat.ModTime()
+	expectOld[absPath] = osModTime
+
+	log.Debug().
+		Str("relPath", relPath).
+		Stringer("age", age).
+		Stringer("stamp", oldTime).
+		Stringer("actual", osModTime).
+		Msg("makeOld")
+
+	// Sanity check that the timestamp on disk is somewhat similar to what we expected.
+	timediff := osModTime.Sub(oldTime).Abs()
+	if timediff.Seconds() > 1 {
+		panic(fmt.Sprintf("unable to set timestamp of %s:\n      set=%q but\n   actual=%q, difference is %s",
+			absPath, oldTime, osModTime, timediff))
+	}
 }
 
 func TestGCCanary(t *testing.T) {
