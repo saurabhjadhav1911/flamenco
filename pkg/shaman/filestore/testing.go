@@ -23,6 +23,8 @@
 package filestore
 
 import (
+	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -75,7 +77,7 @@ func (s *Store) MustStoreFileForTest(checksum string, filesize int64, contents [
 	}
 }
 
-// LinkTestFileStore creates a copy of _test_file_store by hard-linking files into a temporary directory.
+// LinkTestFileStore creates a copy of _test_file_store in a temporary directory.
 // Panics if there are any errors.
 func LinkTestFileStore(cloneTo string) {
 	_, myFilename, _, _ := runtime.Caller(0)
@@ -96,7 +98,7 @@ func LinkTestFileStore(cloneTo string) {
 		if info.IsDir() {
 			return os.MkdirAll(targetPath, 0755)
 		}
-		err = os.Link(visitPath, targetPath)
+		err = copyFile(visitPath, targetPath)
 		if err != nil {
 			return err
 		}
@@ -106,4 +108,34 @@ func LinkTestFileStore(cloneTo string) {
 	if err := filepath.Walk(fileStorePath, visit); err != nil {
 		panic(err)
 	}
+}
+
+func copyFile(sourcePath, destPath string) error {
+	// Open the source file.
+	srcFile, err := os.Open(sourcePath)
+	if err != nil {
+		return fmt.Errorf("could not open %q: %w", sourcePath, err)
+	}
+	defer srcFile.Close()
+
+	// Create the destination file.
+	destFile, err := os.Create(destPath)
+	if err != nil {
+		return fmt.Errorf("could not create %q: %w", destPath, err)
+	}
+	defer destFile.Close()
+
+	// Copy the contents from source to destination.
+	_, err = io.Copy(destFile, srcFile)
+	if err != nil {
+		return fmt.Errorf("could not copy contents of %q to %q: %w", sourcePath, destPath, err)
+	}
+
+	// Flush any buffered data to ensure completion.
+	err = destFile.Sync()
+	if err != nil {
+		return fmt.Errorf("could not sync buffer of %q to disk: %w", destPath, err)
+	}
+
+	return nil
 }
