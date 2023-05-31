@@ -248,7 +248,13 @@ func (s *Server) gcDeleteOldFiles(doDryRun bool, oldFiles mtimeMap, logger zerol
 			pathLogger.Info().Msg("would delete unused file")
 		} else {
 			pathLogger.Info().Msg("deleting unused file")
-			if err := s.fileStore.RemoveStoredFile(path); err == nil {
+			err := s.fileStore.RemoveStoredFile(path)
+			switch {
+			case errors.Is(err, fs.ErrNotExist):
+				pathLogger.Debug().Msg("shaman: unused file disappeared before we could remove it during GC run")
+			case err != nil:
+				pathLogger.Error().Err(err).Msg("shaman: unable to delete unused file during GC run")
+			default:
 				deletedFiles++
 			}
 		}
