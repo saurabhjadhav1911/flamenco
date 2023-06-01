@@ -19,7 +19,15 @@ from pathlib import Path
 
 __is_first_load = "operators" not in locals()
 if __is_first_load:
-    from . import operators, gui, job_types, comms, preferences, worker_clusters
+    from . import (
+        operators,
+        gui,
+        job_types,
+        comms,
+        preferences,
+        projects,
+        worker_clusters,
+    )
 else:
     import importlib
 
@@ -28,6 +36,7 @@ else:
     job_types = importlib.reload(job_types)
     comms = importlib.reload(comms)
     preferences = importlib.reload(preferences)
+    projects = importlib.reload(projects)
     worker_clusters = importlib.reload(worker_clusters)
 
 import bpy

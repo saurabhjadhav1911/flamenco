@@ -381,8 +381,9 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         """
         from .bat import interface as bat_interface
 
-        # TODO: get project path from addon preferences / project definition on Manager.
-        project_path = blendfile.parent
+        # Get project path from addon preferences.
+        prefs = preferences.get(context)
+        project_path: Path = prefs.project_root()
         try:
             project_path = Path(bpy.path.abspath(str(project_path))).resolve()
         except FileNotFoundError:
@@ -395,7 +396,6 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
             datetime.datetime.now().isoformat("-").replace(":", ""),
             self.job_name,
         )
-        prefs = preferences.get(context)
         pack_target_dir = Path(prefs.job_storage) / unique_dir
 
         # TODO: this should take the blendfile location relative to the project path into account.
@@ -438,9 +438,12 @@ class FLAMENCO_OT_submit_job(FlamencoOpMixin, bpy.types.Operator):
         assert self.job is not None
         self.log.info("Sending BAT pack to Shaman")
 
+        prefs = preferences.get(context)
+        project_path: Path = prefs.project_root()
+
         self.packthread = bat_interface.copy(
             base_blendfile=blendfile,
-            project=blendfile.parent,  # TODO: get from preferences/GUI.
+            project=project_path,
             target="/",  # Target directory irrelevant for Shaman transfers.
             exclusion_filter="",  # TODO: get from GUI.
             relative_only=True,  # TODO: get from GUI.

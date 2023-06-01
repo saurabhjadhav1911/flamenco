@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # <pep8 compliant>
 
+from pathlib import Path
+
 import bpy
+
+from . import projects
 
 
 def discard_flamenco_client(context):
@@ -34,6 +38,11 @@ def _manager_url_updated(prefs, context):
     comms.ping_manager_with_report(context.window_manager, api_client, prefs)
 
 
+_project_finder_enum_items = [
+    (key, info.label, info.description) for key, info in projects.finders.items()
+]
+
+
 class WorkerCluster(bpy.types.PropertyGroup):
     id: bpy.props.StringProperty(name="id")  # type: ignore
     name: bpy.props.StringProperty(name="Name")  # type: ignore
@@ -48,6 +57,13 @@ class FlamencoPreferences(bpy.types.AddonPreferences):
         description="Location of the Manager",
         default="http://localhost:8080/",
         update=_manager_url_updated,
+    )
+
+    project_finder: bpy.props.EnumProperty(  # type: ignore
+        name="Project Finder",
+        description="Strategy for Flamenco to find the top level directory of your project",
+        default=_project_finder_enum_items[0][0],
+        items=_project_finder_enum_items,
     )
 
     is_shaman_enabled: bpy.props.BoolProperty(  # type: ignore
@@ -113,6 +129,23 @@ class FlamencoPreferences(bpy.types.AddonPreferences):
         if self.is_shaman_enabled:
             text_row(col, "Shaman enabled")
         col.prop(self, "job_storage_for_gui", text="Job Storage")
+
+        # Project Root
+        col = layout.column(align=True)
+        col.prop(self, "project_finder")
+        try:
+            project_root = self.project_root()
+        except ValueError:
+            pass
+        else:
+            text_row(col, str(project_root))
+
+    def project_root(self) -> Path:
+        """Use the configured project finder to find the project root directory."""
+
+        # It is assumed that the blendfile is saved.
+        blendfile = Path(bpy.data.filepath)
+        return projects.for_blendfile(blendfile, self.project_finder)
 
 
 def get(context: bpy.types.Context) -> FlamencoPreferences:
