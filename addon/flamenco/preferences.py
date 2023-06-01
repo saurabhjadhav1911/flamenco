@@ -35,9 +35,9 @@ def _manager_url_updated(prefs, context):
 
 
 class WorkerCluster(bpy.types.PropertyGroup):
-    id: bpy.props.StringProperty(name="id")
-    name: bpy.props.StringProperty(name="Name")
-    description: bpy.props.StringProperty(name="Description")
+    id: bpy.props.StringProperty(name="id")  # type: ignore
+    name: bpy.props.StringProperty(name="Name")  # type: ignore
+    description: bpy.props.StringProperty(name="Description")  # type: ignore
 
 
 class FlamencoPreferences(bpy.types.AddonPreferences):
