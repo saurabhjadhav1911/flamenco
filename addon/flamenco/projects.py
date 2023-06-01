@@ -28,10 +28,6 @@ def for_blendfile(blendfile: Path, strategy: str) -> Path:
     return finder_info.finder(blendfile)
 
 
-def _finder_none(blendfile: Path) -> Path:
-    return blendfile.absolute().parent
-
-
 def _finder_blender_project(blendfile: Path) -> Path:
     return _search_path_marker(blendfile, ".blender_project")
 
@@ -77,11 +73,6 @@ class FinderInfo:
 
 
 finders: dict[str, FinderInfo] = {
-    "NONE": FinderInfo(
-        "None",
-        "Just use the directory containing the current blend file as the project directory.",
-        _finder_none,
-    ),
     "BLENDER_PROJECT": FinderInfo(
         "Blender Project",
         "Find a .blend_project directory and use that as indicator for the top level project directory.",

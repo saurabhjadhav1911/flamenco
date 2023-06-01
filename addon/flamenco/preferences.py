@@ -143,6 +143,11 @@ class FlamencoPreferences(bpy.types.AddonPreferences):
     def project_root(self) -> Path:
         """Use the configured project finder to find the project root directory."""
 
+        if not self.project_finder:
+            # Just a sanity fallback for missing preferences. It should be
+            # covered by the 'default=...' of the property, but just to be sure.
+            self.project_finder = "BLENDER_PROJECT"
+
         # It is assumed that the blendfile is saved.
         blendfile = Path(bpy.data.filepath)
         return projects.for_blendfile(blendfile, self.project_finder)
