@@ -233,7 +233,7 @@ project-website:
 	cd web/project-website; hugo --baseURL https://flamenco.blender.org/
 	rsync web/project-website/public/ ${WEBSERVER_SSH}:${WEBSERVER_ROOT}/ \
 		-e "ssh" \
-		-a \
+		-rl \
 		--exclude v2/ \
 		--exclude downloads/ \
 		--exclude .well-known/ \
