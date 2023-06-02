@@ -163,6 +163,11 @@ func (f *Flamenco) SignOff(e echo.Context) error {
 		w.StatusChangeClear()
 	}
 
+	// Remember the previous status if an initial status exists
+	if w.StatusRequested == "" {
+		w.StatusChangeRequest(prevStatus, false)
+  	}
+
 	// Pass a generic background context, as these changes should be stored even
 	// when the HTTP connection is aborted.
 	bgCtx, bgCtxCancel := bgContext()

@@ -244,6 +244,10 @@ func TestWorkerSignoffTaskRequeue(t *testing.T) {
 		Name:           worker.Name,
 		PreviousStatus: &prevStatus,
 		Status:         api.WorkerStatusOffline,
+		StatusChange:	&api.WorkerStatusChangeRequest{
+			IsLazy:		false,
+			Status:		api.WorkerStatusAwake,
+		},
 		Updated:        worker.UpdatedAt,
 		Version:        worker.Software,
 	})
@@ -255,11 +259,11 @@ func TestWorkerSignoffTaskRequeue(t *testing.T) {
 	assert.Equal(t, http.StatusNoContent, resp.StatusCode)
 }
 
-func TestWorkerSignoffStatusChangeRequest(t *testing.T) {
+func TestWorkerRememberPreviousStatus(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
-
 	mf := newMockedFlamenco(mockCtrl)
+
 	worker := testWorker()
 	worker.Status = api.WorkerStatusAwake
 	worker.StatusChangeRequest(api.WorkerStatusOffline, true)
@@ -269,25 +273,30 @@ func TestWorkerSignoffStatusChangeRequest(t *testing.T) {
 		Name:           worker.Name,
 		PreviousStatus: ptr(api.WorkerStatusAwake),
 		Status:         api.WorkerStatusOffline,
+		StatusChange:	&api.WorkerStatusChangeRequest{
+			IsLazy:		false,
+			Status:		api.WorkerStatusAwake,
+		},
 		Updated:        worker.UpdatedAt,
 		Version:        worker.Software,
 	})
 
-	// Expect the Worker to be saved with the status change removed.
 	savedWorker := worker
 	savedWorker.Status = api.WorkerStatusOffline
-	savedWorker.StatusChangeClear()
+	savedWorker.StatusRequested = api.WorkerStatusAwake
+	savedWorker.LazyStatusRequest = false
 	mf.persistence.EXPECT().SaveWorkerStatus(gomock.Any(), &savedWorker).Return(nil)
-
 	mf.stateMachine.EXPECT().RequeueActiveTasksOfWorker(gomock.Any(), &worker, "worker signed off").Return(nil)
 	mf.persistence.EXPECT().WorkerSeen(gomock.Any(), &worker)
 
-	// Perform the request
 	echo := mf.prepareMockedRequest(nil)
 	requestWorkerStore(echo, &worker)
 	err := mf.flamenco.SignOff(echo)
 	assert.NoError(t, err)
 	assertResponseNoContent(t, echo)
+
+	assert.Equal(t, api.WorkerStatusAwake, worker.StatusRequested)
+	assert.Equal(t, false, worker.LazyStatusRequest)
 }
 
 func TestWorkerState(t *testing.T) {
