@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -80,6 +81,77 @@ func (ce *CommandExecutor) cmdMoveDirectory(ctx context.Context, logger zerolog.
 	return ce.moveAndLog(ctx, taskID, cmd.Name, src, dest)
 }
 
+// cmdCopyFiles executes the "copy-file" command.
+// It takes an absolute source and destination file path,
+// and copies the source file to its destination, if possible.
+// Missing directories in destination path are created as needed.
+// If the target path already exists, an error is returned. Destination will not be overwritten.
+func (ce *CommandExecutor) cmdCopyFile(ctx context.Context, logger zerolog.Logger, taskID string, cmd api.Command) error {
+	var src, dest string
+	var ok bool
+
+	logger = logger.With().
+		Interface("command", cmd).
+		Str("src", src).
+		Str("dest", dest).
+		Logger()
+
+	if src, ok = cmdParameter[string](cmd, "src"); !ok || src == "" {
+		msg := "missing or empty 'src' parameter"
+		err := NewParameterMissingError("src", cmd)
+		return ce.errorLogProcess(ctx, logger, cmd, taskID, err, msg)
+	}
+	if !filepath.IsAbs(src) {
+		msg := fmt.Sprintf("source path %q is not absolute, not copying anything", src)
+		err := NewParameterInvalidError("src", cmd, "path is not absolute")
+		return ce.errorLogProcess(ctx, logger, cmd, taskID, err, msg)
+	}
+	if !fileExists(src) {
+		msg := fmt.Sprintf("source path %q does not exist, not copying anything", src)
+		err := NewParameterInvalidError("src", cmd, "path does not exist")
+		return ce.errorLogProcess(ctx, logger, cmd, taskID, err, msg)
+	}
+
+	if dest, ok = cmdParameter[string](cmd, "dest"); !ok || dest == "" {
+		msg := "missing or empty 'dest' parameter"
+		err := NewParameterMissingError("dest", cmd)
+		return ce.errorLogProcess(ctx, logger, cmd, taskID, err, msg)
+	}
+	if !filepath.IsAbs(dest) {
+		msg := fmt.Sprintf("destination path %q is not absolute, not copying anything", src)
+		err := NewParameterInvalidError("dest", cmd, "path is not absolute")
+		return ce.errorLogProcess(ctx, logger, cmd, taskID, err, msg)
+	}
+	if fileExists(dest) {
+		msg := fmt.Sprintf("destination path %q already exists, not copying anything", dest)
+		err := NewParameterInvalidError("dest", cmd, "path already exists")
+		return ce.errorLogProcess(ctx, logger, cmd, taskID, err, msg)
+	}
+
+	msg := fmt.Sprintf("copying %q to %q", src, dest)
+	if err := ce.errorLogProcess(ctx, logger, cmd, taskID, nil, msg); err != nil {
+		return err
+	}
+
+	err, logMsg := fileCopy(src, dest)
+	return ce.errorLogProcess(ctx, logger, cmd, taskID, err, logMsg)
+}
+
+func (ce *CommandExecutor) errorLogProcess(ctx context.Context, logger zerolog.Logger, cmd api.Command, taskID string, err error, logMsg string) error {
+	msg := fmt.Sprintf("%s: %s", cmd.Name, logMsg)
+
+	if err != nil {
+		logger.Warn().Msg(msg)
+	} else {
+		logger.Info().Msg(msg)
+	}
+
+	if logErr := ce.listener.LogProduced(ctx, taskID, msg); logErr != nil {
+		return logErr
+	}
+	return err
+}
+
 // moveAndLog renames a file/directory from `src` to `dest`, and logs the moveAndLog.
 // The other parameters are just for logging.
 func (ce *CommandExecutor) moveAndLog(ctx context.Context, taskID, cmdName, src, dest string) error {
@@ -98,6 +170,51 @@ func (ce *CommandExecutor) moveAndLog(ctx context.Context, taskID, cmdName, src,
 
 	return nil
 }
+
+func fileCopy(src, dest string) (error, string) {
+	src_file, err := os.Open(src)
+	if err != nil {
+		msg := fmt.Sprintf("failed to open source file %q: %v", src, err)
+		return err, msg
+	}
+	defer src_file.Close()
+
+	src_file_stat, err := src_file.Stat()
+	if err != nil {
+		msg := fmt.Sprintf("failed to stat source file %q: %v", src, err)
+		return err, msg
+	}
+
+	if !src_file_stat.Mode().IsRegular() {
+		err := &os.PathError{Op: "stat", Path: src, Err: errors.New("Not a regular file")}
+		msg := fmt.Sprintf("invalid source file %q: %v", src, err)
+		return err, msg
+	}
+
+	dest_dirpath := filepath.Dir(dest)
+	if !fileExists(dest_dirpath) {
+		if err := os.MkdirAll(dest_dirpath, 0750); err != nil {
+			msg := fmt.Sprintf("failed to create directories %q: %v", dest_dirpath, err)
+			return err, msg
+		}
+	}
+
+	dest_file, err := os.Create(dest)
+	if err != nil {
+		msg := fmt.Sprintf("failed to create destination file %q: %v", dest, err)
+		return err, msg
+	}
+	defer dest_file.Close()
+
+	if _, err := io.Copy(dest_file, src_file); err != nil {
+		msg := fmt.Sprintf("failed to copy %q to %q: %v", src, dest, err)
+		return err, msg
+	}
+
+	msg := fmt.Sprintf("copied %q to %q", src, dest)
+	return nil, msg
+}
+
 
 func fileExists(filename string) bool {
 	_, err := os.Stat(filename)

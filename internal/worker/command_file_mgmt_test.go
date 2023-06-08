@@ -16,6 +16,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// `move-directory` tests.
+
 type cmdMoveDirFixture struct {
 	mockCtrl *gomock.Controller
 	ce       *CommandExecutor
@@ -264,6 +266,163 @@ func (f cmdMoveDirFixture) run() error {
 	return f.ce.Run(f.ctx, taskID, cmd)
 }
 
+// `copy-file` tests.
+
+type cmdCopyFileFixture struct {
+	mockCtrl *gomock.Controller
+	ce       *CommandExecutor
+	mocks    *CommandExecutorMocks
+	ctx      context.Context
+
+	temppath string
+	cwd      string
+
+	absolute_src_path  string
+	absolute_dest_path string
+}
+
+func TestCmdCopyFile(t *testing.T) {
+	f := newCmdCopyFileFixture(t)
+	defer f.finish(t)
+
+	src_dirpath := filepath.Join(f.temppath, "src_path/to")
+	dest_dirpath := filepath.Join(f.temppath, "dest_path/to")
+
+	f.absolute_src_path = filepath.Join(src_dirpath, "file1.txt")
+	f.absolute_dest_path = filepath.Join(dest_dirpath, "file2.txt")
+
+	directoryEnsureExist(src_dirpath)
+	assert.DirExists(t, src_dirpath)
+
+	fileCreateEmpty(f.absolute_src_path)
+	assert.FileExists(t, f.absolute_src_path)
+
+	assert.NoDirExists(t, dest_dirpath)
+	assert.NoFileExists(t, f.absolute_dest_path)
+
+	f.mocks.listener.EXPECT().LogProduced(gomock.Any(), taskID,
+		fmt.Sprintf("copy-file: copying %q to %q", f.absolute_src_path, f.absolute_dest_path))
+
+	f.mocks.listener.EXPECT().LogProduced(gomock.Any(), taskID,
+		fmt.Sprintf("copy-file: copied %q to %q", f.absolute_src_path, f.absolute_dest_path))
+
+	assert.NoError(t, f.run())
+
+	assert.DirExists(t, src_dirpath)
+	assert.DirExists(t, dest_dirpath)
+	assert.FileExists(t, f.absolute_src_path)
+	assert.FileExists(t, f.absolute_dest_path)
+}
+
+func TestCmdCopyFileDestinationExists(t *testing.T) {
+	f := newCmdCopyFileFixture(t)
+	defer f.finish(t)
+
+	src_dirpath := filepath.Join(f.temppath, "src_path/to")
+	dest_dirpath := filepath.Join(f.temppath, "dest_path/to")
+
+	f.absolute_src_path = filepath.Join(src_dirpath, "file1.txt")
+	f.absolute_dest_path = filepath.Join(dest_dirpath, "file2.txt")
+
+	directoryEnsureExist(src_dirpath)
+	assert.DirExists(t, src_dirpath)
+
+	fileCreateEmpty(f.absolute_src_path)
+	assert.FileExists(t, f.absolute_src_path)
+
+	assert.NoDirExists(t, dest_dirpath)
+	assert.NoFileExists(t, f.absolute_dest_path)
+
+	directoryEnsureExist(dest_dirpath)
+	assert.DirExists(t, dest_dirpath)
+
+	fileCreateEmpty(f.absolute_dest_path)
+	assert.FileExists(t, f.absolute_dest_path)
+
+	f.mocks.listener.EXPECT().LogProduced(gomock.Any(), taskID,
+		fmt.Sprintf("copy-file: destination path %q already exists, not copying anything", f.absolute_dest_path))
+
+	assert.Error(t, f.run())
+}
+
+
+func TestCmdCopyFileSourceIsDir(t *testing.T) {
+	f := newCmdCopyFileFixture(t)
+	defer f.finish(t)
+
+	src_dirpath := filepath.Join(f.temppath, "src_path/to")
+	dest_dirpath := filepath.Join(f.temppath, "dest_path/to")
+
+	f.absolute_src_path = src_dirpath
+	f.absolute_dest_path = filepath.Join(dest_dirpath, "file2.txt")
+
+	directoryEnsureExist(src_dirpath)
+	assert.DirExists(t, src_dirpath)
+
+	assert.NoDirExists(t, dest_dirpath)
+	assert.NoFileExists(t, f.absolute_dest_path)
+
+	f.mocks.listener.EXPECT().LogProduced(gomock.Any(), taskID,
+		fmt.Sprintf("copy-file: copying %q to %q", f.absolute_src_path, f.absolute_dest_path))
+
+	f.mocks.listener.EXPECT().LogProduced(gomock.Any(), taskID,
+		fmt.Sprintf("copy-file: invalid source file %q: stat %s: Not a regular file",
+			f.absolute_src_path, f.absolute_src_path))
+
+	assert.Error(t, f.run())
+}
+
+
+func newCmdCopyFileFixture(t *testing.T) cmdCopyFileFixture {
+	mockCtrl := gomock.NewController(t)
+	ce, mocks := testCommandExecutor(t, mockCtrl)
+
+	temppath, err := os.MkdirTemp("", "test-copy-file")
+	if err != nil {
+		t.Fatalf("unable to create temp dir: %v", err)
+	}
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getcw: %v", err)
+	}
+
+	if err := os.Chdir(temppath); err != nil {
+		t.Fatalf("chdir(%s): %v", temppath, err)
+	}
+
+	return cmdCopyFileFixture{
+		mockCtrl: mockCtrl,
+		ce:       ce,
+		mocks:    mocks,
+		ctx:      context.Background(),
+		temppath: temppath,
+		cwd:      cwd,
+	}
+}
+
+func (f cmdCopyFileFixture) finish(t *testing.T) {
+	if err := os.Chdir(f.cwd); err != nil {
+		t.Fatalf("chdir(%s): %v", f.cwd, err)
+	}
+
+	os.RemoveAll(f.temppath)
+	f.mockCtrl.Finish()
+}
+
+func (f cmdCopyFileFixture) run() error {        
+	cmd := api.Command{
+		Name: "copy-file",
+		Parameters: map[string]interface{}{
+			"src": f.absolute_src_path,
+			"dest": f.absolute_dest_path,
+		},
+	}
+	return f.ce.Run(f.ctx, taskID, cmd)
+}
+
+// Misc utils
+
 func ensureDirExists(dirpath string) {
 	if err := os.MkdirAll(dirpath, fs.ModePerm); err != nil {
 		panic(fmt.Sprintf("unable to create dir %s: %v", dirpath, err))
@@ -277,4 +436,12 @@ func fileCreateEmpty(filename string) {
 		panic(err.Error())
 	}
 	file.Close()
+}
+
+func directoryEnsureExist(dirpath string) {
+	err := os.MkdirAll(dirpath, 0750)
+
+	if err != nil {
+		panic(err.Error())
+	}
 }
