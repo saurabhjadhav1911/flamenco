@@ -21,6 +21,15 @@ import (
 	"git.blender.org/flamenco/pkg/api"
 )
 
+// rememberableWorkerStates contains those worker statuses that should be
+// remembered when the worker signs off, so that it'll be sent to that state
+// again next time it signs on. Not every state has to be remembered like this;
+// 'error' and 'starting' are not states to send the worker into.
+var rememberableWorkerStates = map[api.WorkerStatus]bool{
+	api.WorkerStatusAsleep: true,
+	api.WorkerStatusAwake:  true,
+}
+
 // RegisterWorker registers a new worker and stores it in the database.
 func (f *Flamenco) RegisterWorker(e echo.Context) error {
 	logger := requestLogger(e)
@@ -163,10 +172,10 @@ func (f *Flamenco) SignOff(e echo.Context) error {
 		w.StatusChangeClear()
 	}
 
-	// Remember the previous status if an initial status exists
-	if w.StatusRequested == "" {
+	// Remember the previous status if an initial status exists.
+	if w.StatusRequested == "" && rememberableWorkerStates[prevStatus] {
 		w.StatusChangeRequest(prevStatus, false)
-  	}
+	}
 
 	// Pass a generic background context, as these changes should be stored even
 	// when the HTTP connection is aborted.

@@ -244,12 +244,12 @@ func TestWorkerSignoffTaskRequeue(t *testing.T) {
 		Name:           worker.Name,
 		PreviousStatus: &prevStatus,
 		Status:         api.WorkerStatusOffline,
-		StatusChange:	&api.WorkerStatusChangeRequest{
-			IsLazy:		false,
-			Status:		api.WorkerStatusAwake,
+		StatusChange: &api.WorkerStatusChangeRequest{
+			IsLazy: false,
+			Status: api.WorkerStatusAwake,
 		},
-		Updated:        worker.UpdatedAt,
-		Version:        worker.Software,
+		Updated: worker.UpdatedAt,
+		Version: worker.Software,
 	})
 
 	err := mf.flamenco.SignOff(echo)
@@ -273,12 +273,12 @@ func TestWorkerRememberPreviousStatus(t *testing.T) {
 		Name:           worker.Name,
 		PreviousStatus: ptr(api.WorkerStatusAwake),
 		Status:         api.WorkerStatusOffline,
-		StatusChange:	&api.WorkerStatusChangeRequest{
-			IsLazy:		false,
-			Status:		api.WorkerStatusAwake,
+		StatusChange: &api.WorkerStatusChangeRequest{
+			IsLazy: false,
+			Status: api.WorkerStatusAwake,
 		},
-		Updated:        worker.UpdatedAt,
-		Version:        worker.Software,
+		Updated: worker.UpdatedAt,
+		Version: worker.Software,
 	})
 
 	savedWorker := worker
@@ -297,6 +297,40 @@ func TestWorkerRememberPreviousStatus(t *testing.T) {
 
 	assert.Equal(t, api.WorkerStatusAwake, worker.StatusRequested)
 	assert.Equal(t, false, worker.LazyStatusRequest)
+}
+
+// Test that certain statuses (like 'starting') are not remembered.
+func TestWorkerDontRememberPreviousStatus(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mf := newMockedFlamenco(mockCtrl)
+
+	worker := testWorker()
+	worker.Status = api.WorkerStatusError
+	worker.StatusChangeRequest(api.WorkerStatusOffline, true)
+
+	mf.broadcaster.EXPECT().BroadcastWorkerUpdate(api.SocketIOWorkerUpdate{
+		Id:             worker.UUID,
+		Name:           worker.Name,
+		PreviousStatus: ptr(api.WorkerStatusError),
+		Status:         api.WorkerStatusOffline,
+		StatusChange:   nil,
+		Updated:        worker.UpdatedAt,
+		Version:        worker.Software,
+	})
+
+	savedWorker := worker
+	savedWorker.Status = api.WorkerStatusOffline
+	savedWorker.StatusChangeClear() // No status change should be queued.
+	mf.persistence.EXPECT().SaveWorkerStatus(gomock.Any(), &savedWorker).Return(nil)
+	mf.stateMachine.EXPECT().RequeueActiveTasksOfWorker(gomock.Any(), &worker, "worker signed off").Return(nil)
+	mf.persistence.EXPECT().WorkerSeen(gomock.Any(), &worker)
+
+	echo := mf.prepareMockedRequest(nil)
+	requestWorkerStore(echo, &worker)
+	err := mf.flamenco.SignOff(echo)
+	assert.NoError(t, err)
+	assertResponseNoContent(t, echo)
 }
 
 func TestWorkerState(t *testing.T) {
