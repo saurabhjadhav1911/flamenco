@@ -8,6 +8,9 @@ next to the `flamenco-manager` executable. The previous chapters
 ([Shared Storage][storage] and [Variables][variables]) also described parts of
 that configuration file.
 
+[storage]: {{< ref "shared-storage" >}}
+[variables]: {{< ref "usage/variables/multi-platform" >}}
+
 ## Example Configuration
 
 This is an example `flamenco-manager.yaml` file:
