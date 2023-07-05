@@ -31,16 +31,19 @@ func findBlender() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	helpMsg := "Flamenco Manager will have to supply the full path to Blender when tasks are sent " +
+		"to this Worker. For more info see https://flamenco.blender.org/usage/variables/blender/"
+
 	result, err := find_blender.Find(ctx)
 	switch {
 	case errors.Is(err, fs.ErrNotExist), errors.Is(err, exec.ErrNotFound):
-		log.Warn().Msg("Blender could not be found, Flamenco Manager will have to supply a full path")
+		log.Warn().Msg("Blender could not be found. " + helpMsg)
 	case err != nil:
-		log.Warn().AnErr("cause", err).Msg("there was an issue finding Blender on this system, Flamenco Manager will have to supply a full path")
+		log.Warn().AnErr("cause", err).Msg("There was an error finding Blender on this system. " + helpMsg)
 	default:
 		log.Info().
 			Str("path", result.FoundLocation).
 			Str("version", result.BlenderVersion).
-			Msg("Blender found on this system, it will be used unless Flamenco Manager specifies a path to a different Blender")
+			Msg("Blender found on this system, it will be used unless the Flamenco Manager configuration specifies a different path.")
 	}
 }
