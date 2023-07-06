@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -189,6 +190,16 @@ func TestCheckSharedStoragePath(t *testing.T) {
 	// that seems consistent.
 	// FIXME: find another way to test with unwritable directories on Windows.
 	if runtime.GOOS != "windows" {
+
+		// Root can always create directories, so this test would fail with a
+		// confusing message. Instead it's better to refuse running as root at all.
+		currentUser, err := user.Current()
+		require.NoError(t, err)
+		require.NotEqual(t, "0", currentUser.Uid,
+			"this test requires running as normal user, not %s (%s)", currentUser.Username, currentUser.Uid)
+		require.NotEqual(t, "root", currentUser.Username,
+			"this test requires running as normal user, not %s (%s)", currentUser.Username, currentUser.Uid)
+
 		parentPath := filepath.Join(mf.tempdir, "deep")
 		testPath := filepath.Join(parentPath, "nesting")
 		if err := os.Mkdir(parentPath, fs.ModePerm); !assert.NoError(t, err) {
