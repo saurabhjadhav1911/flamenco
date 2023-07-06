@@ -44,6 +44,6 @@ func ExtendedVersion() string {
 	case releaseCycleRelease, releaseCycleReleaseCandidate:
 		return ApplicationVersion
 	default:
-		return fmt.Sprintf("%s-%s", ApplicationVersion, ApplicationGitHash)
+		return fmt.Sprintf("%s (%s)", ApplicationVersion, ApplicationGitHash)
 	}
 }

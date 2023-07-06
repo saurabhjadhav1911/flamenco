@@ -26,6 +26,7 @@ func (f *Flamenco) GetVersion(e echo.Context) error {
 		Version:      appinfo.ExtendedVersion(),
 		Shortversion: appinfo.ApplicationVersion,
 		Name:         appinfo.ApplicationName,
+		Git:          appinfo.ApplicationGitHash,
 	})
 }
 

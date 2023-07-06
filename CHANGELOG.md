@@ -12,7 +12,7 @@ bugs in actually-released versions.
 - Fix limitation where a job could have no more than 1000 tasks ([#104201](https://projects.blender.org/studio/flamenco/issues/104201))
 - Add support for finding the top-level 'project' directory. When submitting files to Flamenco, the add-on will try to retain the directory structure of your Blender project as precisely as possible. This new feature allows the add-on to find the top-level directory of your project by finding a `.blender_project`, `.git`, or `.subversion` directory. This can be configured in the add-on preferences.
 - Worker status is remembered when they sign off, so that workers when they come back online do so to the same state ([#99549](https://projects.blender.org/studio/flamenco/issues/99549)).
-
+- Nicer version display for non-release builds. Instead of `3.3-alpha0-v3.2-76-gdd34d538`, show `3.3-alpha0 (v3.2-76-gdd34d538)`.
 
 ## 3.2 - released 2023-02-21
 
