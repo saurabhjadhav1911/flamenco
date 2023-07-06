@@ -1334,14 +1334,21 @@ components:
     FlamencoVersion:
       type: object
       properties:
-        "version": { type: string }
+        "version":
+          type: string
+          description: >
+            Version of this Manager, meant for human consumption. For release
+            builds it is the same as `shortversion`, for other builds it also
+            includes the `git` version info.
         "shortversion": { type: string }
         "name": { type: string }
-      required: [version, shortversion, name]
+        "git": { type: string }
+      required: [version, shortversion, name, git]
       example:
-        version: 3.0-beta1-56-g4761e3d7-dirty
-        shortversion: 3.0-beta1
+        version: "3.3-alpha0 (v3.2-76-gdd34d538)"
+        shortversion: 3.3-alpha0
         name: Your Manager
+        git: v3.2-76-gdd34d538
 
     ManagerConfiguration:
       type: object
