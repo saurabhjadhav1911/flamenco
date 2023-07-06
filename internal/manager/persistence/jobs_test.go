@@ -81,7 +81,7 @@ func TestSaveJobStorageInfo(t *testing.T) {
 	ctx, cancel, db := persistenceTestFixtures(t, 1*time.Second)
 	defer cancel()
 
-	startTime := time.Date(2023, time.February, 7, 15, 0, 0, 0, time.Local)
+	startTime := time.Date(2023, time.February, 7, 15, 0, 0, 0, time.UTC)
 	mockNow := startTime
 	db.gormDB.NowFunc = func() time.Time { return mockNow }
 
@@ -95,7 +95,7 @@ func TestSaveJobStorageInfo(t *testing.T) {
 	assert.EqualValues(t, startTime, dbJob.UpdatedAt)
 
 	// Move the clock forward.
-	updateTime := time.Date(2023, time.February, 7, 15, 10, 0, 0, time.Local)
+	updateTime := time.Date(2023, time.February, 7, 15, 10, 0, 0, time.UTC)
 	mockNow = updateTime
 
 	// Save the storage info.
