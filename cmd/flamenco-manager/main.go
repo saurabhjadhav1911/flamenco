@@ -370,7 +370,7 @@ func makeAutoDiscoverable(urls []url.URL) *upnp_ssdp.Server {
 }
 
 func logURLs(urls []url.URL) {
-	log.Info().Int("count", len(urls)).Msg("possble URL at which to reach Flamenco Manager")
+	log.Info().Int("count", len(urls)).Msg("possible URLs at which to reach Flamenco Manager")
 	for _, url := range urls {
 		// Don't log this with something like `Str("url", url.String())`, because
 		// that puts `url=` in front of the URL. This can interfere with
