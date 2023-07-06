@@ -113,11 +113,17 @@ func TestDeleteJob(t *testing.T) {
 	defer cancel()
 
 	authJob := createTestAuthoredJobWithTasks()
+	authJob.Name = "Job to delete"
 	persistAuthoredJob(t, ctx, db, authJob)
+
+	otherJob := duplicateJobAndTasks(authJob)
+	otherJob.Name = "The other job"
+	otherJobTaskCount := int64(len(otherJob.Tasks))
+	persistAuthoredJob(t, ctx, db, otherJob)
 
 	// Delete the job.
 	err := db.DeleteJob(ctx, authJob.JobID)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Test it cannot be found via the API.
 	_, err = db.FetchJob(ctx, authJob.JobID)
@@ -126,16 +132,27 @@ func TestDeleteJob(t *testing.T) {
 	// Test that the job is really gone.
 	var numJobs int64
 	tx := db.gormDB.Model(&Job{}).Count(&numJobs)
-	assert.NoError(t, tx.Error)
-	assert.Equal(t, int64(0), numJobs, "the job should have been deleted")
+	require.NoError(t, tx.Error)
+	assert.Equal(t, int64(1), numJobs,
+		"the job should have been deleted, and the other one should still be there")
 
 	// Test that the tasks are gone too.
 	var numTasks int64
 	tx = db.gormDB.Model(&Task{}).Count(&numTasks)
-	assert.NoError(t, tx.Error)
-	assert.Equal(t, int64(0), numTasks, "tasks should have been deleted along with their job")
+	require.NoError(t, tx.Error)
+	assert.Equal(t, otherJobTaskCount, numTasks,
+		"tasks should have been deleted along with their job, and the other job's tasks should still be there")
 
-	// TODO: test that blocklist entries and task dependencies are gone too.
+	// Test that the correct job was deleted.
+	dbOtherJob, err := db.FetchJob(ctx, otherJob.JobID)
+	require.NoError(t, err, "the other job should still be there")
+	assert.Equal(t, otherJob.Name, dbOtherJob.Name)
+
+	// Test that all the remaining tasks belong to that particular job.
+	tx = db.gormDB.Model(&Task{}).Where(Task{JobID: dbOtherJob.ID}).Count(&numTasks)
+	require.NoError(t, tx.Error)
+	assert.Equal(t, otherJobTaskCount, numTasks,
+		"all remaining tasks should belong to the other job")
 }
 
 func TestRequestJobDeletion(t *testing.T) {
