@@ -254,9 +254,12 @@ type Error struct {
 
 // FlamencoVersion defines model for FlamencoVersion.
 type FlamencoVersion struct {
+	Git          string `json:"git"`
 	Name         string `json:"name"`
 	Shortversion string `json:"shortversion"`
-	Version      string `json:"version"`
+
+	// Version of this Manager, meant for human consumption. For release builds it is the same as `shortversion`, for other builds it also includes the `git` version info.
+	Version string `json:"version"`
 }
 
 // Job defines model for Job.

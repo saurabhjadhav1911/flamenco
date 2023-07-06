@@ -22,13 +22,14 @@ class FlamencoVersion {
     /**
      * Constructs a new <code>FlamencoVersion</code>.
      * @alias module:model/FlamencoVersion
-     * @param version {String} 
+     * @param version {String} Version of this Manager, meant for human consumption. For release builds it is the same as `shortversion`, for other builds it also includes the `git` version info. 
      * @param shortversion {String} 
      * @param name {String} 
+     * @param git {String} 
      */
-    constructor(version, shortversion, name) { 
+    constructor(version, shortversion, name, git) { 
         
-        FlamencoVersion.initialize(this, version, shortversion, name);
+        FlamencoVersion.initialize(this, version, shortversion, name, git);
     }
 
     /**
@@ -36,10 +37,11 @@ class FlamencoVersion {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, version, shortversion, name) { 
+    static initialize(obj, version, shortversion, name, git) { 
         obj['version'] = version;
         obj['shortversion'] = shortversion;
         obj['name'] = name;
+        obj['git'] = git;
     }
 
     /**
@@ -62,6 +64,9 @@ class FlamencoVersion {
             if (data.hasOwnProperty('name')) {
                 obj['name'] = ApiClient.convertToType(data['name'], 'String');
             }
+            if (data.hasOwnProperty('git')) {
+                obj['git'] = ApiClient.convertToType(data['git'], 'String');
+            }
         }
         return obj;
     }
@@ -70,6 +75,7 @@ class FlamencoVersion {
 }
 
 /**
+ * Version of this Manager, meant for human consumption. For release builds it is the same as `shortversion`, for other builds it also includes the `git` version info. 
  * @member {String} version
  */
 FlamencoVersion.prototype['version'] = undefined;
@@ -83,6 +89,11 @@ FlamencoVersion.prototype['shortversion'] = undefined;
  * @member {String} name
  */
 FlamencoVersion.prototype['name'] = undefined;
+
+/**
+ * @member {String} git
+ */
+FlamencoVersion.prototype['git'] = undefined;
 
 
 

@@ -84,6 +84,7 @@ class FlamencoVersion(ModelNormal):
             'version': (str,),  # noqa: E501
             'shortversion': (str,),  # noqa: E501
             'name': (str,),  # noqa: E501
+            'git': (str,),  # noqa: E501
         }
 
     @cached_property
@@ -95,6 +96,7 @@ class FlamencoVersion(ModelNormal):
         'version': 'version',  # noqa: E501
         'shortversion': 'shortversion',  # noqa: E501
         'name': 'name',  # noqa: E501
+        'git': 'git',  # noqa: E501
     }
 
     read_only_vars = {
@@ -104,13 +106,14 @@ class FlamencoVersion(ModelNormal):
 
     @classmethod
     @convert_js_args_to_python_args
-    def _from_openapi_data(cls, version, shortversion, name, *args, **kwargs):  # noqa: E501
+    def _from_openapi_data(cls, version, shortversion, name, git, *args, **kwargs):  # noqa: E501
         """FlamencoVersion - a model defined in OpenAPI
 
         Args:
-            version (str):
+            version (str): Version of this Manager, meant for human consumption. For release builds it is the same as `shortversion`, for other builds it also includes the `git` version info. 
             shortversion (str):
             name (str):
+            git (str):
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -173,6 +176,7 @@ class FlamencoVersion(ModelNormal):
         self.version = version
         self.shortversion = shortversion
         self.name = name
+        self.git = git
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
                         self._configuration is not None and \
@@ -193,13 +197,14 @@ class FlamencoVersion(ModelNormal):
     ])
 
     @convert_js_args_to_python_args
-    def __init__(self, version, shortversion, name, *args, **kwargs):  # noqa: E501
+    def __init__(self, version, shortversion, name, git, *args, **kwargs):  # noqa: E501
         """FlamencoVersion - a model defined in OpenAPI
 
         Args:
-            version (str):
+            version (str): Version of this Manager, meant for human consumption. For release builds it is the same as `shortversion`, for other builds it also includes the `git` version info. 
             shortversion (str):
             name (str):
+            git (str):
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -260,6 +265,7 @@ class FlamencoVersion(ModelNormal):
         self.version = version
         self.shortversion = shortversion
         self.name = name
+        self.git = git
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
                         self._configuration is not None and \
