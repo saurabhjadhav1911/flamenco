@@ -2,6 +2,7 @@
 
 MY_DIR="$(dirname "$(readlink -e "$0")")"
 ADDON_ZIP="$MY_DIR/web/static/flamenco3-addon.zip"
+WORKER_TARGET=/shared/software/flamenco3-worker/flamenco-worker
 
 set -e
 
@@ -22,7 +23,12 @@ scp flamenco-manager flamenco.farm.blender:/home/flamenco3/
 ssh -o ClearAllForwardings=yes flamenco.farm.blender -t sudo systemctl start flamenco3-manager
 
 prompt "Deploying Worker"
-cp -f flamenco-worker /shared/software/flamenco3-worker
+if [ -e "$WORKER_TARGET" ]; then
+  # Move the old worker out of the way. This should keep the old executable
+  # as-is on disk, hopefully keeping currently-running processes happy.
+  mv "$WORKER_TARGET" "$WORKER_TARGET.old"
+fi
+cp -f flamenco-worker "$WORKER_TARGET"
 
 prompt "Deploying Blender Add-on"
 rm -rf /shared/software/addons/flamenco
