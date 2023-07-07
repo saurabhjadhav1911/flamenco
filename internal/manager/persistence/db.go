@@ -15,7 +15,7 @@ import (
 	"github.com/glebarez/sqlite"
 )
 
-const vacuumPeriod = 1 * time.Hour
+const checkPeriod = 1 * time.Hour
 
 // DB provides the database interface.
 type DB struct {
@@ -57,6 +57,10 @@ func OpenDB(ctx context.Context, dsn string) (*DB, error) {
 	}
 
 	// Perfom some maintenance at startup.
+	if !db.performIntegrityCheck(ctx) {
+		return nil, ErrIntegrity
+	}
+
 	db.vacuum()
 
 	if err := db.migrate(); err != nil {
@@ -145,27 +149,6 @@ func openDBWithConfig(dsn string, config *gorm.Config) (*DB, error) {
 // deletedAt, updatedAt) are stored in UTC.
 func nowFunc() time.Time {
 	return time.Now().UTC()
-}
-
-// PeriodicMaintenanceLoop periodically vacuums the database.
-// This function only returns when the context is done.
-func (db *DB) PeriodicMaintenanceLoop(ctx context.Context) {
-	log.Debug().Msg("periodic database maintenance loop starting")
-	defer log.Debug().Msg("periodic database maintenance loop stopping")
-
-	var waitTime time.Duration
-
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(waitTime):
-			waitTime = vacuumPeriod
-		}
-
-		log.Debug().Msg("vacuuming database")
-		db.vacuum()
-	}
 }
 
 // vacuum executes the SQL "VACUUM" command, and logs any errors.
