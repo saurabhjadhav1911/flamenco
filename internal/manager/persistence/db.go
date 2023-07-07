@@ -40,6 +40,18 @@ func OpenDB(ctx context.Context, dsn string) (*DB, error) {
 		return nil, err
 	}
 
+	// Close the database connection if there was some error. This prevents
+	// leaking database connections & should remove any write-ahead-log files.
+	closeConnOnReturn := true
+	defer func() {
+		if !closeConnOnReturn {
+			return
+		}
+		if err := db.Close(); err != nil {
+			log.Debug().AnErr("cause", err).Msg("cannot close database connection")
+		}
+	}()
+
 	if err := setBusyTimeout(db.gormDB, 5*time.Second); err != nil {
 		return nil, err
 	}
@@ -52,6 +64,7 @@ func OpenDB(ctx context.Context, dsn string) (*DB, error) {
 	}
 	log.Debug().Msg("database automigration succesful")
 
+	closeConnOnReturn = false
 	return db, nil
 }
 
@@ -73,6 +86,22 @@ func openDBWithConfig(dsn string, config *gorm.Config) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	db := DB{
+		gormDB: gormDB,
+	}
+
+	// Close the database connection if there was some error. This prevents
+	// leaking database connections & should remove any write-ahead-log files.
+	closeConnOnReturn := true
+	defer func() {
+		if !closeConnOnReturn {
+			return
+		}
+		if err := db.Close(); err != nil {
+			log.Debug().AnErr("cause", err).Msg("cannot close database connection")
+		}
+	}()
 
 	// Use the generic sql.DB interface to set some connection pool options.
 	sqlDB, err := gormDB.DB()
@@ -108,10 +137,7 @@ func openDBWithConfig(dsn string, config *gorm.Config) (*DB, error) {
 		return nil, fmt.Errorf("enabling SQLite 'normal' sync mode: %w", tx.Error)
 	}
 
-	db := DB{
-		gormDB: gormDB,
-	}
-
+	closeConnOnReturn = false
 	return &db, nil
 }
 
