@@ -48,3 +48,4 @@ web/project-website/resources/_gen/
 # IDE related stuff
 *.DS_Store
 .vscode/settings.json
+.vscode/launch.json
