@@ -534,10 +534,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /api/v3/worker-mgt/workers/{worker_id}/setclusters:
-    summary: Update the cluster membership of this Worker.
+  /api/v3/worker-mgt/workers/{worker_id}/settags:
+    summary: Update the tag membership of this Worker.
     post:
-      operationId: setWorkerClusters
+      operationId: setWorkerTags
       tags: [worker-mgt]
       parameters:
         - name: worker_id
@@ -545,12 +545,12 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       requestBody:
-        description: The list of cluster IDs this worker should be a member of.
+        description: The list of worker tag IDs this worker should be a member of.
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/WorkerClusterChangeRequest"
+              $ref: "#/components/schemas/WorkerTagChangeRequest"
       responses:
         "204":
           description: Status change was accepted.
@@ -611,84 +611,84 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /api/v3/worker-mgt/clusters:
-    summary: Manage worker clusters.
+  /api/v3/worker-mgt/tags:
+    summary: Manage worker tags.
     get:
-      operationId: fetchWorkerClusters
-      summary: Get list of worker clusters.
+      operationId: fetchWorkerTags
+      summary: Get list of worker tags.
       tags: [worker-mgt]
       responses:
         "200":
-          description: Worker clusters.
+          description: Worker tags.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/WorkerClusterList" }
+              schema: { $ref: "#/components/schemas/WorkerTagList" }
     post:
-      operationId: createWorkerCluster
-      summary: Create a new worker cluster.
+      operationId: createWorkerTag
+      summary: Create a new worker tag.
       tags: [worker-mgt]
       requestBody:
-        description: The worker cluster.
+        description: The worker tag.
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/WorkerCluster"
+              $ref: "#/components/schemas/WorkerTag"
       responses:
         "200":
-          description: The cluster was created. The created cluster is returned, so that the caller can know its UUID.
+          description: The tag was created. The created tag is returned, so that the caller can know its UUID.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/WorkerCluster" }
+              schema: { $ref: "#/components/schemas/WorkerTag" }
         default:
           description: Error message
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
 
-  /api/v3/worker-mgt/cluster/{cluster_id}:
-    summary: Get, update, or delete a worker cluster.
+  /api/v3/worker-mgt/tag/{tag_id}:
+    summary: Get, update, or delete a worker tag.
     parameters:
-      - name: cluster_id
+      - name: tag_id
         in: path
         required: true
         schema: { type: string, format: uuid }
     get:
-      operationId: fetchWorkerCluster
-      summary: Get a single worker cluster.
+      operationId: fetchWorkerTag
+      summary: Get a single worker tag.
       tags: [worker-mgt]
       responses:
         "200":
-          description: The worker cluster.
+          description: The worker tag.
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/WorkerCluster" }
+              schema: { $ref: "#/components/schemas/WorkerTag" }
     put:
-      operationId: updateWorkerCluster
-      summary: Update an existing worker cluster.
+      operationId: updateWorkerTag
+      summary: Update an existing worker tag.
       tags: [worker-mgt]
       requestBody:
-        description: The updated worker cluster.
+        description: The updated worker tag.
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/WorkerCluster"
+              $ref: "#/components/schemas/WorkerTag"
       responses:
         "204":
-          description: The cluster update has been stored.
+          description: The tag update has been stored.
         default:
           description: Error message
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
     delete:
-      operationId: deleteWorkerCluster
-      summary: Remove this worker cluster. This unassigns all workers from the cluster and removes it.
+      operationId: deleteWorkerTag
+      summary: Remove this worker tag. This unassigns all workers from the tag and removes it.
       tags: [worker-mgt]
       responses:
         "204":
-          description: The cluster has been removed.
+          description: The tag has been removed.
         default:
           description: Unexpected error.
           content:
@@ -1758,12 +1758,12 @@ components:
             test/debug scripts easier, as they can use a static document on all
             platforms.
         "storage": { $ref: "#/components/schemas/JobStorageInfo" }
-        "worker_cluster":
+        "worker_tag":
           type: string
           format: uuid
           description: >
-            Worker Cluster that should execute this job. When a cluster ID is
-            given, only Workers in that cluster will be scheduled to work on it.
+            Worker tag that should execute this job. When a tag ID is
+            given, only Workers in that tag will be scheduled to work on it.
             If empty or ommitted, all workers can work on this job.
       required: [name, type, priority, submitter_platform]
       example:
@@ -2364,10 +2364,10 @@ components:
               type: array
               items: { type: string }
             "task": { $ref: "#/components/schemas/WorkerTask" }
-            "clusters":
+            "tags":
               type: array
-              items: { $ref: "#/components/schemas/WorkerCluster" }
-              description: Clusters of which this Worker is a member.
+              items: { $ref: "#/components/schemas/WorkerTag" }
+              description: Tags of which this Worker is a member.
           required:
             - id
             - name
@@ -2421,17 +2421,17 @@ components:
         start_time: "09:00"
         end_time: "18:00"
 
-    WorkerCluster:
+    WorkerTag:
       type: object
       description: >
-        Cluster of workers. A job can optionally specify which cluster it should
-        be limited to. Workers can be part of multiple clusters simultaneously.
+        Tag of workers. A job can optionally specify which tag it should
+        be limited to. Workers can be part of multiple tags simultaneously.
       properties:
         "id":
           type: string
           format: uuid
           description: >
-            UUID of the cluster. Can be ommitted when creating a new cluster, in
+            UUID of the tag. Can be ommitted when creating a new tag, in
             which case a random UUID will be assigned.
         "name":
           type: string
@@ -2442,25 +2442,25 @@ components:
         name: GPU-EEVEE
         description: All workers that can do GPU rendering with EEVEE.
 
-    WorkerClusterList:
+    WorkerTagList:
       type: object
       properties:
-        "clusters":
+        "tags":
           type: array
-          items: { $ref: "#/components/schemas/WorkerCluster" }
+          items: { $ref: "#/components/schemas/WorkerTag" }
 
-    WorkerClusterChangeRequest:
+    WorkerTagChangeRequest:
       type: object
-      description: Request to change which clusters this Worker is assigned to.
+      description: Request to change which tags this Worker is assigned to.
       properties:
-        "cluster_ids":
+        "tag_ids":
           type: array
           items:
             type: string
             format: uuid
-      required: [cluster_ids]
+      required: [tag_ids]
       example:
-        "cluster_ids": ["4312d68c-ea6d-4566-9bf6-e9f09be48ceb"]
+        "tag_ids": ["4312d68c-ea6d-4566-9bf6-e9f09be48ceb"]
 
   securitySchemes:
     worker_auth:
