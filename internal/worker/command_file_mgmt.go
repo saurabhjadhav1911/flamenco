@@ -215,7 +215,6 @@ func fileCopy(src, dest string) (error, string) {
 	return nil, msg
 }
 
-
 func fileExists(filename string) bool {
 	_, err := os.Stat(filename)
 	return !errors.Is(err, fs.ErrNotExist)

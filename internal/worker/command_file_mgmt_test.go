@@ -345,7 +345,6 @@ func TestCmdCopyFileDestinationExists(t *testing.T) {
 	assert.Error(t, f.run())
 }
 
-
 func TestCmdCopyFileSourceIsDir(t *testing.T) {
 	f := newCmdCopyFileFixture(t)
 	defer f.finish(t)
@@ -371,7 +370,6 @@ func TestCmdCopyFileSourceIsDir(t *testing.T) {
 
 	assert.Error(t, f.run())
 }
-
 
 func newCmdCopyFileFixture(t *testing.T) cmdCopyFileFixture {
 	mockCtrl := gomock.NewController(t)
@@ -410,11 +408,11 @@ func (f cmdCopyFileFixture) finish(t *testing.T) {
 	f.mockCtrl.Finish()
 }
 
-func (f cmdCopyFileFixture) run() error {        
+func (f cmdCopyFileFixture) run() error {
 	cmd := api.Command{
 		Name: "copy-file",
 		Parameters: map[string]interface{}{
-			"src": f.absolute_src_path,
+			"src":  f.absolute_src_path,
 			"dest": f.absolute_dest_path,
 		},
 	}

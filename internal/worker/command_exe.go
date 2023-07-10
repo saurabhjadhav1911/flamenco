@@ -90,7 +90,7 @@ func NewCommandExecutor(cli CommandLineRunner, listener CommandListener, timeSer
 
 		// file-management
 		"move-directory": ce.cmdMoveDirectory,
-		"copy-file": ce.cmdCopyFile,
+		"copy-file":      ce.cmdCopyFile,
 	}
 
 	return ce
