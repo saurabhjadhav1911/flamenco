@@ -126,14 +126,14 @@ func TestWorkersLeftToRun(t *testing.T) {
 	worker1 := createWorker(ctx, t, db)
 	worker2 := createWorkerFrom(ctx, t, db, *worker1)
 
-	// Create one worker cluster. It will not be used by this job, but one of the
+	// Create one worker tag. It will not be used by this job, but one of the
 	// workers will be assigned to it. It can get this job's tasks, though.
-	// Because the job is clusterless, it can be run by all.
-	cluster1 := WorkerCluster{UUID: "11157623-4b14-4801-bee2-271dddab6309", Name: "Cluster 1"}
-	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster1))
+	// Because the job is tagless, it can be run by all.
+	tag1 := WorkerTag{UUID: "11157623-4b14-4801-bee2-271dddab6309", Name: "Tag 1"}
+	require.NoError(t, db.CreateWorkerTag(ctx, &tag1))
 	workerC1 := createWorker(ctx, t, db, func(w *Worker) {
 		w.UUID = "c1c1c1c1-0000-1111-2222-333333333333"
-		w.Clusters = []*WorkerCluster{&cluster1}
+		w.Tags = []*WorkerTag{&tag1}
 	})
 
 	uuidMap := func(workers ...*Worker) map[string]bool {
@@ -172,43 +172,43 @@ func TestWorkersLeftToRun(t *testing.T) {
 	}
 }
 
-func TestWorkersLeftToRunWithClusters(t *testing.T) {
+func TestWorkersLeftToRunWithTags(t *testing.T) {
 	ctx, cancel, db := persistenceTestFixtures(t, schedulerTestTimeout)
 	defer cancel()
 
-	// Create clusters.
-	cluster1 := WorkerCluster{UUID: "11157623-4b14-4801-bee2-271dddab6309", Name: "Cluster 1"}
-	cluster2 := WorkerCluster{UUID: "22257623-4b14-4801-bee2-271dddab6309", Name: "Cluster 2"}
-	cluster3 := WorkerCluster{UUID: "33357623-4b14-4801-bee2-271dddab6309", Name: "Cluster 3"}
-	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster1))
-	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster2))
-	require.NoError(t, db.CreateWorkerCluster(ctx, &cluster3))
+	// Create tags.
+	tag1 := WorkerTag{UUID: "11157623-4b14-4801-bee2-271dddab6309", Name: "Tag 1"}
+	tag2 := WorkerTag{UUID: "22257623-4b14-4801-bee2-271dddab6309", Name: "Tag 2"}
+	tag3 := WorkerTag{UUID: "33357623-4b14-4801-bee2-271dddab6309", Name: "Tag 3"}
+	require.NoError(t, db.CreateWorkerTag(ctx, &tag1))
+	require.NoError(t, db.CreateWorkerTag(ctx, &tag2))
+	require.NoError(t, db.CreateWorkerTag(ctx, &tag3))
 
-	// Create a job in cluster1.
+	// Create a job in tag1.
 	authoredJob := createTestAuthoredJobWithTasks()
-	authoredJob.WorkerClusterUUID = cluster1.UUID
+	authoredJob.WorkerTagUUID = tag1.UUID
 	job := persistAuthoredJob(t, ctx, db, authoredJob)
 
-	// Clusters 1 + 3
+	// Tags 1 + 3
 	workerC13 := createWorker(ctx, t, db, func(w *Worker) {
 		w.UUID = "c13c1313-0000-1111-2222-333333333333"
-		w.Clusters = []*WorkerCluster{&cluster1, &cluster3}
+		w.Tags = []*WorkerTag{&tag1, &tag3}
 	})
-	// Cluster 1
+	// Tag 1
 	workerC1 := createWorker(ctx, t, db, func(w *Worker) {
 		w.UUID = "c1c1c1c1-0000-1111-2222-333333333333"
-		w.Clusters = []*WorkerCluster{&cluster1}
+		w.Tags = []*WorkerTag{&tag1}
 	})
-	// Cluster 2 worker, this one should never appear.
+	// Tag 2 worker, this one should never appear.
 	createWorker(ctx, t, db, func(w *Worker) {
 		w.UUID = "c2c2c2c2-0000-1111-2222-333333333333"
-		w.Clusters = []*WorkerCluster{&cluster2}
+		w.Tags = []*WorkerTag{&tag2}
 	})
-	// No clusters, so should be able to run only clusterless jobs. Which is none
+	// No tags, so should be able to run only tagless jobs. Which is none
 	// in this test.
 	createWorker(ctx, t, db, func(w *Worker) {
 		w.UUID = "00000000-0000-1111-2222-333333333333"
-		w.Clusters = nil
+		w.Tags = nil
 	})
 
 	uuidMap := func(workers ...*Worker) map[string]bool {
@@ -219,7 +219,7 @@ func TestWorkersLeftToRunWithClusters(t *testing.T) {
 		return theMap
 	}
 
-	// All Cluster 1 workers, no blocklist.
+	// All Tag 1 workers, no blocklist.
 	left, err := db.WorkersLeftToRun(ctx, job, "blender")
 	require.NoError(t, err)
 	assert.Equal(t, uuidMap(workerC13, workerC1), left)
@@ -230,7 +230,7 @@ func TestWorkersLeftToRunWithClusters(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, uuidMap(workerC13), left)
 
-	// All clustered workers blocked.
+	// All taged workers blocked.
 	_ = db.AddWorkerToJobBlocklist(ctx, job, workerC13, "blender")
 	left, err = db.WorkersLeftToRun(ctx, job, "blender")
 	assert.NoError(t, err)

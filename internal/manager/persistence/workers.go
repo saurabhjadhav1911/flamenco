@@ -31,7 +31,7 @@ type Worker struct {
 
 	SupportedTaskTypes string `gorm:"type:varchar(255);default:''"` // comma-separated list of task types.
 
-	Clusters []*WorkerCluster `gorm:"many2many:worker_cluster_membership;constraint:OnDelete:CASCADE"`
+	Tags []*WorkerTag `gorm:"many2many:worker_tag_membership;constraint:OnDelete:CASCADE"`
 }
 
 func (w *Worker) Identifier() string {
@@ -73,7 +73,7 @@ func (db *DB) CreateWorker(ctx context.Context, w *Worker) error {
 func (db *DB) FetchWorker(ctx context.Context, uuid string) (*Worker, error) {
 	w := Worker{}
 	tx := db.gormDB.WithContext(ctx).
-		Preload("Clusters").
+		Preload("Tags").
 		First(&w, "uuid = ?", uuid)
 	if tx.Error != nil {
 		return nil, workerError(tx.Error, "fetching worker")

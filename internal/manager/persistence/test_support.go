@@ -96,8 +96,8 @@ type WorkerTestFixture struct {
 	ctx  context.Context
 	done func()
 
-	worker  *Worker
-	cluster *WorkerCluster
+	worker *Worker
+	tag    *WorkerTag
 }
 
 func workerTestFixtures(t *testing.T, testContextTimeout time.Duration) WorkerTestFixture {
@@ -113,21 +113,21 @@ func workerTestFixtures(t *testing.T, testContextTimeout time.Duration) WorkerTe
 		SupportedTaskTypes: "blender,ffmpeg,file-management",
 	}
 
-	wc := WorkerCluster{
+	wc := WorkerTag{
 		UUID:        uuid.New(),
 		Name:        "arbejdsklynge",
-		Description: "Worker cluster in Danish",
+		Description: "Worker tag in Danish",
 	}
 
 	require.NoError(t, db.CreateWorker(ctx, &w))
-	require.NoError(t, db.CreateWorkerCluster(ctx, &wc))
+	require.NoError(t, db.CreateWorkerTag(ctx, &wc))
 
 	return WorkerTestFixture{
 		db:   db,
 		ctx:  ctx,
 		done: cancel,
 
-		worker:  &w,
-		cluster: &wc,
+		worker: &w,
+		tag:    &wc,
 	}
 }

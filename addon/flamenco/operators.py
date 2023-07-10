@@ -10,7 +10,7 @@ from urllib3.exceptions import HTTPError, MaxRetryError
 
 import bpy
 
-from . import job_types, job_submission, preferences, worker_clusters
+from . import job_types, job_submission, preferences, worker_tags
 from .job_types_propgroup import JobTypePropertyGroup
 from .bat.submodules import bpathlib
 
@@ -83,10 +83,10 @@ class FLAMENCO_OT_fetch_job_types(FlamencoOpMixin, bpy.types.Operator):
         return {"FINISHED"}
 
 
-class FLAMENCO_OT_fetch_worker_clusters(FlamencoOpMixin, bpy.types.Operator):
-    bl_idname = "flamenco.fetch_worker_clusters"
-    bl_label = "Fetch Worker Clusters"
-    bl_description = "Query Flamenco Manager to obtain the available worker clusters"
+class FLAMENCO_OT_fetch_worker_tags(FlamencoOpMixin, bpy.types.Operator):
+    bl_idname = "flamenco.fetch_worker_tags"
+    bl_label = "Fetch Worker Tags"
+    bl_description = "Query Flamenco Manager to obtain the available worker tags"
 
     def execute(self, context: bpy.types.Context) -> set[str]:
         api_client = self.get_api_client(context)
@@ -94,10 +94,10 @@ class FLAMENCO_OT_fetch_worker_clusters(FlamencoOpMixin, bpy.types.Operator):
         from flamenco.manager import ApiException
 
         scene = context.scene
-        old_cluster = getattr(scene, "flamenco_worker_cluster", "")
+        old_tag = getattr(scene, "flamenco_worker_tag", "")
 
         try:
-            worker_clusters.refresh(context, api_client)
+            worker_tags.refresh(context, api_client)
         except ApiException as ex:
             self.report({"ERROR"}, "Error getting job types: %s" % ex)
             return {"CANCELLED"}
@@ -107,9 +107,9 @@ class FLAMENCO_OT_fetch_worker_clusters(FlamencoOpMixin, bpy.types.Operator):
             self.report({"ERROR"}, "Unable to reach Manager")
             return {"CANCELLED"}
 
-        if old_cluster:
-            # TODO: handle cases where the old cluster no longer exists.
-            scene.flamenco_worker_cluster = old_cluster
+        if old_tag:
+            # TODO: handle cases where the old tag no longer exists.
+            scene.flamenco_worker_tag = old_tag
 
         return {"FINISHED"}
 
@@ -669,7 +669,7 @@ class FLAMENCO3_OT_explore_file_path(bpy.types.Operator):
 
 classes = (
     FLAMENCO_OT_fetch_job_types,
-    FLAMENCO_OT_fetch_worker_clusters,
+    FLAMENCO_OT_fetch_worker_tags,
     FLAMENCO_OT_ping_manager,
     FLAMENCO_OT_eval_setting,
     FLAMENCO_OT_submit_job,

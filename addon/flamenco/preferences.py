@@ -43,7 +43,7 @@ _project_finder_enum_items = [
 ]
 
 
-class WorkerCluster(bpy.types.PropertyGroup):
+class WorkerTag(bpy.types.PropertyGroup):
     id: bpy.props.StringProperty(name="id")  # type: ignore
     name: bpy.props.StringProperty(name="Name")  # type: ignore
     description: bpy.props.StringProperty(name="Description")  # type: ignore
@@ -93,10 +93,10 @@ class FlamencoPreferences(bpy.types.AddonPreferences):
         get=lambda prefs: prefs.job_storage,
     )
 
-    worker_clusters: bpy.props.CollectionProperty(  # type: ignore
-        type=WorkerCluster,
-        name="Worker Clusters",
-        description="Cache for the worker clusters available on the configured Manager",
+    worker_tags: bpy.props.CollectionProperty(  # type: ignore
+        type=WorkerTag,
+        name="Worker Tags",
+        description="Cache for the worker tags available on the configured Manager",
         options={"HIDDEN"},
     )
 
@@ -169,7 +169,7 @@ def manager_url(context: bpy.types.Context) -> str:
 
 
 classes = (
-    WorkerCluster,
+    WorkerTag,
     FlamencoPreferences,
 )
 _register, _unregister = bpy.utils.register_classes_factory(classes)

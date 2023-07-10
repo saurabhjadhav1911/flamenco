@@ -16,25 +16,25 @@ _enum_items: list[Union[tuple[str, str, str], tuple[str, str, str, int, int]]] =
 
 
 def refresh(context: bpy.types.Context, api_client: _ApiClient) -> None:
-    """Fetch the available worker clusters from the Manager."""
+    """Fetch the available worker tags from the Manager."""
     from flamenco.manager import ApiClient
     from flamenco.manager.api import worker_mgt_api
-    from flamenco.manager.model.worker_cluster_list import WorkerClusterList
+    from flamenco.manager.model.worker_tag_list import WorkerTagList
 
     assert isinstance(api_client, ApiClient)
 
     api = worker_mgt_api.WorkerMgtApi(api_client)
-    response: WorkerClusterList = api.fetch_worker_clusters()
+    response: WorkerTagList = api.fetch_worker_tags()
 
     # Store on the preferences, so a cached version persists until the next refresh.
     prefs = preferences.get(context)
-    prefs.worker_clusters.clear()
+    prefs.worker_tags.clear()
 
-    for cluster in response.clusters:
-        rna_cluster = prefs.worker_clusters.add()
-        rna_cluster.id = cluster.id
-        rna_cluster.name = cluster.name
-        rna_cluster.description = getattr(cluster, "description", "")
+    for tag in response.tags:
+        rna_tag = prefs.worker_tags.add()
+        rna_tag.id = tag.id
+        rna_tag.name = tag.name
+        rna_tag.description = getattr(tag, "description", "")
 
     # Preferences have changed, so make sure that Blender saves them (assuming
     # auto-save here).
@@ -46,25 +46,25 @@ def _get_enum_items(self, context):
     prefs = preferences.get(context)
 
     _enum_items = [
-        ("-", "All", "No specific cluster assigned, any worker can handle this job"),
+        ("-", "All", "No specific tag assigned, any worker can handle this job"),
     ]
     _enum_items.extend(
-        (cluster.id, cluster.name, cluster.description)
-        for cluster in prefs.worker_clusters
+        (tag.id, tag.name, tag.description)
+        for tag in prefs.worker_tags
     )
     return _enum_items
 
 
 def register() -> None:
-    bpy.types.Scene.flamenco_worker_cluster = bpy.props.EnumProperty(
-        name="Worker Cluster",
+    bpy.types.Scene.flamenco_worker_tag = bpy.props.EnumProperty(
+        name="Worker Tag",
         items=_get_enum_items,
         description="The set of Workers that can handle tasks of this job",
     )
 
 
 def unregister() -> None:
-    to_del = ((bpy.types.Scene, "flamenco_worker_cluster"),)
+    to_del = ((bpy.types.Scene, "flamenco_worker_tag"),)
     for ob, attr in to_del:
         try:
             delattr(ob, attr)

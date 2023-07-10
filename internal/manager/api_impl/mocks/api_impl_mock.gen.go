@@ -141,18 +141,18 @@ func (mr *MockPersistenceServiceMockRecorder) CreateWorker(arg0, arg1 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorker", reflect.TypeOf((*MockPersistenceService)(nil).CreateWorker), arg0, arg1)
 }
 
-// CreateWorkerCluster mocks base method.
-func (m *MockPersistenceService) CreateWorkerCluster(arg0 context.Context, arg1 *persistence.WorkerCluster) error {
+// CreateWorkerTag mocks base method.
+func (m *MockPersistenceService) CreateWorkerTag(arg0 context.Context, arg1 *persistence.WorkerTag) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateWorkerCluster", arg0, arg1)
+	ret := m.ctrl.Call(m, "CreateWorkerTag", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CreateWorkerCluster indicates an expected call of CreateWorkerCluster.
-func (mr *MockPersistenceServiceMockRecorder) CreateWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
+// CreateWorkerTag indicates an expected call of CreateWorkerTag.
+func (mr *MockPersistenceServiceMockRecorder) CreateWorkerTag(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).CreateWorkerCluster), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWorkerTag", reflect.TypeOf((*MockPersistenceService)(nil).CreateWorkerTag), arg0, arg1)
 }
 
 // DeleteWorker mocks base method.
@@ -169,18 +169,18 @@ func (mr *MockPersistenceServiceMockRecorder) DeleteWorker(arg0, arg1 interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorker", reflect.TypeOf((*MockPersistenceService)(nil).DeleteWorker), arg0, arg1)
 }
 
-// DeleteWorkerCluster mocks base method.
-func (m *MockPersistenceService) DeleteWorkerCluster(arg0 context.Context, arg1 string) error {
+// DeleteWorkerTag mocks base method.
+func (m *MockPersistenceService) DeleteWorkerTag(arg0 context.Context, arg1 string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteWorkerCluster", arg0, arg1)
+	ret := m.ctrl.Call(m, "DeleteWorkerTag", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteWorkerCluster indicates an expected call of DeleteWorkerCluster.
-func (mr *MockPersistenceServiceMockRecorder) DeleteWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
+// DeleteWorkerTag indicates an expected call of DeleteWorkerTag.
+func (mr *MockPersistenceServiceMockRecorder) DeleteWorkerTag(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).DeleteWorkerCluster), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkerTag", reflect.TypeOf((*MockPersistenceService)(nil).DeleteWorkerTag), arg0, arg1)
 }
 
 // FetchJob mocks base method.
@@ -258,34 +258,34 @@ func (mr *MockPersistenceServiceMockRecorder) FetchWorker(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorker", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorker), arg0, arg1)
 }
 
-// FetchWorkerCluster mocks base method.
-func (m *MockPersistenceService) FetchWorkerCluster(arg0 context.Context, arg1 string) (*persistence.WorkerCluster, error) {
+// FetchWorkerTag mocks base method.
+func (m *MockPersistenceService) FetchWorkerTag(arg0 context.Context, arg1 string) (*persistence.WorkerTag, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FetchWorkerCluster", arg0, arg1)
-	ret0, _ := ret[0].(*persistence.WorkerCluster)
+	ret := m.ctrl.Call(m, "FetchWorkerTag", arg0, arg1)
+	ret0, _ := ret[0].(*persistence.WorkerTag)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FetchWorkerCluster indicates an expected call of FetchWorkerCluster.
-func (mr *MockPersistenceServiceMockRecorder) FetchWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
+// FetchWorkerTag indicates an expected call of FetchWorkerTag.
+func (mr *MockPersistenceServiceMockRecorder) FetchWorkerTag(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorkerCluster), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerTag", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorkerTag), arg0, arg1)
 }
 
-// FetchWorkerClusters mocks base method.
-func (m *MockPersistenceService) FetchWorkerClusters(arg0 context.Context) ([]*persistence.WorkerCluster, error) {
+// FetchWorkerTags mocks base method.
+func (m *MockPersistenceService) FetchWorkerTags(arg0 context.Context) ([]*persistence.WorkerTag, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FetchWorkerClusters", arg0)
-	ret0, _ := ret[0].([]*persistence.WorkerCluster)
+	ret := m.ctrl.Call(m, "FetchWorkerTags", arg0)
+	ret0, _ := ret[0].([]*persistence.WorkerTag)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FetchWorkerClusters indicates an expected call of FetchWorkerClusters.
-func (mr *MockPersistenceServiceMockRecorder) FetchWorkerClusters(arg0 interface{}) *gomock.Call {
+// FetchWorkerTags indicates an expected call of FetchWorkerTags.
+func (mr *MockPersistenceServiceMockRecorder) FetchWorkerTags(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerClusters", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorkerClusters), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchWorkerTags", reflect.TypeOf((*MockPersistenceService)(nil).FetchWorkerTags), arg0)
 }
 
 // FetchWorkerTask mocks base method.
@@ -433,20 +433,6 @@ func (mr *MockPersistenceServiceMockRecorder) SaveWorker(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveWorker", reflect.TypeOf((*MockPersistenceService)(nil).SaveWorker), arg0, arg1)
 }
 
-// SaveWorkerCluster mocks base method.
-func (m *MockPersistenceService) SaveWorkerCluster(arg0 context.Context, arg1 *persistence.WorkerCluster) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveWorkerCluster", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SaveWorkerCluster indicates an expected call of SaveWorkerCluster.
-func (mr *MockPersistenceServiceMockRecorder) SaveWorkerCluster(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveWorkerCluster", reflect.TypeOf((*MockPersistenceService)(nil).SaveWorkerCluster), arg0, arg1)
-}
-
 // SaveWorkerStatus mocks base method.
 func (m *MockPersistenceService) SaveWorkerStatus(arg0 context.Context, arg1 *persistence.Worker) error {
 	m.ctrl.T.Helper()
@@ -459,6 +445,20 @@ func (m *MockPersistenceService) SaveWorkerStatus(arg0 context.Context, arg1 *pe
 func (mr *MockPersistenceServiceMockRecorder) SaveWorkerStatus(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveWorkerStatus", reflect.TypeOf((*MockPersistenceService)(nil).SaveWorkerStatus), arg0, arg1)
+}
+
+// SaveWorkerTag mocks base method.
+func (m *MockPersistenceService) SaveWorkerTag(arg0 context.Context, arg1 *persistence.WorkerTag) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveWorkerTag", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveWorkerTag indicates an expected call of SaveWorkerTag.
+func (mr *MockPersistenceServiceMockRecorder) SaveWorkerTag(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveWorkerTag", reflect.TypeOf((*MockPersistenceService)(nil).SaveWorkerTag), arg0, arg1)
 }
 
 // ScheduleTask mocks base method.
@@ -532,18 +532,18 @@ func (mr *MockPersistenceServiceMockRecorder) WorkerSeen(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WorkerSeen", reflect.TypeOf((*MockPersistenceService)(nil).WorkerSeen), arg0, arg1)
 }
 
-// WorkerSetClusters mocks base method.
-func (m *MockPersistenceService) WorkerSetClusters(arg0 context.Context, arg1 *persistence.Worker, arg2 []string) error {
+// WorkerSetTags mocks base method.
+func (m *MockPersistenceService) WorkerSetTags(arg0 context.Context, arg1 *persistence.Worker, arg2 []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WorkerSetClusters", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "WorkerSetTags", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// WorkerSetClusters indicates an expected call of WorkerSetClusters.
-func (mr *MockPersistenceServiceMockRecorder) WorkerSetClusters(arg0, arg1, arg2 interface{}) *gomock.Call {
+// WorkerSetTags indicates an expected call of WorkerSetTags.
+func (mr *MockPersistenceServiceMockRecorder) WorkerSetTags(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WorkerSetClusters", reflect.TypeOf((*MockPersistenceService)(nil).WorkerSetClusters), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WorkerSetTags", reflect.TypeOf((*MockPersistenceService)(nil).WorkerSetTags), arg0, arg1, arg2)
 }
 
 // WorkersLeftToRun mocks base method.

@@ -16,7 +16,7 @@ func (db *DB) migrate() error {
 		&Task{},
 		&TaskFailure{},
 		&Worker{},
-		&WorkerCluster{},
+		&WorkerTag{},
 	)
 	if err != nil {
 		return fmt.Errorf("failed to automigrate database: %v", err)

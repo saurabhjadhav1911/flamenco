@@ -32,12 +32,17 @@
           <dt class="field-name" title="ID">ID</dt>
           <dd><span @click="copyElementText" class="click-to-copy">{{ jobData.id }}</span></dd>
 
-          <template v-if="workerCluster">
-            <!-- TODO: fetch cluster name and show that instead, and allow editing of the cluster. -->
-            <dt class="field-name" title="Worker Cluster">Cluster</dt>
-            <dd :title="workerCluster.description"><span @click="copyElementData" class="click-to-copy"
-                :data-clipboard="workerCluster.id">{{
-                  workerCluster.name }}</span></dd>
+          <template v-if="workerTag">
+            <!-- TODO: fetch tag name and show that instead, and allow editing of the tag. -->
+            <dt class="field-name" title="Worker Tag">Tag</dt>
+            <dd :title="workerTag.description">
+              <span
+                @click="copyElementData"
+                class="click-to-copy"
+                :data-clipboard="workerTag.id"
+                >{{ workerTag.name }}</span
+              >
+            </dd>
           </template>
 
           <dt class="field-name" title="Name">Name</dt>
@@ -128,11 +133,10 @@ export default {
       this._refreshJobSettings(this.jobData);
     }
 
-    this.workers.refreshClusters()
-      .catch((error) => {
-        const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
-        this.notifs.add(`Error: ${errorMsg}`);
-      });
+    this.workers.refreshTags().catch((error) => {
+      const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
+      this.notifs.add(`Error: ${errorMsg}`);
+    });
   },
   computed: {
     hasJobData() {
@@ -156,9 +160,9 @@ export default {
       }
       return this.jobData.settings;
     },
-    workerCluster() {
-      if (!this.jobData.worker_cluster) return undefined;
-      return this.workers.clustersByID[this.jobData.worker_cluster];
+    workerTag() {
+      if (!this.jobData.worker_tag) return undefined;
+      return this.workers.tagsByID[this.jobData.worker_tag];
     },
   },
   watch: {

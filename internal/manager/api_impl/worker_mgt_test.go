@@ -262,58 +262,58 @@ func TestRequestWorkerStatusChangeRevert(t *testing.T) {
 	assertResponseNoContent(t, echo)
 }
 
-func TestWorkerClusterCRUDHappyFlow(t *testing.T) {
+func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	mf := newMockedFlamenco(mockCtrl)
 
-	// Create a cluster.
+	// Create a tag.
 	UUID := "18d9234e-5135-458f-a1ba-a350c3d4e837"
-	apiCluster := api.WorkerCluster{
+	apiTag := api.WorkerTag{
 		Id:          &UUID,
 		Name:        "ʻO nā manu ʻino",
 		Description: ptr("Ke aloha"),
 	}
-	expectDBCluster := persistence.WorkerCluster{
+	expectDBTag := persistence.WorkerTag{
 		UUID:        UUID,
-		Name:        apiCluster.Name,
-		Description: *apiCluster.Description,
+		Name:        apiTag.Name,
+		Description: *apiTag.Description,
 	}
-	mf.persistence.EXPECT().CreateWorkerCluster(gomock.Any(), &expectDBCluster)
-	// TODO: expect SocketIO broadcast of the cluster creation.
-	echo := mf.prepareMockedJSONRequest(apiCluster)
-	require.NoError(t, mf.flamenco.CreateWorkerCluster(echo))
-	assertResponseJSON(t, echo, http.StatusOK, &apiCluster)
+	mf.persistence.EXPECT().CreateWorkerTag(gomock.Any(), &expectDBTag)
+	// TODO: expect SocketIO broadcast of the tag creation.
+	echo := mf.prepareMockedJSONRequest(apiTag)
+	require.NoError(t, mf.flamenco.CreateWorkerTag(echo))
+	assertResponseJSON(t, echo, http.StatusOK, &apiTag)
 
-	// Fetch the cluster
-	mf.persistence.EXPECT().FetchWorkerCluster(gomock.Any(), UUID).Return(&expectDBCluster, nil)
+	// Fetch the tag
+	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
 	echo = mf.prepareMockedRequest(nil)
-	require.NoError(t, mf.flamenco.FetchWorkerCluster(echo, UUID))
-	assertResponseJSON(t, echo, http.StatusOK, &apiCluster)
+	require.NoError(t, mf.flamenco.FetchWorkerTag(echo, UUID))
+	assertResponseJSON(t, echo, http.StatusOK, &apiTag)
 
 	// Update & save.
 	newUUID := "60442762-83d3-4fc3-bf75-6ab5799cdbaa"
-	newAPICluster := api.WorkerCluster{
+	newAPITag := api.WorkerTag{
 		Id:   &newUUID, // Intentionally change the UUID. This should just be ignored.
 		Name: "updated name",
 	}
-	expectNewDBCluster := persistence.WorkerCluster{
+	expectNewDBTag := persistence.WorkerTag{
 		UUID:        UUID,
-		Name:        newAPICluster.Name,
+		Name:        newAPITag.Name,
 		Description: "",
 	}
-	// TODO: expect SocketIO broadcast of the cluster update.
-	mf.persistence.EXPECT().FetchWorkerCluster(gomock.Any(), UUID).Return(&expectDBCluster, nil)
-	mf.persistence.EXPECT().SaveWorkerCluster(gomock.Any(), &expectNewDBCluster)
-	echo = mf.prepareMockedJSONRequest(newAPICluster)
-	require.NoError(t, mf.flamenco.UpdateWorkerCluster(echo, UUID))
+	// TODO: expect SocketIO broadcast of the tag update.
+	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
+	mf.persistence.EXPECT().SaveWorkerTag(gomock.Any(), &expectNewDBTag)
+	echo = mf.prepareMockedJSONRequest(newAPITag)
+	require.NoError(t, mf.flamenco.UpdateWorkerTag(echo, UUID))
 	assertResponseNoContent(t, echo)
 
 	// Delete.
-	mf.persistence.EXPECT().DeleteWorkerCluster(gomock.Any(), UUID)
-	// TODO: expect SocketIO broadcast of the cluster deletion.
-	echo = mf.prepareMockedJSONRequest(newAPICluster)
-	require.NoError(t, mf.flamenco.DeleteWorkerCluster(echo, UUID))
+	mf.persistence.EXPECT().DeleteWorkerTag(gomock.Any(), UUID)
+	// TODO: expect SocketIO broadcast of the tag deletion.
+	echo = mf.prepareMockedJSONRequest(newAPITag)
+	require.NoError(t, mf.flamenco.DeleteWorkerTag(echo, UUID))
 	assertResponseNoContent(t, echo)
 }

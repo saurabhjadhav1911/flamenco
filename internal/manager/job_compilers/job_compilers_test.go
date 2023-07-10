@@ -45,12 +45,12 @@ func exampleSubmittedJob() api.SubmittedJob {
 			"user.name":  "Sybren Stüvel",
 		}}
 	sj := api.SubmittedJob{
-		Name:          "3Д рендеринг",
-		Priority:      50,
-		Type:          "simple-blender-render",
-		Settings:      &settings,
-		Metadata:      &metadata,
-		WorkerCluster: ptr("acce9983-e663-4210-b3cc-f7bfa629cb21"),
+		Name:      "3Д рендеринг",
+		Priority:  50,
+		Type:      "simple-blender-render",
+		Settings:  &settings,
+		Metadata:  &metadata,
+		WorkerTag: ptr("acce9983-e663-4210-b3cc-f7bfa629cb21"),
 	}
 	return sj
 }
@@ -80,7 +80,7 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 
 	// Properties should be copied as-is.
 	assert.Equal(t, sj.Name, aj.Name)
-	assert.Equal(t, *sj.WorkerCluster, aj.WorkerClusterUUID)
+	assert.Equal(t, *sj.WorkerTag, aj.WorkerTagUUID)
 	assert.Equal(t, sj.Type, aj.JobType)
 	assert.Equal(t, sj.Priority, aj.Priority)
 	assert.EqualValues(t, sj.Settings.AdditionalProperties, aj.Settings)
@@ -139,7 +139,7 @@ func TestSimpleBlenderRenderHappy(t *testing.T) {
 	assert.Equal(t, expectDeps, tVideo.Dependencies)
 }
 
-func TestJobWithoutCluster(t *testing.T) {
+func TestJobWithoutTag(t *testing.T) {
 	c := mockedClock(t)
 
 	s, err := Load(c)
@@ -151,20 +151,20 @@ func TestJobWithoutCluster(t *testing.T) {
 
 	sj := exampleSubmittedJob()
 
-	// Try with nil WorkerCluster.
+	// Try with nil WorkerTag.
 	{
-		sj.WorkerCluster = nil
+		sj.WorkerTag = nil
 		aj, err := s.Compile(ctx, sj)
 		require.NoError(t, err)
-		assert.Zero(t, aj.WorkerClusterUUID)
+		assert.Zero(t, aj.WorkerTagUUID)
 	}
 
-	// Try with empty WorkerCluster.
+	// Try with empty WorkerTag.
 	{
-		sj.WorkerCluster = ptr("")
+		sj.WorkerTag = ptr("")
 		aj, err := s.Compile(ctx, sj)
 		require.NoError(t, err)
-		assert.Zero(t, aj.WorkerClusterUUID)
+		assert.Zero(t, aj.WorkerTagUUID)
 	}
 }
 

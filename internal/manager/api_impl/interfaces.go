@@ -65,13 +65,13 @@ type PersistenceService interface {
 	RemoveFromJobBlocklist(ctx context.Context, jobUUID, workerUUID, taskType string) error
 	ClearJobBlocklist(ctx context.Context, job *persistence.Job) error
 
-	// Worker cluster management.
-	WorkerSetClusters(ctx context.Context, worker *persistence.Worker, clusterUUIDs []string) error
-	CreateWorkerCluster(ctx context.Context, cluster *persistence.WorkerCluster) error
-	FetchWorkerCluster(ctx context.Context, uuid string) (*persistence.WorkerCluster, error)
-	FetchWorkerClusters(ctx context.Context) ([]*persistence.WorkerCluster, error)
-	DeleteWorkerCluster(ctx context.Context, uuid string) error
-	SaveWorkerCluster(ctx context.Context, cluster *persistence.WorkerCluster) error
+	// Worker tag management.
+	WorkerSetTags(ctx context.Context, worker *persistence.Worker, tagUUIDs []string) error
+	CreateWorkerTag(ctx context.Context, tag *persistence.WorkerTag) error
+	FetchWorkerTag(ctx context.Context, uuid string) (*persistence.WorkerTag, error)
+	FetchWorkerTags(ctx context.Context) ([]*persistence.WorkerTag, error)
+	DeleteWorkerTag(ctx context.Context, uuid string) error
+	SaveWorkerTag(ctx context.Context, tag *persistence.WorkerTag) error
 
 	// WorkersLeftToRun returns a set of worker UUIDs that can run tasks of the given type on the given job.
 	WorkersLeftToRun(ctx context.Context, job *persistence.Job, taskType string) (map[string]bool, error)

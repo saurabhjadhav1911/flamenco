@@ -15,16 +15,16 @@ export const useWorkers = defineStore('workers', {
      */
     activeWorkerID: "",
 
-    /** @type {API.WorkerCluster[]} */
-    clusters: [],
+    /** @type {API.WorkerTag[]} */
+    tags: [],
 
-    /* Mapping from cluster UUID to API.WorkerCluster. */
-    clustersByID: {},
+    /* Mapping from tag UUID to API.WorkerTag. */
+    tagsByID: {},
   }),
   actions: {
     setActiveWorkerID(workerID) {
       this.$patch({
-        activeWorker: {id: workerID, settings: {}, metadata: {}},
+        activeWorker: { id: workerID, settings: {}, metadata: {} },
         activeWorkerID: workerID,
       });
     },
@@ -47,22 +47,21 @@ export const useWorkers = defineStore('workers', {
       });
     },
     /**
-     * Fetch the available worker clusters from the Manager.
+     * Fetch the available worker tags from the Manager.
      *
      * @returns a promise.
      */
-    refreshClusters() {
+    refreshTags() {
       const api = new WorkerMgtApi(getAPIClient());
-      return api.fetchWorkerClusters()
-        .then((resp) => {
-          this.clusters = resp.clusters;
+      return api.fetchWorkerTags().then((resp) => {
+        this.tags = resp.tags;
 
-          let clustersByID = {};
-          for (let cluster of this.clusters) {
-            clustersByID[cluster.id] = cluster;
-          }
-          this.clustersByID = clustersByID;
-        })
+        let tagsByID = {};
+        for (let tag of this.tags) {
+          tagsByID[tag.id] = tag;
+        }
+        this.tagsByID = tagsByID;
+      });
     },
   },
-})
+});

@@ -182,7 +182,7 @@ func (f *Flamenco) RequestWorkerStatusChange(e echo.Context, workerUUID string) 
 	return e.NoContent(http.StatusNoContent)
 }
 
-func (f *Flamenco) SetWorkerClusters(e echo.Context, workerUUID string) error {
+func (f *Flamenco) SetWorkerTags(e echo.Context, workerUUID string) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
 	logger = logger.With().Str("worker", workerUUID).Logger()
@@ -192,7 +192,7 @@ func (f *Flamenco) SetWorkerClusters(e echo.Context, workerUUID string) error {
 	}
 
 	// Decode the request body.
-	var change api.WorkerClusterChangeRequest
+	var change api.WorkerTagChangeRequest
 	if err := e.Bind(&change); err != nil {
 		logger.Warn().Err(err).Msg("bad request received")
 		return sendAPIError(e, http.StatusBadRequest, "invalid format")
@@ -210,13 +210,13 @@ func (f *Flamenco) SetWorkerClusters(e echo.Context, workerUUID string) error {
 	}
 
 	logger = logger.With().
-		Strs("clusters", change.ClusterIds).
+		Strs("tags", change.TagIds).
 		Logger()
-	logger.Info().Msg("worker cluster change requested")
+	logger.Info().Msg("worker tag change requested")
 
-	// Store the new cluster assignment.
-	if err := f.persist.WorkerSetClusters(ctx, dbWorker, change.ClusterIds); err != nil {
-		logger.Error().Err(err).Msg("saving worker after cluster change request")
+	// Store the new tag assignment.
+	if err := f.persist.WorkerSetTags(ctx, dbWorker, change.TagIds); err != nil {
+		logger.Error().Err(err).Msg("saving worker after tag change request")
 		return sendAPIError(e, http.StatusInternalServerError, "error saving worker: %v", err)
 	}
 
@@ -227,155 +227,155 @@ func (f *Flamenco) SetWorkerClusters(e echo.Context, workerUUID string) error {
 	return e.NoContent(http.StatusNoContent)
 }
 
-func (f *Flamenco) DeleteWorkerCluster(e echo.Context, clusterUUID string) error {
+func (f *Flamenco) DeleteWorkerTag(e echo.Context, tagUUID string) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
-	logger = logger.With().Str("cluster", clusterUUID).Logger()
+	logger = logger.With().Str("tag", tagUUID).Logger()
 
-	if !uuid.IsValid(clusterUUID) {
+	if !uuid.IsValid(tagUUID) {
 		return sendAPIError(e, http.StatusBadRequest, "not a valid UUID")
 	}
 
-	err := f.persist.DeleteWorkerCluster(ctx, clusterUUID)
+	err := f.persist.DeleteWorkerTag(ctx, tagUUID)
 	switch {
-	case errors.Is(err, persistence.ErrWorkerClusterNotFound):
-		logger.Debug().Msg("non-existent worker cluster requested")
-		return sendAPIError(e, http.StatusNotFound, "worker cluster %q not found", clusterUUID)
+	case errors.Is(err, persistence.ErrWorkerTagNotFound):
+		logger.Debug().Msg("non-existent worker tag requested")
+		return sendAPIError(e, http.StatusNotFound, "worker tag %q not found", tagUUID)
 	case err != nil:
-		logger.Error().Err(err).Msg("deleting worker cluster")
-		return sendAPIError(e, http.StatusInternalServerError, "error deleting worker cluster: %v", err)
+		logger.Error().Err(err).Msg("deleting worker tag")
+		return sendAPIError(e, http.StatusInternalServerError, "error deleting worker tag: %v", err)
 	}
 
-	// TODO: SocketIO broadcast of cluster deletion.
+	// TODO: SocketIO broadcast of tag deletion.
 
-	logger.Info().Msg("worker cluster deleted")
+	logger.Info().Msg("worker tag deleted")
 	return e.NoContent(http.StatusNoContent)
 }
 
-func (f *Flamenco) FetchWorkerCluster(e echo.Context, clusterUUID string) error {
+func (f *Flamenco) FetchWorkerTag(e echo.Context, tagUUID string) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
-	logger = logger.With().Str("cluster", clusterUUID).Logger()
+	logger = logger.With().Str("tag", tagUUID).Logger()
 
-	if !uuid.IsValid(clusterUUID) {
+	if !uuid.IsValid(tagUUID) {
 		return sendAPIError(e, http.StatusBadRequest, "not a valid UUID")
 	}
 
-	cluster, err := f.persist.FetchWorkerCluster(ctx, clusterUUID)
+	tag, err := f.persist.FetchWorkerTag(ctx, tagUUID)
 	switch {
-	case errors.Is(err, persistence.ErrWorkerClusterNotFound):
-		logger.Debug().Msg("non-existent worker cluster requested")
-		return sendAPIError(e, http.StatusNotFound, "worker cluster %q not found", clusterUUID)
+	case errors.Is(err, persistence.ErrWorkerTagNotFound):
+		logger.Debug().Msg("non-existent worker tag requested")
+		return sendAPIError(e, http.StatusNotFound, "worker tag %q not found", tagUUID)
 	case err != nil:
-		logger.Error().Err(err).Msg("fetching worker cluster")
-		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker cluster: %v", err)
+		logger.Error().Err(err).Msg("fetching worker tag")
+		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker tag: %v", err)
 	}
 
-	return e.JSON(http.StatusOK, workerClusterDBtoAPI(*cluster))
+	return e.JSON(http.StatusOK, workerTagDBtoAPI(*tag))
 }
 
-func (f *Flamenco) UpdateWorkerCluster(e echo.Context, clusterUUID string) error {
+func (f *Flamenco) UpdateWorkerTag(e echo.Context, tagUUID string) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
-	logger = logger.With().Str("cluster", clusterUUID).Logger()
+	logger = logger.With().Str("tag", tagUUID).Logger()
 
-	if !uuid.IsValid(clusterUUID) {
+	if !uuid.IsValid(tagUUID) {
 		return sendAPIError(e, http.StatusBadRequest, "not a valid UUID")
 	}
 
 	// Decode the request body.
-	var update api.UpdateWorkerClusterJSONBody
+	var update api.UpdateWorkerTagJSONBody
 	if err := e.Bind(&update); err != nil {
 		logger.Warn().Err(err).Msg("bad request received")
 		return sendAPIError(e, http.StatusBadRequest, "invalid format")
 	}
 
-	dbCluster, err := f.persist.FetchWorkerCluster(ctx, clusterUUID)
+	dbTag, err := f.persist.FetchWorkerTag(ctx, tagUUID)
 	switch {
-	case errors.Is(err, persistence.ErrWorkerClusterNotFound):
-		logger.Debug().Msg("non-existent worker cluster requested")
-		return sendAPIError(e, http.StatusNotFound, "worker cluster %q not found", clusterUUID)
+	case errors.Is(err, persistence.ErrWorkerTagNotFound):
+		logger.Debug().Msg("non-existent worker tag requested")
+		return sendAPIError(e, http.StatusNotFound, "worker tag %q not found", tagUUID)
 	case err != nil:
-		logger.Error().Err(err).Msg("fetching worker cluster")
-		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker cluster: %v", err)
+		logger.Error().Err(err).Msg("fetching worker tag")
+		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker tag: %v", err)
 	}
 
-	// Update the cluster.
-	dbCluster.Name = update.Name
+	// Update the tag.
+	dbTag.Name = update.Name
 	if update.Description == nil {
-		dbCluster.Description = ""
+		dbTag.Description = ""
 	} else {
-		dbCluster.Description = *update.Description
+		dbTag.Description = *update.Description
 	}
 
-	if err := f.persist.SaveWorkerCluster(ctx, dbCluster); err != nil {
-		logger.Error().Err(err).Msg("saving worker cluster")
-		return sendAPIError(e, http.StatusInternalServerError, "error saving worker cluster")
+	if err := f.persist.SaveWorkerTag(ctx, dbTag); err != nil {
+		logger.Error().Err(err).Msg("saving worker tag")
+		return sendAPIError(e, http.StatusInternalServerError, "error saving worker tag")
 	}
 
-	// TODO: SocketIO broadcast of cluster update.
+	// TODO: SocketIO broadcast of tag update.
 
 	return e.NoContent(http.StatusNoContent)
 }
 
-func (f *Flamenco) FetchWorkerClusters(e echo.Context) error {
+func (f *Flamenco) FetchWorkerTags(e echo.Context) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
 
-	dbClusters, err := f.persist.FetchWorkerClusters(ctx)
+	dbTags, err := f.persist.FetchWorkerTags(ctx)
 	if err != nil {
-		logger.Error().Err(err).Msg("fetching worker clusters")
-		return sendAPIError(e, http.StatusInternalServerError, "error saving worker cluster")
+		logger.Error().Err(err).Msg("fetching worker tags")
+		return sendAPIError(e, http.StatusInternalServerError, "error saving worker tag")
 	}
 
-	apiClusters := []api.WorkerCluster{}
-	for _, dbCluster := range dbClusters {
-		apiCluster := workerClusterDBtoAPI(*dbCluster)
-		apiClusters = append(apiClusters, apiCluster)
+	apiTags := []api.WorkerTag{}
+	for _, dbTag := range dbTags {
+		apiTag := workerTagDBtoAPI(*dbTag)
+		apiTags = append(apiTags, apiTag)
 	}
 
-	clusterList := api.WorkerClusterList{
-		Clusters: &apiClusters,
+	tagList := api.WorkerTagList{
+		Tags: &apiTags,
 	}
-	return e.JSON(http.StatusOK, &clusterList)
+	return e.JSON(http.StatusOK, &tagList)
 }
 
-func (f *Flamenco) CreateWorkerCluster(e echo.Context) error {
+func (f *Flamenco) CreateWorkerTag(e echo.Context) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
 
 	// Decode the request body.
-	var apiCluster api.CreateWorkerClusterJSONBody
-	if err := e.Bind(&apiCluster); err != nil {
+	var apiTag api.CreateWorkerTagJSONBody
+	if err := e.Bind(&apiTag); err != nil {
 		logger.Warn().Err(err).Msg("bad request received")
 		return sendAPIError(e, http.StatusBadRequest, "invalid format")
 	}
 
 	// Convert to persistence layer model.
-	var clusterUUID string
-	if apiCluster.Id != nil && *apiCluster.Id != "" {
-		clusterUUID = *apiCluster.Id
+	var tagUUID string
+	if apiTag.Id != nil && *apiTag.Id != "" {
+		tagUUID = *apiTag.Id
 	} else {
-		clusterUUID = uuid.New()
+		tagUUID = uuid.New()
 	}
 
-	dbCluster := persistence.WorkerCluster{
-		UUID: clusterUUID,
-		Name: apiCluster.Name,
+	dbTag := persistence.WorkerTag{
+		UUID: tagUUID,
+		Name: apiTag.Name,
 	}
-	if apiCluster.Description != nil {
-		dbCluster.Description = *apiCluster.Description
+	if apiTag.Description != nil {
+		dbTag.Description = *apiTag.Description
 	}
 
 	// Store in the database.
-	if err := f.persist.CreateWorkerCluster(ctx, &dbCluster); err != nil {
-		logger.Error().Err(err).Msg("creating worker cluster")
-		return sendAPIError(e, http.StatusInternalServerError, "error creating worker cluster")
+	if err := f.persist.CreateWorkerTag(ctx, &dbTag); err != nil {
+		logger.Error().Err(err).Msg("creating worker tag")
+		return sendAPIError(e, http.StatusInternalServerError, "error creating worker tag")
 	}
 
-	// TODO: SocketIO broadcast of cluster creation.
+	// TODO: SocketIO broadcast of tag creation.
 
-	return e.JSON(http.StatusOK, workerClusterDBtoAPI(dbCluster))
+	return e.JSON(http.StatusOK, workerTagDBtoAPI(dbTag))
 }
 
 func workerSummary(w persistence.Worker) api.WorkerSummary {
@@ -407,26 +407,26 @@ func workerDBtoAPI(w persistence.Worker) api.Worker {
 		SupportedTaskTypes: w.TaskTypes(),
 	}
 
-	if len(w.Clusters) > 0 {
-		clusters := []api.WorkerCluster{}
-		for i := range w.Clusters {
-			clusters = append(clusters, workerClusterDBtoAPI(*w.Clusters[i]))
+	if len(w.Tags) > 0 {
+		tags := []api.WorkerTag{}
+		for i := range w.Tags {
+			tags = append(tags, workerTagDBtoAPI(*w.Tags[i]))
 		}
-		apiWorker.Clusters = &clusters
+		apiWorker.Tags = &tags
 	}
 
 	return apiWorker
 }
 
-func workerClusterDBtoAPI(wc persistence.WorkerCluster) api.WorkerCluster {
+func workerTagDBtoAPI(wc persistence.WorkerTag) api.WorkerTag {
 	uuid := wc.UUID // Take a copy for safety.
 
-	apiCluster := api.WorkerCluster{
+	apiTag := api.WorkerTag{
 		Id:   &uuid,
 		Name: wc.Name,
 	}
 	if len(wc.Description) > 0 {
-		apiCluster.Description = &wc.Description
+		apiTag.Description = &wc.Description
 	}
-	return apiCluster
+	return apiTag
 }

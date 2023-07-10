@@ -127,8 +127,8 @@ func (s *Service) Compile(ctx context.Context, sj api.SubmittedJob) (*AuthoredJo
 		aj.Storage.ShamanCheckoutID = *sj.Storage.ShamanCheckoutId
 	}
 
-	if sj.WorkerCluster != nil {
-		aj.WorkerClusterUUID = *sj.WorkerCluster
+	if sj.WorkerTag != nil {
+		aj.WorkerTagUUID = *sj.WorkerTag
 	}
 
 	compiler, err := vm.getCompileJob()

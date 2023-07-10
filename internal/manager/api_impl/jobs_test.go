@@ -320,19 +320,19 @@ func TestSubmitJobWithShamanCheckoutID(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestSubmitJobWithWorkerCluster(t *testing.T) {
+func TestSubmitJobWithWorkerTag(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
 	mf := newMockedFlamenco(mockCtrl)
 	worker := testWorker()
 
-	workerClusterUUID := "04435762-9dc8-4f13-80b7-643a6fa5b6fd"
-	cluster := persistence.WorkerCluster{
+	workerTagUUID := "04435762-9dc8-4f13-80b7-643a6fa5b6fd"
+	tag := persistence.WorkerTag{
 		Model:       persistence.Model{ID: 47},
-		UUID:        workerClusterUUID,
-		Name:        "first cluster",
-		Description: "my first cluster",
+		UUID:        workerTagUUID,
+		Name:        "first tag",
+		Description: "my first tag",
 	}
 
 	submittedJob := api.SubmittedJob{
@@ -340,7 +340,7 @@ func TestSubmitJobWithWorkerCluster(t *testing.T) {
 		Type:              "test",
 		Priority:          50,
 		SubmitterPlatform: worker.Platform,
-		WorkerCluster:     &workerClusterUUID,
+		WorkerTag:         &workerTagUUID,
 	}
 
 	mf.expectConvertTwoWayVariables(t,
@@ -351,8 +351,8 @@ func TestSubmitJobWithWorkerCluster(t *testing.T) {
 
 	// Expect the job compiler to be called.
 	authoredJob := job_compilers.AuthoredJob{
-		JobID:             "afc47568-bd9d-4368-8016-e91d945db36d",
-		WorkerClusterUUID: workerClusterUUID,
+		JobID:         "afc47568-bd9d-4368-8016-e91d945db36d",
+		WorkerTagUUID: workerTagUUID,
 
 		Name:     submittedJob.Name,
 		JobType:  submittedJob.Type,
@@ -382,8 +382,8 @@ func TestSubmitJobWithWorkerCluster(t *testing.T) {
 		Settings: persistence.StringInterfaceMap{},
 		Metadata: persistence.StringStringMap{},
 
-		WorkerClusterID: &cluster.ID,
-		WorkerCluster:   &cluster,
+		WorkerTagID: &tag.ID,
+		WorkerTag:   &tag,
 	}
 	mf.persistence.EXPECT().FetchJob(gomock.Any(), queuedJob.JobID).Return(&dbJob, nil)
 

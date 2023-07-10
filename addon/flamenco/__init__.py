@@ -26,7 +26,7 @@ if __is_first_load:
         comms,
         preferences,
         projects,
-        worker_clusters,
+        worker_tags,
     )
 else:
     import importlib
@@ -37,7 +37,7 @@ else:
     comms = importlib.reload(comms)
     preferences = importlib.reload(preferences)
     projects = importlib.reload(projects)
-    worker_clusters = importlib.reload(worker_clusters)
+    worker_tags = importlib.reload(worker_tags)
 
 import bpy
 
@@ -155,7 +155,7 @@ def register() -> None:
     )
 
     preferences.register()
-    worker_clusters.register()
+    worker_tags.register()
     operators.register()
     gui.register()
     job_types.register()
@@ -173,5 +173,5 @@ def unregister() -> None:
     job_types.unregister()
     gui.unregister()
     operators.unregister()
-    worker_clusters.unregister()
+    worker_tags.unregister()
     preferences.unregister()

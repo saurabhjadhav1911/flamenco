@@ -64,7 +64,7 @@ func (db *DB) QueryJobs(ctx context.Context, apiQ api.JobsQuery) ([]*Job, error)
 		}
 	}
 
-	q.Preload("Cluster")
+	q.Preload("Tag")
 
 	result := []*Job{}
 	tx := q.Scan(&result)

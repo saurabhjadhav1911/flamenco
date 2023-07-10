@@ -757,7 +757,7 @@ func createWorker(ctx context.Context, t *testing.T, db *DB, updaters ...func(*W
 		Software:           "3.0",
 		Status:             api.WorkerStatusAwake,
 		SupportedTaskTypes: "blender,ffmpeg,file-management",
-		Clusters:           nil,
+		Tags:               nil,
 	}
 
 	for _, updater := range updaters {

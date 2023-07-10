@@ -34,21 +34,24 @@
       </dd>
     </dl>
 
-    <section class="worker-clusters" v-if="workers.clusters && workers.clusters.length">
-      <h3 class="sub-title">Clusters</h3>
+    <section class="worker-tags" v-if="workers.tags && workers.tags.length">
+      <h3 class="sub-title">Tags</h3>
       <ul>
-        <li v-for="cluster in workers.clusters">
-          <switch-checkbox :isChecked="thisWorkerClusters[cluster.id]" :label="cluster.name" :title="cluster.description"
-            @switch-toggle="toggleWorkerCluster(cluster.id)">
+        <li v-for="tag in workers.tags">
+          <switch-checkbox
+            :isChecked="thisWorkerTags[tag.id]"
+            :label="tag.name"
+            :title="tag.description"
+            @switch-toggle="toggleWorkerTag(tag.id)"
+          >
           </switch-checkbox>
         </li>
       </ul>
-      <p class="hint" v-if="hasClustersAssigned">
-        This worker will only pick up jobs assigned to one of its clusters, and clusterless jobs.
+      <p class="hint" v-if="hasTagsAssigned">
+        This worker will only pick up jobs assigned to one of its tags, and
+        tagless jobs.
       </p>
-      <p class="hint" v-else>
-        This worker will only pick up clusterless jobs.
-      </p>
+      <p class="hint" v-else>This worker will only pick up tagless jobs.</p>
     </section>
 
     <section class="sleep-schedule" :class="{ 'is-schedule-active': workerSleepSchedule.is_active }">
@@ -140,7 +143,7 @@ import { useNotifs } from '@/stores/notifications'
 import { useWorkers } from '@/stores/workers'
 
 import * as datetime from "@/datetime";
-import { WorkerMgtApi, WorkerSleepSchedule, WorkerClusterChangeRequest } from '@/manager-api';
+import { WorkerMgtApi, WorkerSleepSchedule, WorkerTagChangeRequest } from "@/manager-api";
 import { getAPIClient } from "@/api-client";
 import { workerStatus } from "../../statusindicator";
 import LinkWorkerTask from '@/components/LinkWorkerTask.vue';
@@ -165,18 +168,17 @@ export default {
       notifs: useNotifs(),
       copyElementText: copyElementText,
       workers: useWorkers(),
-      thisWorkerClusters: {}, // Mapping from UUID to 'isAssigned' boolean.
+      thisWorkerTags: {}, // Mapping from UUID to 'isAssigned' boolean.
     };
   },
   mounted() {
     // Allow testing from the JS console:
     window.workerDetailsVue = this;
 
-    this.workers.refreshClusters()
-      .catch((error) => {
-        const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
-        this.notifs.add(`Error: ${errorMsg}`);
-      });
+    this.workers.refreshTags().catch((error) => {
+      const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
+      this.notifs.add(`Error: ${errorMsg}`);
+    });
   },
   watch: {
     workerData(newData, oldData) {
@@ -191,7 +193,7 @@ export default {
         this.fetchWorkerSleepSchedule();
       }
 
-      this.updateThisWorkerClusters(newData);
+      this.updateThisWorkerTags(newData);
     },
   },
   computed: {
@@ -210,10 +212,10 @@ export default {
     workerSleepScheduleStatusLabel() {
       return this.workerSleepSchedule.is_active ? 'Enabled' : 'Disabled';
     },
-    hasClustersAssigned() {
-      const clusterIDs = this.getAssignedClusterIDs();
-      return clusterIDs && clusterIDs.length > 0;
-    }
+    hasTagsAssigned() {
+      const tagIDs = this.getAssignedTagIDs();
+      return tagIDs && tagIDs.length > 0;
+    },
   },
   methods: {
     fetchWorkerSleepSchedule() {
@@ -262,46 +264,48 @@ export default {
       }
       this.api.deleteWorker(this.workerData.id);
     },
-    updateThisWorkerClusters(newWorkerData) {
-      if (!newWorkerData || !newWorkerData.clusters) {
-        this.thisWorkerClusters = {};
+    updateThisWorkerTags(newWorkerData) {
+      if (!newWorkerData || !newWorkerData.tags) {
+        this.thisWorkerTags = {};
         return;
       }
 
-      const assignedClusters = newWorkerData.clusters.reduce(
-        (accu, cluster) => { accu[cluster.id] = true; return accu; },
-        {});
-      this.thisWorkerClusters = assignedClusters;
+      const assignedTags = newWorkerData.tags.reduce((accu, tag) => {
+        accu[tag.id] = true;
+        return accu;
+      }, {});
+      this.thisWorkerTags = assignedTags;
     },
-    toggleWorkerCluster(clusterID) {
-      console.log("Toggled", clusterID);
-      this.thisWorkerClusters[clusterID] = !this.thisWorkerClusters[clusterID];
-      console.log("New assignment:", plain(this.thisWorkerClusters))
+    toggleWorkerTag(tagID) {
+      console.log("Toggled", tagID);
+      this.thisWorkerTags[tagID] = !this.thisWorkerTags[tagID];
+      console.log("New assignment:", plain(this.thisWorkerTags));
 
-      // Construct cluster change request.
-      const clusterIDs = this.getAssignedClusterIDs();
-      const changeRequest = new WorkerClusterChangeRequest(clusterIDs);
+      // Construct tag change request.
+      const tagIDs = this.getAssignedTagIDs();
+      const changeRequest = new WorkerTagChangeRequest(tagIDs);
 
       // Send to the Manager.
-      this.api.setWorkerClusters(this.workerData.id, changeRequest)
+      this.api
+        .setWorkerTags(this.workerData.id, changeRequest)
         .then(() => {
-          this.notifs.add('Cluster assignment updated');
+          this.notifs.add("Tag assignment updated");
         })
         .catch((error) => {
           const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
           this.notifs.add(`Error: ${errorMsg}`);
         });
     },
-    getAssignedClusterIDs() {
-      const clusterIDs = [];
-      for (let clusterID in this.thisWorkerClusters) {
+    getAssignedTagIDs() {
+      const tagIDs = [];
+      for (let tagID in this.thisWorkerTags) {
         // Values can exist and be set to 'false'.
-        const isAssigned = this.thisWorkerClusters[clusterID];
-        if (isAssigned) clusterIDs.push(clusterID);
+        const isAssigned = this.thisWorkerTags[tagID];
+        if (isAssigned) tagIDs.push(tagID);
       }
-      return clusterIDs;
-    }
-  }
+      return tagIDs;
+    },
+  },
 };
 </script>
 
@@ -377,11 +381,11 @@ export default {
   white-space: nowrap;
 }
 
-.worker-clusters ul {
+.worker-tags ul {
   list-style: none;
 }
 
-.worker-clusters ul li {
+.worker-tags ul li {
   margin-bottom: 0.25rem;
 }
 </style>

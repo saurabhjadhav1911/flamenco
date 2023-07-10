@@ -54,9 +54,9 @@ def job_for_scene(scene: bpy.types.Scene) -> Optional[_SubmittedJob]:
         type_etag=propgroup.job_type.etag,
     )
 
-    worker_cluster: str = getattr(scene, "flamenco_worker_cluster", "")
-    if worker_cluster and worker_cluster != "-":
-        job.worker_cluster = worker_cluster
+    worker_tag: str = getattr(scene, "flamenco_worker_tag", "")
+    if worker_tag and worker_tag != "-":
+        job.worker_tag = worker_tag
 
     return job
 

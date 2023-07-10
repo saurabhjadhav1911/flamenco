@@ -26,7 +26,7 @@ func (db *DB) ScheduleTask(ctx context.Context, w *Worker) (*Task, error) {
 	logger := log.With().Str("worker", w.UUID).Logger()
 	logger.Trace().Msg("finding task for worker")
 
-	hasWorkerClusters, err := db.HasWorkerClusters(ctx)
+	hasWorkerTags, err := db.HasWorkerTags(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func (db *DB) ScheduleTask(ctx context.Context, w *Worker) (*Task, error) {
 	var task *Task
 	txErr := db.gormDB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var err error
-		task, err = findTaskForWorker(tx, w, hasWorkerClusters)
+		task, err = findTaskForWorker(tx, w, hasWorkerTags)
 		if err != nil {
 			if isDatabaseBusyError(err) {
 				logger.Trace().Err(err).Msg("database busy while finding task for worker")
@@ -84,7 +84,7 @@ func (db *DB) ScheduleTask(ctx context.Context, w *Worker) (*Task, error) {
 	return task, nil
 }
 
-func findTaskForWorker(tx *gorm.DB, w *Worker, checkWorkerClusters bool) (*Task, error) {
+func findTaskForWorker(tx *gorm.DB, w *Worker, checkWorkerTags bool) (*Task, error) {
 	task := Task{}
 
 	// If a task is alreay active & assigned to this worker, return just that.
@@ -129,21 +129,21 @@ func findTaskForWorker(tx *gorm.DB, w *Worker, checkWorkerClusters bool) (*Task,
 		Where("TF.worker_id is NULL").                        // Not failed before
 		Where("tasks.type not in (?)", blockedTaskTypesQuery) // Non-blocklisted
 
-	if checkWorkerClusters {
-		// The system has one or more clusters, so limit the available jobs to those
-		// that have no cluster, or overlap with the Worker's clusters.
-		if len(w.Clusters) == 0 {
-			// Clusterless workers only get clusterless jobs.
+	if checkWorkerTags {
+		// The system has one or more tags, so limit the available jobs to those
+		// that have no tag, or overlap with the Worker's tags.
+		if len(w.Tags) == 0 {
+			// Tagless workers only get tagless jobs.
 			findTaskQuery = findTaskQuery.
-				Where("jobs.worker_cluster_id is NULL")
+				Where("jobs.worker_tag_id is NULL")
 		} else {
-			// Clustered workers get clusterless jobs AND jobs of their own clusters.
-			clusterIDs := []uint{}
-			for _, cluster := range w.Clusters {
-				clusterIDs = append(clusterIDs, cluster.ID)
+			// Taged workers get tagless jobs AND jobs of their own tags.
+			tagIDs := []uint{}
+			for _, tag := range w.Tags {
+				tagIDs = append(tagIDs, tag.ID)
 			}
 			findTaskQuery = findTaskQuery.
-				Where("jobs.worker_cluster_id is NULL or worker_cluster_id in ?", clusterIDs)
+				Where("jobs.worker_tag_id is NULL or worker_tag_id in ?", tagIDs)
 		}
 	}
 
