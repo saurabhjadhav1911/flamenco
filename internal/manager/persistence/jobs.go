@@ -162,70 +162,91 @@ func (db *DB) StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.Au
 			return jobError(err, "storing job")
 		}
 
-		uuidToTask := make(map[string]*Task)
-		for _, authoredTask := range authoredJob.Tasks {
-			var commands []Command
-			for _, authoredCommand := range authoredTask.Commands {
-				commands = append(commands, Command{
-					Name:       authoredCommand.Name,
-					Parameters: StringInterfaceMap(authoredCommand.Parameters),
-				})
-			}
-
-			dbTask := Task{
-				Name:     authoredTask.Name,
-				Type:     authoredTask.Type,
-				UUID:     authoredTask.UUID,
-				Job:      &dbJob,
-				Priority: authoredTask.Priority,
-				Status:   api.TaskStatusQueued,
-				Commands: commands,
-				// dependencies are stored below.
-			}
-			if err := tx.Create(&dbTask).Error; err != nil {
-				return taskError(err, "storing task: %v", err)
-			}
-
-			uuidToTask[authoredTask.UUID] = &dbTask
-		}
-
-		// Store the dependencies between tasks.
-		for _, authoredTask := range authoredJob.Tasks {
-			if len(authoredTask.Dependencies) == 0 {
-				continue
-			}
-
-			dbTask, ok := uuidToTask[authoredTask.UUID]
-			if !ok {
-				return taskError(nil, "unable to find task %q in the database, even though it was just authored", authoredTask.UUID)
-			}
-
-			deps := make([]*Task, len(authoredTask.Dependencies))
-			for i, t := range authoredTask.Dependencies {
-				depTask, ok := uuidToTask[t.UUID]
-				if !ok {
-					return taskError(nil, "finding task with UUID %q; a task depends on a task that is not part of this job", t.UUID)
-				}
-				deps[i] = depTask
-			}
-			dependenciesbatchsize := 1000
-			for j := 0; j < len(deps); j += dependenciesbatchsize {
-				end := j + dependenciesbatchsize
-				if end > len(deps) {
-					end = len(deps)
-				}
-				currentDeps := deps[j:end]
-				dbTask.Dependencies = currentDeps
-				tx.Model(&dbTask).Where("UUID = ?", dbTask.UUID)
-				subQuery := tx.Model(dbTask).Updates(Task{Dependencies: currentDeps})
-				if subQuery.Error != nil {
-					return taskError(subQuery.Error, "error with storing dependencies of task %q issue exists in dependencies %d to %d", authoredTask.UUID, j, end)
-				}
-			}
-		}
-
-		return nil
+		return db.storeAuthoredJobTaks(ctx, tx, &dbJob, &authoredJob)
 	})
+}
+
+// StoreAuthoredJobTaks is a low-level function that is only used for recreating an existing job's tasks.
+// It stores `authoredJob`'s tasks, but attaches them to the already-persisted `job`.
+func (db *DB) StoreAuthoredJobTaks(
+	ctx context.Context,
+	job *Job,
+	authoredJob *job_compilers.AuthoredJob,
+) error {
+	tx := db.gormDB.WithContext(ctx)
+	return db.storeAuthoredJobTaks(ctx, tx, job, authoredJob)
+}
+
+func (db *DB) storeAuthoredJobTaks(
+	ctx context.Context,
+	tx *gorm.DB,
+	dbJob *Job,
+	authoredJob *job_compilers.AuthoredJob,
+) error {
+
+	uuidToTask := make(map[string]*Task)
+	for _, authoredTask := range authoredJob.Tasks {
+		var commands []Command
+		for _, authoredCommand := range authoredTask.Commands {
+			commands = append(commands, Command{
+				Name:       authoredCommand.Name,
+				Parameters: StringInterfaceMap(authoredCommand.Parameters),
+			})
+		}
+
+		dbTask := Task{
+			Name:     authoredTask.Name,
+			Type:     authoredTask.Type,
+			UUID:     authoredTask.UUID,
+			Job:      dbJob,
+			Priority: authoredTask.Priority,
+			Status:   api.TaskStatusQueued,
+			Commands: commands,
+			// dependencies are stored below.
+		}
+		if err := tx.Create(&dbTask).Error; err != nil {
+			return taskError(err, "storing task: %v", err)
+		}
+
+		uuidToTask[authoredTask.UUID] = &dbTask
+	}
+
+	// Store the dependencies between tasks.
+	for _, authoredTask := range authoredJob.Tasks {
+		if len(authoredTask.Dependencies) == 0 {
+			continue
+		}
+
+		dbTask, ok := uuidToTask[authoredTask.UUID]
+		if !ok {
+			return taskError(nil, "unable to find task %q in the database, even though it was just authored", authoredTask.UUID)
+		}
+
+		deps := make([]*Task, len(authoredTask.Dependencies))
+		for i, t := range authoredTask.Dependencies {
+			depTask, ok := uuidToTask[t.UUID]
+			if !ok {
+				return taskError(nil, "finding task with UUID %q; a task depends on a task that is not part of this job", t.UUID)
+			}
+			deps[i] = depTask
+		}
+		dependenciesbatchsize := 1000
+		for j := 0; j < len(deps); j += dependenciesbatchsize {
+			end := j + dependenciesbatchsize
+			if end > len(deps) {
+				end = len(deps)
+			}
+			currentDeps := deps[j:end]
+			dbTask.Dependencies = currentDeps
+			tx.Model(&dbTask).Where("UUID = ?", dbTask.UUID)
+			subQuery := tx.Model(dbTask).Updates(Task{Dependencies: currentDeps})
+			if subQuery.Error != nil {
+				return taskError(subQuery.Error, "error with storing dependencies of task %q issue exists in dependencies %d to %d", authoredTask.UUID, j, end)
+			}
+		}
+	}
+
+	return nil
 }
 
 // FetchJob fetches a single job, without fetching its tasks.

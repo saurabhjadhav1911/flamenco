@@ -69,6 +69,10 @@ flamenco-worker:
 stresser:
 	go build -v ${BUILD_FLAGS} ${PKG}/cmd/stresser
 
+.PHONY: job-creator
+job-creator:
+	go build -v ${BUILD_FLAGS} ${PKG}/cmd/job-creator
+
 addon-packer: cmd/addon-packer/addon-packer.go
 	go build -v ${BUILD_FLAGS} ${PKG}/cmd/addon-packer
 
