@@ -116,18 +116,18 @@ Class | Method | HTTP request | Description
 *WorkerApi* | [**task_update**](flamenco/manager/docs/WorkerApi.md#task_update) | **POST** /api/v3/worker/task/{task_id} | Update the task, typically to indicate progress, completion, or failure.
 *WorkerApi* | [**worker_state**](flamenco/manager/docs/WorkerApi.md#worker_state) | **GET** /api/v3/worker/state | 
 *WorkerApi* | [**worker_state_changed**](flamenco/manager/docs/WorkerApi.md#worker_state_changed) | **POST** /api/v3/worker/state-changed | Worker changed state. This could be as acknowledgement of a Manager-requested state change, or in response to worker-local signals.
-*WorkerMgtApi* | [**create_worker_cluster**](flamenco/manager/docs/WorkerMgtApi.md#create_worker_cluster) | **POST** /api/v3/worker-mgt/clusters | Create a new worker cluster.
+*WorkerMgtApi* | [**create_worker_tag**](flamenco/manager/docs/WorkerMgtApi.md#create_worker_tag) | **POST** /api/v3/worker-mgt/tags | Create a new worker tag.
 *WorkerMgtApi* | [**delete_worker**](flamenco/manager/docs/WorkerMgtApi.md#delete_worker) | **DELETE** /api/v3/worker-mgt/workers/{worker_id} | Remove the given worker. It is recommended to only call this function when the worker is in &#x60;offline&#x60; state. If the worker is still running, stop it first. Any task still assigned to the worker will be requeued. 
-*WorkerMgtApi* | [**delete_worker_cluster**](flamenco/manager/docs/WorkerMgtApi.md#delete_worker_cluster) | **DELETE** /api/v3/worker-mgt/cluster/{cluster_id} | Remove this worker cluster. This unassigns all workers from the cluster and removes it.
+*WorkerMgtApi* | [**delete_worker_tag**](flamenco/manager/docs/WorkerMgtApi.md#delete_worker_tag) | **DELETE** /api/v3/worker-mgt/tag/{tag_id} | Remove this worker tag. This unassigns all workers from the tag and removes it.
 *WorkerMgtApi* | [**fetch_worker**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker) | **GET** /api/v3/worker-mgt/workers/{worker_id} | Fetch info about the worker.
-*WorkerMgtApi* | [**fetch_worker_cluster**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker_cluster) | **GET** /api/v3/worker-mgt/cluster/{cluster_id} | Get a single worker cluster.
-*WorkerMgtApi* | [**fetch_worker_clusters**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker_clusters) | **GET** /api/v3/worker-mgt/clusters | Get list of worker clusters.
 *WorkerMgtApi* | [**fetch_worker_sleep_schedule**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker_sleep_schedule) | **GET** /api/v3/worker-mgt/workers/{worker_id}/sleep-schedule | 
+*WorkerMgtApi* | [**fetch_worker_tag**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker_tag) | **GET** /api/v3/worker-mgt/tag/{tag_id} | Get a single worker tag.
+*WorkerMgtApi* | [**fetch_worker_tags**](flamenco/manager/docs/WorkerMgtApi.md#fetch_worker_tags) | **GET** /api/v3/worker-mgt/tags | Get list of worker tags.
 *WorkerMgtApi* | [**fetch_workers**](flamenco/manager/docs/WorkerMgtApi.md#fetch_workers) | **GET** /api/v3/worker-mgt/workers | Get list of workers.
 *WorkerMgtApi* | [**request_worker_status_change**](flamenco/manager/docs/WorkerMgtApi.md#request_worker_status_change) | **POST** /api/v3/worker-mgt/workers/{worker_id}/setstatus | 
-*WorkerMgtApi* | [**set_worker_clusters**](flamenco/manager/docs/WorkerMgtApi.md#set_worker_clusters) | **POST** /api/v3/worker-mgt/workers/{worker_id}/setclusters | 
 *WorkerMgtApi* | [**set_worker_sleep_schedule**](flamenco/manager/docs/WorkerMgtApi.md#set_worker_sleep_schedule) | **POST** /api/v3/worker-mgt/workers/{worker_id}/sleep-schedule | 
-*WorkerMgtApi* | [**update_worker_cluster**](flamenco/manager/docs/WorkerMgtApi.md#update_worker_cluster) | **PUT** /api/v3/worker-mgt/cluster/{cluster_id} | Update an existing worker cluster.
+*WorkerMgtApi* | [**set_worker_tags**](flamenco/manager/docs/WorkerMgtApi.md#set_worker_tags) | **POST** /api/v3/worker-mgt/workers/{worker_id}/settags | 
+*WorkerMgtApi* | [**update_worker_tag**](flamenco/manager/docs/WorkerMgtApi.md#update_worker_tag) | **PUT** /api/v3/worker-mgt/tag/{tag_id} | Update an existing worker tag.
 
 
 ## Documentation For Models
@@ -197,9 +197,6 @@ Class | Method | HTTP request | Description
  - [TaskWorker](flamenco/manager/docs/TaskWorker.md)
  - [Worker](flamenco/manager/docs/Worker.md)
  - [WorkerAllOf](flamenco/manager/docs/WorkerAllOf.md)
- - [WorkerCluster](flamenco/manager/docs/WorkerCluster.md)
- - [WorkerClusterChangeRequest](flamenco/manager/docs/WorkerClusterChangeRequest.md)
- - [WorkerClusterList](flamenco/manager/docs/WorkerClusterList.md)
  - [WorkerList](flamenco/manager/docs/WorkerList.md)
  - [WorkerRegistration](flamenco/manager/docs/WorkerRegistration.md)
  - [WorkerSignOn](flamenco/manager/docs/WorkerSignOn.md)
@@ -209,6 +206,9 @@ Class | Method | HTTP request | Description
  - [WorkerStatus](flamenco/manager/docs/WorkerStatus.md)
  - [WorkerStatusChangeRequest](flamenco/manager/docs/WorkerStatusChangeRequest.md)
  - [WorkerSummary](flamenco/manager/docs/WorkerSummary.md)
+ - [WorkerTag](flamenco/manager/docs/WorkerTag.md)
+ - [WorkerTagChangeRequest](flamenco/manager/docs/WorkerTagChangeRequest.md)
+ - [WorkerTagList](flamenco/manager/docs/WorkerTagList.md)
  - [WorkerTask](flamenco/manager/docs/WorkerTask.md)
  - [WorkerTaskAllOf](flamenco/manager/docs/WorkerTaskAllOf.md)
 

@@ -23,12 +23,12 @@ from flamenco.manager.model_utils import (  # noqa: F401
 )
 from flamenco.manager.model.error import Error
 from flamenco.manager.model.worker import Worker
-from flamenco.manager.model.worker_cluster import WorkerCluster
-from flamenco.manager.model.worker_cluster_change_request import WorkerClusterChangeRequest
-from flamenco.manager.model.worker_cluster_list import WorkerClusterList
 from flamenco.manager.model.worker_list import WorkerList
 from flamenco.manager.model.worker_sleep_schedule import WorkerSleepSchedule
 from flamenco.manager.model.worker_status_change_request import WorkerStatusChangeRequest
+from flamenco.manager.model.worker_tag import WorkerTag
+from flamenco.manager.model.worker_tag_change_request import WorkerTagChangeRequest
+from flamenco.manager.model.worker_tag_list import WorkerTagList
 
 
 class WorkerMgtApi(object):
@@ -42,21 +42,21 @@ class WorkerMgtApi(object):
         if api_client is None:
             api_client = ApiClient()
         self.api_client = api_client
-        self.create_worker_cluster_endpoint = _Endpoint(
+        self.create_worker_tag_endpoint = _Endpoint(
             settings={
-                'response_type': (WorkerCluster,),
+                'response_type': (WorkerTag,),
                 'auth': [],
-                'endpoint_path': '/api/v3/worker-mgt/clusters',
-                'operation_id': 'create_worker_cluster',
+                'endpoint_path': '/api/v3/worker-mgt/tags',
+                'operation_id': 'create_worker_tag',
                 'http_method': 'POST',
                 'servers': None,
             },
             params_map={
                 'all': [
-                    'worker_cluster',
+                    'worker_tag',
                 ],
                 'required': [
-                    'worker_cluster',
+                    'worker_tag',
                 ],
                 'nullable': [
                 ],
@@ -71,13 +71,13 @@ class WorkerMgtApi(object):
                 'allowed_values': {
                 },
                 'openapi_types': {
-                    'worker_cluster':
-                        (WorkerCluster,),
+                    'worker_tag':
+                        (WorkerTag,),
                 },
                 'attribute_map': {
                 },
                 'location_map': {
-                    'worker_cluster': 'body',
+                    'worker_tag': 'body',
                 },
                 'collection_format_map': {
                 }
@@ -141,21 +141,21 @@ class WorkerMgtApi(object):
             },
             api_client=api_client
         )
-        self.delete_worker_cluster_endpoint = _Endpoint(
+        self.delete_worker_tag_endpoint = _Endpoint(
             settings={
                 'response_type': None,
                 'auth': [],
-                'endpoint_path': '/api/v3/worker-mgt/cluster/{cluster_id}',
-                'operation_id': 'delete_worker_cluster',
+                'endpoint_path': '/api/v3/worker-mgt/tag/{tag_id}',
+                'operation_id': 'delete_worker_tag',
                 'http_method': 'DELETE',
                 'servers': None,
             },
             params_map={
                 'all': [
-                    'cluster_id',
+                    'tag_id',
                 ],
                 'required': [
-                    'cluster_id',
+                    'tag_id',
                 ],
                 'nullable': [
                 ],
@@ -170,14 +170,14 @@ class WorkerMgtApi(object):
                 'allowed_values': {
                 },
                 'openapi_types': {
-                    'cluster_id':
+                    'tag_id':
                         (str,),
                 },
                 'attribute_map': {
-                    'cluster_id': 'cluster_id',
+                    'tag_id': 'tag_id',
                 },
                 'location_map': {
-                    'cluster_id': 'path',
+                    'tag_id': 'path',
                 },
                 'collection_format_map': {
                 }
@@ -239,97 +239,6 @@ class WorkerMgtApi(object):
             },
             api_client=api_client
         )
-        self.fetch_worker_cluster_endpoint = _Endpoint(
-            settings={
-                'response_type': (WorkerCluster,),
-                'auth': [],
-                'endpoint_path': '/api/v3/worker-mgt/cluster/{cluster_id}',
-                'operation_id': 'fetch_worker_cluster',
-                'http_method': 'GET',
-                'servers': None,
-            },
-            params_map={
-                'all': [
-                    'cluster_id',
-                ],
-                'required': [
-                    'cluster_id',
-                ],
-                'nullable': [
-                ],
-                'enum': [
-                ],
-                'validation': [
-                ]
-            },
-            root_map={
-                'validations': {
-                },
-                'allowed_values': {
-                },
-                'openapi_types': {
-                    'cluster_id':
-                        (str,),
-                },
-                'attribute_map': {
-                    'cluster_id': 'cluster_id',
-                },
-                'location_map': {
-                    'cluster_id': 'path',
-                },
-                'collection_format_map': {
-                }
-            },
-            headers_map={
-                'accept': [
-                    'application/json'
-                ],
-                'content_type': [],
-            },
-            api_client=api_client
-        )
-        self.fetch_worker_clusters_endpoint = _Endpoint(
-            settings={
-                'response_type': (WorkerClusterList,),
-                'auth': [],
-                'endpoint_path': '/api/v3/worker-mgt/clusters',
-                'operation_id': 'fetch_worker_clusters',
-                'http_method': 'GET',
-                'servers': None,
-            },
-            params_map={
-                'all': [
-                ],
-                'required': [],
-                'nullable': [
-                ],
-                'enum': [
-                ],
-                'validation': [
-                ]
-            },
-            root_map={
-                'validations': {
-                },
-                'allowed_values': {
-                },
-                'openapi_types': {
-                },
-                'attribute_map': {
-                },
-                'location_map': {
-                },
-                'collection_format_map': {
-                }
-            },
-            headers_map={
-                'accept': [
-                    'application/json'
-                ],
-                'content_type': [],
-            },
-            api_client=api_client
-        )
         self.fetch_worker_sleep_schedule_endpoint = _Endpoint(
             settings={
                 'response_type': (WorkerSleepSchedule,),
@@ -367,6 +276,97 @@ class WorkerMgtApi(object):
                 },
                 'location_map': {
                     'worker_id': 'path',
+                },
+                'collection_format_map': {
+                }
+            },
+            headers_map={
+                'accept': [
+                    'application/json'
+                ],
+                'content_type': [],
+            },
+            api_client=api_client
+        )
+        self.fetch_worker_tag_endpoint = _Endpoint(
+            settings={
+                'response_type': (WorkerTag,),
+                'auth': [],
+                'endpoint_path': '/api/v3/worker-mgt/tag/{tag_id}',
+                'operation_id': 'fetch_worker_tag',
+                'http_method': 'GET',
+                'servers': None,
+            },
+            params_map={
+                'all': [
+                    'tag_id',
+                ],
+                'required': [
+                    'tag_id',
+                ],
+                'nullable': [
+                ],
+                'enum': [
+                ],
+                'validation': [
+                ]
+            },
+            root_map={
+                'validations': {
+                },
+                'allowed_values': {
+                },
+                'openapi_types': {
+                    'tag_id':
+                        (str,),
+                },
+                'attribute_map': {
+                    'tag_id': 'tag_id',
+                },
+                'location_map': {
+                    'tag_id': 'path',
+                },
+                'collection_format_map': {
+                }
+            },
+            headers_map={
+                'accept': [
+                    'application/json'
+                ],
+                'content_type': [],
+            },
+            api_client=api_client
+        )
+        self.fetch_worker_tags_endpoint = _Endpoint(
+            settings={
+                'response_type': (WorkerTagList,),
+                'auth': [],
+                'endpoint_path': '/api/v3/worker-mgt/tags',
+                'operation_id': 'fetch_worker_tags',
+                'http_method': 'GET',
+                'servers': None,
+            },
+            params_map={
+                'all': [
+                ],
+                'required': [],
+                'nullable': [
+                ],
+                'enum': [
+                ],
+                'validation': [
+                ]
+            },
+            root_map={
+                'validations': {
+                },
+                'allowed_values': {
+                },
+                'openapi_types': {
+                },
+                'attribute_map': {
+                },
+                'location_map': {
                 },
                 'collection_format_map': {
                 }
@@ -477,62 +477,6 @@ class WorkerMgtApi(object):
             },
             api_client=api_client
         )
-        self.set_worker_clusters_endpoint = _Endpoint(
-            settings={
-                'response_type': None,
-                'auth': [],
-                'endpoint_path': '/api/v3/worker-mgt/workers/{worker_id}/setclusters',
-                'operation_id': 'set_worker_clusters',
-                'http_method': 'POST',
-                'servers': None,
-            },
-            params_map={
-                'all': [
-                    'worker_id',
-                    'worker_cluster_change_request',
-                ],
-                'required': [
-                    'worker_id',
-                    'worker_cluster_change_request',
-                ],
-                'nullable': [
-                ],
-                'enum': [
-                ],
-                'validation': [
-                ]
-            },
-            root_map={
-                'validations': {
-                },
-                'allowed_values': {
-                },
-                'openapi_types': {
-                    'worker_id':
-                        (str,),
-                    'worker_cluster_change_request':
-                        (WorkerClusterChangeRequest,),
-                },
-                'attribute_map': {
-                    'worker_id': 'worker_id',
-                },
-                'location_map': {
-                    'worker_id': 'path',
-                    'worker_cluster_change_request': 'body',
-                },
-                'collection_format_map': {
-                }
-            },
-            headers_map={
-                'accept': [
-                    'application/json'
-                ],
-                'content_type': [
-                    'application/json'
-                ]
-            },
-            api_client=api_client
-        )
         self.set_worker_sleep_schedule_endpoint = _Endpoint(
             settings={
                 'response_type': None,
@@ -589,23 +533,23 @@ class WorkerMgtApi(object):
             },
             api_client=api_client
         )
-        self.update_worker_cluster_endpoint = _Endpoint(
+        self.set_worker_tags_endpoint = _Endpoint(
             settings={
                 'response_type': None,
                 'auth': [],
-                'endpoint_path': '/api/v3/worker-mgt/cluster/{cluster_id}',
-                'operation_id': 'update_worker_cluster',
-                'http_method': 'PUT',
+                'endpoint_path': '/api/v3/worker-mgt/workers/{worker_id}/settags',
+                'operation_id': 'set_worker_tags',
+                'http_method': 'POST',
                 'servers': None,
             },
             params_map={
                 'all': [
-                    'cluster_id',
-                    'worker_cluster',
+                    'worker_id',
+                    'worker_tag_change_request',
                 ],
                 'required': [
-                    'cluster_id',
-                    'worker_cluster',
+                    'worker_id',
+                    'worker_tag_change_request',
                 ],
                 'nullable': [
                 ],
@@ -620,17 +564,73 @@ class WorkerMgtApi(object):
                 'allowed_values': {
                 },
                 'openapi_types': {
-                    'cluster_id':
+                    'worker_id':
                         (str,),
-                    'worker_cluster':
-                        (WorkerCluster,),
+                    'worker_tag_change_request':
+                        (WorkerTagChangeRequest,),
                 },
                 'attribute_map': {
-                    'cluster_id': 'cluster_id',
+                    'worker_id': 'worker_id',
                 },
                 'location_map': {
-                    'cluster_id': 'path',
-                    'worker_cluster': 'body',
+                    'worker_id': 'path',
+                    'worker_tag_change_request': 'body',
+                },
+                'collection_format_map': {
+                }
+            },
+            headers_map={
+                'accept': [
+                    'application/json'
+                ],
+                'content_type': [
+                    'application/json'
+                ]
+            },
+            api_client=api_client
+        )
+        self.update_worker_tag_endpoint = _Endpoint(
+            settings={
+                'response_type': None,
+                'auth': [],
+                'endpoint_path': '/api/v3/worker-mgt/tag/{tag_id}',
+                'operation_id': 'update_worker_tag',
+                'http_method': 'PUT',
+                'servers': None,
+            },
+            params_map={
+                'all': [
+                    'tag_id',
+                    'worker_tag',
+                ],
+                'required': [
+                    'tag_id',
+                    'worker_tag',
+                ],
+                'nullable': [
+                ],
+                'enum': [
+                ],
+                'validation': [
+                ]
+            },
+            root_map={
+                'validations': {
+                },
+                'allowed_values': {
+                },
+                'openapi_types': {
+                    'tag_id':
+                        (str,),
+                    'worker_tag':
+                        (WorkerTag,),
+                },
+                'attribute_map': {
+                    'tag_id': 'tag_id',
+                },
+                'location_map': {
+                    'tag_id': 'path',
+                    'worker_tag': 'body',
                 },
                 'collection_format_map': {
                 }
@@ -646,21 +646,21 @@ class WorkerMgtApi(object):
             api_client=api_client
         )
 
-    def create_worker_cluster(
+    def create_worker_tag(
         self,
-        worker_cluster,
+        worker_tag,
         **kwargs
     ):
-        """Create a new worker cluster.  # noqa: E501
+        """Create a new worker tag.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.create_worker_cluster(worker_cluster, async_req=True)
+        >>> thread = api.create_worker_tag(worker_tag, async_req=True)
         >>> result = thread.get()
 
         Args:
-            worker_cluster (WorkerCluster): The worker cluster.
+            worker_tag (WorkerTag): The worker tag.
 
         Keyword Args:
             _return_http_data_only (bool): response data without head status
@@ -691,7 +691,7 @@ class WorkerMgtApi(object):
             async_req (bool): execute request asynchronously
 
         Returns:
-            WorkerCluster
+            WorkerTag
                 If the method is called asynchronously, returns the request
                 thread.
         """
@@ -719,9 +719,9 @@ class WorkerMgtApi(object):
         kwargs['_content_type'] = kwargs.get(
             '_content_type')
         kwargs['_host_index'] = kwargs.get('_host_index')
-        kwargs['worker_cluster'] = \
-            worker_cluster
-        return self.create_worker_cluster_endpoint.call_with_http_info(**kwargs)
+        kwargs['worker_tag'] = \
+            worker_tag
+        return self.create_worker_tag_endpoint.call_with_http_info(**kwargs)
 
     def delete_worker(
         self,
@@ -800,21 +800,21 @@ class WorkerMgtApi(object):
             worker_id
         return self.delete_worker_endpoint.call_with_http_info(**kwargs)
 
-    def delete_worker_cluster(
+    def delete_worker_tag(
         self,
-        cluster_id,
+        tag_id,
         **kwargs
     ):
-        """Remove this worker cluster. This unassigns all workers from the cluster and removes it.  # noqa: E501
+        """Remove this worker tag. This unassigns all workers from the tag and removes it.  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.delete_worker_cluster(cluster_id, async_req=True)
+        >>> thread = api.delete_worker_tag(tag_id, async_req=True)
         >>> result = thread.get()
 
         Args:
-            cluster_id (str):
+            tag_id (str):
 
         Keyword Args:
             _return_http_data_only (bool): response data without head status
@@ -873,9 +873,9 @@ class WorkerMgtApi(object):
         kwargs['_content_type'] = kwargs.get(
             '_content_type')
         kwargs['_host_index'] = kwargs.get('_host_index')
-        kwargs['cluster_id'] = \
-            cluster_id
-        return self.delete_worker_cluster_endpoint.call_with_http_info(**kwargs)
+        kwargs['tag_id'] = \
+            tag_id
+        return self.delete_worker_tag_endpoint.call_with_http_info(**kwargs)
 
     def fetch_worker(
         self,
@@ -954,155 +954,6 @@ class WorkerMgtApi(object):
             worker_id
         return self.fetch_worker_endpoint.call_with_http_info(**kwargs)
 
-    def fetch_worker_cluster(
-        self,
-        cluster_id,
-        **kwargs
-    ):
-        """Get a single worker cluster.  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-
-        >>> thread = api.fetch_worker_cluster(cluster_id, async_req=True)
-        >>> result = thread.get()
-
-        Args:
-            cluster_id (str):
-
-        Keyword Args:
-            _return_http_data_only (bool): response data without head status
-                code and headers. Default is True.
-            _preload_content (bool): if False, the urllib3.HTTPResponse object
-                will be returned without reading/decoding response data.
-                Default is True.
-            _request_timeout (int/float/tuple): timeout setting for this request. If
-                one number provided, it will be total request timeout. It can also
-                be a pair (tuple) of (connection, read) timeouts.
-                Default is None.
-            _check_input_type (bool): specifies if type checking
-                should be done one the data sent to the server.
-                Default is True.
-            _check_return_type (bool): specifies if type checking
-                should be done one the data received from the server.
-                Default is True.
-            _spec_property_naming (bool): True if the variable names in the input data
-                are serialized names, as specified in the OpenAPI document.
-                False if the variable names in the input data
-                are pythonic names, e.g. snake case (default)
-            _content_type (str/None): force body content-type.
-                Default is None and content-type will be predicted by allowed
-                content-types and body.
-            _host_index (int/None): specifies the index of the server
-                that we want to use.
-                Default is read from the configuration.
-            async_req (bool): execute request asynchronously
-
-        Returns:
-            WorkerCluster
-                If the method is called asynchronously, returns the request
-                thread.
-        """
-        kwargs['async_req'] = kwargs.get(
-            'async_req', False
-        )
-        kwargs['_return_http_data_only'] = kwargs.get(
-            '_return_http_data_only', True
-        )
-        kwargs['_preload_content'] = kwargs.get(
-            '_preload_content', True
-        )
-        kwargs['_request_timeout'] = kwargs.get(
-            '_request_timeout', None
-        )
-        kwargs['_check_input_type'] = kwargs.get(
-            '_check_input_type', True
-        )
-        kwargs['_check_return_type'] = kwargs.get(
-            '_check_return_type', True
-        )
-        kwargs['_spec_property_naming'] = kwargs.get(
-            '_spec_property_naming', False
-        )
-        kwargs['_content_type'] = kwargs.get(
-            '_content_type')
-        kwargs['_host_index'] = kwargs.get('_host_index')
-        kwargs['cluster_id'] = \
-            cluster_id
-        return self.fetch_worker_cluster_endpoint.call_with_http_info(**kwargs)
-
-    def fetch_worker_clusters(
-        self,
-        **kwargs
-    ):
-        """Get list of worker clusters.  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-
-        >>> thread = api.fetch_worker_clusters(async_req=True)
-        >>> result = thread.get()
-
-
-        Keyword Args:
-            _return_http_data_only (bool): response data without head status
-                code and headers. Default is True.
-            _preload_content (bool): if False, the urllib3.HTTPResponse object
-                will be returned without reading/decoding response data.
-                Default is True.
-            _request_timeout (int/float/tuple): timeout setting for this request. If
-                one number provided, it will be total request timeout. It can also
-                be a pair (tuple) of (connection, read) timeouts.
-                Default is None.
-            _check_input_type (bool): specifies if type checking
-                should be done one the data sent to the server.
-                Default is True.
-            _check_return_type (bool): specifies if type checking
-                should be done one the data received from the server.
-                Default is True.
-            _spec_property_naming (bool): True if the variable names in the input data
-                are serialized names, as specified in the OpenAPI document.
-                False if the variable names in the input data
-                are pythonic names, e.g. snake case (default)
-            _content_type (str/None): force body content-type.
-                Default is None and content-type will be predicted by allowed
-                content-types and body.
-            _host_index (int/None): specifies the index of the server
-                that we want to use.
-                Default is read from the configuration.
-            async_req (bool): execute request asynchronously
-
-        Returns:
-            WorkerClusterList
-                If the method is called asynchronously, returns the request
-                thread.
-        """
-        kwargs['async_req'] = kwargs.get(
-            'async_req', False
-        )
-        kwargs['_return_http_data_only'] = kwargs.get(
-            '_return_http_data_only', True
-        )
-        kwargs['_preload_content'] = kwargs.get(
-            '_preload_content', True
-        )
-        kwargs['_request_timeout'] = kwargs.get(
-            '_request_timeout', None
-        )
-        kwargs['_check_input_type'] = kwargs.get(
-            '_check_input_type', True
-        )
-        kwargs['_check_return_type'] = kwargs.get(
-            '_check_return_type', True
-        )
-        kwargs['_spec_property_naming'] = kwargs.get(
-            '_spec_property_naming', False
-        )
-        kwargs['_content_type'] = kwargs.get(
-            '_content_type')
-        kwargs['_host_index'] = kwargs.get('_host_index')
-        return self.fetch_worker_clusters_endpoint.call_with_http_info(**kwargs)
-
     def fetch_worker_sleep_schedule(
         self,
         worker_id,
@@ -1179,6 +1030,155 @@ class WorkerMgtApi(object):
         kwargs['worker_id'] = \
             worker_id
         return self.fetch_worker_sleep_schedule_endpoint.call_with_http_info(**kwargs)
+
+    def fetch_worker_tag(
+        self,
+        tag_id,
+        **kwargs
+    ):
+        """Get a single worker tag.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+
+        >>> thread = api.fetch_worker_tag(tag_id, async_req=True)
+        >>> result = thread.get()
+
+        Args:
+            tag_id (str):
+
+        Keyword Args:
+            _return_http_data_only (bool): response data without head status
+                code and headers. Default is True.
+            _preload_content (bool): if False, the urllib3.HTTPResponse object
+                will be returned without reading/decoding response data.
+                Default is True.
+            _request_timeout (int/float/tuple): timeout setting for this request. If
+                one number provided, it will be total request timeout. It can also
+                be a pair (tuple) of (connection, read) timeouts.
+                Default is None.
+            _check_input_type (bool): specifies if type checking
+                should be done one the data sent to the server.
+                Default is True.
+            _check_return_type (bool): specifies if type checking
+                should be done one the data received from the server.
+                Default is True.
+            _spec_property_naming (bool): True if the variable names in the input data
+                are serialized names, as specified in the OpenAPI document.
+                False if the variable names in the input data
+                are pythonic names, e.g. snake case (default)
+            _content_type (str/None): force body content-type.
+                Default is None and content-type will be predicted by allowed
+                content-types and body.
+            _host_index (int/None): specifies the index of the server
+                that we want to use.
+                Default is read from the configuration.
+            async_req (bool): execute request asynchronously
+
+        Returns:
+            WorkerTag
+                If the method is called asynchronously, returns the request
+                thread.
+        """
+        kwargs['async_req'] = kwargs.get(
+            'async_req', False
+        )
+        kwargs['_return_http_data_only'] = kwargs.get(
+            '_return_http_data_only', True
+        )
+        kwargs['_preload_content'] = kwargs.get(
+            '_preload_content', True
+        )
+        kwargs['_request_timeout'] = kwargs.get(
+            '_request_timeout', None
+        )
+        kwargs['_check_input_type'] = kwargs.get(
+            '_check_input_type', True
+        )
+        kwargs['_check_return_type'] = kwargs.get(
+            '_check_return_type', True
+        )
+        kwargs['_spec_property_naming'] = kwargs.get(
+            '_spec_property_naming', False
+        )
+        kwargs['_content_type'] = kwargs.get(
+            '_content_type')
+        kwargs['_host_index'] = kwargs.get('_host_index')
+        kwargs['tag_id'] = \
+            tag_id
+        return self.fetch_worker_tag_endpoint.call_with_http_info(**kwargs)
+
+    def fetch_worker_tags(
+        self,
+        **kwargs
+    ):
+        """Get list of worker tags.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+
+        >>> thread = api.fetch_worker_tags(async_req=True)
+        >>> result = thread.get()
+
+
+        Keyword Args:
+            _return_http_data_only (bool): response data without head status
+                code and headers. Default is True.
+            _preload_content (bool): if False, the urllib3.HTTPResponse object
+                will be returned without reading/decoding response data.
+                Default is True.
+            _request_timeout (int/float/tuple): timeout setting for this request. If
+                one number provided, it will be total request timeout. It can also
+                be a pair (tuple) of (connection, read) timeouts.
+                Default is None.
+            _check_input_type (bool): specifies if type checking
+                should be done one the data sent to the server.
+                Default is True.
+            _check_return_type (bool): specifies if type checking
+                should be done one the data received from the server.
+                Default is True.
+            _spec_property_naming (bool): True if the variable names in the input data
+                are serialized names, as specified in the OpenAPI document.
+                False if the variable names in the input data
+                are pythonic names, e.g. snake case (default)
+            _content_type (str/None): force body content-type.
+                Default is None and content-type will be predicted by allowed
+                content-types and body.
+            _host_index (int/None): specifies the index of the server
+                that we want to use.
+                Default is read from the configuration.
+            async_req (bool): execute request asynchronously
+
+        Returns:
+            WorkerTagList
+                If the method is called asynchronously, returns the request
+                thread.
+        """
+        kwargs['async_req'] = kwargs.get(
+            'async_req', False
+        )
+        kwargs['_return_http_data_only'] = kwargs.get(
+            '_return_http_data_only', True
+        )
+        kwargs['_preload_content'] = kwargs.get(
+            '_preload_content', True
+        )
+        kwargs['_request_timeout'] = kwargs.get(
+            '_request_timeout', None
+        )
+        kwargs['_check_input_type'] = kwargs.get(
+            '_check_input_type', True
+        )
+        kwargs['_check_return_type'] = kwargs.get(
+            '_check_return_type', True
+        )
+        kwargs['_spec_property_naming'] = kwargs.get(
+            '_spec_property_naming', False
+        )
+        kwargs['_content_type'] = kwargs.get(
+            '_content_type')
+        kwargs['_host_index'] = kwargs.get('_host_index')
+        return self.fetch_worker_tags_endpoint.call_with_http_info(**kwargs)
 
     def fetch_workers(
         self,
@@ -1333,87 +1333,6 @@ class WorkerMgtApi(object):
             worker_status_change_request
         return self.request_worker_status_change_endpoint.call_with_http_info(**kwargs)
 
-    def set_worker_clusters(
-        self,
-        worker_id,
-        worker_cluster_change_request,
-        **kwargs
-    ):
-        """set_worker_clusters  # noqa: E501
-
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-
-        >>> thread = api.set_worker_clusters(worker_id, worker_cluster_change_request, async_req=True)
-        >>> result = thread.get()
-
-        Args:
-            worker_id (str):
-            worker_cluster_change_request (WorkerClusterChangeRequest): The list of cluster IDs this worker should be a member of.
-
-        Keyword Args:
-            _return_http_data_only (bool): response data without head status
-                code and headers. Default is True.
-            _preload_content (bool): if False, the urllib3.HTTPResponse object
-                will be returned without reading/decoding response data.
-                Default is True.
-            _request_timeout (int/float/tuple): timeout setting for this request. If
-                one number provided, it will be total request timeout. It can also
-                be a pair (tuple) of (connection, read) timeouts.
-                Default is None.
-            _check_input_type (bool): specifies if type checking
-                should be done one the data sent to the server.
-                Default is True.
-            _check_return_type (bool): specifies if type checking
-                should be done one the data received from the server.
-                Default is True.
-            _spec_property_naming (bool): True if the variable names in the input data
-                are serialized names, as specified in the OpenAPI document.
-                False if the variable names in the input data
-                are pythonic names, e.g. snake case (default)
-            _content_type (str/None): force body content-type.
-                Default is None and content-type will be predicted by allowed
-                content-types and body.
-            _host_index (int/None): specifies the index of the server
-                that we want to use.
-                Default is read from the configuration.
-            async_req (bool): execute request asynchronously
-
-        Returns:
-            None
-                If the method is called asynchronously, returns the request
-                thread.
-        """
-        kwargs['async_req'] = kwargs.get(
-            'async_req', False
-        )
-        kwargs['_return_http_data_only'] = kwargs.get(
-            '_return_http_data_only', True
-        )
-        kwargs['_preload_content'] = kwargs.get(
-            '_preload_content', True
-        )
-        kwargs['_request_timeout'] = kwargs.get(
-            '_request_timeout', None
-        )
-        kwargs['_check_input_type'] = kwargs.get(
-            '_check_input_type', True
-        )
-        kwargs['_check_return_type'] = kwargs.get(
-            '_check_return_type', True
-        )
-        kwargs['_spec_property_naming'] = kwargs.get(
-            '_spec_property_naming', False
-        )
-        kwargs['_content_type'] = kwargs.get(
-            '_content_type')
-        kwargs['_host_index'] = kwargs.get('_host_index')
-        kwargs['worker_id'] = \
-            worker_id
-        kwargs['worker_cluster_change_request'] = \
-            worker_cluster_change_request
-        return self.set_worker_clusters_endpoint.call_with_http_info(**kwargs)
-
     def set_worker_sleep_schedule(
         self,
         worker_id,
@@ -1495,23 +1414,23 @@ class WorkerMgtApi(object):
             worker_sleep_schedule
         return self.set_worker_sleep_schedule_endpoint.call_with_http_info(**kwargs)
 
-    def update_worker_cluster(
+    def set_worker_tags(
         self,
-        cluster_id,
-        worker_cluster,
+        worker_id,
+        worker_tag_change_request,
         **kwargs
     ):
-        """Update an existing worker cluster.  # noqa: E501
+        """set_worker_tags  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.update_worker_cluster(cluster_id, worker_cluster, async_req=True)
+        >>> thread = api.set_worker_tags(worker_id, worker_tag_change_request, async_req=True)
         >>> result = thread.get()
 
         Args:
-            cluster_id (str):
-            worker_cluster (WorkerCluster): The updated worker cluster.
+            worker_id (str):
+            worker_tag_change_request (WorkerTagChangeRequest): The list of worker tag IDs this worker should be a member of.
 
         Keyword Args:
             _return_http_data_only (bool): response data without head status
@@ -1570,9 +1489,90 @@ class WorkerMgtApi(object):
         kwargs['_content_type'] = kwargs.get(
             '_content_type')
         kwargs['_host_index'] = kwargs.get('_host_index')
-        kwargs['cluster_id'] = \
-            cluster_id
-        kwargs['worker_cluster'] = \
-            worker_cluster
-        return self.update_worker_cluster_endpoint.call_with_http_info(**kwargs)
+        kwargs['worker_id'] = \
+            worker_id
+        kwargs['worker_tag_change_request'] = \
+            worker_tag_change_request
+        return self.set_worker_tags_endpoint.call_with_http_info(**kwargs)
+
+    def update_worker_tag(
+        self,
+        tag_id,
+        worker_tag,
+        **kwargs
+    ):
+        """Update an existing worker tag.  # noqa: E501
+
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please pass async_req=True
+
+        >>> thread = api.update_worker_tag(tag_id, worker_tag, async_req=True)
+        >>> result = thread.get()
+
+        Args:
+            tag_id (str):
+            worker_tag (WorkerTag): The updated worker tag.
+
+        Keyword Args:
+            _return_http_data_only (bool): response data without head status
+                code and headers. Default is True.
+            _preload_content (bool): if False, the urllib3.HTTPResponse object
+                will be returned without reading/decoding response data.
+                Default is True.
+            _request_timeout (int/float/tuple): timeout setting for this request. If
+                one number provided, it will be total request timeout. It can also
+                be a pair (tuple) of (connection, read) timeouts.
+                Default is None.
+            _check_input_type (bool): specifies if type checking
+                should be done one the data sent to the server.
+                Default is True.
+            _check_return_type (bool): specifies if type checking
+                should be done one the data received from the server.
+                Default is True.
+            _spec_property_naming (bool): True if the variable names in the input data
+                are serialized names, as specified in the OpenAPI document.
+                False if the variable names in the input data
+                are pythonic names, e.g. snake case (default)
+            _content_type (str/None): force body content-type.
+                Default is None and content-type will be predicted by allowed
+                content-types and body.
+            _host_index (int/None): specifies the index of the server
+                that we want to use.
+                Default is read from the configuration.
+            async_req (bool): execute request asynchronously
+
+        Returns:
+            None
+                If the method is called asynchronously, returns the request
+                thread.
+        """
+        kwargs['async_req'] = kwargs.get(
+            'async_req', False
+        )
+        kwargs['_return_http_data_only'] = kwargs.get(
+            '_return_http_data_only', True
+        )
+        kwargs['_preload_content'] = kwargs.get(
+            '_preload_content', True
+        )
+        kwargs['_request_timeout'] = kwargs.get(
+            '_request_timeout', None
+        )
+        kwargs['_check_input_type'] = kwargs.get(
+            '_check_input_type', True
+        )
+        kwargs['_check_return_type'] = kwargs.get(
+            '_check_return_type', True
+        )
+        kwargs['_spec_property_naming'] = kwargs.get(
+            '_spec_property_naming', False
+        )
+        kwargs['_content_type'] = kwargs.get(
+            '_content_type')
+        kwargs['_host_index'] = kwargs.get('_host_index')
+        kwargs['tag_id'] = \
+            tag_id
+        kwargs['worker_tag'] = \
+            worker_tag
+        return self.update_worker_tag_endpoint.call_with_http_info(**kwargs)
 

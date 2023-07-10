@@ -74,9 +74,6 @@ from flamenco.manager.model.task_update import TaskUpdate
 from flamenco.manager.model.task_worker import TaskWorker
 from flamenco.manager.model.worker import Worker
 from flamenco.manager.model.worker_all_of import WorkerAllOf
-from flamenco.manager.model.worker_cluster import WorkerCluster
-from flamenco.manager.model.worker_cluster_change_request import WorkerClusterChangeRequest
-from flamenco.manager.model.worker_cluster_list import WorkerClusterList
 from flamenco.manager.model.worker_list import WorkerList
 from flamenco.manager.model.worker_registration import WorkerRegistration
 from flamenco.manager.model.worker_sign_on import WorkerSignOn
@@ -86,5 +83,8 @@ from flamenco.manager.model.worker_state_changed import WorkerStateChanged
 from flamenco.manager.model.worker_status import WorkerStatus
 from flamenco.manager.model.worker_status_change_request import WorkerStatusChangeRequest
 from flamenco.manager.model.worker_summary import WorkerSummary
+from flamenco.manager.model.worker_tag import WorkerTag
+from flamenco.manager.model.worker_tag_change_request import WorkerTagChangeRequest
+from flamenco.manager.model.worker_tag_list import WorkerTagList
 from flamenco.manager.model.worker_task import WorkerTask
 from flamenco.manager.model.worker_task_all_of import WorkerTaskAllOf

@@ -31,16 +31,16 @@ from flamenco.manager.exceptions import ApiAttributeError
 
 def lazy_import():
     from flamenco.manager.model.worker_all_of import WorkerAllOf
-    from flamenco.manager.model.worker_cluster import WorkerCluster
     from flamenco.manager.model.worker_status import WorkerStatus
     from flamenco.manager.model.worker_status_change_request import WorkerStatusChangeRequest
     from flamenco.manager.model.worker_summary import WorkerSummary
+    from flamenco.manager.model.worker_tag import WorkerTag
     from flamenco.manager.model.worker_task import WorkerTask
     globals()['WorkerAllOf'] = WorkerAllOf
-    globals()['WorkerCluster'] = WorkerCluster
     globals()['WorkerStatus'] = WorkerStatus
     globals()['WorkerStatusChangeRequest'] = WorkerStatusChangeRequest
     globals()['WorkerSummary'] = WorkerSummary
+    globals()['WorkerTag'] = WorkerTag
     globals()['WorkerTask'] = WorkerTask
 
 
@@ -107,7 +107,7 @@ class Worker(ModelComposed):
             'status_change': (WorkerStatusChangeRequest,),  # noqa: E501
             'last_seen': (datetime,),  # noqa: E501
             'task': (WorkerTask,),  # noqa: E501
-            'clusters': ([WorkerCluster],),  # noqa: E501
+            'tags': ([WorkerTag],),  # noqa: E501
         }
 
     @cached_property
@@ -126,7 +126,7 @@ class Worker(ModelComposed):
         'status_change': 'status_change',  # noqa: E501
         'last_seen': 'last_seen',  # noqa: E501
         'task': 'task',  # noqa: E501
-        'clusters': 'clusters',  # noqa: E501
+        'tags': 'tags',  # noqa: E501
     }
 
     read_only_vars = {
@@ -178,7 +178,7 @@ class Worker(ModelComposed):
             status_change (WorkerStatusChangeRequest): [optional]  # noqa: E501
             last_seen (datetime): Last time this worker was seen by the Manager.. [optional]  # noqa: E501
             task (WorkerTask): [optional]  # noqa: E501
-            clusters ([WorkerCluster]): Clusters of which this Worker is a member.. [optional]  # noqa: E501
+            tags ([WorkerTag]): Tags of which this Worker is a member.. [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)
@@ -288,7 +288,7 @@ class Worker(ModelComposed):
             status_change (WorkerStatusChangeRequest): [optional]  # noqa: E501
             last_seen (datetime): Last time this worker was seen by the Manager.. [optional]  # noqa: E501
             task (WorkerTask): [optional]  # noqa: E501
-            clusters ([WorkerCluster]): Clusters of which this Worker is a member.. [optional]  # noqa: E501
+            tags ([WorkerTag]): Tags of which this Worker is a member.. [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)

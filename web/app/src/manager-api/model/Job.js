@@ -97,8 +97,8 @@ class Job {
             if (data.hasOwnProperty('storage')) {
                 obj['storage'] = JobStorageInfo.constructFromObject(data['storage']);
             }
-            if (data.hasOwnProperty('worker_cluster')) {
-                obj['worker_cluster'] = ApiClient.convertToType(data['worker_cluster'], 'String');
+            if (data.hasOwnProperty('worker_tag')) {
+                obj['worker_tag'] = ApiClient.convertToType(data['worker_tag'], 'String');
             }
             if (data.hasOwnProperty('id')) {
                 obj['id'] = ApiClient.convertToType(data['id'], 'String');
@@ -170,10 +170,10 @@ Job.prototype['submitter_platform'] = undefined;
 Job.prototype['storage'] = undefined;
 
 /**
- * Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job. 
- * @member {String} worker_cluster
+ * Worker tag that should execute this job. When a tag ID is given, only Workers in that tag will be scheduled to work on it. If empty or ommitted, all workers can work on this job. 
+ * @member {String} worker_tag
  */
-Job.prototype['worker_cluster'] = undefined;
+Job.prototype['worker_tag'] = undefined;
 
 /**
  * UUID of the Job
@@ -249,10 +249,10 @@ SubmittedJob.prototype['submitter_platform'] = undefined;
  */
 SubmittedJob.prototype['storage'] = undefined;
 /**
- * Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job. 
- * @member {String} worker_cluster
+ * Worker tag that should execute this job. When a tag ID is given, only Workers in that tag will be scheduled to work on it. If empty or ommitted, all workers can work on this job. 
+ * @member {String} worker_tag
  */
-SubmittedJob.prototype['worker_cluster'] = undefined;
+SubmittedJob.prototype['worker_tag'] = undefined;
 // Implement JobAllOf interface:
 /**
  * UUID of the Job

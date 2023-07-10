@@ -30,9 +30,9 @@ from flamenco.manager.exceptions import ApiAttributeError
 
 
 def lazy_import():
-    from flamenco.manager.model.worker_cluster import WorkerCluster
+    from flamenco.manager.model.worker_tag import WorkerTag
     from flamenco.manager.model.worker_task import WorkerTask
-    globals()['WorkerCluster'] = WorkerCluster
+    globals()['WorkerTag'] = WorkerTag
     globals()['WorkerTask'] = WorkerTask
 
 
@@ -93,7 +93,7 @@ class WorkerAllOf(ModelNormal):
             'platform': (str,),  # noqa: E501
             'supported_task_types': ([str],),  # noqa: E501
             'task': (WorkerTask,),  # noqa: E501
-            'clusters': ([WorkerCluster],),  # noqa: E501
+            'tags': ([WorkerTag],),  # noqa: E501
         }
 
     @cached_property
@@ -106,7 +106,7 @@ class WorkerAllOf(ModelNormal):
         'platform': 'platform',  # noqa: E501
         'supported_task_types': 'supported_task_types',  # noqa: E501
         'task': 'task',  # noqa: E501
-        'clusters': 'clusters',  # noqa: E501
+        'tags': 'tags',  # noqa: E501
     }
 
     read_only_vars = {
@@ -156,7 +156,7 @@ class WorkerAllOf(ModelNormal):
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
             task (WorkerTask): [optional]  # noqa: E501
-            clusters ([WorkerCluster]): Clusters of which this Worker is a member.. [optional]  # noqa: E501
+            tags ([WorkerTag]): Tags of which this Worker is a member.. [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)
@@ -247,7 +247,7 @@ class WorkerAllOf(ModelNormal):
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
             task (WorkerTask): [optional]  # noqa: E501
-            clusters ([WorkerCluster]): Clusters of which this Worker is a member.. [optional]  # noqa: E501
+            tags ([WorkerTag]): Tags of which this Worker is a member.. [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)

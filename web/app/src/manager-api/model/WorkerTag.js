@@ -14,20 +14,20 @@
 import ApiClient from '../ApiClient';
 
 /**
- * The WorkerCluster model module.
- * @module model/WorkerCluster
+ * The WorkerTag model module.
+ * @module model/WorkerTag
  * @version 0.0.0
  */
-class WorkerCluster {
+class WorkerTag {
     /**
-     * Constructs a new <code>WorkerCluster</code>.
-     * Cluster of workers. A job can optionally specify which cluster it should be limited to. Workers can be part of multiple clusters simultaneously. 
-     * @alias module:model/WorkerCluster
+     * Constructs a new <code>WorkerTag</code>.
+     * Tag of workers. A job can optionally specify which tag it should be limited to. Workers can be part of multiple tags simultaneously. 
+     * @alias module:model/WorkerTag
      * @param name {String} 
      */
     constructor(name) { 
         
-        WorkerCluster.initialize(this, name);
+        WorkerTag.initialize(this, name);
     }
 
     /**
@@ -40,15 +40,15 @@ class WorkerCluster {
     }
 
     /**
-     * Constructs a <code>WorkerCluster</code> from a plain JavaScript object, optionally creating a new instance.
+     * Constructs a <code>WorkerTag</code> from a plain JavaScript object, optionally creating a new instance.
      * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @param {module:model/WorkerCluster} obj Optional instance to populate.
-     * @return {module:model/WorkerCluster} The populated <code>WorkerCluster</code> instance.
+     * @param {module:model/WorkerTag} obj Optional instance to populate.
+     * @return {module:model/WorkerTag} The populated <code>WorkerTag</code> instance.
      */
     static constructFromObject(data, obj) {
         if (data) {
-            obj = obj || new WorkerCluster();
+            obj = obj || new WorkerTag();
 
             if (data.hasOwnProperty('id')) {
                 obj['id'] = ApiClient.convertToType(data['id'], 'String');
@@ -67,25 +67,25 @@ class WorkerCluster {
 }
 
 /**
- * UUID of the cluster. Can be ommitted when creating a new cluster, in which case a random UUID will be assigned. 
+ * UUID of the tag. Can be ommitted when creating a new tag, in which case a random UUID will be assigned. 
  * @member {String} id
  */
-WorkerCluster.prototype['id'] = undefined;
+WorkerTag.prototype['id'] = undefined;
 
 /**
  * @member {String} name
  */
-WorkerCluster.prototype['name'] = undefined;
+WorkerTag.prototype['name'] = undefined;
 
 /**
  * @member {String} description
  */
-WorkerCluster.prototype['description'] = undefined;
+WorkerTag.prototype['description'] = undefined;
 
 
 
 
 
 
-export default WorkerCluster;
+export default WorkerTag;
 

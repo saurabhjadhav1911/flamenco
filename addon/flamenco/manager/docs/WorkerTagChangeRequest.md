@@ -1,11 +1,11 @@
-# WorkerClusterChangeRequest
+# WorkerTagChangeRequest
 
-Request to change which clusters this Worker is assigned to.
+Request to change which tags this Worker is assigned to.
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**cluster_ids** | **[str]** |  | 
+**tag_ids** | **[str]** |  | 
 **any string name** | **bool, date, datetime, dict, float, int, list, str, none_type** | any string name can be used but the value must be the correct type | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -12,21 +12,21 @@
  */
 
 import ApiClient from '../ApiClient';
-import WorkerCluster from './WorkerCluster';
+import WorkerTag from './WorkerTag';
 
 /**
- * The WorkerClusterList model module.
- * @module model/WorkerClusterList
+ * The WorkerTagList model module.
+ * @module model/WorkerTagList
  * @version 0.0.0
  */
-class WorkerClusterList {
+class WorkerTagList {
     /**
-     * Constructs a new <code>WorkerClusterList</code>.
-     * @alias module:model/WorkerClusterList
+     * Constructs a new <code>WorkerTagList</code>.
+     * @alias module:model/WorkerTagList
      */
     constructor() { 
         
-        WorkerClusterList.initialize(this);
+        WorkerTagList.initialize(this);
     }
 
     /**
@@ -38,18 +38,18 @@ class WorkerClusterList {
     }
 
     /**
-     * Constructs a <code>WorkerClusterList</code> from a plain JavaScript object, optionally creating a new instance.
+     * Constructs a <code>WorkerTagList</code> from a plain JavaScript object, optionally creating a new instance.
      * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @param {module:model/WorkerClusterList} obj Optional instance to populate.
-     * @return {module:model/WorkerClusterList} The populated <code>WorkerClusterList</code> instance.
+     * @param {module:model/WorkerTagList} obj Optional instance to populate.
+     * @return {module:model/WorkerTagList} The populated <code>WorkerTagList</code> instance.
      */
     static constructFromObject(data, obj) {
         if (data) {
-            obj = obj || new WorkerClusterList();
+            obj = obj || new WorkerTagList();
 
-            if (data.hasOwnProperty('clusters')) {
-                obj['clusters'] = ApiClient.convertToType(data['clusters'], [WorkerCluster]);
+            if (data.hasOwnProperty('tags')) {
+                obj['tags'] = ApiClient.convertToType(data['tags'], [WorkerTag]);
             }
         }
         return obj;
@@ -59,14 +59,14 @@ class WorkerClusterList {
 }
 
 /**
- * @member {Array.<module:model/WorkerCluster>} clusters
+ * @member {Array.<module:model/WorkerTag>} tags
  */
-WorkerClusterList.prototype['clusters'] = undefined;
+WorkerTagList.prototype['tags'] = undefined;
 
 
 
 
 
 
-export default WorkerClusterList;
+export default WorkerTagList;
 

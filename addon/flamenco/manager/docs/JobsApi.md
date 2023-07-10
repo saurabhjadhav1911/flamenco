@@ -1225,7 +1225,7 @@ with flamenco.manager.ApiClient() as api_client:
         storage=JobStorageInfo(
             shaman_checkout_id="shaman_checkout_id_example",
         ),
-        worker_cluster="worker_cluster_example",
+        worker_tag="worker_tag_example",
     ) # SubmittedJob | Job to submit
 
     # example passing only required values which don't have defaults set
@@ -1307,7 +1307,7 @@ with flamenco.manager.ApiClient() as api_client:
         storage=JobStorageInfo(
             shaman_checkout_id="shaman_checkout_id_example",
         ),
-        worker_cluster="worker_cluster_example",
+        worker_tag="worker_tag_example",
     ) # SubmittedJob | Job to check
 
     # example passing only required values which don't have defaults set

@@ -110,21 +110,21 @@ type ServerInterface interface {
 	// Get the Flamenco version of this Manager
 	// (GET /api/v3/version)
 	GetVersion(ctx echo.Context) error
-	// Remove this worker cluster. This unassigns all workers from the cluster and removes it.
-	// (DELETE /api/v3/worker-mgt/cluster/{cluster_id})
-	DeleteWorkerCluster(ctx echo.Context, clusterId string) error
-	// Get a single worker cluster.
-	// (GET /api/v3/worker-mgt/cluster/{cluster_id})
-	FetchWorkerCluster(ctx echo.Context, clusterId string) error
-	// Update an existing worker cluster.
-	// (PUT /api/v3/worker-mgt/cluster/{cluster_id})
-	UpdateWorkerCluster(ctx echo.Context, clusterId string) error
-	// Get list of worker clusters.
-	// (GET /api/v3/worker-mgt/clusters)
-	FetchWorkerClusters(ctx echo.Context) error
-	// Create a new worker cluster.
-	// (POST /api/v3/worker-mgt/clusters)
-	CreateWorkerCluster(ctx echo.Context) error
+	// Remove this worker tag. This unassigns all workers from the tag and removes it.
+	// (DELETE /api/v3/worker-mgt/tag/{tag_id})
+	DeleteWorkerTag(ctx echo.Context, tagId string) error
+	// Get a single worker tag.
+	// (GET /api/v3/worker-mgt/tag/{tag_id})
+	FetchWorkerTag(ctx echo.Context, tagId string) error
+	// Update an existing worker tag.
+	// (PUT /api/v3/worker-mgt/tag/{tag_id})
+	UpdateWorkerTag(ctx echo.Context, tagId string) error
+	// Get list of worker tags.
+	// (GET /api/v3/worker-mgt/tags)
+	FetchWorkerTags(ctx echo.Context) error
+	// Create a new worker tag.
+	// (POST /api/v3/worker-mgt/tags)
+	CreateWorkerTag(ctx echo.Context) error
 	// Get list of workers.
 	// (GET /api/v3/worker-mgt/workers)
 	FetchWorkers(ctx echo.Context) error
@@ -135,11 +135,11 @@ type ServerInterface interface {
 	// (GET /api/v3/worker-mgt/workers/{worker_id})
 	FetchWorker(ctx echo.Context, workerId string) error
 
-	// (POST /api/v3/worker-mgt/workers/{worker_id}/setclusters)
-	SetWorkerClusters(ctx echo.Context, workerId string) error
-
 	// (POST /api/v3/worker-mgt/workers/{worker_id}/setstatus)
 	RequestWorkerStatusChange(ctx echo.Context, workerId string) error
+
+	// (POST /api/v3/worker-mgt/workers/{worker_id}/settags)
+	SetWorkerTags(ctx echo.Context, workerId string) error
 
 	// (GET /api/v3/worker-mgt/workers/{worker_id}/sleep-schedule)
 	FetchWorkerSleepSchedule(ctx echo.Context, workerId string) error
@@ -661,69 +661,69 @@ func (w *ServerInterfaceWrapper) GetVersion(ctx echo.Context) error {
 	return err
 }
 
-// DeleteWorkerCluster converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteWorkerCluster(ctx echo.Context) error {
+// DeleteWorkerTag converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteWorkerTag(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "cluster_id" -------------
-	var clusterId string
+	// ------------- Path parameter "tag_id" -------------
+	var tagId string
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, ctx.Param("cluster_id"), &clusterId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "tag_id", runtime.ParamLocationPath, ctx.Param("tag_id"), &tagId)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cluster_id: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter tag_id: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.DeleteWorkerCluster(ctx, clusterId)
+	err = w.Handler.DeleteWorkerTag(ctx, tagId)
 	return err
 }
 
-// FetchWorkerCluster converts echo context to params.
-func (w *ServerInterfaceWrapper) FetchWorkerCluster(ctx echo.Context) error {
+// FetchWorkerTag converts echo context to params.
+func (w *ServerInterfaceWrapper) FetchWorkerTag(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "cluster_id" -------------
-	var clusterId string
+	// ------------- Path parameter "tag_id" -------------
+	var tagId string
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, ctx.Param("cluster_id"), &clusterId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "tag_id", runtime.ParamLocationPath, ctx.Param("tag_id"), &tagId)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cluster_id: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter tag_id: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.FetchWorkerCluster(ctx, clusterId)
+	err = w.Handler.FetchWorkerTag(ctx, tagId)
 	return err
 }
 
-// UpdateWorkerCluster converts echo context to params.
-func (w *ServerInterfaceWrapper) UpdateWorkerCluster(ctx echo.Context) error {
+// UpdateWorkerTag converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateWorkerTag(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "cluster_id" -------------
-	var clusterId string
+	// ------------- Path parameter "tag_id" -------------
+	var tagId string
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "cluster_id", runtime.ParamLocationPath, ctx.Param("cluster_id"), &clusterId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "tag_id", runtime.ParamLocationPath, ctx.Param("tag_id"), &tagId)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cluster_id: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter tag_id: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.UpdateWorkerCluster(ctx, clusterId)
+	err = w.Handler.UpdateWorkerTag(ctx, tagId)
 	return err
 }
 
-// FetchWorkerClusters converts echo context to params.
-func (w *ServerInterfaceWrapper) FetchWorkerClusters(ctx echo.Context) error {
+// FetchWorkerTags converts echo context to params.
+func (w *ServerInterfaceWrapper) FetchWorkerTags(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.FetchWorkerClusters(ctx)
+	err = w.Handler.FetchWorkerTags(ctx)
 	return err
 }
 
-// CreateWorkerCluster converts echo context to params.
-func (w *ServerInterfaceWrapper) CreateWorkerCluster(ctx echo.Context) error {
+// CreateWorkerTag converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateWorkerTag(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.CreateWorkerCluster(ctx)
+	err = w.Handler.CreateWorkerTag(ctx)
 	return err
 }
 
@@ -768,22 +768,6 @@ func (w *ServerInterfaceWrapper) FetchWorker(ctx echo.Context) error {
 	return err
 }
 
-// SetWorkerClusters converts echo context to params.
-func (w *ServerInterfaceWrapper) SetWorkerClusters(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "worker_id" -------------
-	var workerId string
-
-	err = runtime.BindStyledParameterWithLocation("simple", false, "worker_id", runtime.ParamLocationPath, ctx.Param("worker_id"), &workerId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter worker_id: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.SetWorkerClusters(ctx, workerId)
-	return err
-}
-
 // RequestWorkerStatusChange converts echo context to params.
 func (w *ServerInterfaceWrapper) RequestWorkerStatusChange(ctx echo.Context) error {
 	var err error
@@ -797,6 +781,22 @@ func (w *ServerInterfaceWrapper) RequestWorkerStatusChange(ctx echo.Context) err
 
 	// Invoke the callback with all the unmarshalled arguments
 	err = w.Handler.RequestWorkerStatusChange(ctx, workerId)
+	return err
+}
+
+// SetWorkerTags converts echo context to params.
+func (w *ServerInterfaceWrapper) SetWorkerTags(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "worker_id" -------------
+	var workerId string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "worker_id", runtime.ParamLocationPath, ctx.Param("worker_id"), &workerId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter worker_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.SetWorkerTags(ctx, workerId)
 	return err
 }
 
@@ -1010,16 +1010,16 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/api/v3/tasks/:task_id/logtail", wrapper.FetchTaskLogTail)
 	router.POST(baseURL+"/api/v3/tasks/:task_id/setstatus", wrapper.SetTaskStatus)
 	router.GET(baseURL+"/api/v3/version", wrapper.GetVersion)
-	router.DELETE(baseURL+"/api/v3/worker-mgt/cluster/:cluster_id", wrapper.DeleteWorkerCluster)
-	router.GET(baseURL+"/api/v3/worker-mgt/cluster/:cluster_id", wrapper.FetchWorkerCluster)
-	router.PUT(baseURL+"/api/v3/worker-mgt/cluster/:cluster_id", wrapper.UpdateWorkerCluster)
-	router.GET(baseURL+"/api/v3/worker-mgt/clusters", wrapper.FetchWorkerClusters)
-	router.POST(baseURL+"/api/v3/worker-mgt/clusters", wrapper.CreateWorkerCluster)
+	router.DELETE(baseURL+"/api/v3/worker-mgt/tag/:tag_id", wrapper.DeleteWorkerTag)
+	router.GET(baseURL+"/api/v3/worker-mgt/tag/:tag_id", wrapper.FetchWorkerTag)
+	router.PUT(baseURL+"/api/v3/worker-mgt/tag/:tag_id", wrapper.UpdateWorkerTag)
+	router.GET(baseURL+"/api/v3/worker-mgt/tags", wrapper.FetchWorkerTags)
+	router.POST(baseURL+"/api/v3/worker-mgt/tags", wrapper.CreateWorkerTag)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers", wrapper.FetchWorkers)
 	router.DELETE(baseURL+"/api/v3/worker-mgt/workers/:worker_id", wrapper.DeleteWorker)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers/:worker_id", wrapper.FetchWorker)
-	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/setclusters", wrapper.SetWorkerClusters)
 	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/setstatus", wrapper.RequestWorkerStatusChange)
+	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/settags", wrapper.SetWorkerTags)
 	router.GET(baseURL+"/api/v3/worker-mgt/workers/:worker_id/sleep-schedule", wrapper.FetchWorkerSleepSchedule)
 	router.POST(baseURL+"/api/v3/worker-mgt/workers/:worker_id/sleep-schedule", wrapper.SetWorkerSleepSchedule)
 	router.POST(baseURL+"/api/v3/worker/register-worker", wrapper.RegisterWorker)

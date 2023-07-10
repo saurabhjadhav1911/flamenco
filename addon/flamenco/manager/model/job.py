@@ -110,7 +110,7 @@ class Job(ModelComposed):
             'settings': (JobSettings,),  # noqa: E501
             'metadata': (JobMetadata,),  # noqa: E501
             'storage': (JobStorageInfo,),  # noqa: E501
-            'worker_cluster': (str,),  # noqa: E501
+            'worker_tag': (str,),  # noqa: E501
             'delete_requested_at': (datetime,),  # noqa: E501
         }
 
@@ -133,7 +133,7 @@ class Job(ModelComposed):
         'settings': 'settings',  # noqa: E501
         'metadata': 'metadata',  # noqa: E501
         'storage': 'storage',  # noqa: E501
-        'worker_cluster': 'worker_cluster',  # noqa: E501
+        'worker_tag': 'worker_tag',  # noqa: E501
         'delete_requested_at': 'delete_requested_at',  # noqa: E501
     }
 
@@ -189,7 +189,7 @@ class Job(ModelComposed):
             settings (JobSettings): [optional]  # noqa: E501
             metadata (JobMetadata): [optional]  # noqa: E501
             storage (JobStorageInfo): [optional]  # noqa: E501
-            worker_cluster (str): Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job. . [optional]  # noqa: E501
+            worker_tag (str): Worker tag that should execute this job. When a tag ID is given, only Workers in that tag will be scheduled to work on it. If empty or ommitted, all workers can work on this job. . [optional]  # noqa: E501
             delete_requested_at (datetime): If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager. . [optional]  # noqa: E501
         """
 
@@ -304,7 +304,7 @@ class Job(ModelComposed):
             settings (JobSettings): [optional]  # noqa: E501
             metadata (JobMetadata): [optional]  # noqa: E501
             storage (JobStorageInfo): [optional]  # noqa: E501
-            worker_cluster (str): Worker Cluster that should execute this job. When a cluster ID is given, only Workers in that cluster will be scheduled to work on it. If empty or ommitted, all workers can work on this job. . [optional]  # noqa: E501
+            worker_tag (str): Worker tag that should execute this job. When a tag ID is given, only Workers in that tag will be scheduled to work on it. If empty or ommitted, all workers can work on this job. . [optional]  # noqa: E501
             delete_requested_at (datetime): If job deletion was requested, this is the timestamp at which that request was stored on Flamenco Manager. . [optional]  # noqa: E501
         """
 
