@@ -4,6 +4,8 @@ MY_DIR="$(dirname "$(readlink -e "$0")")"
 ADDON_ZIP="$MY_DIR/web/static/flamenco3-addon.zip"
 WORKER_TARGET=/shared/software/flamenco3-worker/flamenco-worker
 
+TIMESTAMP=$(date +'%Y-%m-%d-%H%M%S')
+
 set -e
 
 function prompt() {
@@ -19,6 +21,7 @@ make
 
 prompt "Deploying Manager"
 ssh -o ClearAllForwardings=yes flamenco.farm.blender -t sudo systemctl stop flamenco3-manager
+ssh -o ClearAllForwardings=yes flamenco.farm.blender -t cp /home/flamenco3/flamenco-manager.sqlite /home/flamenco3/flamenco-manager.sqlite-bak-$TIMESTAMP
 scp flamenco-manager flamenco.farm.blender:/home/flamenco3/
 ssh -o ClearAllForwardings=yes flamenco.farm.blender -t sudo systemctl start flamenco3-manager
 
