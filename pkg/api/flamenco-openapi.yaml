@@ -1683,28 +1683,32 @@ components:
         "eval":
           type: string
           description: Python expression to be evaluated in order to determine the default value for this setting.
-        "evalOnSubmit":
+        "evalInfo":
           type: object
-          description: >
-            Enables the 'eval on submit' toggle button behavior for this setting.
-            A toggle button will be shown in Blender's submission interface.
-            When toggled on, the `eval` expression will determine the setting's
-            value. Manually editing the setting is then no longer possible, and
-            instead of an input field, the 'placeholder' string is shown.
-
-            An example use is the to-be-rendered frame range, which by default
-            automatically follows the scene range, but can be overridden
-            manually when desired.
+          description: Meta-data for the 'eval' expression.
           properties:
-            "showButton":
+            "showLinkButton":
               type: boolean
-              description: Enable or disable the 'eval on submit' toggle button.
-            "placeholder":
-              type: string
+              default: false
               description: >
-                Placeholder text to show when the manual input field is hidden
-                (because eval-on-submit has been toggled on by the user).
-          required: [showButton, placeholder]
+                Enables the 'eval on submit' toggle button behavior for this setting.
+                A toggle button will be shown in Blender's submission interface.
+                When toggled on, the `eval` expression will determine the setting's
+                value. Manually editing the setting is then no longer possible, and
+                instead of an input field, the 'description' string is shown.
+
+                An example use is the to-be-rendered frame range, which by default
+                automatically follows the scene range, but can be overridden
+                manually when desired.
+            "description":
+              type: string
+              default: ""
+              description: >
+                Description of what the 'eval' expression is doing.
+                It is also used as placeholder text to show when the manual
+                input field is hidden (because eval-on-submit has been toggled
+                on by the user).
+          required: [showLinkButton, description]
         "visible":
           $ref: "#/components/schemas/AvailableJobSettingVisibility"
         "required":
