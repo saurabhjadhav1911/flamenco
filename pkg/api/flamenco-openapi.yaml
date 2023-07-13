@@ -1683,6 +1683,20 @@ components:
         "eval":
           type: string
           description: Python expression to be evaluated in order to determine the default value for this setting.
+        "autoevalLockable":
+          # This setting uses camelCase, as 'autoeval_lockable' would translate
+          # to an 'AutoevalLockable' property in the Go code, which should be
+          # accessed as 'autoevalLockable' in the job compiler JavaScript file.
+          # To keep things consistent, the property is just named
+          # `autoevalLockable` here too.
+          type: boolean
+          default: false
+          description: >
+            Enables a toggle option in the submission interface to enable
+            auto-evaluation. When toggled on, the `eval` setting will always be
+            evaluated on job submission. An example use is the to-be-rendered
+            frame range, which by default automatically follows the scene range,
+            but can be overridden manually when desired.
         "visible":
           $ref: "#/components/schemas/AvailableJobSettingVisibility"
         "required":
