@@ -1683,20 +1683,28 @@ components:
         "eval":
           type: string
           description: Python expression to be evaluated in order to determine the default value for this setting.
-        "autoevalLockable":
-          # This setting uses camelCase, as 'autoeval_lockable' would translate
-          # to an 'AutoevalLockable' property in the Go code, which should be
-          # accessed as 'autoevalLockable' in the job compiler JavaScript file.
-          # To keep things consistent, the property is just named
-          # `autoevalLockable` here too.
-          type: boolean
-          default: false
+        "evalOnSubmit":
+          type: object
           description: >
-            Enables a toggle option in the submission interface to enable
-            auto-evaluation. When toggled on, the `eval` setting will always be
-            evaluated on job submission. An example use is the to-be-rendered
-            frame range, which by default automatically follows the scene range,
-            but can be overridden manually when desired.
+            Enables the 'eval on submit' toggle button behavior for this setting.
+            A toggle button will be shown in Blender's submission interface.
+            When toggled on, the `eval` expression will determine the setting's
+            value. Manually editing the setting is then no longer possible, and
+            instead of an input field, the 'placeholder' string is shown.
+
+            An example use is the to-be-rendered frame range, which by default
+            automatically follows the scene range, but can be overridden
+            manually when desired.
+          properties:
+            "showButton":
+              type: boolean
+              description: Enable or disable the 'eval on submit' toggle button.
+            "placeholder":
+              type: string
+              description: >
+                Placeholder text to show when the manual input field is hidden
+                (because eval-on-submit has been toggled on by the user).
+          required: [showButton, placeholder]
         "visible":
           $ref: "#/components/schemas/AvailableJobSettingVisibility"
         "required":
