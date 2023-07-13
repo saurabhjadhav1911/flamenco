@@ -144,7 +144,8 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
     ) -> None:
         autoeval_enabled = job_types.setting_should_autoeval(propgroup, setting)
         if autoeval_enabled:
-            label = propgroup.bl_rna.properties[setting.key].name
+            # Mypy doesn't know the bl_rna attribute exists.
+            label = propgroup.bl_rna.properties[setting.key].name  # type: ignore
             layout.prop(
                 propgroup,
                 job_types.setting_autoeval_propname(setting),
