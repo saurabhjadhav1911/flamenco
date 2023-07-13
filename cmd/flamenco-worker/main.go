@@ -52,7 +52,7 @@ var cliArgs struct {
 func main() {
 	parseCliArgs()
 	if cliArgs.version {
-		fmt.Println(appinfo.ApplicationVersion)
+		fmt.Println(appinfo.ExtendedVersion())
 		return
 	}
 
