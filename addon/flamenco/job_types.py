@@ -80,10 +80,15 @@ def setting_should_autoeval(
     return getattr(propgroup, propname, False)
 
 
-def setting_can_autoeval(setting: _AvailableJobSetting) -> bool:
-    # Note that this uses the Pythonified name; that's done by the OpenAPI code generator.
-    can: bool = setting.get("autoeval_lockable", False)
-    return can
+def show_eval_on_submit_button(setting: _AvailableJobSetting) -> bool:
+    """Return whether this setting should show the 'eval on submit' toggle button."""
+
+    eval_on_submit = setting.get("eval_on_submit", None)
+    if not eval_on_submit:
+        return False
+
+    show_button: bool = eval_on_submit.get("show_button", False)
+    return show_button
 
 
 def setting_autoeval_propname(setting: _AvailableJobSetting) -> str:

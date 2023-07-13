@@ -97,7 +97,7 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
         row = layout.row(align=True)
 
         if setting.get("editable", True):
-            if job_types.setting_can_autoeval(setting):
+            if job_types.show_eval_on_submit_button(setting):
                 self.draw_setting_autoeval(row, propgroup, setting)
             else:
                 self.draw_setting_editable(row, propgroup, setting)
@@ -146,11 +146,18 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
         if autoeval_enabled:
             # Mypy doesn't know the bl_rna attribute exists.
             label = propgroup.bl_rna.properties[setting.key].name  # type: ignore
-            layout.prop(
+
+            split = layout.split(factor=0.4, align=True)
+            split.alignment = "RIGHT"
+            split.label(text=label)
+
+            row = split.row(align=True)
+            row.label(text=setting.eval_on_submit.placeholder)
+            row.prop(
                 propgroup,
                 job_types.setting_autoeval_propname(setting),
-                text=label,
-                icon="AUTO",
+                text="",
+                icon="LINKED",
             )
         else:
             self.draw_setting_editable(layout, propgroup, setting)
@@ -158,7 +165,7 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
                 propgroup,
                 job_types.setting_autoeval_propname(setting),
                 text="",
-                icon="AUTO",
+                icon="UNLINKED",
             )
 
     def draw_flamenco_status(

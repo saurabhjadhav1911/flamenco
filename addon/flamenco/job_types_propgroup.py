@@ -257,7 +257,7 @@ def generate(job_type: _AvailableJobType) -> type[JobTypePropertyGroup]:
         prop = _create_property(job_type, setting)
         pg_type.__annotations__[setting.key] = prop
 
-        if job_types.setting_can_autoeval(setting):
+        if job_types.show_eval_on_submit_button(setting):
             # Add RNA property for the 'auto-eval' toggle.
             propname, prop = _create_autoeval_property(setting)
             pg_type.__annotations__[propname] = prop
@@ -323,7 +323,7 @@ def _create_autoeval_property(
     )
 
     prop = bpy.props.BoolProperty(
-        name="Auto Evaluate %s" % setting_name,
+        name="Use Automatic Value",
         description=prop_descr,
         default=True,
     )
