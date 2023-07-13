@@ -131,8 +131,7 @@ class JobTypePropertyGroup:
         setting value. Otherwise the default is used.
         """
         for setting in self.job_type.settings:
-            if job_types.setting_is_visible(setting):
-                # Skip those settings that will be visible in the GUI.
+            if not job_types.setting_should_autoeval(self, setting):
                 continue
 
             setting_eval = setting.get("eval", "")
@@ -253,9 +252,15 @@ def generate(job_type: _AvailableJobType) -> type[JobTypePropertyGroup]:
     )
     pg_type.__annotations__ = {}
 
+    # Add RNA properties for the settings.
     for setting in job_type.settings:
         prop = _create_property(job_type, setting)
         pg_type.__annotations__[setting.key] = prop
+
+        if job_types.setting_can_autoeval(setting):
+            # Add RNA property for the 'auto-eval' toggle.
+            propname, prop = _create_autoeval_property(setting)
+            pg_type.__annotations__[propname] = prop
 
     assert issubclass(pg_type, JobTypePropertyGroup), "did not expect type %r" % type(
         pg_type
@@ -302,6 +307,29 @@ def _create_property(job_type: _AvailableJobType, setting: _AvailableJobSetting)
     prop_name = _job_setting_key_to_label(setting.key)
     prop = prop_type(name=prop_name, **prop_kwargs)
     return prop
+
+
+def _create_autoeval_property(
+    setting: _AvailableJobSetting,
+) -> tuple[str, Any]:
+    from flamenco.manager.model.available_job_setting import AvailableJobSetting
+
+    assert isinstance(setting, AvailableJobSetting)
+
+    setting_name = _job_setting_key_to_label(setting.key)
+    prop_descr = (
+        "Automatically determine the value for %r when the job gets submitted"
+        % setting_name
+    )
+
+    prop = bpy.props.BoolProperty(
+        name="Auto Evaluate %s" % setting_name,
+        description=prop_descr,
+        default=True,
+    )
+
+    prop_name = job_types.setting_autoeval_propname(setting)
+    return prop_name, prop
 
 
 def _find_prop_type(

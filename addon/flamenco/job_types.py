@@ -68,6 +68,30 @@ def setting_is_visible(setting: _AvailableJobSetting) -> bool:
     return str(visibility) in {"visible", "submission"}
 
 
+def setting_should_autoeval(
+    propgroup: job_types_propgroup.JobTypePropertyGroup,
+    setting: _AvailableJobSetting,
+) -> bool:
+    if not setting_is_visible(setting):
+        # Invisible settings are there purely to be auto-evaluated.
+        return True
+
+    propname = setting_autoeval_propname(setting)
+    return getattr(propgroup, propname, False)
+
+
+def setting_can_autoeval(setting: _AvailableJobSetting) -> bool:
+    # Note that this uses the Pythonified name; that's done by the OpenAPI code generator.
+    can: bool = setting.get("autoeval_lockable", False)
+    print(f"setting_can_autoeval({setting.key}: {can})")
+    return can
+
+
+def setting_autoeval_propname(setting: _AvailableJobSetting) -> str:
+    """Return the property name of the 'auto-eval' state for this setting."""
+    return f"autoeval_{setting.key}"
+
+
 def _store_available_job_types(available_job_types: _AvailableJobTypes) -> None:
     global _available_job_types
     global _job_type_enum_items

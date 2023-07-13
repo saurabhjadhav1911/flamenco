@@ -95,8 +95,12 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
             return
 
         row = layout.row(align=True)
+
         if setting.get("editable", True):
-            self.draw_setting_editable(row, propgroup, setting)
+            if job_types.setting_can_autoeval(setting):
+                self.draw_setting_autoeval(row, propgroup, setting)
+            else:
+                self.draw_setting_editable(row, propgroup, setting)
         else:
             self.draw_setting_readonly(context, row, propgroup, setting)
 
@@ -131,6 +135,30 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
         setting: _AvailableJobSetting,
     ) -> None:
         layout.prop(propgroup, setting.key)
+
+    def draw_setting_autoeval(
+        self,
+        layout: bpy.types.UILayout,
+        propgroup: JobTypePropertyGroup,
+        setting: _AvailableJobSetting,
+    ) -> None:
+        autoeval_enabled = job_types.setting_should_autoeval(propgroup, setting)
+        if autoeval_enabled:
+            label = propgroup.bl_rna.properties[setting.key].name
+            layout.prop(
+                propgroup,
+                job_types.setting_autoeval_propname(setting),
+                text=label,
+                icon="AUTO",
+            )
+        else:
+            self.draw_setting_editable(layout, propgroup, setting)
+            layout.prop(
+                propgroup,
+                job_types.setting_autoeval_propname(setting),
+                text="",
+                icon="AUTO",
+            )
 
     def draw_flamenco_status(
         self, context: bpy.types.Context, layout: bpy.types.UILayout
