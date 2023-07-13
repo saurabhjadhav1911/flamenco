@@ -83,7 +83,6 @@ def setting_should_autoeval(
 def setting_can_autoeval(setting: _AvailableJobSetting) -> bool:
     # Note that this uses the Pythonified name; that's done by the OpenAPI code generator.
     can: bool = setting.get("autoeval_lockable", False)
-    print(f"setting_can_autoeval({setting.key}: {can})")
     return can
 
 
