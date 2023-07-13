@@ -83,11 +83,11 @@ def setting_should_autoeval(
 def show_eval_on_submit_button(setting: _AvailableJobSetting) -> bool:
     """Return whether this setting should show the 'eval on submit' toggle button."""
 
-    eval_on_submit = setting.get("eval_on_submit", None)
-    if not eval_on_submit:
+    eval_info = setting.get("eval_info", None)
+    if not eval_info:
         return False
 
-    show_button: bool = eval_on_submit.get("show_button", False)
+    show_button: bool = eval_info.get("show_link_button", False)
     return show_button
 
 

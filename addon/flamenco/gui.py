@@ -152,7 +152,7 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
             split.label(text=label)
 
             row = split.row(align=True)
-            row.label(text=setting.eval_on_submit.placeholder)
+            row.label(text=getattr(setting.eval_info, "description") or "")
             row.prop(
                 propgroup,
                 job_types.setting_autoeval_propname(setting),
