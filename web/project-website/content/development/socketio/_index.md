@@ -42,5 +42,9 @@ system on the Manager/backend side:
 `internal/manager/webupdates/worker_updates.go`
 : sending worker-related updates.
 
+`pkg/api/flamenco-openapi.yaml`
+: the OpenAPI specification also includes the structures sent over SocketIO.
+Search for `SocketIOJobUpdate`; the rest is defined in its vicinity.
+
 For a relatively simple example of a job update broadcast, see
 `func (f *Flamenco) SetJobPriority(...)` in `internal/manager/api_impl/jobs.go`.
