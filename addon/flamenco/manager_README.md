@@ -134,7 +134,7 @@ Class | Method | HTTP request | Description
 
  - [AssignedTask](flamenco/manager/docs/AssignedTask.md)
  - [AvailableJobSetting](flamenco/manager/docs/AvailableJobSetting.md)
- - [AvailableJobSettingEvalOnSubmit](flamenco/manager/docs/AvailableJobSettingEvalOnSubmit.md)
+ - [AvailableJobSettingEvalInfo](flamenco/manager/docs/AvailableJobSettingEvalInfo.md)
  - [AvailableJobSettingSubtype](flamenco/manager/docs/AvailableJobSettingSubtype.md)
  - [AvailableJobSettingType](flamenco/manager/docs/AvailableJobSettingType.md)
  - [AvailableJobSettingVisibility](flamenco/manager/docs/AvailableJobSettingVisibility.md)

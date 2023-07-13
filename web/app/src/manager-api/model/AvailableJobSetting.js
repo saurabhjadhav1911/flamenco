@@ -12,7 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
-import AvailableJobSettingEvalOnSubmit from './AvailableJobSettingEvalOnSubmit';
+import AvailableJobSettingEvalInfo from './AvailableJobSettingEvalInfo';
 import AvailableJobSettingSubtype from './AvailableJobSettingSubtype';
 import AvailableJobSettingType from './AvailableJobSettingType';
 import AvailableJobSettingVisibility from './AvailableJobSettingVisibility';
@@ -80,8 +80,8 @@ class AvailableJobSetting {
             if (data.hasOwnProperty('eval')) {
                 obj['eval'] = ApiClient.convertToType(data['eval'], 'String');
             }
-            if (data.hasOwnProperty('evalOnSubmit')) {
-                obj['evalOnSubmit'] = AvailableJobSettingEvalOnSubmit.constructFromObject(data['evalOnSubmit']);
+            if (data.hasOwnProperty('evalInfo')) {
+                obj['evalInfo'] = AvailableJobSettingEvalInfo.constructFromObject(data['evalInfo']);
             }
             if (data.hasOwnProperty('visible')) {
                 obj['visible'] = AvailableJobSettingVisibility.constructFromObject(data['visible']);
@@ -146,9 +146,9 @@ AvailableJobSetting.prototype['default'] = undefined;
 AvailableJobSetting.prototype['eval'] = undefined;
 
 /**
- * @member {module:model/AvailableJobSettingEvalOnSubmit} evalOnSubmit
+ * @member {module:model/AvailableJobSettingEvalInfo} evalInfo
  */
-AvailableJobSetting.prototype['evalOnSubmit'] = undefined;
+AvailableJobSetting.prototype['evalInfo'] = undefined;
 
 /**
  * @member {module:model/AvailableJobSettingVisibility} visible

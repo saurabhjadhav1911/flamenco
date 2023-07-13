@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 **description** | **bool, date, datetime, dict, float, int, list, str, none_type** | The description/tooltip shown in the user interface. | [optional] 
 **default** | **bool, date, datetime, dict, float, int, list, str, none_type** | The default value shown to the user when determining this setting. | [optional] 
 **eval** | **str** | Python expression to be evaluated in order to determine the default value for this setting. | [optional] 
-**eval_on_submit** | [**AvailableJobSettingEvalOnSubmit**](AvailableJobSettingEvalOnSubmit.md) |  | [optional] 
+**eval_info** | [**AvailableJobSettingEvalInfo**](AvailableJobSettingEvalInfo.md) |  | [optional] 
 **visible** | [**AvailableJobSettingVisibility**](AvailableJobSettingVisibility.md) |  | [optional] 
 **required** | **bool** | Whether to immediately reject a job definition, of this type, without this particular setting.  | [optional]  if omitted the server will use the default value of False
 **editable** | **bool** | Whether to allow editing this setting after the job has been submitted. Would imply deleting all existing tasks for this job, and recompiling it.  | [optional]  if omitted the server will use the default value of False

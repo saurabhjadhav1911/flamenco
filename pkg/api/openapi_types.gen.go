@@ -174,15 +174,15 @@ type AvailableJobSetting struct {
 	// Python expression to be evaluated in order to determine the default value for this setting.
 	Eval *string `json:"eval,omitempty"`
 
-	// Enables the 'eval on submit' toggle button behavior for this setting. A toggle button will be shown in Blender's submission interface. When toggled on, the `eval` expression will determine the setting's value. Manually editing the setting is then no longer possible, and instead of an input field, the 'placeholder' string is shown.
-	// An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired.
-	EvalOnSubmit *struct {
-		// Placeholder text to show when the manual input field is hidden (because eval-on-submit has been toggled on by the user).
-		Placeholder string `json:"placeholder"`
+	// Meta-data for the 'eval' expression.
+	EvalInfo *struct {
+		// Description of what the 'eval' expression is doing. It is also used as placeholder text to show when the manual input field is hidden (because eval-on-submit has been toggled on by the user).
+		Description string `json:"description"`
 
-		// Enable or disable the 'eval on submit' toggle button.
-		ShowButton bool `json:"showButton"`
-	} `json:"evalOnSubmit,omitempty"`
+		// Enables the 'eval on submit' toggle button behavior for this setting. A toggle button will be shown in Blender's submission interface. When toggled on, the `eval` expression will determine the setting's value. Manually editing the setting is then no longer possible, and instead of an input field, the 'description' string is shown.
+		// An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired.
+		ShowLinkButton bool `json:"showLinkButton"`
+	} `json:"evalInfo,omitempty"`
 
 	// Identifier for the setting, must be unique within the job type.
 	Key string `json:"key"`

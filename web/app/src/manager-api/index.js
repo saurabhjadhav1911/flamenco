@@ -15,7 +15,7 @@
 import ApiClient from './ApiClient';
 import AssignedTask from './model/AssignedTask';
 import AvailableJobSetting from './model/AvailableJobSetting';
-import AvailableJobSettingEvalOnSubmit from './model/AvailableJobSettingEvalOnSubmit';
+import AvailableJobSettingEvalInfo from './model/AvailableJobSettingEvalInfo';
 import AvailableJobSettingSubtype from './model/AvailableJobSettingSubtype';
 import AvailableJobSettingType from './model/AvailableJobSettingType';
 import AvailableJobSettingVisibility from './model/AvailableJobSettingVisibility';
@@ -146,10 +146,10 @@ export {
     AvailableJobSetting,
 
     /**
-     * The AvailableJobSettingEvalOnSubmit model constructor.
-     * @property {module:model/AvailableJobSettingEvalOnSubmit}
+     * The AvailableJobSettingEvalInfo model constructor.
+     * @property {module:model/AvailableJobSettingEvalInfo}
      */
-    AvailableJobSettingEvalOnSubmit,
+    AvailableJobSettingEvalInfo,
 
     /**
      * The AvailableJobSettingSubtype model constructor.
