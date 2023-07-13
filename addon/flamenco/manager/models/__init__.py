@@ -11,6 +11,7 @@
 
 from flamenco.manager.model.assigned_task import AssignedTask
 from flamenco.manager.model.available_job_setting import AvailableJobSetting
+from flamenco.manager.model.available_job_setting_eval_on_submit import AvailableJobSettingEvalOnSubmit
 from flamenco.manager.model.available_job_setting_subtype import AvailableJobSettingSubtype
 from flamenco.manager.model.available_job_setting_type import AvailableJobSettingType
 from flamenco.manager.model.available_job_setting_visibility import AvailableJobSettingVisibility

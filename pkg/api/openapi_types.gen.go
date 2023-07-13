@@ -159,9 +159,6 @@ type AssignedTask struct {
 
 // Single setting of a Job types.
 type AvailableJobSetting struct {
-	// Enables a toggle option in the submission interface to enable auto-evaluation. When toggled on, the `eval` setting will always be evaluated on job submission. An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired.
-	AutoevalLockable *bool `json:"autoevalLockable,omitempty"`
-
 	// When given, limit the valid values to these choices. Only usable with string type.
 	Choices *[]string `json:"choices,omitempty"`
 
@@ -176,6 +173,16 @@ type AvailableJobSetting struct {
 
 	// Python expression to be evaluated in order to determine the default value for this setting.
 	Eval *string `json:"eval,omitempty"`
+
+	// Enables the 'eval on submit' toggle button behavior for this setting. A toggle button will be shown in Blender's submission interface. When toggled on, the `eval` expression will determine the setting's value. Manually editing the setting is then no longer possible, and instead of an input field, the 'placeholder' string is shown.
+	// An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired.
+	EvalOnSubmit *struct {
+		// Placeholder text to show when the manual input field is hidden (because eval-on-submit has been toggled on by the user).
+		Placeholder string `json:"placeholder"`
+
+		// Enable or disable the 'eval on submit' toggle button.
+		ShowButton bool `json:"showButton"`
+	} `json:"evalOnSubmit,omitempty"`
 
 	// Identifier for the setting, must be unique within the job type.
 	Key string `json:"key"`
