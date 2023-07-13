@@ -91,6 +91,17 @@ def show_eval_on_submit_button(setting: _AvailableJobSetting) -> bool:
     return show_button
 
 
+def eval_description(setting: _AvailableJobSetting) -> str:
+    """Return the 'eval description' of this setting, or an empty string if not found."""
+
+    eval_info = setting.get("eval_info", None)
+    if not eval_info:
+        return ""
+
+    description: str = eval_info.get("description", "")
+    return description
+
+
 def setting_autoeval_propname(setting: _AvailableJobSetting) -> str:
     """Return the property name of the 'auto-eval' state for this setting."""
     return f"autoeval_{setting.key}"

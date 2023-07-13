@@ -126,6 +126,7 @@ class FLAMENCO_PT_job_submission(bpy.types.Panel):
         props = layout.operator("flamenco.eval_setting", text="", icon="SCRIPTPLUGINS")
         props.setting_key = setting.key
         props.setting_eval = setting_eval
+        props.eval_description = job_types.eval_description(setting)
 
     def draw_setting_readonly(
         self,

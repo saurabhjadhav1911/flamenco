@@ -143,6 +143,14 @@ class FLAMENCO_OT_eval_setting(FlamencoOpMixin, bpy.types.Operator):
     setting_key: bpy.props.StringProperty(name="Setting Key")  # type: ignore
     setting_eval: bpy.props.StringProperty(name="Python Expression")  # type: ignore
 
+    eval_description: bpy.props.StringProperty(name="Description", options={"HIDDEN"})
+
+    @classmethod
+    def description(cls, context, properties):
+        if not properties.eval_description:
+            return ""  # Causes bl_description to be shown.
+        return f"Set value to: {properties.eval_description}"
+
     def execute(self, context: bpy.types.Context) -> set[str]:
         job = job_submission.job_for_scene(context.scene)
         if job is None:
