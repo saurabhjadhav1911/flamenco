@@ -159,6 +159,9 @@ type AssignedTask struct {
 
 // Single setting of a Job types.
 type AvailableJobSetting struct {
+	// Enables a toggle option in the submission interface to enable auto-evaluation. When toggled on, the `eval` setting will always be evaluated on job submission. An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired.
+	AutoevalLockable *bool `json:"autoevalLockable,omitempty"`
+
 	// When given, limit the valid values to these choices. Only usable with string type.
 	Choices *[]string `json:"choices,omitempty"`
 

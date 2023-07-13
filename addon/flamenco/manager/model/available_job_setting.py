@@ -99,6 +99,7 @@ class AvailableJobSetting(ModelNormal):
             'description': (bool, date, datetime, dict, float, int, list, str, none_type,),  # noqa: E501
             'default': (bool, date, datetime, dict, float, int, list, str, none_type,),  # noqa: E501
             'eval': (str,),  # noqa: E501
+            'autoeval_lockable': (bool,),  # noqa: E501
             'visible': (AvailableJobSettingVisibility,),  # noqa: E501
             'required': (bool,),  # noqa: E501
             'editable': (bool,),  # noqa: E501
@@ -118,6 +119,7 @@ class AvailableJobSetting(ModelNormal):
         'description': 'description',  # noqa: E501
         'default': 'default',  # noqa: E501
         'eval': 'eval',  # noqa: E501
+        'autoeval_lockable': 'autoevalLockable',  # noqa: E501
         'visible': 'visible',  # noqa: E501
         'required': 'required',  # noqa: E501
         'editable': 'editable',  # noqa: E501
@@ -174,6 +176,7 @@ class AvailableJobSetting(ModelNormal):
             description (bool, date, datetime, dict, float, int, list, str, none_type): The description/tooltip shown in the user interface.. [optional]  # noqa: E501
             default (bool, date, datetime, dict, float, int, list, str, none_type): The default value shown to the user when determining this setting.. [optional]  # noqa: E501
             eval (str): Python expression to be evaluated in order to determine the default value for this setting.. [optional]  # noqa: E501
+            autoeval_lockable (bool): Enables a toggle option in the submission interface to enable auto-evaluation. When toggled on, the `eval` setting will always be evaluated on job submission. An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired. . [optional] if omitted the server will use the default value of False  # noqa: E501
             visible (AvailableJobSettingVisibility): [optional]  # noqa: E501
             required (bool): Whether to immediately reject a job definition, of this type, without this particular setting. . [optional] if omitted the server will use the default value of False  # noqa: E501
             editable (bool): Whether to allow editing this setting after the job has been submitted. Would imply deleting all existing tasks for this job, and recompiling it. . [optional] if omitted the server will use the default value of False  # noqa: E501
@@ -270,6 +273,7 @@ class AvailableJobSetting(ModelNormal):
             description (bool, date, datetime, dict, float, int, list, str, none_type): The description/tooltip shown in the user interface.. [optional]  # noqa: E501
             default (bool, date, datetime, dict, float, int, list, str, none_type): The default value shown to the user when determining this setting.. [optional]  # noqa: E501
             eval (str): Python expression to be evaluated in order to determine the default value for this setting.. [optional]  # noqa: E501
+            autoeval_lockable (bool): Enables a toggle option in the submission interface to enable auto-evaluation. When toggled on, the `eval` setting will always be evaluated on job submission. An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired. . [optional] if omitted the server will use the default value of False  # noqa: E501
             visible (AvailableJobSettingVisibility): [optional]  # noqa: E501
             required (bool): Whether to immediately reject a job definition, of this type, without this particular setting. . [optional] if omitted the server will use the default value of False  # noqa: E501
             editable (bool): Whether to allow editing this setting after the job has been submitted. Would imply deleting all existing tasks for this job, and recompiling it. . [optional] if omitted the server will use the default value of False  # noqa: E501

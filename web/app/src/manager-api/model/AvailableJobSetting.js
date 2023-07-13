@@ -79,6 +79,9 @@ class AvailableJobSetting {
             if (data.hasOwnProperty('eval')) {
                 obj['eval'] = ApiClient.convertToType(data['eval'], 'String');
             }
+            if (data.hasOwnProperty('autoevalLockable')) {
+                obj['autoevalLockable'] = ApiClient.convertToType(data['autoevalLockable'], 'Boolean');
+            }
             if (data.hasOwnProperty('visible')) {
                 obj['visible'] = AvailableJobSettingVisibility.constructFromObject(data['visible']);
             }
@@ -140,6 +143,13 @@ AvailableJobSetting.prototype['default'] = undefined;
  * @member {String} eval
  */
 AvailableJobSetting.prototype['eval'] = undefined;
+
+/**
+ * Enables a toggle option in the submission interface to enable auto-evaluation. When toggled on, the `eval` setting will always be evaluated on job submission. An example use is the to-be-rendered frame range, which by default automatically follows the scene range, but can be overridden manually when desired. 
+ * @member {Boolean} autoevalLockable
+ * @default false
+ */
+AvailableJobSetting.prototype['autoevalLockable'] = false;
 
 /**
  * @member {module:model/AvailableJobSettingVisibility} visible
