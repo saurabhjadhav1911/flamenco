@@ -195,7 +195,9 @@ func runFlamencoManager() bool {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		persist.PeriodicIntegrityCheck(mainCtx, mainCtxCancel)
+		persist.PeriodicIntegrityCheck(mainCtx,
+			configService.Get().DBIntegrityCheck,
+			mainCtxCancel)
 	}()
 
 	// Start the web server.

@@ -73,8 +73,11 @@ type Base struct {
 	Meta ConfMeta `yaml:"_meta"`
 
 	ManagerName string `yaml:"manager_name"`
-	DatabaseDSN string `yaml:"database"`
-	Listen      string `yaml:"listen"`
+
+	DatabaseDSN      string        `yaml:"database"`
+	DBIntegrityCheck time.Duration `yaml:"database_check_period"`
+
+	Listen string `yaml:"listen"`
 
 	SSDPDiscovery bool `yaml:"autodiscoverable"`
 

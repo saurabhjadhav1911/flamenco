@@ -14,7 +14,6 @@ var ErrIntegrity = errors.New("database integrity check failed")
 
 const (
 	integrityCheckTimeout = 2 * time.Second
-	integrityCheckPeriod  = 1 * time.Hour
 )
 
 type PragmaIntegrityCheckResult struct {
@@ -30,15 +29,26 @@ type PragmaForeignKeyCheckResult struct {
 
 // PeriodicIntegrityCheck periodically checks the database integrity.
 // This function only returns when the context is done.
-func (db *DB) PeriodicIntegrityCheck(ctx context.Context, onErrorCallback func()) {
-	log.Debug().Msg("database: periodic integrity check loop starting")
-	defer log.Debug().Msg("database: periodic integrity check loop stopping")
+func (db *DB) PeriodicIntegrityCheck(
+	ctx context.Context,
+	period time.Duration,
+	onErrorCallback func(),
+) {
+	if period == 0 {
+		log.Info().Msg("database: periodic integrity check disabled")
+		return
+	}
+
+	log.Info().
+		Stringer("period", period).
+		Msg("database: periodic integrity check starting")
+	defer log.Debug().Msg("database: periodic integrity check stopping")
 
 	for {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(integrityCheckPeriod):
+		case <-time.After(period):
 		}
 
 		ok := db.performIntegrityCheck(ctx)
