@@ -74,26 +74,26 @@ func (db *DB) pragmaIntegrityCheck(ctx context.Context) (ok bool) {
 		Raw("PRAGMA integrity_check").
 		Scan(&issues)
 	if tx.Error != nil {
-		log.Error().Err(tx.Error).Msg("database error checking integrity")
+		log.Error().Err(tx.Error).Msg("database: error checking integrity")
 		return false
 	}
 
 	switch len(issues) {
 	case 0:
-		log.Warn().Msg("database integrity check returned nothing, expected explicit 'ok'; treating as an implicit 'ok'")
+		log.Warn().Msg("database: integrity check returned nothing, expected explicit 'ok'; treating as an implicit 'ok'")
 		return true
 	case 1:
 		if issues[0].Description == "ok" {
-			log.Debug().Msg("database integrity check ok")
+			log.Debug().Msg("database: integrity check ok")
 			return true
 		}
 	}
 
-	log.Error().Int("num_issues", len(issues)).Msg("database integrity check failed")
+	log.Error().Int("num_issues", len(issues)).Msg("database: integrity check failed")
 	for _, issue := range issues {
 		log.Error().
 			Str("description", issue.Description).
-			Msg("database integrity check failure")
+			Msg("database: integrity check failure")
 	}
 
 	return false
@@ -115,23 +115,23 @@ func (db *DB) pragmaForeignKeyCheck(ctx context.Context) (ok bool) {
 		Raw("PRAGMA foreign_key_check").
 		Scan(&issues)
 	if tx.Error != nil {
-		log.Error().Err(tx.Error).Msg("database error checking foreign keys")
+		log.Error().Err(tx.Error).Msg("database: error checking foreign keys")
 		return false
 	}
 
 	if len(issues) == 0 {
-		log.Debug().Msg("database foreign key check ok")
+		log.Debug().Msg("database: foreign key check ok")
 		return true
 	}
 
-	log.Error().Int("num_issues", len(issues)).Msg("database foreign key check failed")
+	log.Error().Int("num_issues", len(issues)).Msg("database: foreign key check failed")
 	for _, issue := range issues {
 		log.Error().
 			Str("table", issue.Table).
 			Int("rowid", issue.RowID).
 			Str("parent", issue.Parent).
 			Int("fkid", issue.FKID).
-			Msg("database foreign key relation missing")
+			Msg("database: foreign key relation missing")
 	}
 
 	return false
