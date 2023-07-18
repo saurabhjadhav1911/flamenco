@@ -15,6 +15,7 @@ bugs in actually-released versions.
 - Nicer version display for non-release builds. Instead of `3.3-alpha0-v3.2-76-gdd34d538`, show `3.3-alpha0 (v3.2-76-gdd34d538)`.
 - Job settings: add a description for the `eval` field. This is shown in the tooltip of the 'set to automatic value' button, to make it clear what that button will do.
 - Job settings: make it possible for a setting to be "linked" to its automatic value. For job settings that have this new feature enabled, they will not be editable by default, and the setting will just use its `eval` expression to determine the value. This can be toggled by the user in Blender's submission interface, to still allow manual edits of the value when needed.
+- Database integrity tests. These are always run at startup of Flamenco Manager, and by default run periodically every hour. This can be configured by adding/changing the `database_check_period: 1h` setting in `flamenco-manager.yaml`. Setting it to `0` will disable the periodic check. When a database consistency error is found, Flamenco Manager will immediately shut down.
 
 
 ## 3.2 - released 2023-02-21
