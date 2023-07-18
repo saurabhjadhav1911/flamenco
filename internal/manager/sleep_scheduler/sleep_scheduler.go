@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/benbjohnson/clock"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"git.blender.org/flamenco/internal/manager/persistence"
@@ -79,6 +80,11 @@ func (ss *SleepScheduler) SetSchedule(ctx context.Context, workerUUID string, sc
 	if err := ss.persist.SetWorkerSleepSchedule(ctx, workerUUID, schedule); err != nil {
 		return fmt.Errorf("persisting sleep schedule of worker %s: %w", workerUUID, err)
 	}
+
+	logger := addLoggerFields(zerolog.Ctx(ctx), schedule)
+	logger.Info().
+		Str("worker", schedule.Worker.Identifier()).
+		Msg("sleep scheduler: new schedule for worker")
 
 	return ss.ApplySleepSchedule(ctx, schedule)
 }
@@ -238,4 +244,20 @@ func (ss *SleepScheduler) checkSchedule(ctx context.Context, schedule *persisten
 func (ss *SleepScheduler) mayUpdateWorker(worker *persistence.Worker) bool {
 	shouldSkip := skipWorkersInStatus[worker.Status]
 	return !shouldSkip
+}
+
+func addLoggerFields(logger *zerolog.Logger, schedule *persistence.SleepSchedule) zerolog.Logger {
+	logCtx := logger.With()
+
+	if schedule.Worker != nil {
+		logCtx = logCtx.Str("worker", schedule.Worker.Identifier())
+	}
+
+	logCtx = logCtx.
+		Bool("isActive", schedule.IsActive).
+		Str("daysOfWeek", schedule.DaysOfWeek).
+		Stringer("startTime", schedule.StartTime).
+		Stringer("endTime", schedule.EndTime)
+
+	return logCtx.Logger()
 }

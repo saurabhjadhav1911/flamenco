@@ -65,11 +65,11 @@ func (f *Flamenco) SetWorkerSleepSchedule(e echo.Context, workerUUID string) err
 		DaysOfWeek: schedule.DaysOfWeek,
 	}
 	if err := dbSchedule.StartTime.Scan(schedule.StartTime); err != nil {
-		logger.Warn().Err(err).Msg("bad request received, cannot parse schedule start time")
+		logger.Warn().Interface("schedule", schedule).Err(err).Msg("bad request received, cannot parse schedule start time")
 		return sendAPIError(e, http.StatusBadRequest, "invalid format for schedule start time")
 	}
 	if err := dbSchedule.EndTime.Scan(schedule.EndTime); err != nil {
-		logger.Warn().Err(err).Msg("bad request received, cannot parse schedule end time")
+		logger.Warn().Interface("schedule", schedule).Err(err).Msg("bad request received, cannot parse schedule end time")
 		return sendAPIError(e, http.StatusBadRequest, "invalid format for schedule end time")
 	}
 
@@ -84,6 +84,5 @@ func (f *Flamenco) SetWorkerSleepSchedule(e echo.Context, workerUUID string) err
 		return sendAPIError(e, http.StatusInternalServerError, "error fetching sleep schedule: %v", err)
 	}
 
-	logger.Info().Interface("schedule", schedule).Msg("worker sleep schedule updated")
 	return e.NoContent(http.StatusNoContent)
 }
