@@ -12,7 +12,10 @@ import (
 
 var ErrIntegrity = errors.New("database integrity check failed")
 
-const integrityCheckTimeout = 2 * time.Second
+const (
+	integrityCheckTimeout = 2 * time.Second
+	integrityCheckPeriod  = 1 * time.Hour
+)
 
 type PragmaIntegrityCheckResult struct {
 	Description string `gorm:"column:integrity_check"`
@@ -23,6 +26,27 @@ type PragmaForeignKeyCheckResult struct {
 	RowID  int    `gorm:"column:rowid"`
 	Parent string `gorm:"column:parent"`
 	FKID   int    `gorm:"column:fkid"`
+}
+
+// PeriodicIntegrityCheck periodically checks the database integrity.
+// This function only returns when the context is done.
+func (db *DB) PeriodicIntegrityCheck(ctx context.Context, onErrorCallback func()) {
+	log.Debug().Msg("database: periodic integrity check loop starting")
+	defer log.Debug().Msg("database: periodic integrity check loop stopping")
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(integrityCheckPeriod):
+		}
+
+		ok := db.performIntegrityCheck(ctx)
+		if !ok {
+			log.Error().Msg("database: periodic integrity check failed")
+			onErrorCallback()
+		}
+	}
 }
 
 // performIntegrityCheck uses a few 'pragma' SQL statements to do some integrity checking.

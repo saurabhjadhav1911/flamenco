@@ -15,8 +15,6 @@ import (
 	"github.com/glebarez/sqlite"
 )
 
-const checkPeriod = 1 * time.Hour
-
 // DB provides the database interface.
 type DB struct {
 	gormDB *gorm.DB

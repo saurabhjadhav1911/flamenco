@@ -139,12 +139,6 @@ func runFlamencoManager() bool {
 	persist := openDB(*configService)
 	defer persist.Close()
 
-	// Disabled for now. `VACUUM` locks the database, which means that other
-	// queries can fail with a "database is locked (5) (SQLITE_BUSY)" error. This
-	// situation should be handled gracefully before reinstating the vacuum loop.
-	//
-	// go persist.PeriodicMaintenanceLoop(mainCtx)
-
 	timeService := clock.New()
 	compiler, err := job_compilers.Load(timeService)
 	if err != nil {
@@ -194,6 +188,14 @@ func runFlamencoManager() bool {
 	go func() {
 		defer wg.Done()
 		lastRender.Run(mainCtx)
+	}()
+
+	// Run a periodic integrity check on the database.
+	// When that check fails, the entire application should shut down.
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		persist.PeriodicIntegrityCheck(mainCtx, mainCtxCancel)
 	}()
 
 	// Start the web server.
