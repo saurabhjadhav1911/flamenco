@@ -28,8 +28,9 @@
 import * as API from '@/manager-api';
 import { getAPIClient } from "@/api-client";
 import { backendURL } from '@/urls';
+import { useSocketStatus } from '@/stores/socket-status';
 
-import ApiSpinner from '@/components/ApiSpinner.vue'
+import ApiSpinner from '@/components/ApiSpinner.vue';
 
 const DEFAULT_FLAMENCO_NAME = "Flamenco";
 const DEFAULT_FLAMENCO_VERSION = "unknown";
@@ -47,6 +48,14 @@ export default {
   mounted() {
     window.app = this;
     this.fetchManagerInfo();
+
+    const sockStatus = useSocketStatus();
+    this.$watch(() => sockStatus.isConnected, (isConnected) => {
+      if (!isConnected) return;
+      if (!sockStatus.wasEverDisconnected) return;
+      this.socketIOReconnect();
+    });
+
   },
   methods: {
     // TODO: also call this when SocketIO reconnects.
@@ -56,6 +65,16 @@ export default {
         this.flamencoName = version.name;
         this.flamencoVersion = version.version;
       })
+    },
+
+    socketIOReconnect() {
+      const metaAPI = new API.MetaApi(getAPIClient())
+      metaAPI.getVersion().then((version) => {
+        if (version.name === this.flamencoName && version.version == this.flamencoVersion)
+          return;
+        console.log(`Updated from ${this.flamencoVersion} to ${version.version}`);
+        location.reload();
+      });
     },
   },
 }
