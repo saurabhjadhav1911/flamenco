@@ -25,7 +25,7 @@ func (f *Flamenco) GetVersion(e echo.Context) error {
 	return e.JSON(http.StatusOK, api.FlamencoVersion{
 		Version:      appinfo.ExtendedVersion(),
 		Shortversion: appinfo.ApplicationVersion,
-		Name:         appinfo.ApplicationName,
+		Name:         f.config.Get().ManagerName,
 		Git:          appinfo.ApplicationGitHash,
 	})
 }
