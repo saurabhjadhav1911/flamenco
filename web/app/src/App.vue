@@ -58,7 +58,6 @@ export default {
 
   },
   methods: {
-    // TODO: also call this when SocketIO reconnects.
     fetchManagerInfo() {
       const metaAPI = new API.MetaApi(getAPIClient());
       metaAPI.getVersion().then((version) => {
