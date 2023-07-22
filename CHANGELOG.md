@@ -17,6 +17,7 @@ bugs in actually-released versions.
 - Job settings: make it possible for a setting to be "linked" to its automatic value. For job settings that have this new feature enabled, they will not be editable by default, and the setting will just use its `eval` expression to determine the value. This can be toggled by the user in Blender's submission interface, to still allow manual edits of the value when needed.
 - Database integrity tests. These are always run at startup of Flamenco Manager, and by default run periodically every hour. This can be configured by adding/changing the `database_check_period: 1h` setting in `flamenco-manager.yaml`. Setting it to `0` will disable the periodic check. When a database consistency error is found, Flamenco Manager will immediately shut down.
 - The webapp automatically reloads after a disconnect, when it reconnects to Flamenco Manager and sees the Manager version changed [#104235](https://projects.blender.org/studio/flamenco/pulls/104235).
+- Show the configured Flamenco Manager name in the webapp's browser window title.
 
 
 ## 3.2 - released 2023-02-21

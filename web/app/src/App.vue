@@ -63,6 +63,7 @@ export default {
       metaAPI.getVersion().then((version) => {
         this.flamencoName = version.name;
         this.flamencoVersion = version.version;
+        document.title = version.name;
       })
     },
 
