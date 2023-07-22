@@ -16,7 +16,7 @@ var defaultConfig = Conf{
 	Base: Base{
 		Meta: ConfMeta{Version: latestConfigVersion},
 
-		ManagerName: "Flamenco Manager",
+		ManagerName: "Flamenco",
 		Listen:      ":8080",
 		// ListenHTTPS:   ":8433",
 		DatabaseDSN:             "flamenco-manager.sqlite",
