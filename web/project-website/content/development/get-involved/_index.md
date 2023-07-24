@@ -34,7 +34,7 @@ done, take a look at the [workboard][workboard].
 Did you find an issue or a bug in Flamenco? Please [report a bug][bug], it
 helps Flamenco to get better!
 
-[bug]: {{flamenco/reportBugButton}}
+[bug]: https://projects.blender.org/studio/flamenco/issues/new?template=.gitea%2fissue_template%2fbug.yaml
 
 <--->
 
