@@ -12,6 +12,14 @@ type ValueToVariableReplacer struct {
 	twoWayVars map[string]string // Mapping from variable name to value.
 }
 
+// VariableExpander expands variables and applies two-way variable replacement to the values.
+type VariableExpander struct {
+	oneWayVars        map[string]string // Mapping from variable name to value.
+	managerTwoWayVars map[string]string // Mapping from variable name to value for the Manager platform.
+	targetTwoWayVars  map[string]string // Mapping from variable name to value for the target platform.
+	targetPlatform    VariablePlatform
+}
+
 // NewVariableToValueConverter returns a ValueToVariableReplacer for the given audience & platform.
 func (c *Conf) NewVariableToValueConverter(audience VariableAudience, platform VariablePlatform) *ValueToVariableReplacer {
 	// Get the variables for the given audience & platform.
@@ -26,6 +34,25 @@ func (c *Conf) NewVariableToValueConverter(audience VariableAudience, platform V
 
 	return &ValueToVariableReplacer{
 		twoWayVars: twoWayVars,
+	}
+}
+
+// NewVariableExpander returns a new VariableExpander for the given audience & platform.
+func (c *Conf) NewVariableExpander(audience VariableAudience, platform VariablePlatform) *VariableExpander {
+	// Get the variables for the given audience & platform.
+	varsForPlatform := c.getVariables(audience, platform)
+	if len(varsForPlatform) == 0 {
+		log.Warn().
+			Str("audience", string(audience)).
+			Str("platform", string(platform)).
+			Msg("no variables defined for this platform given this audience")
+	}
+
+	return &VariableExpander{
+		oneWayVars:        varsForPlatform,
+		managerTwoWayVars: c.GetTwoWayVariables(audience, c.currentGOOS),
+		targetTwoWayVars:  c.GetTwoWayVariables(audience, platform),
+		targetPlatform:    platform,
 	}
 }
 
@@ -71,4 +98,43 @@ func isValueMatch(valueToMatch, variableValue string) bool {
 	}
 
 	return false
+}
+
+// Replace converts "{variable name}" to the value that belongs to the audience and platform.
+func (ve *VariableExpander) Expand(valueToExpand string) string {
+	expanded := valueToExpand
+
+	// Expand variables from {varname} to their value for the target platform.
+	for varname, varvalue := range ve.oneWayVars {
+		placeholder := fmt.Sprintf("{%s}", varname)
+		expanded = strings.Replace(expanded, placeholder, varvalue, -1)
+	}
+
+	// Go through the two-way variables, to make sure that the result of
+	// expanding variables gets the two-way variables applied as well. This is
+	// necessary to make implicitly-defined variable, which are only defined for
+	// the Manager's platform, usable for the target platform.
+	//
+	// Practically, this replaces "value for the Manager platform" with "value
+	// for the target platform".
+	isPathValue := false
+	for varname, managerValue := range ve.managerTwoWayVars {
+		targetValue, ok := ve.targetTwoWayVars[varname]
+		if !ok {
+			continue
+		}
+		if !isValueMatch(expanded, managerValue) {
+			continue
+		}
+		expanded = targetValue + expanded[len(managerValue):]
+
+		// Since two-way variables are meant for path replacement, we know this
+		// should be a path.
+		isPathValue = true
+	}
+
+	if isPathValue {
+		expanded = crosspath.ToPlatform(expanded, string(ve.targetPlatform))
+	}
+	return expanded
 }

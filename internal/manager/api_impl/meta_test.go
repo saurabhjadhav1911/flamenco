@@ -90,12 +90,10 @@ func TestGetSharedStorage(t *testing.T) {
 	mf.config.EXPECT().EffectiveStoragePath().Return(`S:\storage\flamenco`).AnyTimes()
 
 	{ // Test user client on Linux.
+		// Defer to the actual ExpandVariables() implementation of the above config.
 		mf.config.EXPECT().
-			ExpandVariables(gomock.Any(), gomock.Any(), config.VariableAudienceUsers, config.VariablePlatformLinux).
-			Do(func(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform) {
-				// Defer to the actual ExpandVariables() implementation of the above config.
-				conf.ExpandVariables(inputChannel, outputChannel, audience, platform)
-			})
+			NewVariableExpander(config.VariableAudienceUsers, config.VariablePlatformLinux).
+			DoAndReturn(conf.NewVariableExpander)
 		mf.shaman.EXPECT().IsEnabled().Return(false)
 
 		echoCtx := mf.prepareMockedRequest(nil)
@@ -109,12 +107,10 @@ func TestGetSharedStorage(t *testing.T) {
 	}
 
 	{ // Test worker client on Linux with Shaman enabled.
+		// Defer to the actual ExpandVariables() implementation of the above config.
 		mf.config.EXPECT().
-			ExpandVariables(gomock.Any(), gomock.Any(), config.VariableAudienceWorkers, config.VariablePlatformLinux).
-			Do(func(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform) {
-				// Defer to the actual ExpandVariables() implementation of the above config.
-				conf.ExpandVariables(inputChannel, outputChannel, audience, platform)
-			})
+			NewVariableExpander(config.VariableAudienceWorkers, config.VariablePlatformLinux).
+			DoAndReturn(conf.NewVariableExpander)
 		mf.shaman.EXPECT().IsEnabled().Return(true)
 
 		echoCtx := mf.prepareMockedRequest(nil)
@@ -129,12 +125,10 @@ func TestGetSharedStorage(t *testing.T) {
 	}
 
 	{ // Test user client on Windows.
+		// Defer to the actual ExpandVariables() implementation of the above config.
 		mf.config.EXPECT().
-			ExpandVariables(gomock.Any(), gomock.Any(), config.VariableAudienceUsers, config.VariablePlatformWindows).
-			Do(func(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform) {
-				// Defer to the actual ExpandVariables() implementation of the above config.
-				conf.ExpandVariables(inputChannel, outputChannel, audience, platform)
-			})
+			NewVariableExpander(config.VariableAudienceUsers, config.VariablePlatformWindows).
+			DoAndReturn(conf.NewVariableExpander)
 		mf.shaman.EXPECT().IsEnabled().Return(false)
 
 		echoCtx := mf.prepareMockedRequest(nil)

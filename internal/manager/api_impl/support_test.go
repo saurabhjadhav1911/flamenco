@@ -101,8 +101,8 @@ func (mf *mockedFlamenco) expectExpandVariables(
 
 	// Defer the mocked call to the fake configuration.
 	return mf.config.EXPECT().
-		ExpandVariables(gomock.Any(), gomock.Any(), expectAudience, expectPlatform).
-		DoAndReturn(c.ExpandVariables)
+		NewVariableExpander(expectAudience, expectPlatform).
+		DoAndReturn(c.NewVariableExpander)
 }
 
 func (mf *mockedFlamenco) expectConvertTwoWayVariables(

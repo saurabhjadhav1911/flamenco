@@ -855,18 +855,6 @@ func (mr *MockConfigServiceMockRecorder) EffectiveStoragePath() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EffectiveStoragePath", reflect.TypeOf((*MockConfigService)(nil).EffectiveStoragePath))
 }
 
-// ExpandVariables mocks base method.
-func (m *MockConfigService) ExpandVariables(arg0 <-chan string, arg1 chan<- string, arg2 config.VariableAudience, arg3 config.VariablePlatform) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ExpandVariables", arg0, arg1, arg2, arg3)
-}
-
-// ExpandVariables indicates an expected call of ExpandVariables.
-func (mr *MockConfigServiceMockRecorder) ExpandVariables(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpandVariables", reflect.TypeOf((*MockConfigService)(nil).ExpandVariables), arg0, arg1, arg2, arg3)
-}
-
 // ForceFirstRun mocks base method.
 func (m *MockConfigService) ForceFirstRun() {
 	m.ctrl.T.Helper()
@@ -906,6 +894,20 @@ func (m *MockConfigService) IsFirstRun() (bool, error) {
 func (mr *MockConfigServiceMockRecorder) IsFirstRun() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsFirstRun", reflect.TypeOf((*MockConfigService)(nil).IsFirstRun))
+}
+
+// NewVariableExpander mocks base method.
+func (m *MockConfigService) NewVariableExpander(arg0 config.VariableAudience, arg1 config.VariablePlatform) *config.VariableExpander {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NewVariableExpander", arg0, arg1)
+	ret0, _ := ret[0].(*config.VariableExpander)
+	return ret0
+}
+
+// NewVariableExpander indicates an expected call of NewVariableExpander.
+func (mr *MockConfigServiceMockRecorder) NewVariableExpander(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewVariableExpander", reflect.TypeOf((*MockConfigService)(nil).NewVariableExpander), arg0, arg1)
 }
 
 // NewVariableToValueConverter mocks base method.

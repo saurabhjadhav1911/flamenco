@@ -71,18 +71,12 @@ func (f *Flamenco) GetVariables(e echo.Context, audience api.ManagerVariableAudi
 
 func (f *Flamenco) GetSharedStorage(e echo.Context, audience api.ManagerVariableAudience, platform string) error {
 	location := f.config.EffectiveStoragePath()
-
-	feeder := make(chan string, 1)
-	receiver := make(chan string, 1)
-
-	feeder <- location
-	close(feeder)
-	f.config.ExpandVariables(feeder, receiver, config.VariableAudience(audience), config.VariablePlatform(platform))
+	varExpand := f.config.NewVariableExpander(config.VariableAudience(audience), config.VariablePlatform(platform))
 
 	return e.JSON(http.StatusOK, api.SharedStorageLocation{
 		Audience:      audience,
 		Platform:      platform,
-		Location:      <-receiver,
+		Location:      varExpand.Expand(location),
 		ShamanEnabled: f.isShamanEnabled(),
 	})
 }

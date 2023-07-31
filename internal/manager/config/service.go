@@ -71,8 +71,8 @@ func (s *Service) Save() error {
 }
 
 // Expose some functions of Conf here, for easier mocking of functionality via interfaces.
-func (s *Service) ExpandVariables(inputChannel <-chan string, outputChannel chan<- string, audience VariableAudience, platform VariablePlatform) {
-	s.config.ExpandVariables(inputChannel, outputChannel, audience, platform)
+func (s *Service) NewVariableExpander(audience VariableAudience, platform VariablePlatform) *VariableExpander {
+	return s.config.NewVariableExpander(audience, platform)
 }
 func (s *Service) NewVariableToValueConverter(audience VariableAudience, platform VariablePlatform) *ValueToVariableReplacer {
 	return s.config.NewVariableToValueConverter(audience, platform)

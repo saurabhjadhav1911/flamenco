@@ -3,8 +3,6 @@ package api_impl
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import (
-	"sync"
-
 	"git.blender.org/flamenco/internal/manager/config"
 	"git.blender.org/flamenco/internal/manager/persistence"
 	"git.blender.org/flamenco/pkg/api"
@@ -12,36 +10,28 @@ import (
 
 //go:generate go run github.com/golang/mock/mockgen -destination mocks/varrepl.gen.go -package mocks git.blender.org/flamenco/internal/manager/api_impl VariableReplacer
 type VariableReplacer interface {
-	ExpandVariables(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform)
+	NewVariableExpander(audience config.VariableAudience, platform config.VariablePlatform) *config.VariableExpander
 	ResolveVariables(audience config.VariableAudience, platform config.VariablePlatform) map[string]config.ResolvedVariable
 	NewVariableToValueConverter(audience config.VariableAudience, platform config.VariablePlatform) *config.ValueToVariableReplacer
 }
 
 // replaceTaskVariables performs variable replacement for worker tasks.
 func replaceTaskVariables(replacer VariableReplacer, task api.AssignedTask, worker persistence.Worker) api.AssignedTask {
-	feeder := make(chan string, 1)
-	receiver := make(chan string, 1)
-
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		replacer.ExpandVariables(feeder, receiver,
-			config.VariableAudienceWorkers, config.VariablePlatform(worker.Platform))
-	}()
+	varExpander := replacer.NewVariableExpander(
+		config.VariableAudienceWorkers,
+		config.VariablePlatform(worker.Platform),
+	)
 
 	for cmdIndex, cmd := range task.Commands {
 		for key, value := range cmd.Parameters {
 			switch v := value.(type) {
 			case string:
-				feeder <- v
-				task.Commands[cmdIndex].Parameters[key] = <-receiver
+				task.Commands[cmdIndex].Parameters[key] = varExpander.Expand(v)
 
 			case []string:
 				replaced := make([]string, len(v))
 				for idx := range v {
-					feeder <- v[idx]
-					replaced[idx] = <-receiver
+					replaced[idx] = varExpander.Expand(v[idx])
 				}
 				task.Commands[cmdIndex].Parameters[key] = replaced
 
@@ -50,8 +40,7 @@ func replaceTaskVariables(replacer VariableReplacer, task api.AssignedTask, work
 				for idx := range v {
 					switch itemValue := v[idx].(type) {
 					case string:
-						feeder <- itemValue
-						replaced[idx] = <-receiver
+						replaced[idx] = varExpander.Expand(itemValue)
 					default:
 						replaced[idx] = itemValue
 					}
@@ -63,10 +52,6 @@ func replaceTaskVariables(replacer VariableReplacer, task api.AssignedTask, work
 			}
 		}
 	}
-
-	close(feeder)
-	wg.Wait()
-	close(receiver)
 
 	return task
 }

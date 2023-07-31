@@ -34,16 +34,18 @@ func (m *MockVariableReplacer) EXPECT() *MockVariableReplacerMockRecorder {
 	return m.recorder
 }
 
-// ExpandVariables mocks base method.
-func (m *MockVariableReplacer) ExpandVariables(arg0 <-chan string, arg1 chan<- string, arg2 config.VariableAudience, arg3 config.VariablePlatform) {
+// NewVariableExpander mocks base method.
+func (m *MockVariableReplacer) NewVariableExpander(arg0 config.VariableAudience, arg1 config.VariablePlatform) *config.VariableExpander {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ExpandVariables", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "NewVariableExpander", arg0, arg1)
+	ret0, _ := ret[0].(*config.VariableExpander)
+	return ret0
 }
 
-// ExpandVariables indicates an expected call of ExpandVariables.
-func (mr *MockVariableReplacerMockRecorder) ExpandVariables(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+// NewVariableExpander indicates an expected call of NewVariableExpander.
+func (mr *MockVariableReplacerMockRecorder) NewVariableExpander(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpandVariables", reflect.TypeOf((*MockVariableReplacer)(nil).ExpandVariables), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewVariableExpander", reflect.TypeOf((*MockVariableReplacer)(nil).NewVariableExpander), arg0, arg1)
 }
 
 // NewVariableToValueConverter mocks base method.
