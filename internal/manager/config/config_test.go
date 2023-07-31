@@ -17,6 +17,10 @@ func TestVariablesWithBackslashes(t *testing.T) {
 	assert.Equal(t, expectSingle, vars["single-backslash"]["blender"])
 	assert.Equal(t, expectDouble, vars["double-backslash"]["blender"])
 	assert.Equal(t, expectSingle, vars["quoted-double-backslash"]["blender"])
+
+	assert.Equal(t, `C:\Downloads\tab\newline.exe`, vars["single-backslash-common-escapechar"]["blender"])
+	assert.Equal(t, `C:\Downloads\blender-1.0\`, vars["single-backslash-trailing"]["blender"])
+	assert.Equal(t, `F:\`, vars["single-backslash-drive-only"]["blender"])
 }
 
 func TestReplaceTwowayVariables(t *testing.T) {

@@ -22,3 +22,9 @@ variables:
         value: C:\\Downloads\\blender-1.0\\blender.exe
       - platform: quoted-double-backslash
         value: "C:\\Downloads\\blender-1.0\\blender.exe"
+      - platform: single-backslash-common-escapechar
+        value: C:\Downloads\tab\newline.exe
+      - platform: single-backslash-trailing
+        value: C:\Downloads\blender-1.0\
+      - platform: single-backslash-drive-only
+        value: F:\
