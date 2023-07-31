@@ -131,6 +131,10 @@ func ToPlatform(path, platform string) string {
 	pathsep := pathSepForPlatform(platform)
 	translated := strings.Join(components, pathsep)
 
+	if platform == "windows" {
+		return EnsureDriveAbsolute(translated)
+	}
+
 	return translated
 }
 
@@ -161,4 +165,29 @@ func TrimTrailingSep(path string) string {
 		return string([]rune(path)[0])
 	}
 	return trimmed
+}
+
+// EnsureDriveAbsolute ensures that a Windows path that starts with a drive
+// letter also has an absolute path on that drive. For example, turns
+// `F:path\to\file` into `F:\path\to\file`.
+func EnsureDriveAbsolute(windowsPath string) string {
+	runes := []rune(windowsPath)
+	numRunes := len(runes)
+	if numRunes < 2 {
+		return windowsPath
+	}
+
+	if !validDriveLetter(runes[0]) || runes[1] != ':' {
+		return windowsPath
+	}
+
+	pathSep := pathSepForPlatform("windows")
+	if numRunes == 2 {
+		return windowsPath + pathSep
+	}
+	if string(runes[2]) == pathSep {
+		return windowsPath // Already F:\blabla
+	}
+
+	return string(runes[:2]) + pathSep + string(runes[2:])
 }

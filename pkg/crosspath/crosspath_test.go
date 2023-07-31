@@ -185,6 +185,7 @@ func TestIsRoot(t *testing.T) {
 		{"just letters", "just letters", false},
 		{"subdir of root", "/subdir", false},
 		{"subdir of drive", "C:\\subdir", false},
+		{"relative subdir of drive", "C:subdir", false},
 
 		{"indirectly root", "/subdir/..", false},
 		{"UNC notation", `\\NAS\Share\`, false},
@@ -221,7 +222,14 @@ func TestToPlatform(t *testing.T) {
 		{"mixed-lnx", args{`F:/mixed/path\to\file.blend`, "linux"}, `F:/mixed/path/to/file.blend`},
 		{"absolute-win", args{`F:/absolute/path`, "windows"}, `F:\absolute\path`},
 		{"absolute-lnx", args{`/absolute/path`, "linux"}, `/absolute/path`},
-		{"drive-relative-win", args{`/absolute/path`, "windows"}, `\absolute\path`},
+		{"relative-win", args{`/absolute/path`, "windows"}, `\absolute\path`},
+
+		// Trailing path separators should not be removed if it's only a drive
+		// letter, as concatenation rules are tricky there. `F:path` is not the same
+		// as `F:\path`.
+		{"drive-root-win", args{`F:\`, "windows"}, `F:\`},
+		{"trailing-win", args{`F:\directory\`, "linux"}, `F:/directory`},
+		{"trailing-lnx", args{`/dir/path/`, "windows"}, `\dir\path`},
 
 		// UNC notation should survive, even when it no longer makes sense (like on Linux).
 		{"unc-win", args{`\\NAS\share\path`, "windows"}, `\\NAS\share\path`},
@@ -263,6 +271,37 @@ func TestTrimTrailingSep(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := TrimTrailingSep(tt.args.path); got != tt.want {
 				t.Errorf("TrimTrailingSep() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestEnsureDriveAbsolute(t *testing.T) {
+	tests := []struct {
+		name      string
+		inputPath string
+		want      string
+	}{
+		// Windows paths expected to change:
+		{"windows-drive-relative", `F:path\to\file`, `F:\path\to\file`},
+		{"windows-drive-relative-mixed", "F:path/to/file", `F:\path/to/file`},
+		{"windows-drive-only", "F:", `F:\`},
+
+		// No-op paths:
+		{"empty", "", ""},
+		{"linux-root", "/", "/"},
+		{"linux-path", "/some/path", "/some/path"},
+		{"linux-unicode-path", "/söme/path", "/söme/path"},
+		{"one-letter", "F", "F"},
+		{"windows-drive-invalid", `©:path\to\thing`, `©:path\to\thing`},
+		{"windows-unc", `\\NAS\Flamenco\path`, `\\NAS\Flamenco\path`},
+		{"unicode-one-letter", "€", "€"},
+		{"windows-drive-absolute", `F:\some\path`, `F:\some\path`},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := EnsureDriveAbsolute(tt.inputPath); got != tt.want {
+				t.Errorf("EnsureDriveAbsolute() = %v, want %v", got, tt.want)
 			}
 		})
 	}

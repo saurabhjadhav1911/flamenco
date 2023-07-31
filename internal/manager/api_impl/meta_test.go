@@ -143,6 +143,63 @@ func TestGetSharedStorage(t *testing.T) {
 
 }
 
+// Test shared storage sitting on /mnt/flamenco, where that's mapped to F:\ for Windows.
+func TestGetSharedStorageDriveLetterRoot(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	conf := config.GetTestConfig(func(c *config.Conf) {
+		// Test with a Manager on Linux.
+		c.MockCurrentGOOSForTests("linux")
+
+		// Set up a two-way variable to do the mapping.
+		c.Variables["shared_storage_mapping"] = config.Variable{
+			IsTwoWay: true,
+			Values: []config.VariableValue{
+				{Value: "/mnt/flamenco", Platform: config.VariablePlatformLinux, Audience: config.VariableAudienceAll},
+				{Value: `F:\`, Platform: config.VariablePlatformWindows, Audience: config.VariableAudienceAll},
+			},
+		}
+	})
+	mf.config.EXPECT().Get().Return(&conf).AnyTimes()
+	mf.config.EXPECT().EffectiveStoragePath().Return(`/mnt/flamenco`).AnyTimes()
+
+	{ // Test user client on Linux.
+		mf.config.EXPECT().
+			NewVariableExpander(config.VariableAudienceUsers, config.VariablePlatformLinux).
+			DoAndReturn(conf.NewVariableExpander)
+		mf.shaman.EXPECT().IsEnabled().Return(false)
+
+		echoCtx := mf.prepareMockedRequest(nil)
+		err := mf.flamenco.GetSharedStorage(echoCtx, api.ManagerVariableAudienceUsers, "linux")
+		require.NoError(t, err)
+		assertResponseJSON(t, echoCtx, http.StatusOK, api.SharedStorageLocation{
+			Location: "/mnt/flamenco",
+			Audience: api.ManagerVariableAudienceUsers,
+			Platform: "linux",
+		})
+	}
+
+	{ // Test user client on Windows.
+		mf.config.EXPECT().
+			NewVariableExpander(config.VariableAudienceUsers, config.VariablePlatformWindows).
+			DoAndReturn(conf.NewVariableExpander)
+		mf.shaman.EXPECT().IsEnabled().Return(false)
+
+		echoCtx := mf.prepareMockedRequest(nil)
+		err := mf.flamenco.GetSharedStorage(echoCtx, api.ManagerVariableAudienceUsers, "windows")
+		require.NoError(t, err)
+		assertResponseJSON(t, echoCtx, http.StatusOK, api.SharedStorageLocation{
+			Location: `F:\`,
+			Audience: api.ManagerVariableAudienceUsers,
+			Platform: "windows",
+		})
+	}
+
+}
+
 func TestCheckSharedStoragePath(t *testing.T) {
 	mf, finish := metaTestFixtures(t)
 	defer finish()

@@ -126,7 +126,7 @@ func (ve *VariableExpander) Expand(valueToExpand string) string {
 		if !isValueMatch(expanded, managerValue) {
 			continue
 		}
-		expanded = targetValue + expanded[len(managerValue):]
+		expanded = ve.join(targetValue, expanded[len(managerValue):], ve.targetPlatform)
 
 		// Since two-way variables are meant for path replacement, we know this
 		// should be a path.
@@ -136,5 +136,20 @@ func (ve *VariableExpander) Expand(valueToExpand string) string {
 	if isPathValue {
 		expanded = crosspath.ToPlatform(expanded, string(ve.targetPlatform))
 	}
+
 	return expanded
+}
+
+func (ve *VariableExpander) join(valueFromVariable, suffix string, platform VariablePlatform) string {
+	result := valueFromVariable + suffix
+
+	if platform == VariablePlatformWindows {
+		// 'result' may now be of the form `F:some\path\to\file`, where `F:` comes
+		// from `valueFromVariable` and the rest is the suffix. This is not an
+		// absolute path, and needs a separator between the drive letter and the
+		// rest of the path.
+		return crosspath.EnsureDriveAbsolute(result)
+	}
+
+	return result
 }
