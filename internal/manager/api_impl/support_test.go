@@ -126,8 +126,8 @@ func (mf *mockedFlamenco) expectConvertTwoWayVariables(
 
 	// Defer the mocked call to the fake configuration.
 	return mf.config.EXPECT().
-		ConvertTwoWayVariables(gomock.Any(), gomock.Any(), expectAudience, expectPlatform).
-		DoAndReturn(c.ConvertTwoWayVariables)
+		NewVariableToValueConverter(expectAudience, expectPlatform).
+		DoAndReturn(c.NewVariableToValueConverter)
 }
 
 // prepareMockedJSONRequest returns an `echo.Context` that has a JSON request body attached to it.

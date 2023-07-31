@@ -34,18 +34,6 @@ func (m *MockVariableReplacer) EXPECT() *MockVariableReplacerMockRecorder {
 	return m.recorder
 }
 
-// ConvertTwoWayVariables mocks base method.
-func (m *MockVariableReplacer) ConvertTwoWayVariables(arg0 <-chan string, arg1 chan<- string, arg2 config.VariableAudience, arg3 config.VariablePlatform) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ConvertTwoWayVariables", arg0, arg1, arg2, arg3)
-}
-
-// ConvertTwoWayVariables indicates an expected call of ConvertTwoWayVariables.
-func (mr *MockVariableReplacerMockRecorder) ConvertTwoWayVariables(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConvertTwoWayVariables", reflect.TypeOf((*MockVariableReplacer)(nil).ConvertTwoWayVariables), arg0, arg1, arg2, arg3)
-}
-
 // ExpandVariables mocks base method.
 func (m *MockVariableReplacer) ExpandVariables(arg0 <-chan string, arg1 chan<- string, arg2 config.VariableAudience, arg3 config.VariablePlatform) {
 	m.ctrl.T.Helper()
@@ -56,6 +44,20 @@ func (m *MockVariableReplacer) ExpandVariables(arg0 <-chan string, arg1 chan<- s
 func (mr *MockVariableReplacerMockRecorder) ExpandVariables(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpandVariables", reflect.TypeOf((*MockVariableReplacer)(nil).ExpandVariables), arg0, arg1, arg2, arg3)
+}
+
+// NewVariableToValueConverter mocks base method.
+func (m *MockVariableReplacer) NewVariableToValueConverter(arg0 config.VariableAudience, arg1 config.VariablePlatform) *config.ValueToVariableReplacer {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NewVariableToValueConverter", arg0, arg1)
+	ret0, _ := ret[0].(*config.ValueToVariableReplacer)
+	return ret0
+}
+
+// NewVariableToValueConverter indicates an expected call of NewVariableToValueConverter.
+func (mr *MockVariableReplacerMockRecorder) NewVariableToValueConverter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewVariableToValueConverter", reflect.TypeOf((*MockVariableReplacer)(nil).NewVariableToValueConverter), arg0, arg1)
 }
 
 // ResolveVariables mocks base method.

@@ -472,57 +472,6 @@ func (c *Conf) ExpandVariables(inputChannel <-chan string, outputChannel chan<- 
 	}
 }
 
-// ConvertTwoWayVariables converts the value of a variable with "{variable
-// name}", but only for two-way variables. The function iterates over all
-// strings provided by the input channel, and sends the expanded result into the
-// output channel. It will return when the input channel is closed.
-func (c *Conf) ConvertTwoWayVariables(inputChannel <-chan string, outputChannel chan<- string,
-	audience VariableAudience, platform VariablePlatform) {
-
-	// Get the variables for the given audience & platform.
-	twoWayVars := c.GetTwoWayVariables(audience, platform)
-	if len(twoWayVars) == 0 {
-		log.Debug().
-			Str("audience", string(audience)).
-			Str("platform", string(platform)).
-			Msg("no two-way variables defined for this platform given this audience")
-	}
-
-	doValueReplacement := func(valueToConvert string) string {
-		for varName, varValue := range twoWayVars {
-			if !isValueMatch(valueToConvert, varValue) {
-				continue
-			}
-			valueToConvert = fmt.Sprintf("{%s}%s", varName, valueToConvert[len(varValue):])
-		}
-
-		return valueToConvert
-	}
-
-	for valueToExpand := range inputChannel {
-		outputChannel <- doValueReplacement(valueToExpand)
-	}
-}
-
-// isValueMatch returns whether `valueToMatch` starts with `variableValue`.
-// When `variableValue` is a Windows path (with backslash separators), it is
-// also tested with forward slashes against `valueToMatch`.
-func isValueMatch(valueToMatch, variableValue string) bool {
-	if strings.HasPrefix(valueToMatch, variableValue) {
-		return true
-	}
-
-	// If the variable value has a backslash, assume it is a Windows path.
-	// Convert it to slash notation just to see if that would provide a
-	// match.
-	if strings.ContainsRune(variableValue, '\\') {
-		slashedValue := crosspath.ToSlash(variableValue)
-		return strings.HasPrefix(valueToMatch, slashedValue)
-	}
-
-	return false
-}
-
 // getVariables returns the variable values for this (audience, platform) combination.
 // If no variables are found, just returns an empty map. If a value is defined
 // for both the "all" platform and specifically the given platform, the specific

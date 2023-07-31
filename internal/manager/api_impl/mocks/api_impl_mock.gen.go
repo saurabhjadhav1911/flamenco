@@ -841,18 +841,6 @@ func (m *MockConfigService) EXPECT() *MockConfigServiceMockRecorder {
 	return m.recorder
 }
 
-// ConvertTwoWayVariables mocks base method.
-func (m *MockConfigService) ConvertTwoWayVariables(arg0 <-chan string, arg1 chan<- string, arg2 config.VariableAudience, arg3 config.VariablePlatform) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ConvertTwoWayVariables", arg0, arg1, arg2, arg3)
-}
-
-// ConvertTwoWayVariables indicates an expected call of ConvertTwoWayVariables.
-func (mr *MockConfigServiceMockRecorder) ConvertTwoWayVariables(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConvertTwoWayVariables", reflect.TypeOf((*MockConfigService)(nil).ConvertTwoWayVariables), arg0, arg1, arg2, arg3)
-}
-
 // EffectiveStoragePath mocks base method.
 func (m *MockConfigService) EffectiveStoragePath() string {
 	m.ctrl.T.Helper()
@@ -918,6 +906,20 @@ func (m *MockConfigService) IsFirstRun() (bool, error) {
 func (mr *MockConfigServiceMockRecorder) IsFirstRun() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsFirstRun", reflect.TypeOf((*MockConfigService)(nil).IsFirstRun))
+}
+
+// NewVariableToValueConverter mocks base method.
+func (m *MockConfigService) NewVariableToValueConverter(arg0 config.VariableAudience, arg1 config.VariablePlatform) *config.ValueToVariableReplacer {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NewVariableToValueConverter", arg0, arg1)
+	ret0, _ := ret[0].(*config.ValueToVariableReplacer)
+	return ret0
+}
+
+// NewVariableToValueConverter indicates an expected call of NewVariableToValueConverter.
+func (mr *MockConfigServiceMockRecorder) NewVariableToValueConverter(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewVariableToValueConverter", reflect.TypeOf((*MockConfigService)(nil).NewVariableToValueConverter), arg0, arg1)
 }
 
 // ResolveVariables mocks base method.

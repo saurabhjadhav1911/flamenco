@@ -14,7 +14,7 @@ import (
 type VariableReplacer interface {
 	ExpandVariables(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform)
 	ResolveVariables(audience config.VariableAudience, platform config.VariablePlatform) map[string]config.ResolvedVariable
-	ConvertTwoWayVariables(inputChannel <-chan string, outputChannel chan<- string, audience config.VariableAudience, platform config.VariablePlatform)
+	NewVariableToValueConverter(audience config.VariableAudience, platform config.VariablePlatform) *config.ValueToVariableReplacer
 }
 
 // replaceTaskVariables performs variable replacement for worker tasks.
@@ -78,16 +78,10 @@ func replaceTaskVariables(replacer VariableReplacer, task api.AssignedTask, work
 //
 // NOTE: this updates the job in place.
 func replaceTwoWayVariables(replacer VariableReplacer, job *api.SubmittedJob) {
-	feeder := make(chan string, 1)
-	receiver := make(chan string, 1)
-
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		replacer.ConvertTwoWayVariables(feeder, receiver,
-			config.VariableAudienceWorkers, config.VariablePlatform(job.SubmitterPlatform))
-	}()
+	valueToVariable := replacer.NewVariableToValueConverter(
+		config.VariableAudienceWorkers,
+		config.VariablePlatform(job.SubmitterPlatform),
+	)
 
 	// Only replace variables in settings and metadata, not in other job fields.
 	if job.Settings != nil {
@@ -96,18 +90,14 @@ func replaceTwoWayVariables(replacer VariableReplacer, job *api.SubmittedJob) {
 			if !ok {
 				continue
 			}
-			feeder <- stringValue
-			job.Settings.AdditionalProperties[settingKey] = <-receiver
+			newValue := valueToVariable.Replace(stringValue)
+			job.Settings.AdditionalProperties[settingKey] = newValue
 		}
 	}
 	if job.Metadata != nil {
 		for metaKey, metaValue := range job.Metadata.AdditionalProperties {
-			feeder <- metaValue
-			job.Metadata.AdditionalProperties[metaKey] = <-receiver
+			newValue := valueToVariable.Replace(metaValue)
+			job.Metadata.AdditionalProperties[metaKey] = newValue
 		}
 	}
-
-	close(feeder)
-	wg.Wait()
-	close(receiver)
 }
