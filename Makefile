@@ -18,6 +18,9 @@ _GIT_DESCRIPTION_OR_TAG := $(subst v${VERSION}-,,$(shell git describe --tag --di
 # in the "extended version" of Flamenco, which combines ${VERSION} and
 # ${GITHASH}.
 GITHASH := $(subst v${VERSION},$(shell git rev-parse --short=9 HEAD),${_GIT_DESCRIPTION_OR_TAG})
+ifeq (${GITHASH},dirty)
+GITHASH := $(shell git rev-parse --short=9 HEAD)
+endif
 
 LDFLAGS := ${LDFLAGS} -X ${PKG}/internal/appinfo.ApplicationVersion=${VERSION} \
 	-X ${PKG}/internal/appinfo.ApplicationGitHash=${GITHASH} \
