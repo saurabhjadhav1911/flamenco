@@ -136,7 +136,11 @@ func buildWebService(
 	})
 
 	// Serve the Blender add-on. It's contained in the static files of the webapp.
-	e.GET("/flamenco3-addon.zip", echo.WrapHandler(webAppHandler))
+	e.GET("/flamenco-addon.zip", echo.WrapHandler(webAppHandler))
+	e.GET("/flamenco3-addon.zip", func(c echo.Context) error {
+		return c.Redirect(http.StatusPermanentRedirect, "/flamenco-addon.zip")
+	})
+
 	// The favicons are also in the static files of the webapp.
 	e.GET("/favicon.png", echo.WrapHandler(webAppHandler))
 	e.GET("/favicon.ico", echo.WrapHandler(webAppHandler))

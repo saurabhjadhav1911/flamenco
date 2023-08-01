@@ -16,7 +16,7 @@
     </nav>
     <api-spinner />
     <span class="app-version">
-      <a :href="backendURL('/flamenco3-addon.zip')">add-on</a>
+      <a :href="backendURL('/flamenco-addon.zip')">add-on</a>
       | <a :href="backendURL('/api/v3/swagger-ui/')">API</a>
       | version: {{ flamencoVersion }}
     </span>

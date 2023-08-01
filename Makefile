@@ -91,7 +91,7 @@ webapp-static: addon-packer
 # in `cmd/flamenco-manager/main.go`
 	yarn --cwd web/app build --outDir ../static --base=/app/ --logLevel warn
 # yarn --cwd web/app build --outDir ../static --base=/app/ --minify false
-	./addon-packer -filename ${WEB_STATIC}/flamenco3-addon.zip
+	./addon-packer -filename ${WEB_STATIC}/flamenco-addon.zip
 	@echo "Web app has been installed into ${WEB_STATIC}"
 
 generate:

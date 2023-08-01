@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MY_DIR="$(dirname "$(readlink -e "$0")")"
-ADDON_ZIP="$MY_DIR/web/static/flamenco3-addon.zip"
+ADDON_ZIP="$MY_DIR/web/static/flamenco-addon.zip"
 WORKER_TARGET=/shared/software/flamenco3-worker/flamenco-worker
 
 TIMESTAMP=$(date +'%Y-%m-%d-%H%M%S')

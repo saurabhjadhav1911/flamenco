@@ -7,6 +7,7 @@ bugs in actually-released versions.
 ## 3.3 - in development
 
 - Upgrade bundled FFmpeg from 5.0 to 5.1.
+- Rename the add-on download to `flamenco-addon.zip` (it used to be `flamenco3-addon.zip`). It still contains the same files as before, and in Blender the name of the add-on has not changed.
 - Improve speed of queueing up >100 simultaneous job deletions.
 - Improve logging of job deletion.
 - Add Worker Tag support. Workers can be members of any number of tags. Workers will only work on jobs that are assigned to that tag. Jobs that do not have a tag will be available to all workers, regardless of their tag assignment. As a result, tagless workers will only work on tagless jobs.
