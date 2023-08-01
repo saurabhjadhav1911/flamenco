@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func (w *Worker) gotoStateOffline(context.Context) {

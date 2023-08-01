@@ -12,8 +12,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/worker/persistence"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/worker/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // TODO: pull the SQLite stuff out of this file into a more global place, so

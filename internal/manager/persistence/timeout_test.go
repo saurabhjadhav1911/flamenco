@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // SPDX-License-Identifier: GPL-3.0-or-later

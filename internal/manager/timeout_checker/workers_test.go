@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/golang/mock/gomock"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 const workerTimeout = 20 * time.Minute

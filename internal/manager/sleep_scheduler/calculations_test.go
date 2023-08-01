@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func TestCalculateNextCheck(t *testing.T) {

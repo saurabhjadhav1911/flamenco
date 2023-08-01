@@ -9,9 +9,9 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // taskFailJobPercentage is the percentage of a job's tasks that need to fail to

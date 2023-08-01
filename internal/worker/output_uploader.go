@@ -16,7 +16,7 @@ import (
 	"github.com/rs/zerolog/log"
 	_ "golang.org/x/image/tiff"
 
-	"git.blender.org/flamenco/pkg/last_in_one_out_queue"
+	"projects.blender.org/studio/flamenco/pkg/last_in_one_out_queue"
 )
 
 const thumbnailJPEGQuality = 85

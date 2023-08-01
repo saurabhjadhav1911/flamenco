@@ -27,13 +27,13 @@ import (
 	"io"
 	"sync"
 
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman/checkout"
-	"git.blender.org/flamenco/pkg/shaman/config"
-	"git.blender.org/flamenco/pkg/shaman/fileserver"
-	"git.blender.org/flamenco/pkg/shaman/filestore"
-	"git.blender.org/flamenco/pkg/shaman/jwtauth"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman/checkout"
+	"projects.blender.org/studio/flamenco/pkg/shaman/config"
+	"projects.blender.org/studio/flamenco/pkg/shaman/fileserver"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/jwtauth"
 )
 
 var ErrDoesNotExist = checkout.ErrDoesNotExist

@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"git.blender.org/flamenco/internal/manager/job_compilers"
-	"git.blender.org/flamenco/internal/uuid"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/job_compilers"
+	"projects.blender.org/studio/flamenco/internal/uuid"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 const schedulerTestTimeout = 100 * time.Millisecond

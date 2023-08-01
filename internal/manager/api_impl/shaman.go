@@ -7,8 +7,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman/fileserver"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman/fileserver"
 )
 
 func (f *Flamenco) isShamanEnabled() bool {

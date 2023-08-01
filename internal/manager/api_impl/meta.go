@@ -14,11 +14,11 @@ import (
 	"strconv"
 	"strings"
 
-	"git.blender.org/flamenco/internal/appinfo"
-	"git.blender.org/flamenco/internal/find_blender"
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/labstack/echo/v4"
+	"projects.blender.org/studio/flamenco/internal/appinfo"
+	"projects.blender.org/studio/flamenco/internal/find_blender"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func (f *Flamenco) GetVersion(e echo.Context) error {

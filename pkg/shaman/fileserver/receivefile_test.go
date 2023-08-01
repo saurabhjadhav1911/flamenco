@@ -29,11 +29,11 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"git.blender.org/flamenco/pkg/shaman/config"
-	"git.blender.org/flamenco/pkg/shaman/hasher"
+	"projects.blender.org/studio/flamenco/pkg/shaman/config"
+	"projects.blender.org/studio/flamenco/pkg/shaman/hasher"
 
-	"git.blender.org/flamenco/pkg/shaman/filestore"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 )
 
 func TestStoreFile(t *testing.T) {

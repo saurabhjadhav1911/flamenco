@@ -26,9 +26,9 @@ import (
 	"net/url"
 	"path"
 
-	"git.blender.org/flamenco/internal/appinfo"
 	"github.com/fromkeith/gossdp"
 	"github.com/rs/zerolog"
+	"projects.blender.org/studio/flamenco/internal/appinfo"
 )
 
 // Server advertises services via UPnP/SSDP.

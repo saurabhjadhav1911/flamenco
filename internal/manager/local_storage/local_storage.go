@@ -9,8 +9,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"git.blender.org/flamenco/pkg/crosspath"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 type StorageInfo struct {

@@ -12,9 +12,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/uuid"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/uuid"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func (f *Flamenco) TaskUpdate(e echo.Context, taskID string) error {

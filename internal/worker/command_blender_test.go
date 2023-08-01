@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // SPDX-License-Identifier: GPL-3.0-or-later

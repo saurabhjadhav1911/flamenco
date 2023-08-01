@@ -11,7 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 
-	// sqlite "git.blender.org/flamenco/pkg/gorm-modernc-sqlite"
+	// sqlite "projects.blender.org/studio/flamenco/pkg/gorm-modernc-sqlite"
 	"github.com/glebarez/sqlite"
 )
 

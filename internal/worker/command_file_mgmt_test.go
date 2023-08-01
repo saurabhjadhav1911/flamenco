@@ -11,9 +11,9 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // `move-directory` tests.

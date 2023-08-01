@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 
 	"github.com/rs/zerolog"
 )

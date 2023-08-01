@@ -6,7 +6,7 @@ import (
 	"context"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // This file contains functions for dealing with task/worker timeouts. Not database timeouts.

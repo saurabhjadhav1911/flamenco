@@ -5,7 +5,7 @@ package stresser
 import (
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/worker"
+	"projects.blender.org/studio/flamenco/internal/worker"
 )
 
 type FakeConfig struct {

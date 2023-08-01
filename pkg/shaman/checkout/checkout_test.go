@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman/filestore"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 )
 
 func TestCheckout(t *testing.T) {

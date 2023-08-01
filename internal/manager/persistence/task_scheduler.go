@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 var (

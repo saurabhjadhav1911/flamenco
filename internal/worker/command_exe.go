@@ -12,8 +12,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/worker/cli_runner"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/worker/cli_runner"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 type CommandExecutor struct {
@@ -30,7 +30,7 @@ var _ CommandRunner = (*CommandExecutor)(nil)
 type commandCallable func(ctx context.Context, logger zerolog.Logger, taskID string, cmd api.Command) error
 
 // Generate mock implementation of this interface.
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/command_listener.gen.go -package mocks git.blender.org/flamenco/internal/worker CommandListener
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/command_listener.gen.go -package mocks projects.blender.org/studio/flamenco/internal/worker CommandListener
 
 // CommandListener sends the result of commands (log, output files) to the Manager.
 type CommandListener interface {
@@ -49,7 +49,7 @@ type TimeService interface {
 
 // CommandLineRunner is an interface around exec.CommandContext().
 //
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/cli_runner.gen.go -package mocks git.blender.org/flamenco/internal/worker CommandLineRunner
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/cli_runner.gen.go -package mocks projects.blender.org/studio/flamenco/internal/worker CommandLineRunner
 type CommandLineRunner interface {
 	CommandContext(ctx context.Context, name string, arg ...string) *exec.Cmd
 	RunWithTextOutput(

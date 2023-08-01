@@ -7,11 +7,11 @@ import (
 	"errors"
 	"testing"
 
-	"git.blender.org/flamenco/internal/manager/job_deleter/mocks"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/shaman"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/internal/manager/job_deleter/mocks"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/shaman"
 )
 
 type JobDeleterMocks struct {

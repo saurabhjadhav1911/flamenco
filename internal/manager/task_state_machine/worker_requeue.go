@@ -5,9 +5,9 @@ package task_state_machine
 import (
 	"context"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // RequeueActiveTasksOfWorker re-queues all active tasks (should be max one) of this worker.

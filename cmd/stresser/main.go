@@ -15,8 +15,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/appinfo"
-	"git.blender.org/flamenco/internal/stresser"
+	"projects.blender.org/studio/flamenco/internal/appinfo"
+	"projects.blender.org/studio/flamenco/internal/stresser"
 )
 
 var cliArgs struct {

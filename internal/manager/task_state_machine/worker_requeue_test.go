@@ -5,10 +5,10 @@ package task_state_machine
 import (
 	"testing"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func TestRequeueActiveTasksOfWorker(t *testing.T) {

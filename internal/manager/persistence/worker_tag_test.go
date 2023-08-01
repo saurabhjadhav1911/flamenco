@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/internal/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"projects.blender.org/studio/flamenco/internal/uuid"
 )
 
 func TestCreateFetchTag(t *testing.T) {

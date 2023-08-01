@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // cmdEcho executes the "echo" command.

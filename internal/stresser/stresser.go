@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"git.blender.org/flamenco/internal/worker"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/internal/worker"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 const (

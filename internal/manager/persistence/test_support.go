@@ -10,13 +10,13 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/internal/uuid"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/glebarez/sqlite"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
+	"projects.blender.org/studio/flamenco/internal/uuid"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // Change this to a filename if you want to run a single test and inspect the

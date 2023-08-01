@@ -5,13 +5,13 @@ package sleep_scheduler
 import (
 	"context"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // Generate mock implementations of these interfaces.
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks git.blender.org/flamenco/internal/manager/sleep_scheduler PersistenceService,ChangeBroadcaster
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks projects.blender.org/studio/flamenco/internal/manager/sleep_scheduler PersistenceService,ChangeBroadcaster
 
 type PersistenceService interface {
 	FetchWorkerSleepSchedule(ctx context.Context, workerUUID string) (*persistence.SleepSchedule, error)

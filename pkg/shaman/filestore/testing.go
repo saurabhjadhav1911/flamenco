@@ -31,7 +31,7 @@ import (
 	"runtime"
 	"time"
 
-	"git.blender.org/flamenco/pkg/shaman/config"
+	"projects.blender.org/studio/flamenco/pkg/shaman/config"
 )
 
 // CreateTestStore returns a Store that can be used for unit testing.

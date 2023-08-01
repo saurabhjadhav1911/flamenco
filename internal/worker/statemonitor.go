@@ -9,7 +9,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // queryManagerForStateChange asks the Manager whether we should go to another state or not.

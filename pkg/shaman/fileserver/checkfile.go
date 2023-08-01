@@ -23,7 +23,7 @@
 package fileserver
 
 import (
-	"git.blender.org/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 )
 
 func (fs *FileServer) CheckFile(checksum string, filesize int64) filestore.FileStatus {

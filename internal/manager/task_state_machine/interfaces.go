@@ -5,15 +5,15 @@ package task_state_machine
 import (
 	"context"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/task_logs"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/rs/zerolog"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/task_logs"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // Generate mock implementations of these interfaces.
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks git.blender.org/flamenco/internal/manager/task_state_machine PersistenceService,ChangeBroadcaster,LogStorage
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks projects.blender.org/studio/flamenco/internal/manager/task_state_machine PersistenceService,ChangeBroadcaster,LogStorage
 
 type PersistenceService interface {
 	SaveTask(ctx context.Context, task *persistence.Task) error

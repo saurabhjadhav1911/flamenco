@@ -16,12 +16,12 @@ import (
 	"fmt"
 	"time"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman"
 )
 
 // jobDeletionQueueSize determines how many job deletion requests can be kept in

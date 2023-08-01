@@ -9,8 +9,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/worker/mocks"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/worker/mocks"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 type CommandExecutorMocks struct {

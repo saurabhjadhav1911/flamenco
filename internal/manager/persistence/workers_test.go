@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"git.blender.org/flamenco/internal/uuid"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/uuid"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func TestCreateFetchWorker(t *testing.T) {

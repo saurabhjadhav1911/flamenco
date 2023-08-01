@@ -34,9 +34,9 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/pkg/shaman/config"
-	"git.blender.org/flamenco/pkg/shaman/filestore"
-	"git.blender.org/flamenco/pkg/shaman/touch"
+	"projects.blender.org/studio/flamenco/pkg/shaman/config"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/touch"
 )
 
 var (

@@ -13,7 +13,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
 )
 
 type workerContextKey string

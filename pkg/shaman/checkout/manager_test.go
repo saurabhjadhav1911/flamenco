@@ -31,11 +31,11 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman/config"
-	"git.blender.org/flamenco/pkg/shaman/filestore"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman/config"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 )
 
 func createTestManager() (*Manager, func()) {

@@ -26,7 +26,7 @@ import (
 	"context"
 	"sync"
 
-	"git.blender.org/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 )
 
 type receiverChannel chan struct{}

@@ -17,10 +17,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/manager/api_impl/mocks"
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/api_impl/mocks"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 type mockedFlamenco struct {

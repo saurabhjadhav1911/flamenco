@@ -13,9 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"git.blender.org/flamenco/internal/appinfo"
 	"github.com/rs/zerolog/log"
 	yaml "gopkg.in/yaml.v2"
+	"projects.blender.org/studio/flamenco/internal/appinfo"
 )
 
 var (

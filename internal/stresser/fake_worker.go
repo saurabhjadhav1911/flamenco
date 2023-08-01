@@ -11,8 +11,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/worker"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/worker"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 const (

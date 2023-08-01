@@ -11,9 +11,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/task_state_machine/mocks"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/task_state_machine/mocks"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 type StateMachineMocks struct {

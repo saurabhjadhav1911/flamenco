@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
 	"gorm.io/gorm"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 type Worker struct {

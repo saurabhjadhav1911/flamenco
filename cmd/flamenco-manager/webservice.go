@@ -19,13 +19,13 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/ziflex/lecho/v3"
 
-	"git.blender.org/flamenco/internal/manager/api_impl"
-	"git.blender.org/flamenco/internal/manager/local_storage"
-	"git.blender.org/flamenco/internal/manager/swagger_ui"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/internal/upnp_ssdp"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/web"
+	"projects.blender.org/studio/flamenco/internal/manager/api_impl"
+	"projects.blender.org/studio/flamenco/internal/manager/local_storage"
+	"projects.blender.org/studio/flamenco/internal/manager/swagger_ui"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/internal/upnp_ssdp"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/web"
 )
 
 func buildWebService(

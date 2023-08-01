@@ -6,8 +6,8 @@ import (
 
 	gosocketio "github.com/graarh/golang-socketio"
 
-	"git.blender.org/flamenco/internal/uuid"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/uuid"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // Separate type aliases for room names and event types; it's otherwise too easy

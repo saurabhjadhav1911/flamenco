@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/labstack/echo/v4"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 type Flamenco struct {

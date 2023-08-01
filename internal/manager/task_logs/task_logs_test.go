@@ -14,12 +14,12 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/internal/manager/task_logs/mocks"
 	"github.com/benbjohnson/clock"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/internal/manager/task_logs/mocks"
 )
 
 func TestLogWriting(t *testing.T) {

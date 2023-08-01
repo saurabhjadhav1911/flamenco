@@ -4,7 +4,7 @@ import (
 	"runtime"
 	"time"
 
-	shaman_config "git.blender.org/flamenco/pkg/shaman/config"
+	shaman_config "projects.blender.org/studio/flamenco/pkg/shaman/config"
 )
 
 // SPDX-License-Identifier: GPL-3.0-or-later

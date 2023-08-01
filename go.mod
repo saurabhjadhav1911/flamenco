@@ -1,4 +1,4 @@
-module git.blender.org/flamenco
+module projects.blender.org/studio/flamenco
 
 go 1.20
 

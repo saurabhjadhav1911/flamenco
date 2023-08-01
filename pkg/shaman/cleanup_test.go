@@ -31,11 +31,11 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/pkg/shaman/config"
-	"git.blender.org/flamenco/pkg/shaman/filestore"
-	"git.blender.org/flamenco/pkg/shaman/jwtauth"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/pkg/shaman/config"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/jwtauth"
 )
 
 func createTestShaman() (*Server, func()) {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"git.blender.org/flamenco/pkg/crosspath"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 type ValueToVariableReplacer struct {

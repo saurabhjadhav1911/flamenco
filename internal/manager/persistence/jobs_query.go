@@ -5,8 +5,8 @@ import (
 	"context"
 	"strings"
 
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func (db *DB) QueryJobs(ctx context.Context, apiQ api.JobsQuery) ([]*Job, error) {

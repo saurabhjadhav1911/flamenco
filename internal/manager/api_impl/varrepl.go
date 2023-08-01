@@ -3,12 +3,12 @@ package api_impl
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import (
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/varrepl.gen.go -package mocks git.blender.org/flamenco/internal/manager/api_impl VariableReplacer
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/varrepl.gen.go -package mocks projects.blender.org/studio/flamenco/internal/manager/api_impl VariableReplacer
 type VariableReplacer interface {
 	NewVariableExpander(audience config.VariableAudience, platform config.VariablePlatform) *config.VariableExpander
 	ResolveVariables(audience config.VariableAudience, platform config.VariablePlatform) map[string]config.ResolvedVariable

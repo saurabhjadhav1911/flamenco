@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/crosspath"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 var (

@@ -15,12 +15,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 
-	"git.blender.org/flamenco/internal/manager/job_compilers"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/internal/uuid"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/crosspath"
+	"projects.blender.org/studio/flamenco/internal/manager/job_compilers"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/internal/uuid"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 // JobFilesURLPrefix is the URL prefix that the Flamenco API expects to serve

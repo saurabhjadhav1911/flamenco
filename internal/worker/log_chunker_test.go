@@ -9,7 +9,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/worker/mocks"
+	"projects.blender.org/studio/flamenco/internal/worker/mocks"
 )
 
 // SPDX-License-Identifier: GPL-3.0-or-later

@@ -14,9 +14,9 @@ import (
 	"github.com/google/shlex"
 	"github.com/rs/zerolog"
 
-	"git.blender.org/flamenco/internal/find_blender"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/crosspath"
+	"projects.blender.org/studio/flamenco/internal/find_blender"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 var regexpFileSaved = regexp.MustCompile("Saved: '(.*)'")

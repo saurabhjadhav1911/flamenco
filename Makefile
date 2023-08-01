@@ -1,6 +1,6 @@
 -include .env
 
-PKG := git.blender.org/flamenco
+PKG := projects.blender.org/studio/flamenco
 
 # To update the version number in all the relevant places, update the VERSION
 # variable below and run `make update-version`.

@@ -9,10 +9,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/crosspath"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 func varreplTestTask() api.AssignedTask {

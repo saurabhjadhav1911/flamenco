@@ -7,8 +7,8 @@ import (
 	"errors"
 	"io"
 
-	"git.blender.org/flamenco/internal/manager/api_impl"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/api_impl"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // DummyShaman implements the Shaman interface from `internal/manager/api_impl/interfaces.go`

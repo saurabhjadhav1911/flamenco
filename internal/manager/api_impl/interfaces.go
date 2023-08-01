@@ -13,20 +13,20 @@ import (
 	"github.com/benbjohnson/clock"
 	"github.com/rs/zerolog"
 
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/internal/manager/job_compilers"
-	"git.blender.org/flamenco/internal/manager/job_deleter"
-	"git.blender.org/flamenco/internal/manager/last_rendered"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/sleep_scheduler"
-	"git.blender.org/flamenco/internal/manager/task_state_machine"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/internal/manager/job_compilers"
+	"projects.blender.org/studio/flamenco/internal/manager/job_deleter"
+	"projects.blender.org/studio/flamenco/internal/manager/last_rendered"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/sleep_scheduler"
+	"projects.blender.org/studio/flamenco/internal/manager/task_state_machine"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman"
 )
 
 // Generate mock implementations of these interfaces.
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/api_impl_mock.gen.go -package mocks git.blender.org/flamenco/internal/manager/api_impl PersistenceService,ChangeBroadcaster,JobCompiler,LogStorage,ConfigService,TaskStateMachine,Shaman,LastRendered,LocalStorage,WorkerSleepScheduler,JobDeleter
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/api_impl_mock.gen.go -package mocks projects.blender.org/studio/flamenco/internal/manager/api_impl PersistenceService,ChangeBroadcaster,JobCompiler,LogStorage,ConfigService,TaskStateMachine,Shaman,LastRendered,LocalStorage,WorkerSleepScheduler,JobDeleter
 
 type PersistenceService interface {
 	StoreAuthoredJob(ctx context.Context, authoredJob job_compilers.AuthoredJob) error

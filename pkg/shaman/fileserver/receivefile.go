@@ -28,9 +28,9 @@ import (
 	"fmt"
 	"io"
 
-	"git.blender.org/flamenco/pkg/shaman/filestore"
-	"git.blender.org/flamenco/pkg/shaman/hasher"
 	"github.com/rs/zerolog"
+	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/hasher"
 )
 
 // ErrFileAlreadyExists indicates that a file already exists in the Shaman

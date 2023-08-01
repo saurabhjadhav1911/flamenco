@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"git.blender.org/flamenco/internal/manager/local_storage"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/internal/manager/local_storage"
 )
 
 func TestNew(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 	"sync"
 	"testing"
 
-	"git.blender.org/flamenco/pkg/crosspath"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 func TestDefaultSettings(t *testing.T) {

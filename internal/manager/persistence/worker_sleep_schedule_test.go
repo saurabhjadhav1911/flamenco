@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"git.blender.org/flamenco/internal/uuid"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"projects.blender.org/studio/flamenco/internal/uuid"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func TestFetchWorkerSleepSchedule(t *testing.T) {

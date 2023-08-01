@@ -2,7 +2,7 @@ package task_state_machine
 
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import "git.blender.org/flamenco/pkg/api"
+import "projects.blender.org/studio/flamenco/pkg/api"
 
 var (
 	// Task statuses that always get requeued when the job is requeueing.

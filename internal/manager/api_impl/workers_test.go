@@ -13,10 +13,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/internal/manager/last_rendered"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/internal/manager/last_rendered"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func TestTaskScheduleHappy(t *testing.T) {

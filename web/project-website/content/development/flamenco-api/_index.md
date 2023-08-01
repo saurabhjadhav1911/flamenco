@@ -141,7 +141,7 @@ import (
 	"context"
 	"fmt"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func main() {

@@ -12,7 +12,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"git.blender.org/flamenco/internal/manager/timeout_checker/mocks"
+	"projects.blender.org/studio/flamenco/internal/manager/timeout_checker/mocks"
 )
 
 type TimeoutCheckerMocks struct {

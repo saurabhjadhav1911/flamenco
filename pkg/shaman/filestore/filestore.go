@@ -29,8 +29,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"git.blender.org/flamenco/pkg/shaman/config"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/pkg/shaman/config"
 )
 
 // Store represents the default Shaman file store.

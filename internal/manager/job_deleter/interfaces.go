@@ -5,15 +5,15 @@ package job_deleter
 import (
 	"context"
 
-	"git.blender.org/flamenco/internal/manager/local_storage"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/shaman"
+	"projects.blender.org/studio/flamenco/internal/manager/local_storage"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/shaman"
 )
 
 // Generate mock implementations of these interfaces.
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks git.blender.org/flamenco/internal/manager/job_deleter PersistenceService,Storage,ChangeBroadcaster,Shaman
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks projects.blender.org/studio/flamenco/internal/manager/job_deleter PersistenceService,Storage,ChangeBroadcaster,Shaman
 
 type PersistenceService interface {
 	FetchJob(ctx context.Context, jobUUID string) (*persistence.Job, error)

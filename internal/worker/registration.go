@@ -15,8 +15,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/appinfo"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/appinfo"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 const workerNameEnvVariable = "FLAMENCO_WORKER_NAME"

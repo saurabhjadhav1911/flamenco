@@ -11,10 +11,10 @@ import (
 	"sync"
 	"time"
 
-	"git.blender.org/flamenco/internal/manager/webupdates"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/benbjohnson/clock"
 	"github.com/rs/zerolog"
+	"projects.blender.org/studio/flamenco/internal/manager/webupdates"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 const (
@@ -35,7 +35,7 @@ type Storage struct {
 }
 
 // Generate mock implementations of these interfaces.
-//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks git.blender.org/flamenco/internal/manager/task_logs LocalStorage,ChangeBroadcaster
+//go:generate go run github.com/golang/mock/mockgen -destination mocks/interfaces_mock.gen.go -package mocks projects.blender.org/studio/flamenco/internal/manager/task_logs LocalStorage,ChangeBroadcaster
 
 type LocalStorage interface {
 	// ForJob returns the absolute directory path for storing job-related files.

@@ -4,8 +4,8 @@ package webupdates
 import (
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // NewWorkerUpdate returns a partial SocketIOWorkerUpdate struct for the given worker.

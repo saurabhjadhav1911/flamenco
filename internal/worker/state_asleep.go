@@ -6,7 +6,7 @@ import (
 	"context"
 	"time"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 const durationSleepCheck = 3 * time.Second

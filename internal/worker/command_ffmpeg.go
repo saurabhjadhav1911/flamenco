@@ -20,9 +20,9 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/find_ffmpeg"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/crosspath"
+	"projects.blender.org/studio/flamenco/internal/find_ffmpeg"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 type CreateVideoParams struct {

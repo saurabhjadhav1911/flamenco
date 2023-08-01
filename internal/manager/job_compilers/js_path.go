@@ -3,9 +3,9 @@ package job_compilers
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import (
-	"git.blender.org/flamenco/pkg/crosspath"
 	"github.com/dop251/goja"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
 )
 
 // PathModule provides file path manipulation functions by wrapping Go's `path`.

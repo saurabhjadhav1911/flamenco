@@ -9,15 +9,15 @@ import (
 	"os"
 	"testing"
 
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/internal/manager/job_compilers"
-	"git.blender.org/flamenco/internal/manager/last_rendered"
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
-	"git.blender.org/flamenco/pkg/moremock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/internal/manager/job_compilers"
+	"projects.blender.org/studio/flamenco/internal/manager/last_rendered"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/moremock"
 )
 
 func ptr[T any](value T) *T {

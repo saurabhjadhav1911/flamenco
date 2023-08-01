@@ -11,12 +11,12 @@ import (
 	"runtime"
 	"testing"
 
-	"git.blender.org/flamenco/internal/manager/config"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"projects.blender.org/studio/flamenco/internal/manager/config"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func TestGetVariables(t *testing.T) {

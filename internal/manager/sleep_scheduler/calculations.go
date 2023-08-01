@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"git.blender.org/flamenco/internal/manager/persistence"
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/internal/manager/persistence"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // scheduledWorkerStatus returns the expected worker status at the given date/time.

@@ -18,7 +18,7 @@ import (
 
 	"github.com/rs/zerolog"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // cmdMoveDirectory executes the "move-directory" command.

@@ -9,8 +9,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"git.blender.org/flamenco/internal/find_blender"
-	"git.blender.org/flamenco/internal/find_ffmpeg"
+	"projects.blender.org/studio/flamenco/internal/find_blender"
+	"projects.blender.org/studio/flamenco/internal/find_ffmpeg"
 )
 
 // findFFmpeg tries to find FFmpeg, in order to show its version (if found) or a warning (if not).

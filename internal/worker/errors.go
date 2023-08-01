@@ -5,7 +5,7 @@ package worker
 import (
 	"fmt"
 
-	"git.blender.org/flamenco/pkg/api"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // This file contains error types used in the rest of the Worker code.

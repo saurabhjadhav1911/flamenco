@@ -26,8 +26,8 @@ import (
 	"context"
 	"testing"
 
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/stretchr/testify/assert"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 func TestReportRequirements(t *testing.T) {

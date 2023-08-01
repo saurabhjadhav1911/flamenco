@@ -11,9 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"git.blender.org/flamenco/internal/upnp_ssdp"
-	"git.blender.org/flamenco/pkg/api"
 	"github.com/rs/zerolog/log"
+	"projects.blender.org/studio/flamenco/internal/upnp_ssdp"
+	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
 // maybeAutodiscoverManager starts Manager auto-discovery if there is no Manager URL configured yet.

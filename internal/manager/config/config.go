@@ -20,9 +20,9 @@ import (
 	"github.com/rs/zerolog/log"
 	yaml "gopkg.in/yaml.v2"
 
-	"git.blender.org/flamenco/internal/appinfo"
-	"git.blender.org/flamenco/pkg/crosspath"
-	shaman_config "git.blender.org/flamenco/pkg/shaman/config"
+	"projects.blender.org/studio/flamenco/internal/appinfo"
+	"projects.blender.org/studio/flamenco/pkg/crosspath"
+	shaman_config "projects.blender.org/studio/flamenco/pkg/shaman/config"
 )
 
 // configFilename is used to specify where flamenco will write its config file.
