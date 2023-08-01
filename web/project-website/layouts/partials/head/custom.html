@@ -1,1 +1,4 @@
 <script defer data-domain="flamenco.blender.org" src="https://analytics.blender.org/js/script.js"></script>
+{{- with .Page.Params.Redirect }}
+  <meta http-equiv="refresh" content="0; url={{.}}" />
+{{- end }}
