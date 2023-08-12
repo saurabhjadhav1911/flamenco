@@ -1513,7 +1513,7 @@ components:
 
     WorkerStatus:
       type: string
-      enum: [starting, awake, asleep, error, testing, offline]
+      enum: [starting, awake, asleep, error, testing, offline, restart]
 
     WorkerSignOn:
       type: object
@@ -1523,12 +1523,14 @@ components:
           type: array
           items: { type: string }
         software_version: { type: string }
+        can_restart: { type: boolean }
       required: [name, supported_task_types, software_version]
       example:
         # This example may be nice to use from the SwaggerUI interface.
         name: API user
         supported_task_types: [blender, ffmpeg, file-management, misc]
         software_version: swagger-ui
+        can_restart: false
 
     WorkerStateChange:
       type: object
@@ -2313,7 +2315,10 @@ components:
           type: string
           format: date-time
           description: This is only set when the worker was deleted.
-      required: [id, name, updated, status, version]
+        "can_restart":
+          type: boolean
+          description: Whether this Worker can auto-restart.
+      required: [id, name, updated, status, version, can_restart]
 
     SocketIOSubscription:
       type: object
@@ -2373,7 +2378,10 @@ components:
         "version":
           type: string
           description: Version of Flamenco this Worker is running
-      required: [id, name, status, version]
+        "can_restart":
+          type: boolean
+          description: Whether this worker can auto-restart.
+      required: [id, name, status, version, can_restart]
 
     Worker:
       description: All information about a Worker
