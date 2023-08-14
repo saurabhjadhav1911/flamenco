@@ -11,6 +11,7 @@ This is an example of such a configuration file:
 ```yaml
 manager_url: http://flamenco.local:8080/
 task_types: [blender, ffmpeg, file-management, misc]
+restart_exit_code: 47
 ```
 
 - `manager_url`: The URL of the Manager to connect to. If the setting is blank
@@ -20,9 +21,13 @@ task_types: [blender, ffmpeg, file-management, misc]
   determined by the [job compiler scripts][scripts]; the ones listed here are in
   use by the default scripts. These determine which kind of tasks this Worker
   will get. See [task types][task-types] for more info.
+- `restart_exit_code`: Having this set to a non-zero value will mark this Worker
+  as 'restartable'. See [Shut Down & Restart Actions][restarting] for more
+  information.
 
 [scripts]: {{< ref "usage/job-types" >}}
 [task-types]: {{< ref "usage/job-types" >}}#task-types
+[restarting]: {{< ref "usage/worker-actions" >}}#shut-down--restart-actions
 
 ## Worker Local Files
 
