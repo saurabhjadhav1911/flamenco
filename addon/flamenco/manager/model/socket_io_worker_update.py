@@ -94,6 +94,7 @@ class SocketIOWorkerUpdate(ModelNormal):
             'updated': (datetime,),  # noqa: E501
             'status': (WorkerStatus,),  # noqa: E501
             'version': (str,),  # noqa: E501
+            'can_restart': (bool,),  # noqa: E501
             'last_seen': (datetime,),  # noqa: E501
             'previous_status': (WorkerStatus,),  # noqa: E501
             'status_change': (WorkerStatusChangeRequest,),  # noqa: E501
@@ -111,6 +112,7 @@ class SocketIOWorkerUpdate(ModelNormal):
         'updated': 'updated',  # noqa: E501
         'status': 'status',  # noqa: E501
         'version': 'version',  # noqa: E501
+        'can_restart': 'can_restart',  # noqa: E501
         'last_seen': 'last_seen',  # noqa: E501
         'previous_status': 'previous_status',  # noqa: E501
         'status_change': 'status_change',  # noqa: E501
@@ -124,7 +126,7 @@ class SocketIOWorkerUpdate(ModelNormal):
 
     @classmethod
     @convert_js_args_to_python_args
-    def _from_openapi_data(cls, id, name, updated, status, version, *args, **kwargs):  # noqa: E501
+    def _from_openapi_data(cls, id, name, updated, status, version, can_restart, *args, **kwargs):  # noqa: E501
         """SocketIOWorkerUpdate - a model defined in OpenAPI
 
         Args:
@@ -133,6 +135,7 @@ class SocketIOWorkerUpdate(ModelNormal):
             updated (datetime): Timestamp of last update
             status (WorkerStatus):
             version (str):
+            can_restart (bool): Whether this Worker can auto-restart.
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -201,6 +204,7 @@ class SocketIOWorkerUpdate(ModelNormal):
         self.updated = updated
         self.status = status
         self.version = version
+        self.can_restart = can_restart
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
                         self._configuration is not None and \
@@ -221,7 +225,7 @@ class SocketIOWorkerUpdate(ModelNormal):
     ])
 
     @convert_js_args_to_python_args
-    def __init__(self, id, name, updated, status, version, *args, **kwargs):  # noqa: E501
+    def __init__(self, id, name, updated, status, version, can_restart, *args, **kwargs):  # noqa: E501
         """SocketIOWorkerUpdate - a model defined in OpenAPI
 
         Args:
@@ -230,6 +234,7 @@ class SocketIOWorkerUpdate(ModelNormal):
             updated (datetime): Timestamp of last update
             status (WorkerStatus):
             version (str):
+            can_restart (bool): Whether this Worker can auto-restart.
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -296,6 +301,7 @@ class SocketIOWorkerUpdate(ModelNormal):
         self.updated = updated
         self.status = status
         self.version = version
+        self.can_restart = can_restart
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
                         self._configuration is not None and \

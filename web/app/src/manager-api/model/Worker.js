@@ -35,13 +35,14 @@ class Worker {
      * @param name {String} 
      * @param status {module:model/WorkerStatus} 
      * @param version {String} Version of Flamenco this Worker is running
+     * @param canRestart {Boolean} Whether this worker can auto-restart.
      * @param ipAddress {String} IP address of the Worker
      * @param platform {String} Operating system of the Worker
      * @param supportedTaskTypes {Array.<String>} 
      */
-    constructor(id, name, status, version, ipAddress, platform, supportedTaskTypes) { 
-        WorkerSummary.initialize(this, id, name, status, version);WorkerAllOf.initialize(this, ipAddress, platform, supportedTaskTypes);
-        Worker.initialize(this, id, name, status, version, ipAddress, platform, supportedTaskTypes);
+    constructor(id, name, status, version, canRestart, ipAddress, platform, supportedTaskTypes) { 
+        WorkerSummary.initialize(this, id, name, status, version, canRestart);WorkerAllOf.initialize(this, ipAddress, platform, supportedTaskTypes);
+        Worker.initialize(this, id, name, status, version, canRestart, ipAddress, platform, supportedTaskTypes);
     }
 
     /**
@@ -49,11 +50,12 @@ class Worker {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, id, name, status, version, ipAddress, platform, supportedTaskTypes) { 
+    static initialize(obj, id, name, status, version, canRestart, ipAddress, platform, supportedTaskTypes) { 
         obj['id'] = id;
         obj['name'] = name;
         obj['status'] = status;
         obj['version'] = version;
+        obj['can_restart'] = canRestart;
         obj['ip_address'] = ipAddress;
         obj['platform'] = platform;
         obj['supported_task_types'] = supportedTaskTypes;
@@ -89,6 +91,9 @@ class Worker {
             }
             if (data.hasOwnProperty('version')) {
                 obj['version'] = ApiClient.convertToType(data['version'], 'String');
+            }
+            if (data.hasOwnProperty('can_restart')) {
+                obj['can_restart'] = ApiClient.convertToType(data['can_restart'], 'Boolean');
             }
             if (data.hasOwnProperty('ip_address')) {
                 obj['ip_address'] = ApiClient.convertToType(data['ip_address'], 'String');
@@ -143,6 +148,12 @@ Worker.prototype['last_seen'] = undefined;
  * @member {String} version
  */
 Worker.prototype['version'] = undefined;
+
+/**
+ * Whether this worker can auto-restart.
+ * @member {Boolean} can_restart
+ */
+Worker.prototype['can_restart'] = undefined;
 
 /**
  * IP address of the Worker
@@ -200,6 +211,11 @@ WorkerSummary.prototype['last_seen'] = undefined;
  * @member {String} version
  */
 WorkerSummary.prototype['version'] = undefined;
+/**
+ * Whether this worker can auto-restart.
+ * @member {Boolean} can_restart
+ */
+WorkerSummary.prototype['can_restart'] = undefined;
 // Implement WorkerAllOf interface:
 /**
  * IP address of the Worker

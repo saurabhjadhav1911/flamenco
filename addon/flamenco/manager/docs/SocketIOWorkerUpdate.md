@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **updated** | **datetime** | Timestamp of last update | 
 **status** | [**WorkerStatus**](WorkerStatus.md) |  | 
 **version** | **str** |  | 
+**can_restart** | **bool** | Whether this Worker can auto-restart. | 
 **last_seen** | **datetime** | Last time this worker was seen by the Manager. | [optional] 
 **previous_status** | [**WorkerStatus**](WorkerStatus.md) |  | [optional] 
 **status_change** | [**WorkerStatusChangeRequest**](WorkerStatusChangeRequest.md) |  | [optional] 

@@ -84,6 +84,7 @@ class WorkerSignOn(ModelNormal):
             'name': (str,),  # noqa: E501
             'supported_task_types': ([str],),  # noqa: E501
             'software_version': (str,),  # noqa: E501
+            'can_restart': (bool,),  # noqa: E501
         }
 
     @cached_property
@@ -95,6 +96,7 @@ class WorkerSignOn(ModelNormal):
         'name': 'name',  # noqa: E501
         'supported_task_types': 'supported_task_types',  # noqa: E501
         'software_version': 'software_version',  # noqa: E501
+        'can_restart': 'can_restart',  # noqa: E501
     }
 
     read_only_vars = {
@@ -143,6 +145,7 @@ class WorkerSignOn(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
+            can_restart (bool): [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)
@@ -232,6 +235,7 @@ class WorkerSignOn(ModelNormal):
                                 Animal class but this time we won't travel
                                 through its discriminator because we passed in
                                 _visited_composed_classes = (Animal,)
+            can_restart (bool): [optional]  # noqa: E501
         """
 
         _check_type = kwargs.pop('_check_type', True)

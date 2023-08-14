@@ -62,6 +62,9 @@ class WorkerSignOn {
             if (data.hasOwnProperty('software_version')) {
                 obj['software_version'] = ApiClient.convertToType(data['software_version'], 'String');
             }
+            if (data.hasOwnProperty('can_restart')) {
+                obj['can_restart'] = ApiClient.convertToType(data['can_restart'], 'Boolean');
+            }
         }
         return obj;
     }
@@ -83,6 +86,11 @@ WorkerSignOn.prototype['supported_task_types'] = undefined;
  * @member {String} software_version
  */
 WorkerSignOn.prototype['software_version'] = undefined;
+
+/**
+ * @member {Boolean} can_restart
+ */
+WorkerSignOn.prototype['can_restart'] = undefined;
 
 
 

@@ -29,10 +29,11 @@ class WorkerSummary {
      * @param name {String} 
      * @param status {module:model/WorkerStatus} 
      * @param version {String} Version of Flamenco this Worker is running
+     * @param canRestart {Boolean} Whether this worker can auto-restart.
      */
-    constructor(id, name, status, version) { 
+    constructor(id, name, status, version, canRestart) { 
         
-        WorkerSummary.initialize(this, id, name, status, version);
+        WorkerSummary.initialize(this, id, name, status, version, canRestart);
     }
 
     /**
@@ -40,11 +41,12 @@ class WorkerSummary {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, id, name, status, version) { 
+    static initialize(obj, id, name, status, version, canRestart) { 
         obj['id'] = id;
         obj['name'] = name;
         obj['status'] = status;
         obj['version'] = version;
+        obj['can_restart'] = canRestart;
     }
 
     /**
@@ -75,6 +77,9 @@ class WorkerSummary {
             }
             if (data.hasOwnProperty('version')) {
                 obj['version'] = ApiClient.convertToType(data['version'], 'String');
+            }
+            if (data.hasOwnProperty('can_restart')) {
+                obj['can_restart'] = ApiClient.convertToType(data['can_restart'], 'Boolean');
             }
         }
         return obj;
@@ -114,6 +119,12 @@ WorkerSummary.prototype['last_seen'] = undefined;
  * @member {String} version
  */
 WorkerSummary.prototype['version'] = undefined;
+
+/**
+ * Whether this worker can auto-restart.
+ * @member {Boolean} can_restart
+ */
+WorkerSummary.prototype['can_restart'] = undefined;
 
 
 

@@ -362,6 +362,7 @@ with flamenco.manager.ApiClient(configuration) as api_client:
             "supported_task_types_example",
         ],
         software_version="software_version_example",
+        can_restart=True,
     ) # WorkerSignOn | Worker metadata
 
     # example passing only required values which don't have defaults set

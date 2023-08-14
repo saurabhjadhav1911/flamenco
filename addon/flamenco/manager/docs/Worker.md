@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **name** | **str** |  | 
 **status** | [**WorkerStatus**](WorkerStatus.md) |  | 
 **version** | **str** | Version of Flamenco this Worker is running | 
+**can_restart** | **bool** | Whether this worker can auto-restart. | 
 **ip_address** | **str** | IP address of the Worker | 
 **platform** | **str** | Operating system of the Worker | 
 **supported_task_types** | **[str]** |  | 

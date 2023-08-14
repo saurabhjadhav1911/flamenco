@@ -61,6 +61,13 @@ export default class WorkerStatus {
         "offline" = "offline";
 
     
+        /**
+         * value: "restart"
+         * @const
+         */
+        "restart" = "restart";
+
+    
 
     /**
     * Returns a <code>WorkerStatus</code> enum value from a Javascript object name.

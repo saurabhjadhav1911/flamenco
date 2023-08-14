@@ -139,6 +139,8 @@ const (
 
 	WorkerStatusOffline WorkerStatus = "offline"
 
+	WorkerStatusRestart WorkerStatus = "restart"
+
 	WorkerStatusStarting WorkerStatus = "starting"
 
 	WorkerStatusTesting WorkerStatus = "testing"
@@ -604,6 +606,9 @@ type SocketIOTaskUpdate struct {
 
 // Subset of a Worker, sent over SocketIO when a worker changes.
 type SocketIOWorkerUpdate struct {
+	// Whether this Worker can auto-restart.
+	CanRestart bool `json:"can_restart"`
+
 	// This is only set when the worker was deleted.
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 
@@ -758,6 +763,7 @@ type WorkerRegistration struct {
 
 // WorkerSignOn defines model for WorkerSignOn.
 type WorkerSignOn struct {
+	CanRestart         *bool    `json:"can_restart,omitempty"`
 	Name               string   `json:"name"`
 	SoftwareVersion    string   `json:"software_version"`
 	SupportedTaskTypes []string `json:"supported_task_types"`
@@ -795,7 +801,9 @@ type WorkerStatusChangeRequest struct {
 
 // Basic information about a Worker.
 type WorkerSummary struct {
-	Id string `json:"id"`
+	// Whether this worker can auto-restart.
+	CanRestart bool   `json:"can_restart"`
+	Id         string `json:"id"`
 
 	// Last time this worker was seen by the Manager.
 	LastSeen *time.Time   `json:"last_seen,omitempty"`

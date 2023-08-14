@@ -93,6 +93,7 @@ class WorkerSummary(ModelNormal):
             'name': (str,),  # noqa: E501
             'status': (WorkerStatus,),  # noqa: E501
             'version': (str,),  # noqa: E501
+            'can_restart': (bool,),  # noqa: E501
             'status_change': (WorkerStatusChangeRequest,),  # noqa: E501
             'last_seen': (datetime,),  # noqa: E501
         }
@@ -107,6 +108,7 @@ class WorkerSummary(ModelNormal):
         'name': 'name',  # noqa: E501
         'status': 'status',  # noqa: E501
         'version': 'version',  # noqa: E501
+        'can_restart': 'can_restart',  # noqa: E501
         'status_change': 'status_change',  # noqa: E501
         'last_seen': 'last_seen',  # noqa: E501
     }
@@ -118,7 +120,7 @@ class WorkerSummary(ModelNormal):
 
     @classmethod
     @convert_js_args_to_python_args
-    def _from_openapi_data(cls, id, name, status, version, *args, **kwargs):  # noqa: E501
+    def _from_openapi_data(cls, id, name, status, version, can_restart, *args, **kwargs):  # noqa: E501
         """WorkerSummary - a model defined in OpenAPI
 
         Args:
@@ -126,6 +128,7 @@ class WorkerSummary(ModelNormal):
             name (str):
             status (WorkerStatus):
             version (str): Version of Flamenco this Worker is running
+            can_restart (bool): Whether this worker can auto-restart.
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -191,6 +194,7 @@ class WorkerSummary(ModelNormal):
         self.name = name
         self.status = status
         self.version = version
+        self.can_restart = can_restart
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
                         self._configuration is not None and \
@@ -211,7 +215,7 @@ class WorkerSummary(ModelNormal):
     ])
 
     @convert_js_args_to_python_args
-    def __init__(self, id, name, status, version, *args, **kwargs):  # noqa: E501
+    def __init__(self, id, name, status, version, can_restart, *args, **kwargs):  # noqa: E501
         """WorkerSummary - a model defined in OpenAPI
 
         Args:
@@ -219,6 +223,7 @@ class WorkerSummary(ModelNormal):
             name (str):
             status (WorkerStatus):
             version (str): Version of Flamenco this Worker is running
+            can_restart (bool): Whether this worker can auto-restart.
 
         Keyword Args:
             _check_type (bool): if True, values for parameters in openapi_types
@@ -282,6 +287,7 @@ class WorkerSummary(ModelNormal):
         self.name = name
         self.status = status
         self.version = version
+        self.can_restart = can_restart
         for var_name, var_value in kwargs.items():
             if var_name not in self.attribute_map and \
                         self._configuration is not None and \

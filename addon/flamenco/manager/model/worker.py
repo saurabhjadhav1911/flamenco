@@ -101,6 +101,7 @@ class Worker(ModelComposed):
             'name': (str,),  # noqa: E501
             'status': (WorkerStatus,),  # noqa: E501
             'version': (str,),  # noqa: E501
+            'can_restart': (bool,),  # noqa: E501
             'ip_address': (str,),  # noqa: E501
             'platform': (str,),  # noqa: E501
             'supported_task_types': ([str],),  # noqa: E501
@@ -120,6 +121,7 @@ class Worker(ModelComposed):
         'name': 'name',  # noqa: E501
         'status': 'status',  # noqa: E501
         'version': 'version',  # noqa: E501
+        'can_restart': 'can_restart',  # noqa: E501
         'ip_address': 'ip_address',  # noqa: E501
         'platform': 'platform',  # noqa: E501
         'supported_task_types': 'supported_task_types',  # noqa: E501
@@ -142,6 +144,7 @@ class Worker(ModelComposed):
             name (str):
             status (WorkerStatus):
             version (str): Version of Flamenco this Worker is running
+            can_restart (bool): Whether this worker can auto-restart.
             ip_address (str): IP address of the Worker
             platform (str): Operating system of the Worker
             supported_task_types ([str]):
@@ -252,6 +255,7 @@ class Worker(ModelComposed):
             name (str):
             status (WorkerStatus):
             version (str): Version of Flamenco this Worker is running
+            can_restart (bool): Whether this worker can auto-restart.
             ip_address (str): IP address of the Worker
             platform (str): Operating system of the Worker
             supported_task_types ([str]):

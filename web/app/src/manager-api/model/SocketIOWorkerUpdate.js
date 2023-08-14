@@ -30,10 +30,11 @@ class SocketIOWorkerUpdate {
      * @param updated {Date} Timestamp of last update
      * @param status {module:model/WorkerStatus} 
      * @param version {String} 
+     * @param canRestart {Boolean} Whether this Worker can auto-restart.
      */
-    constructor(id, name, updated, status, version) { 
+    constructor(id, name, updated, status, version, canRestart) { 
         
-        SocketIOWorkerUpdate.initialize(this, id, name, updated, status, version);
+        SocketIOWorkerUpdate.initialize(this, id, name, updated, status, version, canRestart);
     }
 
     /**
@@ -41,12 +42,13 @@ class SocketIOWorkerUpdate {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, id, name, updated, status, version) { 
+    static initialize(obj, id, name, updated, status, version, canRestart) { 
         obj['id'] = id;
         obj['name'] = name;
         obj['updated'] = updated;
         obj['status'] = status;
         obj['version'] = version;
+        obj['can_restart'] = canRestart;
     }
 
     /**
@@ -86,6 +88,9 @@ class SocketIOWorkerUpdate {
             }
             if (data.hasOwnProperty('deleted_at')) {
                 obj['deleted_at'] = ApiClient.convertToType(data['deleted_at'], 'Date');
+            }
+            if (data.hasOwnProperty('can_restart')) {
+                obj['can_restart'] = ApiClient.convertToType(data['can_restart'], 'Boolean');
             }
         }
         return obj;
@@ -143,6 +148,12 @@ SocketIOWorkerUpdate.prototype['version'] = undefined;
  * @member {Date} deleted_at
  */
 SocketIOWorkerUpdate.prototype['deleted_at'] = undefined;
+
+/**
+ * Whether this Worker can auto-restart.
+ * @member {Boolean} can_restart
+ */
+SocketIOWorkerUpdate.prototype['can_restart'] = undefined;
 
 
 
