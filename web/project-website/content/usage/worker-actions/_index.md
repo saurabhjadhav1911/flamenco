@@ -1,14 +1,11 @@
 ---
 title: Worker Actions
 ---
+![Screenshot of the Worker Actions menu in the Flamenco Manager web interface](worker_actions.webp)
 
 The Worker Actions menu can be found in the *Workers* tab of Flamenco Manager's
 web interface. By default it shows *Choose an action...*, and the *Apply* button
-will be disabled until a specific action is chosen.
-
-![Screenshot of the Worker Actions menu in the Flamenco Manager web interface](worker_actions.webp)
-
-The available actions are:
+will be disabled until a specific action is chosen. The available actions are:
 
 <style>
   sup {
@@ -16,17 +13,21 @@ The available actions are:
   }
 </style>
 
-| Menu Item                                    | Effect                                                                                                                                   |
-|----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| Shut Down (after task is finished)           | Wait until the current task is done, then stop the worker. It will exit with status code `0`, indicating a clean shutdown.               |
-| Shut Down (immediately)                      | Abort the current task, and return it to the Manager for requeueing. Then stop the worker process like described above.                  |
-| Restart (after task is finished)<sup>*</sup> | Wait until the current task is done, then stop the worker. It will exit with the configured status code, indicating a desire to restart. |
-| Restart (immediately)<sup>*</sup>            | Abort the current task, and return it to the Manager for requeueing. Then restart the worker process like described above.               |
-| Send to Sleep (after task is finished)       | Let the worker sleep after finishing its current task.                                                                                   |
-| Send to Sleep (immediately)                  | Let the worker sleep immediately. Its current task is aborted and requeued by the Manager.                                               |
-| Wake Up                                      | Wake the worker up. A sleeping worker can take a minute to respond.                                                                      |
+| Label                   | Effect                                                                                                                                                                                       |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Shut Down               | Stop the worker. It will exit with status code `0`, indicating a clean shutdown.                                                                                                             |
+| Restart                 | Stop the worker. It will exit with the configured status code, indicating a desire to restart. This option is only available when the selected worker is marked as 'restartable'. See below. |
+| Send&nbsp;to&nbsp;Sleep | Let the worker sleep. It will not get any new task, just check every 30 seconds to see if it should wake up.                                                                                 |
+| Wake Up                 | Wake the worker up. A sleeping worker can take a while to respond.                                                                                                                           |
 
-<sup>*</sup> The 'Restart' options are only available when the selected worker is marked as 'restartable'. See below.
+Most actions have two 'flavors':
+
+After task is finished
+: Wait until the current task is done, then perform the action. A new task will not be assigned to this worker until it has confirmed the status change.
+
+Immediately
+: Abort the current task, and return it to the Manager for requeueing. Then perform the action.
+
 
 ## Shut Down & Restart actions
 
