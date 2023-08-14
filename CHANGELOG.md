@@ -20,6 +20,7 @@ bugs in actually-released versions.
 - Database integrity tests. These are always run at startup of Flamenco Manager, and by default run periodically every hour. This can be configured by adding/changing the `database_check_period: 1h` setting in `flamenco-manager.yaml`. Setting it to `0` will disable the periodic check. When a database consistency error is found, Flamenco Manager will immediately shut down.
 - The webapp automatically reloads after a disconnect, when it reconnects to Flamenco Manager and sees the Manager version changed [#104235](https://projects.blender.org/studio/flamenco/pulls/104235).
 - Show the configured Flamenco Manager name in the webapp's browser window title.
+- Workers can be marked as 'restartable' by using the `-restart-exit-code N` commandline option. More info in the [Worker Actions documentation](https://flamenco.blender.org/usage/worker-actions/).
 
 
 ## 3.2 - released 2023-02-21
