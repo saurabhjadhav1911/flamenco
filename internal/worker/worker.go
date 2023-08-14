@@ -17,7 +17,8 @@ type Worker struct {
 	doneWg   *sync.WaitGroup
 
 	// Will be closed by the Worker when it wants to shut down. See Worker.WaitForShutdown().
-	shutdown chan struct{}
+	shutdown             chan struct{}
+	restartAfterShutdown bool
 
 	client FlamencoClient
 
@@ -69,14 +70,24 @@ func (w *Worker) Close() {
 	w.doneWg.Wait()
 }
 
+type ShutdownReason int
+
+const (
+	ReasonContextClosed ShutdownReason = iota // Main Context closed.
+	ReasonShutdownReq                         // Manager requested a shutdown.
+	ReasonRestartReq                          // Manager requested a restart.
+)
+
 // WaitForShutdown waits until Flamenco wants to shut down the application.
-// Returns `true` when the Worker has signalled it wants to shut down.
-// Returns `false` when the shutdown was caused by the context closing.
-func (w *Worker) WaitForShutdown(ctx context.Context) bool {
+// Returns the reason of the shutdown.
+func (w *Worker) WaitForShutdown(ctx context.Context) ShutdownReason {
 	select {
 	case <-ctx.Done():
-		return false
+		return ReasonContextClosed
 	case <-w.shutdown:
-		return true
+		if w.restartAfterShutdown {
+			return ReasonRestartReq
+		}
+		return ReasonShutdownReq
 	}
 }

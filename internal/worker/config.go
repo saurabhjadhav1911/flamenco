@@ -46,7 +46,8 @@ type WorkerConfig struct {
 	// configuration file, but also from autodiscovery via UPnP/SSDP.
 	ManagerURL string `yaml:"-"`
 
-	TaskTypes []string `yaml:"task_types"`
+	TaskTypes       []string `yaml:"task_types"`
+	RestartExitCode int      `yaml:"restart_exit_code"`
 }
 
 type WorkerCredentials struct {
@@ -143,6 +144,10 @@ func (fcw *FileConfigWrangler) SaveCredentials(creds WorkerCredentials) error {
 // This is an in-memory change only, and will not be written to the config file.
 func (fcw *FileConfigWrangler) SetManagerURL(managerURL string) {
 	fcw.wc.ManagerURL = managerURL
+}
+
+func (fcw *FileConfigWrangler) SetRestartExitCode(code int) {
+	fcw.wc.RestartExitCode = code
 }
 
 // DefaultConfig returns a fairly sane default configuration.

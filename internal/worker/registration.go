@@ -150,10 +150,12 @@ func repeatSignOnUntilAnswer(ctx context.Context, cfg WorkerConfig, client Flame
 func signOn(ctx context.Context, cfg WorkerConfig, client FlamencoClient) (api.WorkerStatus, error) {
 	logger := log.With().Str("manager", cfg.ManagerURL).Logger()
 
+	canRestart := cfg.RestartExitCode != 0
 	req := api.SignOnJSONRequestBody{
 		Name:               workerName(),
 		SupportedTaskTypes: cfg.TaskTypes,
 		SoftwareVersion:    appinfo.ExtendedVersion(),
+		CanRestart:         &canRestart,
 	}
 
 	logger.Info().

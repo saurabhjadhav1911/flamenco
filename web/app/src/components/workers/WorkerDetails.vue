@@ -32,6 +32,11 @@
       <dd>
         <link-worker-task :workerTask="workerData.task" />
       </dd>
+
+      <template v-if="workerData.can_restart">
+        <dt class="field-can-restart">Can Restart</dt>
+        <dd>{{  workerData.can_restart }}</dd>
+      </template>
     </dl>
 
     <section class="worker-tags" v-if="workers.tags && workers.tags.length">

@@ -25,6 +25,7 @@ type Worker struct {
 	Software   string           `gorm:"type:varchar(32);default:''"`
 	Status     api.WorkerStatus `gorm:"type:varchar(16);default:''"`
 	LastSeenAt time.Time        `gorm:"index"` // Should contain UTC timestamps.
+	CanRestart bool             `gorm:"type:smallint;default:false"`
 
 	StatusRequested   api.WorkerStatus `gorm:"type:varchar(16);default:''"`
 	LazyStatusRequest bool             `gorm:"type:smallint;default:false"`

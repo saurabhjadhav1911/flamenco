@@ -16,6 +16,13 @@ func (w *Worker) gotoStateOffline(context.Context) {
 	defer w.stateMutex.Unlock()
 
 	w.state = api.WorkerStatusOffline
+	w.requestShutdown(false)
+}
+
+// requestShutdown closes the w.shutdown channel, to indicate to the main
+// function that it should proceed with the shutdown procedure.
+func (w *Worker) requestShutdown(requestRestart bool) {
+	w.restartAfterShutdown = requestRestart
 
 	// Signal that the Worker should shut down.
 	log.Debug().Msg("closing the shutdown channel")

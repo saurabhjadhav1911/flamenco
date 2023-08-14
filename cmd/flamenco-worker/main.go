@@ -47,6 +47,8 @@ var cliArgs struct {
 
 	manager  string
 	register bool
+
+	restartExitCode int
 }
 
 func main() {
@@ -84,16 +86,21 @@ func main() {
 
 	// Load configuration, and override things from the CLI arguments if necessary.
 	configWrangler := worker.NewConfigWrangler()
+
+	// Before the config can be overridden, it has to be loaded.
+	if _, err := configWrangler.WorkerConfig(); err != nil {
+		log.Fatal().Err(err).Msg("error loading worker configuration")
+	}
+
 	if cliArgs.managerURL != nil {
 		url := cliArgs.managerURL.String()
 		log.Info().Str("manager", url).Msg("using Manager URL from commandline")
-
-		// Before the config can be overridden, it has to be loaded.
-		if _, err := configWrangler.WorkerConfig(); err != nil {
-			log.Fatal().Err(err).Msg("error loading worker configuration")
-		}
-
 		configWrangler.SetManagerURL(url)
+	}
+	if cliArgs.restartExitCode != 0 {
+		log.Info().Int("exitCode", cliArgs.restartExitCode).
+			Msg("will tell Manager this Worker can restart")
+		configWrangler.SetRestartExitCode(cliArgs.restartExitCode)
 	}
 
 	findBlender()
@@ -163,7 +170,8 @@ func main() {
 
 	go w.Start(workerCtx, startupState)
 
-	if w.WaitForShutdown(workerCtx) {
+	shutdownReason := w.WaitForShutdown(workerCtx)
+	if shutdownReason != worker.ReasonContextClosed {
 		go shutdown()
 	}
 	<-shutdownComplete
@@ -172,6 +180,8 @@ func main() {
 	wg.Wait()
 
 	log.Debug().Msg("process shutting down")
+	config, _ := configWrangler.WorkerConfig()
+	stopProcess(config, shutdownReason)
 }
 
 func shutdown() {
@@ -203,6 +213,17 @@ func shutdown() {
 	close(shutdownComplete)
 }
 
+func stopProcess(config worker.WorkerConfig, shutdownReason worker.ShutdownReason) {
+	switch shutdownReason {
+	case worker.ReasonContextClosed:
+		os.Exit(1)
+	case worker.ReasonShutdownReq:
+		os.Exit(0)
+	case worker.ReasonRestartReq:
+		os.Exit(config.RestartExitCode)
+	}
+}
+
 func parseCliArgs() {
 	flag.BoolVar(&cliArgs.version, "version", false, "Shows the application version, then exits.")
 	flag.BoolVar(&cliArgs.flush, "flush", false, "Flush any buffered task updates to the Manager, then exits.")
@@ -215,6 +236,9 @@ func parseCliArgs() {
 	flag.StringVar(&cliArgs.manager, "manager", "", "URL of the Flamenco Manager.")
 	flag.BoolVar(&cliArgs.register, "register", false, "(Re-)register at the Manager.")
 	flag.BoolVar(&cliArgs.findManager, "find-manager", false, "Autodiscover a Manager, then quit.")
+
+	flag.IntVar(&cliArgs.restartExitCode, "restart-exit-code", 0,
+		"Mark this Worker as restartable. It will exit with this code to signify it needs to be restarted.")
 
 	flag.Parse()
 

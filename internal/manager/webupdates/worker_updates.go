@@ -14,11 +14,12 @@ import (
 // the caller.
 func NewWorkerUpdate(worker *persistence.Worker) api.SocketIOWorkerUpdate {
 	workerUpdate := api.SocketIOWorkerUpdate{
-		Id:      worker.UUID,
-		Name:    worker.Name,
-		Status:  worker.Status,
-		Version: worker.Software,
-		Updated: worker.UpdatedAt,
+		Id:         worker.UUID,
+		Name:       worker.Name,
+		Status:     worker.Status,
+		Version:    worker.Software,
+		Updated:    worker.UpdatedAt,
+		CanRestart: worker.CanRestart,
 	}
 
 	if worker.StatusRequested != "" {

@@ -63,5 +63,12 @@ export const useWorkers = defineStore('workers', {
         this.tagsByID = tagsByID;
       });
     },
+
+    /**
+     * @returns whether the active worker understands how to get restarted.
+     */
+    canRestart() {
+      return !!this.activeWorker && !!this.activeWorker.can_restart;
+    },
   },
 });

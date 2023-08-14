@@ -15,6 +15,7 @@ func (w *Worker) setupStateMachine() {
 	w.stateStarters[api.WorkerStatusAsleep] = w.gotoStateAsleep
 	w.stateStarters[api.WorkerStatusAwake] = w.gotoStateAwake
 	w.stateStarters[api.WorkerStatusOffline] = w.gotoStateOffline
+	w.stateStarters[api.WorkerStatusRestart] = w.gotoStateRestart
 }
 
 // Called whenever the Flamenco Manager has a change in current status for us.

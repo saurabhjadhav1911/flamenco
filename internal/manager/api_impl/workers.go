@@ -30,6 +30,13 @@ var rememberableWorkerStates = map[api.WorkerStatus]bool{
 	api.WorkerStatusAwake:  true,
 }
 
+// offlineWorkerStates contains worker statuses that are automatically
+// acknowledged on sign-off.
+var offlineWorkerStates = map[api.WorkerStatus]bool{
+	api.WorkerStatusOffline: true,
+	api.WorkerStatusRestart: true,
+}
+
 // RegisterWorker registers a new worker and stores it in the database.
 func (f *Flamenco) RegisterWorker(e echo.Context) error {
 	logger := requestLogger(e)
@@ -137,6 +144,7 @@ func (f *Flamenco) workerUpdateAfterSignOn(e echo.Context, update api.SignOnJSON
 	w.Address = e.RealIP()
 	w.Name = update.Name
 	w.Software = update.SoftwareVersion
+	w.CanRestart = update.CanRestart != nil && *update.CanRestart
 
 	// Remove trailing spaces from task types, and convert to lower case.
 	for idx := range update.SupportedTaskTypes {
@@ -168,7 +176,7 @@ func (f *Flamenco) SignOff(e echo.Context) error {
 	w := requestWorkerOrPanic(e)
 	prevStatus := w.Status
 	w.Status = api.WorkerStatusOffline
-	if w.StatusRequested == api.WorkerStatusOffline {
+	if offlineWorkerStates[w.StatusRequested] {
 		w.StatusChangeClear()
 	}
 

@@ -4,7 +4,9 @@
       <template v-if="!hasActiveWorker">Select a Worker</template>
       <template v-else>Choose an action...</template>
     </option>
-    <option v-for="(action, key) in WORKER_ACTIONS" :value="key">{{ action.label }}</option>
+    <template v-for="(action, key) in WORKER_ACTIONS">
+      <option :value="key" v-if="action.condition()">{{ action.label }}</option>
+    </template>
   </select>
   <button :disabled="!canPerformAction" class="btn" @click.prevent="performWorkerAction">Apply</button>
 </template>
@@ -25,6 +27,7 @@ const WORKER_ACTIONS = Object.freeze({
     title: 'Shut down the worker after the current task finishes. The worker may automatically restart.',
     target_status: 'offline',
     lazy: true,
+    condition: () => true,
   },
   offline_immediate: {
     label: 'Shut Down (immediately)',
@@ -32,6 +35,23 @@ const WORKER_ACTIONS = Object.freeze({
     title: 'Immediately shut down the worker. It may automatically restart.',
     target_status: 'offline',
     lazy: false,
+    condition: () => true,
+  },
+  restart_lazy: {
+    label: 'Restart (after task is finished)',
+    icon: '✝',
+    title: 'Restart the worker after the current task finishes.',
+    target_status: 'restart',
+    lazy: true,
+    condition: () => workers.canRestart(),
+  },
+  restart_immediate: {
+    label: 'Restart (immediately)',
+    icon: '✝!',
+    title: 'Immediately restart the worker.',
+    target_status: 'restart',
+    lazy: false,
+    condition: () => workers.canRestart(),
   },
   asleep_lazy: {
     label: 'Send to Sleep (after task is finished)',
@@ -39,6 +59,7 @@ const WORKER_ACTIONS = Object.freeze({
     title: 'Let the worker sleep after finishing this task.',
     target_status: 'asleep',
     lazy: true,
+    condition: () => true,
   },
   asleep_immediate: {
     label: 'Send to Sleep (immediately)',
@@ -46,6 +67,7 @@ const WORKER_ACTIONS = Object.freeze({
     title: 'Let the worker sleep immediately.',
     target_status: 'asleep',
     lazy: false,
+    condition: () => true,
   },
   wakeup: {
     label: 'Wake Up',
@@ -53,6 +75,7 @@ const WORKER_ACTIONS = Object.freeze({
     title: 'Wake the worker up. A sleeping worker can take a minute to respond.',
     target_status: 'awake',
     lazy: false,
+    condition: () => true,
   },
 });
 
@@ -75,7 +98,9 @@ function performWorkerAction() {
   console.log("Requesting worker status change", statuschange);
   api.requestWorkerStatusChange(workerID, statuschange)
     .then((result) => notifs.add(`Worker status change to ${action.target_status} confirmed.`))
-    .catch((error) => notifs.add(`Error requesting worker status change: ${error}`));
+    .catch((error) => {
+      notifs.add(`Error requesting worker status change: ${error.body.message}`)
+    });
 }
 
 </script>

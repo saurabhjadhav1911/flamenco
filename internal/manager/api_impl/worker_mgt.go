@@ -159,6 +159,13 @@ func (f *Flamenco) RequestWorkerStatusChange(e echo.Context, workerUUID string) 
 		Str("requested", string(change.Status)).
 		Bool("lazy", change.IsLazy).
 		Logger()
+
+	if change.Status == api.WorkerStatusRestart && !dbWorker.CanRestart {
+		logger.Error().Msg("worker cannot be restarted, rejecting status change request")
+		return sendAPIError(e, http.StatusPreconditionFailed,
+			"worker %q does not know how to restart", workerUUID)
+	}
+
 	logger.Info().Msg("worker status change requested")
 
 	if dbWorker.Status == change.Status {
@@ -380,10 +387,11 @@ func (f *Flamenco) CreateWorkerTag(e echo.Context) error {
 
 func workerSummary(w persistence.Worker) api.WorkerSummary {
 	summary := api.WorkerSummary{
-		Id:      w.UUID,
-		Name:    w.Name,
-		Status:  w.Status,
-		Version: w.Software,
+		Id:         w.UUID,
+		Name:       w.Name,
+		Status:     w.Status,
+		Version:    w.Software,
+		CanRestart: w.CanRestart,
 	}
 	if w.StatusRequested != "" {
 		summary.StatusChange = &api.WorkerStatusChangeRequest{
