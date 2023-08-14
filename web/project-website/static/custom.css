@@ -190,3 +190,7 @@ article p {
   line-height: 28px;
   margin-top: 0;
 }
+
+table tbody td {
+  vertical-align: top;
+}
