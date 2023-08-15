@@ -237,13 +237,26 @@ func (f *Flamenco) SetWorkerTags(e echo.Context, workerUUID string) error {
 func (f *Flamenco) DeleteWorkerTag(e echo.Context, tagUUID string) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
-	logger = logger.With().Str("tag", tagUUID).Logger()
+	logger = logger.With().Str("uuid", tagUUID).Logger()
 
 	if !uuid.IsValid(tagUUID) {
 		return sendAPIError(e, http.StatusBadRequest, "not a valid UUID")
 	}
 
-	err := f.persist.DeleteWorkerTag(ctx, tagUUID)
+	// Fetch the tag so its name can be logged.
+	dbTag, err := f.persist.FetchWorkerTag(ctx, tagUUID)
+	switch {
+	case errors.Is(err, persistence.ErrWorkerTagNotFound):
+		logger.Debug().Msg("non-existent worker tag requested")
+		return sendAPIError(e, http.StatusNotFound, "worker tag %q not found", tagUUID)
+	case err != nil:
+		logger.Error().Err(err).Msg("fetching worker tag")
+		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker tag: %v", err)
+	}
+
+	logger = logger.With().Str("name", dbTag.Name).Logger()
+
+	err = f.persist.DeleteWorkerTag(ctx, tagUUID)
 	switch {
 	case errors.Is(err, persistence.ErrWorkerTagNotFound):
 		logger.Debug().Msg("non-existent worker tag requested")
@@ -284,7 +297,7 @@ func (f *Flamenco) FetchWorkerTag(e echo.Context, tagUUID string) error {
 func (f *Flamenco) UpdateWorkerTag(e echo.Context, tagUUID string) error {
 	ctx := e.Request().Context()
 	logger := requestLogger(e)
-	logger = logger.With().Str("tag", tagUUID).Logger()
+	logger = logger.With().Str("uuid", tagUUID).Logger()
 
 	if !uuid.IsValid(tagUUID) {
 		return sendAPIError(e, http.StatusBadRequest, "not a valid UUID")
@@ -307,12 +320,24 @@ func (f *Flamenco) UpdateWorkerTag(e echo.Context, tagUUID string) error {
 		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker tag: %v", err)
 	}
 
+	logCtx := logger.With()
+	if dbTag.Name == update.Name {
+		logCtx = logCtx.Str("name", dbTag.Name)
+	} else {
+		logCtx = logCtx.
+			Str("nameOld", dbTag.Name).
+			Str("nameNew", update.Name)
+	}
 
 	// Update the tag.
 	dbTag.Name = update.Name
 	if update.Description != nil && dbTag.Description != *update.Description {
+		logCtx = logCtx.
+			Str("descriptionOld", dbTag.Description).
+			Str("descriptionNew", *update.Description)
 		dbTag.Description = *update.Description
 	}
+	logger = logCtx.Logger()
 
 	if err := f.persist.SaveWorkerTag(ctx, dbTag); err != nil {
 		logger.Error().Err(err).Msg("saving worker tag")
@@ -320,7 +345,7 @@ func (f *Flamenco) UpdateWorkerTag(e echo.Context, tagUUID string) error {
 	}
 
 	// TODO: SocketIO broadcast of tag update.
-
+	logger.Info().Msg("worker tag updated")
 	return e.NoContent(http.StatusNoContent)
 }
 
@@ -365,13 +390,20 @@ func (f *Flamenco) CreateWorkerTag(e echo.Context) error {
 		tagUUID = uuid.New()
 	}
 
+	logCtx := logger.With().
+		Str("name", apiTag.Name).
+		Str("uuid", tagUUID)
+
 	dbTag := persistence.WorkerTag{
 		UUID: tagUUID,
 		Name: apiTag.Name,
 	}
-	if apiTag.Description != nil {
+	if apiTag.Description != nil && *apiTag.Description != "" {
 		dbTag.Description = *apiTag.Description
+		logCtx = logCtx.Str("description", dbTag.Description)
 	}
+
+	logger = logCtx.Logger()
 
 	// Store in the database.
 	if err := f.persist.CreateWorkerTag(ctx, &dbTag); err != nil {
@@ -379,6 +411,7 @@ func (f *Flamenco) CreateWorkerTag(e echo.Context) error {
 		return sendAPIError(e, http.StatusInternalServerError, "error creating worker tag")
 	}
 
+	logger.Info().Msg("created new worker tag")
 	// TODO: SocketIO broadcast of tag creation.
 
 	return e.JSON(http.StatusOK, workerTagDBtoAPI(dbTag))

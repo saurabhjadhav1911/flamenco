@@ -345,6 +345,7 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 	assertResponseNoContent(t, echo)
 
 	// Delete.
+	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
 	mf.persistence.EXPECT().DeleteWorkerTag(gomock.Any(), UUID)
 	// TODO: expect SocketIO broadcast of the tag deletion.
 	echo = mf.prepareMockedJSONRequest(newAPITag)
