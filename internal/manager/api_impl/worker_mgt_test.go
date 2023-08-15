@@ -301,7 +301,41 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 	expectNewDBTag := persistence.WorkerTag{
 		UUID:        UUID,
 		Name:        newAPITag.Name,
+		Description: *apiTag.Description, // Not mentioning new description should keep old one.
+	}
+	// TODO: expect SocketIO broadcast of the tag update.
+	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
+	mf.persistence.EXPECT().SaveWorkerTag(gomock.Any(), &expectNewDBTag)
+	echo = mf.prepareMockedJSONRequest(newAPITag)
+	require.NoError(t, mf.flamenco.UpdateWorkerTag(echo, UUID))
+	assertResponseNoContent(t, echo)
+
+	// Update both description + name & save.
+	newAPITag = api.WorkerTag{
+		Name:        "updated name",
+		Description: ptr(""),
+	}
+	expectNewDBTag = persistence.WorkerTag{
+		UUID:        UUID,
+		Name:        newAPITag.Name,
 		Description: "",
+	}
+	// TODO: expect SocketIO broadcast of the tag update.
+	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
+	mf.persistence.EXPECT().SaveWorkerTag(gomock.Any(), &expectNewDBTag)
+	echo = mf.prepareMockedJSONRequest(newAPITag)
+	require.NoError(t, mf.flamenco.UpdateWorkerTag(echo, UUID))
+	assertResponseNoContent(t, echo)
+
+	// Update both description + name & save.
+	newAPITag = api.WorkerTag{
+		Name:        "updated name",
+		Description: ptr("New Description"),
+	}
+	expectNewDBTag = persistence.WorkerTag{
+		UUID:        UUID,
+		Name:        newAPITag.Name,
+		Description: *newAPITag.Description,
 	}
 	// TODO: expect SocketIO broadcast of the tag update.
 	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
@@ -317,3 +351,5 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 	require.NoError(t, mf.flamenco.DeleteWorkerTag(echo, UUID))
 	assertResponseNoContent(t, echo)
 }
+
+// TODO: add test for creation of already-existing tag.

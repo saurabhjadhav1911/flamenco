@@ -307,11 +307,10 @@ func (f *Flamenco) UpdateWorkerTag(e echo.Context, tagUUID string) error {
 		return sendAPIError(e, http.StatusInternalServerError, "error fetching worker tag: %v", err)
 	}
 
+
 	// Update the tag.
 	dbTag.Name = update.Name
-	if update.Description == nil {
-		dbTag.Description = ""
-	} else {
+	if update.Description != nil && dbTag.Description != *update.Description {
 		dbTag.Description = *update.Description
 	}
 
