@@ -97,6 +97,7 @@ import TabsWrapper from '@/components/TabsWrapper.vue'
 import PopoverEditableJobPriority from '@/components/PopoverEditableJobPriority.vue'
 import { copyElementText, copyElementData } from '@/clipboard';
 import { useWorkers } from '@/stores/workers'
+import { useNotifs } from '@/stores/notifications';
 
 export default {
   props: [
@@ -123,6 +124,7 @@ export default {
       jobTypeSettings: null, // Mapping from setting key to its definition in the job type.
       showAllSettings: false,
       workers: useWorkers(),
+      notifs: useNotifs(),
     };
   },
   mounted() {
