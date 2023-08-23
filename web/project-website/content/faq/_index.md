@@ -61,6 +61,18 @@ file][workercfg].
 
 [workercfg]: {{< ref "usage/worker-configuration" >}}
 
+## My Worker cannot find Blender, what do I do?
+
+When installing and starting the Flamenco Worker you may see a warning in the logs that says
+the Worker cannot find Blender.
+
+```
+WRN Blender could not be found. Flamenco Manager will have to supply the full path to Blender when Tasks are sent to this Worker. For more help see https://flamenco.blender.org/usage/variables/blender/
+```
+
+If Flamenco cannot locate Blender on the system it is possible to use a [two-way variable named `blender`][blendervar] for each platform (eg: Windows, Linux, or MacOS). This path to Blender is then sent to the Worker for each render task. Note that the Worker will still show the warning at startup, as it cannot find Blender by itself; this is fine, because you now have configured the Manager to provide this path.
+
+[blendervar]: {{< ref "usage/variables/blender" >}}
 
 ## Can I change the paths/names of the rendered files?
 
