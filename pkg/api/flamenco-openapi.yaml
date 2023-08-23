@@ -2320,6 +2320,17 @@ components:
           description: Whether this Worker can auto-restart.
       required: [id, name, updated, status, version, can_restart]
 
+    SocketIOWorkerTagUpdate:
+      type: object
+      description: >
+        Worker Tag, sent over SocketIO when it changes.
+      properties:
+        "tag": { $ref: "#/components/schemas/WorkerTag" }
+        "was_deleted":
+          type: boolean
+          description: When a tag was just deleted, this is set to `true`.
+      required: [tag]
+
     SocketIOSubscription:
       type: object
       description: >
@@ -2343,7 +2354,7 @@ components:
 
     SocketIOSubscriptionType:
       type: string
-      enum: [allJobs, allWorkers, job, tasklog, allLastRendered]
+      enum: [allJobs, allWorkers, job, tasklog, allLastRendered, allWorkerTags]
       description: What kind of thing to subscribe to / unsubscribe from.
 
     # Worker Management
