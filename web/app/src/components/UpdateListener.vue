@@ -13,12 +13,14 @@ const websocketURL = ws();
 export default {
   emits: [
     // Data from Flamenco Manager:
-    "jobUpdate", "taskUpdate", "taskLogUpdate", "message", "workerUpdate", "lastRenderedUpdate",
+    "jobUpdate", "taskUpdate", "taskLogUpdate", "message", "workerUpdate",
+    "lastRenderedUpdate", "workerTagUpdate",
     // SocketIO events:
     "sioReconnected", "sioDisconnected"
   ],
   props: [
     "mainSubscription",  // One of the 'allXXX' subscription types, see `SocketIOSubscriptionType` in `flamenco-openapi.yaml`.
+    "extraSubscription", // One of the 'allXXX' subscription types, see `SocketIOSubscriptionType` in `flamenco-openapi.yaml`.
     "subscribedJobID",
     "subscribedTaskID",
   ],
@@ -59,6 +61,14 @@ export default {
       }
     },
     mainSubscription(newType, oldType) {
+      if (oldType) {
+        this._updateMainSubscription("unsubscribe", oldType);
+      }
+      if (newType) {
+        this._updateMainSubscription("subscribe", newType);
+      }
+    },
+    extraSubscription(newType, oldType) {
       if (oldType) {
         this._updateMainSubscription("unsubscribe", oldType);
       }
@@ -160,6 +170,13 @@ export default {
         this.$emit("workerUpdate", apiWorkerUpdate);
       });
 
+      this.socket.on("/workertags", (workerTagUpdate) => {
+        // Convert to API object, in order to have the same parsing of data as
+        // when we'd do an API call.
+        const apiWorkerTagUpdate = API.SocketIOWorkerTagUpdate.constructFromObject(workerTagUpdate)
+        this.$emit("workerTagUpdate", apiWorkerTagUpdate);
+      });
+
       // Chat system, useful for debugging.
       this.socket.on("/message", (message) => {
         this.$emit("message", message);
@@ -219,6 +236,7 @@ export default {
       if (this.subscribedJobID) this._updateJobSubscription("subscribe", this.subscribedJobID);
       if (this.subscribedTaskID) this._updateTaskLogSubscription("subscribe", this.subscribedTaskID);
       if (this.mainSubscription) this._updateMainSubscription("subscribe", this.mainSubscription);
+      if (this.extraSubscription) this._updateMainSubscription("subscribe", this.extraSubscription);
     },
   },
 };

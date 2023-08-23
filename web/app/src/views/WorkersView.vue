@@ -7,7 +7,9 @@
   </div>
   <footer class="app-footer">
     <notification-bar />
-    <update-listener ref="updateListener" mainSubscription="allWorkers" @workerUpdate="onSIOWorkerUpdate"
+    <update-listener ref="updateListener"
+      mainSubscription="allWorkers" extraSubscription="allWorkerTags"
+      @workerUpdate="onSIOWorkerUpdate" @workerTagUpdate="onSIOWorkerTagsUpdate"
       @sioReconnected="onSIOReconnected" @sioDisconnected="onSIODisconnected" />
   </footer>
 </template>
@@ -84,6 +86,10 @@ export default {
       }
 
       this._fetchWorker(this.workerID);
+    },
+    onSIOWorkerTagsUpdate(workerTagsUpdate) {
+      this.workers.refreshTags()
+        .then(() => this._fetchWorker(this.workerID));
     },
 
     onTableWorkerClicked(rowData) {

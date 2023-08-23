@@ -120,6 +120,9 @@ type ChangeBroadcaster interface {
 
 	BroadcastWorkerUpdate(workerUpdate api.SocketIOWorkerUpdate)
 	BroadcastNewWorker(workerUpdate api.SocketIOWorkerUpdate)
+
+	BroadcastWorkerTagUpdate(workerTagUpdate api.SocketIOWorkerTagUpdate)
+	BroadcastNewWorkerTag(workerTagUpdate api.SocketIOWorkerTagUpdate)
 }
 
 // ChangeBroadcaster should be a subset of webupdates.BiDirComms.

@@ -632,6 +632,30 @@ func (mr *MockChangeBroadcasterMockRecorder) BroadcastNewWorker(arg0 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BroadcastNewWorker", reflect.TypeOf((*MockChangeBroadcaster)(nil).BroadcastNewWorker), arg0)
 }
 
+// BroadcastNewWorkerTag mocks base method.
+func (m *MockChangeBroadcaster) BroadcastNewWorkerTag(arg0 api.SocketIOWorkerTagUpdate) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "BroadcastNewWorkerTag", arg0)
+}
+
+// BroadcastNewWorkerTag indicates an expected call of BroadcastNewWorkerTag.
+func (mr *MockChangeBroadcasterMockRecorder) BroadcastNewWorkerTag(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BroadcastNewWorkerTag", reflect.TypeOf((*MockChangeBroadcaster)(nil).BroadcastNewWorkerTag), arg0)
+}
+
+// BroadcastWorkerTagUpdate mocks base method.
+func (m *MockChangeBroadcaster) BroadcastWorkerTagUpdate(arg0 api.SocketIOWorkerTagUpdate) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "BroadcastWorkerTagUpdate", arg0)
+}
+
+// BroadcastWorkerTagUpdate indicates an expected call of BroadcastWorkerTagUpdate.
+func (mr *MockChangeBroadcasterMockRecorder) BroadcastWorkerTagUpdate(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BroadcastWorkerTagUpdate", reflect.TypeOf((*MockChangeBroadcaster)(nil).BroadcastWorkerTagUpdate), arg0)
+}
+
 // BroadcastWorkerUpdate mocks base method.
 func (m *MockChangeBroadcaster) BroadcastWorkerUpdate(arg0 api.SocketIOWorkerUpdate) {
 	m.ctrl.T.Helper()

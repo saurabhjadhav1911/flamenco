@@ -21,9 +21,10 @@ const (
 	// Predefined SocketIO rooms. There will be others, but those will have a
 	// dynamic name like `job-fa48930a-105c-4125-a7f7-0aa1651dcd57` and cannot be
 	// listed here as constants. See `roomXXX()` functions for those.
-	SocketIORoomChat    SocketIORoomName = "Chat"    // For chat messages.
-	SocketIORoomJobs    SocketIORoomName = "Jobs"    // For job updates.
-	SocketIORoomWorkers SocketIORoomName = "Workers" // For worker updates.
+	SocketIORoomChat       SocketIORoomName = "Chat"       // For chat messages.
+	SocketIORoomJobs       SocketIORoomName = "Jobs"       // For job updates.
+	SocketIORoomWorkers    SocketIORoomName = "Workers"    // For worker updates.
+	SocketIORoomWorkerTags SocketIORoomName = "WorkerTags" // For worker tag updates.
 
 	// For updates about ALL last-rendered images. Normally these are sent to a
 	// room specific to a particular job, but for the global "last rendered image"
@@ -40,6 +41,7 @@ const (
 	SIOEventTaskUpdate         SocketIOEventType = "/task"          // sends api.SocketIOTaskUpdate
 	SIOEventTaskLogUpdate      SocketIOEventType = "/tasklog"       // sends api.SocketIOTaskLogUpdate
 	SIOEventWorkerUpdate       SocketIOEventType = "/workers"       // sends api.SocketIOWorkerUpdate
+	SIOEventWorkerTagUpdate    SocketIOEventType = "/workertags"    // sends api.SocketIOWorkerTagUpdate
 	SIOEventSubscription       SocketIOEventType = "/subscription"  // clients send api.SocketIOSubscription
 )
 
@@ -74,6 +76,8 @@ func (b *BiDirComms) handleRoomSubscription(c *gosocketio.Channel, subs api.Sock
 		sioRoom = SocketIORoomWorkers
 	case api.SocketIOSubscriptionTypeAllLastRendered:
 		sioRoom = SocketIORoomLastRendered
+	case api.SocketIOSubscriptionTypeAllWorkerTags:
+		sioRoom = SocketIORoomWorkerTags
 	case api.SocketIOSubscriptionTypeJob:
 		if subs.Uuid == nil {
 			logger.Warn().Msg("socketIO: trying to (un)subscribe to job without UUID")

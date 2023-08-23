@@ -63,6 +63,7 @@ import SocketIOSubscriptionOperation from './model/SocketIOSubscriptionOperation
 import SocketIOSubscriptionType from './model/SocketIOSubscriptionType';
 import SocketIOTaskLogUpdate from './model/SocketIOTaskLogUpdate';
 import SocketIOTaskUpdate from './model/SocketIOTaskUpdate';
+import SocketIOWorkerTagUpdate from './model/SocketIOWorkerTagUpdate';
 import SocketIOWorkerUpdate from './model/SocketIOWorkerUpdate';
 import SubmittedJob from './model/SubmittedJob';
 import Task from './model/Task';
@@ -432,6 +433,12 @@ export {
      * @property {module:model/SocketIOTaskUpdate}
      */
     SocketIOTaskUpdate,
+
+    /**
+     * The SocketIOWorkerTagUpdate model constructor.
+     * @property {module:model/SocketIOWorkerTagUpdate}
+     */
+    SocketIOWorkerTagUpdate,
 
     /**
      * The SocketIOWorkerUpdate model constructor.

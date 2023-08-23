@@ -281,7 +281,9 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 		Description: *apiTag.Description,
 	}
 	mf.persistence.EXPECT().CreateWorkerTag(gomock.Any(), &expectDBTag)
-	// TODO: expect SocketIO broadcast of the tag creation.
+	mf.broadcaster.EXPECT().BroadcastNewWorkerTag(api.SocketIOWorkerTagUpdate{
+		Tag: apiTag,
+	})
 	echo := mf.prepareMockedJSONRequest(apiTag)
 	require.NoError(t, mf.flamenco.CreateWorkerTag(echo))
 	assertResponseJSON(t, echo, http.StatusOK, &apiTag)
@@ -303,7 +305,13 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 		Name:        newAPITag.Name,
 		Description: *apiTag.Description, // Not mentioning new description should keep old one.
 	}
-	// TODO: expect SocketIO broadcast of the tag update.
+	mf.broadcaster.EXPECT().BroadcastWorkerTagUpdate(api.SocketIOWorkerTagUpdate{
+		Tag: api.WorkerTag{
+			Id:          &UUID,
+			Name:        newAPITag.Name,
+			Description: apiTag.Description,
+		},
+	})
 	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
 	mf.persistence.EXPECT().SaveWorkerTag(gomock.Any(), &expectNewDBTag)
 	echo = mf.prepareMockedJSONRequest(newAPITag)
@@ -320,7 +328,13 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 		Name:        newAPITag.Name,
 		Description: "",
 	}
-	// TODO: expect SocketIO broadcast of the tag update.
+	mf.broadcaster.EXPECT().BroadcastWorkerTagUpdate(api.SocketIOWorkerTagUpdate{
+		Tag: api.WorkerTag{
+			Id:          &UUID,
+			Name:        newAPITag.Name,
+			Description: newAPITag.Description,
+		},
+	})
 	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
 	mf.persistence.EXPECT().SaveWorkerTag(gomock.Any(), &expectNewDBTag)
 	echo = mf.prepareMockedJSONRequest(newAPITag)
@@ -337,7 +351,13 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 		Name:        newAPITag.Name,
 		Description: *newAPITag.Description,
 	}
-	// TODO: expect SocketIO broadcast of the tag update.
+	mf.broadcaster.EXPECT().BroadcastWorkerTagUpdate(api.SocketIOWorkerTagUpdate{
+		Tag: api.WorkerTag{
+			Id:          &UUID,
+			Name:        newAPITag.Name,
+			Description: newAPITag.Description,
+		},
+	})
 	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
 	mf.persistence.EXPECT().SaveWorkerTag(gomock.Any(), &expectNewDBTag)
 	echo = mf.prepareMockedJSONRequest(newAPITag)
@@ -347,7 +367,10 @@ func TestWorkerTagCRUDHappyFlow(t *testing.T) {
 	// Delete.
 	mf.persistence.EXPECT().FetchWorkerTag(gomock.Any(), UUID).Return(&expectDBTag, nil)
 	mf.persistence.EXPECT().DeleteWorkerTag(gomock.Any(), UUID)
-	// TODO: expect SocketIO broadcast of the tag deletion.
+	mf.broadcaster.EXPECT().BroadcastWorkerTagUpdate(api.SocketIOWorkerTagUpdate{
+		Tag:        api.WorkerTag{Id: &UUID},
+		WasDeleted: ptr(true),
+	})
 	echo = mf.prepareMockedJSONRequest(newAPITag)
 	require.NoError(t, mf.flamenco.DeleteWorkerTag(echo, UUID))
 	assertResponseNoContent(t, echo)

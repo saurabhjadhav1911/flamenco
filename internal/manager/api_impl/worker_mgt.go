@@ -266,7 +266,9 @@ func (f *Flamenco) DeleteWorkerTag(e echo.Context, tagUUID string) error {
 		return sendAPIError(e, http.StatusInternalServerError, "error deleting worker tag: %v", err)
 	}
 
-	// TODO: SocketIO broadcast of tag deletion.
+	// SocketIO broadcast of tag deletion.
+	update := webupdates.NewWorkerTagDeletedUpdate(tagUUID)
+	f.broadcaster.BroadcastWorkerTagUpdate(update)
 
 	logger.Info().Msg("worker tag deleted")
 	return e.NoContent(http.StatusNoContent)
@@ -344,7 +346,10 @@ func (f *Flamenco) UpdateWorkerTag(e echo.Context, tagUUID string) error {
 		return sendAPIError(e, http.StatusInternalServerError, "error saving worker tag")
 	}
 
-	// TODO: SocketIO broadcast of tag update.
+	// SocketIO broadcast of tag update.
+	sioUpdate := webupdates.NewWorkerTagUpdate(dbTag)
+	f.broadcaster.BroadcastWorkerTagUpdate(sioUpdate)
+
 	logger.Info().Msg("worker tag updated")
 	return e.NoContent(http.StatusNoContent)
 }
@@ -412,7 +417,10 @@ func (f *Flamenco) CreateWorkerTag(e echo.Context) error {
 	}
 
 	logger.Info().Msg("created new worker tag")
-	// TODO: SocketIO broadcast of tag creation.
+
+	// SocketIO broadcast of tag creation.
+	sioUpdate := webupdates.NewWorkerTagUpdate(&dbTag)
+	f.broadcaster.BroadcastNewWorkerTag(sioUpdate)
 
 	return e.JSON(http.StatusOK, workerTagDBtoAPI(dbTag))
 }
