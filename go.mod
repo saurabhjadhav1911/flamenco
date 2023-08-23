@@ -7,8 +7,8 @@ require (
 	github.com/benbjohnson/clock v1.3.0
 	github.com/deepmap/oapi-codegen v1.9.0
 	github.com/disintegration/imaging v1.6.2
-	github.com/dop251/goja v0.0.0-20211217115348-3f9136fa235d
-	github.com/dop251/goja_nodejs v0.0.0-20210225215109-d91c329300e7
+	github.com/dop251/goja v0.0.0-20230812105242-81d76064690d
+	github.com/dop251/goja_nodejs v0.0.0-20211022123610-8dd9abb0616d
 	github.com/fromkeith/gossdp v0.0.0-20180102154144-1b2c43f6886e
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/getkin/kin-openapi v0.88.0
@@ -34,13 +34,14 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
+	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.5 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/google/pprof v0.0.0-20230207041349-798e818bf904 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect

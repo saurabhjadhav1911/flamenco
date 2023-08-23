@@ -327,6 +327,57 @@ func TestEtag(t *testing.T) {
 	}
 }
 
+func TestComplexFrameRange(t *testing.T) {
+	s, err := Load(mockedClock(t))
+	require.NoError(t, err)
+
+	// Compiling a job should be really fast.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+
+	sj := exampleSubmittedJob()
+
+	// Use a series of ranges, where each range is smaller than the chunk size.
+	sj.Settings.AdditionalProperties["frames"] = "0-12,34-56,78-90"
+	sj.Settings.AdditionalProperties["chunk_size"] = 20
+
+	aj, err := s.Compile(ctx, sj)
+	require.NoError(t, err)
+	require.NotNil(t, aj)
+
+	// Expected chunks:
+	// - 0-12, 34-40
+	// - 41-56, 78-81
+	// - 82-90
+	taskNames := []string{}
+	for _, task := range aj.Tasks {
+		taskNames = append(taskNames, task.Name)
+	}
+	require.Equal(t, []string{
+		"render-0-12,34-40",
+		"render-41-56,78-81",
+		"render-82-90",
+		"preview-video",
+	}, taskNames)
+
+	// Check the Blender CLI matches the expected frame ranges.
+	frameRangesFromCLI := []string{}
+	for _, task := range aj.Tasks[0:3] {
+		args := task.Commands[0].Parameters["args"].([]interface{})
+		require.Equal(t, "--render-frame", args[4])
+		frameRangesFromCLI = append(frameRangesFromCLI, args[5].(string))
+	}
+
+	assert.Equal(t,
+		[]string{
+			"0..12,34..40",
+			"41..56,78..81",
+			"82..90",
+		},
+		frameRangesFromCLI,
+	)
+}
+
 func ptr[T any](value T) *T {
 	return &value
 }

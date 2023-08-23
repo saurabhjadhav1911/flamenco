@@ -109,7 +109,7 @@ function authorRenderTasks(settings, renderDir, renderOutput) {
             args: [
                 "--render-output", path.join(renderDir, path.basename(renderOutput)),
                 "--render-format", settings.format,
-                "--render-frame", chunk.replace("-", ".."), // Convert to Blender frame range notation.
+                "--render-frame", chunk.replaceAll("-", ".."), // Convert to Blender frame range notation.
             ]
         });
         task.addCommand(command);
