@@ -256,13 +256,14 @@ type TestMocks struct {
 // to the given time. Seconds and sub-seconds are set to zero.
 func (m *TestMocks) todayAt(hour, minute int) time.Time {
 	now := m.clock.Now()
-	return time.Date(now.Year(), now.Month(), now.Day(), hour, minute, 0, 0, now.Location())
+	todayAt := time.Date(now.Year(), now.Month(), now.Day(), hour, minute, 0, 0, time.Local)
+	return todayAt
 }
 
 // endOfDay returns midnight of the day after whatever the mocked clock's "now" is set to.
 func (m *TestMocks) endOfDay() time.Time {
-	now := m.clock.Now().UTC()
-	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).AddDate(0, 0, 1)
+	startOfToday := m.todayAt(0, 0)
+	return startOfToday.AddDate(0, 0, 1)
 }
 
 func testFixtures(t *testing.T) (*SleepScheduler, TestMocks, context.Context) {

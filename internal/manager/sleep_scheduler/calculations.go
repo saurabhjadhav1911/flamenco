@@ -60,7 +60,7 @@ func calculateNextCheck(now time.Time, schedule *persistence.SleepSchedule) time
 	// calcNext returns the given time of day on "today" if that hasn't passed
 	// yet, otherwise on "tomorrow".
 	calcNext := func(tod persistence.TimeOfDay) time.Time {
-		nextCheck := tod.OnDate(now)
+		nextCheck := tod.OnDate(now).In(time.Local)
 		if nextCheck.Before(now) {
 			nextCheck = nextCheck.AddDate(0, 0, 1)
 		}
@@ -99,5 +99,6 @@ func earliestTime(timestamps []time.Time) time.Time {
 
 // endOfDay returns the next midnight at UTC.
 func endOfDay(now time.Time) time.Time {
-	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC).AddDate(0, 0, 1)
+	startOfDay := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+	return startOfDay.AddDate(0, 0, 1)
 }
