@@ -54,6 +54,13 @@ export default class SocketIOSubscriptionType {
         "allLastRendered" = "allLastRendered";
 
     
+        /**
+         * value: "allWorkerTags"
+         * @const
+         */
+        "allWorkerTags" = "allWorkerTags";
+
+    
 
     /**
     * Returns a <code>SocketIOSubscriptionType</code> enum value from a Javascript object name.

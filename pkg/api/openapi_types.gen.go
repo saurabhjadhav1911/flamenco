@@ -105,6 +105,8 @@ const (
 
 	SocketIOSubscriptionTypeAllLastRendered SocketIOSubscriptionType = "allLastRendered"
 
+	SocketIOSubscriptionTypeAllWorkerTags SocketIOSubscriptionType = "allWorkerTags"
+
 	SocketIOSubscriptionTypeAllWorkers SocketIOSubscriptionType = "allWorkers"
 
 	SocketIOSubscriptionTypeJob SocketIOSubscriptionType = "job"
@@ -602,6 +604,15 @@ type SocketIOTaskUpdate struct {
 
 	// Timestamp of last update
 	Updated time.Time `json:"updated"`
+}
+
+// Worker Tag, sent over SocketIO when it changes.
+type SocketIOWorkerTagUpdate struct {
+	// Tag of workers. A job can optionally specify which tag it should be limited to. Workers can be part of multiple tags simultaneously.
+	Tag WorkerTag `json:"tag"`
+
+	// When a tag was just deleted, this is set to `true`.
+	WasDeleted *bool `json:"was_deleted,omitempty"`
 }
 
 // Subset of a Worker, sent over SocketIO when a worker changes.
