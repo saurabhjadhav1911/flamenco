@@ -71,6 +71,9 @@ stresser:
 job-creator:
 	go build -v ${BUILD_FLAGS} ${PKG}/cmd/job-creator
 
+flamenco-addon.zip: addon-packer
+	./addon-packer -filename ./flamenco-addon.zip
+
 addon-packer: cmd/addon-packer/addon-packer.go
 	go build -v ${BUILD_FLAGS} ${PKG}/cmd/addon-packer
 
