@@ -123,17 +123,20 @@
 
     <section class="worker-maintenance">
       <h3 class="sub-title">Maintenance</h3>
-      <p>{{ workerData.name }} is <span class="worker-status">{{ workerData.status }}</span>, which means
-        <template v-if="workerData.status == 'offline'">can be safely removed.</template>
-        <template v-else>removing it now can cause the Worker to log errors. It
-          is adviced to shut down the Worker before removing it from the
-          system.</template>
-      </p>
-      <p><button @click="deleteWorker">Remove {{ workerData.name }}</button></p>
-      <p class="hint">
-        When a Worker is removed from the system, any active task still assigned
-        to it will be requeued. Restarting the Worker after removing it from the
-        system will simply register it anew.
+      <p>
+        {{ workerData.name }} is 
+        <template v-if="workerData.status == 'offline'">
+          <span class="worker-status">offline</span>, which means it can be safely removed.
+        </template>
+        <template v-else>
+          <template v-if="workerData.status == 'error'">
+          in <span class="worker-status">error</span> state
+          </template>
+          <template v-else>
+            <span class="worker-status">{{ workerData.status }}</span>
+          </template>, which means removing it now can cause it to log errors. It
+          is advised to shut down the Worker before removing it from the system.
+        </template>
       </p>
     </section>
   </template>
