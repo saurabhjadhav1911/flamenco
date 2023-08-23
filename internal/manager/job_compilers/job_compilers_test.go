@@ -57,7 +57,7 @@ func exampleSubmittedJob() api.SubmittedJob {
 
 func mockedClock(t *testing.T) clock.Clock {
 	c := clock.NewMock()
-	now, err := time.Parse(time.RFC3339, "2006-01-02T15:04:05+07:00")
+	now, err := time.ParseInLocation("2006-01-02T15:04:05", "2006-01-02T15:04:05", time.Local)
 	assert.NoError(t, err)
 	c.Set(now)
 	return c
@@ -250,13 +250,13 @@ func TestSimpleBlenderRenderOutputPathFieldReplacement(t *testing.T) {
 	require.NotNil(t, aj)
 
 	// The job compiler should have replaced the {timestamp} and {ext} fields.
-	assert.Equal(t, "/root/2006-01-02_090405/jobname/######", aj.Settings["render_output_path"])
+	assert.Equal(t, "/root/2006-01-02_150405/jobname/######", aj.Settings["render_output_path"])
 
 	// Tasks should have been created to render the frames: 1-3, 4-6, 7-9, 10, and video-encoding
 	require.Len(t, aj.Tasks, 5)
 	t0 := aj.Tasks[0]
 	expectCliArgs := []interface{}{ // They are strings, but Goja doesn't know that and will produce an []interface{}.
-		"--render-output", "/root/2006-01-02_090405/jobname/######",
+		"--render-output", "/root/2006-01-02_150405/jobname/######",
 		"--render-format", sj.Settings.AdditionalProperties["format"].(string),
 		"--render-frame", "1..3",
 	}
@@ -271,8 +271,8 @@ func TestSimpleBlenderRenderOutputPathFieldReplacement(t *testing.T) {
 	tVideo := aj.Tasks[4] // This should be a video encoding task
 	assert.EqualValues(t, AuthoredCommandParameters{
 		"exe":        "ffmpeg",
-		"inputGlob":  "/root/2006-01-02_090405/jobname/*.png",
-		"outputFile": "/root/2006-01-02_090405/jobname/scene123-1-10.mp4",
+		"inputGlob":  "/root/2006-01-02_150405/jobname/*.png",
+		"outputFile": "/root/2006-01-02_150405/jobname/scene123-1-10.mp4",
 		"fps":        int64(24),
 		"args":       expectedFramesToVideoArgs,
 	}, tVideo.Commands[0].Parameters)

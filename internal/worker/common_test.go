@@ -12,7 +12,7 @@ import (
 
 func mockedClock(t *testing.T) *clock.Mock {
 	c := clock.NewMock()
-	now, err := time.Parse(time.RFC3339, "2006-01-02T15:04:05+07:00")
+	now, err := time.ParseInLocation("2006-01-02T15:04:05", "2006-01-02T15:04:05", time.Local)
 	assert.NoError(t, err)
 	c.Set(now)
 	return c
