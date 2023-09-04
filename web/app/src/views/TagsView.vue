@@ -4,7 +4,6 @@
 
     <div class="action-buttons btn-bar-group">
       <div class="btn-bar">
-        <button @click="fetchTags">Refresh</button>
         <button @click="deleteTag" :disabled="!selectedTag">Delete Tag</button>
       </div>
     </div>
@@ -32,7 +31,14 @@
 
     <div id="tag-table-container"></div>
   </div>
-  <footer class="app-footer"></footer>
+  <footer class="app-footer">
+    <notification-bar />
+    <update-listener ref="updateListener"
+      mainSubscription="allWorkerTags"
+      @workerTagUpdate="onSIOWorkerTagsUpdate"
+      @sioReconnected="onSIOReconnected"
+      @sioDisconnected="onSIODisconnected" />
+  </footer>
 </template>
 
 <style>
@@ -62,9 +68,13 @@ import { useNotifs } from "@/stores/notifications";
 import { WorkerMgtApi } from "@/manager-api";
 import { WorkerTag } from "@/manager-api";
 import { getAPIClient } from "@/api-client";
+import NotificationBar from '@/components/footer/NotificationBar.vue'
+import UpdateListener from '@/components/UpdateListener.vue'
 
 export default {
   components: {
+    NotificationBar,
+    UpdateListener,
   },
   data() {
     return {
@@ -155,13 +165,6 @@ export default {
       api
         .updateWorkerTag(tagId, updatedTagData)
         .then(() => {
-          // Update the local state with the edited data without requiring a page refresh
-          this.tags = this.tags.map((tag) => {
-            if (tag.id === tagId) {
-              return { ...tag, ...updatedTagData };
-            }
-            return tag;
-          });
           console.log("Tag updated successfully");
         })
         .catch((error) => {
@@ -181,8 +184,6 @@ export default {
         .then(() => {
           this.selectedTag = null;
           this.tabulator.setData(this.tags);
-
-          this.fetchTags();
         })
         .catch((error) => {
           const errorMsg = JSON.stringify(error);
@@ -200,6 +201,17 @@ export default {
       this.selectedTag = tag;
       this.activeRowIndex = rowIndex;
     },
+
+    // SocketIO connection event handlers:
+    onSIOReconnected() {
+      this.fetchTags();
+    },
+    onSIODisconnected(reason) {
+    },
+    onSIOWorkerTagsUpdate(workerTagsUpdate) {
+      this.fetchTags();
+    },
+
   },
 };
 </script>
