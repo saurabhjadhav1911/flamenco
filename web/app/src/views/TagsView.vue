@@ -62,13 +62,9 @@ import { useNotifs } from "@/stores/notifications";
 import { WorkerMgtApi } from "@/manager-api";
 import { WorkerTag } from "@/manager-api";
 import { getAPIClient } from "@/api-client";
-import TabItem from "@/components/TabItem.vue";
-import TabsWrapper from "@/components/TabsWrapper.vue";
 
 export default {
   components: {
-    TabItem,
-    TabsWrapper,
   },
   data() {
     return {
