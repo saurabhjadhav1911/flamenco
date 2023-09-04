@@ -10,6 +10,9 @@
           <router-link :to="{ name: 'workers' }">Workers</router-link>
         </li>
         <li>
+          <router-link :to="{ name: 'tags' }">Tags</router-link>
+        </li>
+        <li>
           <router-link :to="{ name: 'last-rendered' }">Last Rendered</router-link>
         </li>
       </ul>

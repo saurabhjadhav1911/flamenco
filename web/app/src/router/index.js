@@ -21,6 +21,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/tags',
+      name: 'tags',
+      component: () => import('../views/TagsView.vue'),
+      props: true,
+    },
+    {
       path: '/last-rendered',
       name: 'last-rendered',
       component: () => import('../views/LastRenderedView.vue'),
