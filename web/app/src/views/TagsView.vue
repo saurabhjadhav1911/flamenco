@@ -33,11 +33,13 @@
   </div>
   <footer class="app-footer">
     <notification-bar />
-    <update-listener ref="updateListener"
+    <update-listener
+      ref="updateListener"
       mainSubscription="allWorkerTags"
       @workerTagUpdate="onSIOWorkerTagsUpdate"
       @sioReconnected="onSIOReconnected"
-      @sioDisconnected="onSIODisconnected" />
+      @sioDisconnected="onSIODisconnected"
+    />
   </footer>
 </template>
 
@@ -68,8 +70,8 @@ import { useNotifs } from "@/stores/notifications";
 import { WorkerMgtApi } from "@/manager-api";
 import { WorkerTag } from "@/manager-api";
 import { getAPIClient } from "@/api-client";
-import NotificationBar from '@/components/footer/NotificationBar.vue'
-import UpdateListener from '@/components/UpdateListener.vue'
+import NotificationBar from "@/components/footer/NotificationBar.vue";
+import UpdateListener from "@/components/UpdateListener.vue";
 
 export default {
   components: {
@@ -206,12 +208,10 @@ export default {
     onSIOReconnected() {
       this.fetchTags();
     },
-    onSIODisconnected(reason) {
-    },
+    onSIODisconnected(reason) {},
     onSIOWorkerTagsUpdate(workerTagsUpdate) {
       this.fetchTags();
     },
-
   },
 };
 </script>
