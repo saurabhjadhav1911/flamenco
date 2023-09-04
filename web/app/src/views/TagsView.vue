@@ -1,6 +1,6 @@
 <template>
   <div class="col col-tags-list">
-    <h2 class="column-title">Tag Details</h2>
+    <h2 class="column-title">Available Tags</h2>
 
     <div class="action-buttons btn-bar-group">
       <div class="btn-bar">
@@ -31,6 +31,39 @@
 
     <div id="tag-table-container"></div>
   </div>
+  <div class="col col-tags-info">
+    <h2 class="column-title">Information</h2>
+
+    <p>
+      Workers and jobs can be tagged. With these tags you can assign a job to a
+      subset of your workers.
+    </p>
+
+    <h4>Job Perspective:</h4>
+    <ul>
+      <li>A job can have one tag, or no tag.</li>
+      <li>
+        A job <strong>with</strong> a tag will only be assigned to workers with
+        that tag.
+      </li>
+      <li>
+        A job <strong>without</strong> tag will be assigned to any worker.
+      </li>
+    </ul>
+
+    <h4>Worker Perspective:</h4>
+    <ul>
+      <li>A worker can have any number of tags.</li>
+      <li>
+        A worker <strong>with</strong> one or more tags will work only on jobs
+        with one those tags, and on tagless jobs.
+      </li>
+      <li>
+        A worker <strong>without</strong> tags will work only work on tagless
+        jobs.
+      </li>
+    </ul>
+  </div>
   <footer class="app-footer">
     <notification-bar />
     <update-listener
@@ -47,6 +80,18 @@
 .col-tags-list {
   grid-area: col-1;
 }
+.col-tags-info {
+  grid-area: col-2;
+  color: var(--color-text-muted);
+}
+.col-tags-info h4 {
+  margin-bottom: 0.5em;
+}
+.col-tags-info ul {
+  margin-top: 0.5em;
+  padding-left: 2em;
+}
+
 .create-tag-container {
   width: 100%;
   display: flex;
@@ -89,6 +134,8 @@ export default {
   },
 
   mounted() {
+    document.body.classList.add("is-two-columns");
+
     this.fetchTags();
 
     const tag_options = {
@@ -123,6 +170,9 @@ export default {
       const editedTag = cell.getRow().getData();
       this.updateTagInAPI(editedTag);
     });
+  },
+  unmounted() {
+    document.body.classList.remove("is-two-columns");
   },
 
   methods: {
