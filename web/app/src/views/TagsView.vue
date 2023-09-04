@@ -127,9 +127,6 @@ export default {
 
       const api = new WorkerMgtApi(getAPIClient());
       const newTag = new WorkerTag(this.newTagName);
-
-      newTag.description = "Default Description...";
-
       api
         .createWorkerTag(newTag)
         .then(() => {
