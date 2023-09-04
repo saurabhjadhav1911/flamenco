@@ -35,7 +35,7 @@
   <footer class="app-footer"></footer>
 </template>
 
-<style scoped>
+<style>
 .create-tag-container {
   width: 100%;
   display: flex;
@@ -46,6 +46,9 @@
   flex: 1;
   margin-right: 10px;
   height: 30px;
+}
+.placeholder {
+  color: var(--color-text-hint);
 }
 </style>
 
@@ -85,6 +88,13 @@ export default {
           field: "description",
           sorter: "string",
           editor: "input",
+          formatter(cell) {
+            const cellValue = cell.getData().description;
+            if (!cellValue) {
+              return '<span class="placeholder">click to set a description</span>';
+            }
+            return cellValue;
+          },
         },
       ],
       layout: "fitData",
