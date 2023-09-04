@@ -1,5 +1,5 @@
 <template>
-  <div class="col col-workers-list">
+  <div class="col col-tags-list">
     <h2 class="column-title">Tag Details</h2>
 
     <div class="action-buttons btn-bar-group">
@@ -36,6 +36,9 @@
 </template>
 
 <style>
+.col-tags-list {
+  grid-area: col-1;
+}
 .create-tag-container {
   width: 100%;
   display: flex;
