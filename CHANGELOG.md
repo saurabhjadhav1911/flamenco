@@ -22,6 +22,9 @@ bugs in actually-released versions.
 - Show the configured Flamenco Manager name in the webapp's browser window title.
 - Workers can be marked as 'restartable' by using the `-restart-exit-code N` commandline option. More info in the [Worker Actions documentation](https://flamenco.blender.org/usage/worker-actions/).
 - The `{timestamp}` placeholder in the render output path is now replaced with a local timestamp (rather than UTC).
+- Security updates of some dependencies:
+  - https://pkg.go.dev/vuln/GO-2023-1989
+  - https://pkg.go.dev/vuln/GO-2023-1990
 
 
 ## 3.2 - released 2023-02-21
