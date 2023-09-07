@@ -50,6 +50,10 @@ with-deps:
 	go install github.com/gohugoio/hugo@v0.101.0
 	$(MAKE) application
 
+vet:
+	go vet ./...
+	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
 application: webapp flamenco-manager flamenco-worker
 
 flamenco-manager:
