@@ -236,7 +236,7 @@ clean-webapp-static:
 	mkdir -p ./${WEB_STATIC}
 	touch ${WEB_STATIC}/emptyfile
 
-project-website:
+deploy-website:
 	$(MAKE) -s check-environment
 	rm -rf web/project-website/public/
 	cd web/project-website; hugo --baseURL https://flamenco.blender.org/
