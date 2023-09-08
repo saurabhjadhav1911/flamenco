@@ -38,6 +38,9 @@ JS_API_PKG_NAME=manager
 # ANY ABSOLUTE PATH.
 WEB_STATIC=web/static
 
+# The Hugo package + its version.
+HUGO_PKG := github.com/gohugoio/hugo@v0.101.0
+
 # Prevent any dependency that requires a C compiler, i.e. only work with pure-Go libraries.
 export CGO_ENABLED=0
 
@@ -47,7 +50,6 @@ all: application
 with-deps:
 	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.9.0
 	go install github.com/golang/mock/mockgen@v1.6.0
-	go install github.com/gohugoio/hugo@v0.101.0
 	$(MAKE) application
 
 vet:
@@ -236,10 +238,16 @@ clean-webapp-static:
 	mkdir -p ./${WEB_STATIC}
 	touch ${WEB_STATIC}/emptyfile
 
+devserver-website:
+	go run ${HUGO_PKG} -s web/project-website serve
+
+devserver-webapp:
+	yarn --cwd web/app run dev --host
+
 deploy-website:
 	$(MAKE) -s check-environment
 	rm -rf web/project-website/public/
-	cd web/project-website; hugo --baseURL https://flamenco.blender.org/
+	go run ${HUGO_PKG} -s web/project-website --baseURL https://flamenco.blender.org/
 	rsync web/project-website/public/ ${WEBSERVER_SSH}:${WEBSERVER_ROOT}/ \
 		-e "ssh" \
 		-rl \
