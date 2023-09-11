@@ -59,8 +59,7 @@
         with one those tags, and on tagless jobs.
       </li>
       <li>
-        A worker <strong>without</strong> tags will work only work on tagless
-        jobs.
+        A worker <strong>without</strong> tags will only work on tagless jobs.
       </li>
     </ul>
   </div>
