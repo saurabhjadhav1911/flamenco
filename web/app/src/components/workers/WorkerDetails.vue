@@ -138,6 +138,7 @@
           is advised to shut down the Worker before removing it from the system.
         </template>
       </p>
+      <p><button @click="deleteWorker">Remove {{ workerData.name }}</button></p>
     </section>
   </template>
 
