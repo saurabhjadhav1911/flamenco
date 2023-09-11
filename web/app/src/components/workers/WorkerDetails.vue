@@ -124,7 +124,7 @@
     <section class="worker-maintenance">
       <h3 class="sub-title">Maintenance</h3>
       <p>
-        {{ workerData.name }} is 
+        {{ workerData.name }} is
         <template v-if="workerData.status == 'offline'">
           <span class="worker-status">offline</span>, which means it can be safely removed.
         </template>
