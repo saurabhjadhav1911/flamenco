@@ -5,7 +5,10 @@
     <worker-actions-bar />
 
     <div class="align-right">
-      <status-filter-bar :availableStatuses="availableStatuses" :activeStatuses="shownStatuses" classPrefix="worker-"
+      <status-filter-bar
+        :availableStatuses="availableStatuses"
+        :activeStatuses="shownStatuses"
+        classPrefix="worker-"
         @click="toggleStatusFilter" />
     </div>
   </div>
@@ -17,18 +20,18 @@
 
 <script>
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import { WorkerMgtApi } from '@/manager-api'
+import { WorkerMgtApi } from '@/manager-api';
 import { indicator, workerStatus } from '@/statusindicator';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 import { useWorkers } from '@/stores/workers';
 
-import StatusFilterBar from '@/components/StatusFilterBar.vue'
-import WorkerActionsBar from '@/components/workers/WorkerActionsBar.vue'
+import StatusFilterBar from '@/components/StatusFilterBar.vue';
+import WorkerActionsBar from '@/components/workers/WorkerActionsBar.vue';
 
 export default {
   name: 'WorkersTable',
-  props: ["activeWorkerID"],
-  emits: ["tableRowClicked"],
+  props: ['activeWorkerID'],
+  emits: ['tableRowClicked'],
   components: {
     StatusFilterBar,
     WorkerActionsBar,
@@ -51,7 +54,9 @@ export default {
         // Useful for debugging when there are many similar workers:
         // { title: "ID", field: "id", headerSort: false, formatter: (cell) => cell.getData().id.substr(0, 8), },
         {
-          title: 'Status', field: 'status', sorter: 'string',
+          title: 'Status',
+          field: 'status',
+          sorter: 'string',
           formatter: (cell) => {
             const data = cell.getData();
             const dot = indicator(data.status, 'worker-');
@@ -64,21 +69,19 @@ export default {
       ],
       rowFormatter(row) {
         const data = row.getData();
-        const isActive = (data.id === vueComponent.activeWorkerID);
-        row.getElement().classList.toggle("active-row", isActive);
+        const isActive = data.id === vueComponent.activeWorkerID;
+        row.getElement().classList.toggle('active-row', isActive);
       },
-      initialSort: [
-        { column: "name", dir: "asc" },
-      ],
-      layout: "fitData",
+      initialSort: [{ column: 'name', dir: 'asc' }],
+      layout: 'fitData',
       layoutColumnsOnNewData: true,
-      height: "360px", // Must be set in order for the virtual DOM to function correctly.
+      height: '360px', // Must be set in order for the virtual DOM to function correctly.
       data: [], // Will be filled via a Flamenco API request.
       selectable: false, // The active worker is tracked by click events, not row selection.
     };
     this.tabulator = new Tabulator('#flamenco_workers_list', options);
-    this.tabulator.on("rowClick", this.onRowClick);
-    this.tabulator.on("tableBuilt", this._onTableBuilt);
+    this.tabulator.on('rowClick', this.onRowClick);
+    this.tabulator.on('tableBuilt', this._onTableBuilt);
 
     window.addEventListener('resize', this.recalcTableHeight);
   },
@@ -100,7 +103,7 @@ export default {
   computed: {
     selectedIDs() {
       return this.tabulator.getSelectedData().map((worker) => worker.id);
-    }
+    },
   },
   methods: {
     onReconnected() {
@@ -159,7 +162,9 @@ export default {
       }
       promise
         .then(this.sortData)
-        .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
+        .then(() => {
+          this.tabulator.redraw();
+        }) // Resize columns based on new data.
         .then(this._refreshAvailableStatuses);
 
       // TODO: this should also resize the columns, as the status column can
@@ -171,7 +176,7 @@ export default {
       // store. There were some issues where navigating to another worker would
       // overwrite the old worker's ID, and this prevents that.
       const rowData = plain(row.getData());
-      this.$emit("tableRowClicked", rowData);
+      this.$emit('tableRowClicked', rowData);
     },
     toggleStatusFilter(status) {
       const asSet = new Set(this.shownStatuses);
@@ -199,7 +204,7 @@ export default {
       // Use tab.rowManager.findRow() instead of `tab.getRow()` as the latter
       // logs a warning when the row cannot be found.
       const row = this.tabulator.rowManager.findRow(workerID);
-      if (!row) return
+      if (!row) return;
       if (row.reformat) row.reformat();
       else if (row.reinitialize) row.reinitialize(true);
     },
@@ -229,7 +234,9 @@ export default {
         // `offsetParent` is assumed to be the actual column in the 3-column
         // view. To ensure this, it's given `position: relative` in the CSS
         // styling.
-        console.warn("JobsTable.recalcTableHeight() only works when the offset parent is the real parent of the element.");
+        console.warn(
+          'JobsTable.recalcTableHeight() only works when the offset parent is the real parent of the element.'
+        );
         return;
       }
 

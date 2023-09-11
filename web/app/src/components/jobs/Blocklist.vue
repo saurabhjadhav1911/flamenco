@@ -14,8 +14,14 @@
           <link-worker :worker="{ id: entry.worker_id, name: entry.worker_name }" />
         </td>
         <td>{{ entry.task_type }}</td>
-        <td><button class="btn in-table-row" @click="removeBlocklistEntry(entry)"
-            title="Allow this worker to execute these task types">❌</button></td>
+        <td>
+          <button
+            class="btn in-table-row"
+            @click="removeBlocklistEntry(entry)"
+            title="Allow this worker to execute these task types">
+            ❌
+          </button>
+        </td>
       </tr>
     </table>
     <div v-else class="dl-no-data">
@@ -26,19 +32,19 @@
 </template>
 
 <script setup>
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 import { JobsApi } from '@/manager-api';
 import LinkWorker from '@/components/LinkWorker.vue';
-import { watch, onMounted, inject, ref, nextTick } from 'vue'
+import { watch, onMounted, inject, ref, nextTick } from 'vue';
 
 // jobID should be the job UUID string.
 const props = defineProps(['jobID']);
-const emit = defineEmits(['reshuffled'])
+const emit = defineEmits(['reshuffled']);
 
 const jobsApi = new JobsApi(getAPIClient());
-const isVisible = inject("isVisible");
+const isVisible = inject('isVisible');
 const isFetching = ref(false);
-const errorMsg = ref("");
+const errorMsg = ref('');
 const blocklist = ref([]);
 
 function refreshBlocklist() {
@@ -47,7 +53,8 @@ function refreshBlocklist() {
   }
 
   isFetching.value = true;
-  jobsApi.fetchJobBlocklist(props.jobID)
+  jobsApi
+    .fetchJobBlocklist(props.jobID)
     .then((newBlocklist) => {
       blocklist.value = newBlocklist;
     })
@@ -56,28 +63,36 @@ function refreshBlocklist() {
     })
     .finally(() => {
       isFetching.value = false;
-    })
+    });
 }
 
 function removeBlocklistEntry(blocklistEntry) {
-  jobsApi.removeJobBlocklist(props.jobID, { jobBlocklistEntry: [blocklistEntry] })
+  jobsApi
+    .removeJobBlocklist(props.jobID, { jobBlocklistEntry: [blocklistEntry] })
     .then(() => {
       blocklist.value = blocklist.value.filter(
-        (entry) => !(entry.worker_id == blocklistEntry.worker_id && entry.task_type == blocklistEntry.task_type));
+        (entry) =>
+          !(
+            entry.worker_id == blocklistEntry.worker_id &&
+            entry.task_type == blocklistEntry.task_type
+          )
+      );
     })
     .catch((error) => {
-      console.log("Error removing entry from blocklist", error);
+      console.log('Error removing entry from blocklist', error);
       refreshBlocklist();
-    })
+    });
 }
 
 watch(() => props.jobID, refreshBlocklist);
 watch(blocklist, () => {
-  const emitter = () => { emit("reshuffled") };
+  const emitter = () => {
+    emit('reshuffled');
+  };
   nextTick(() => {
     nextTick(emitter);
   });
-})
+});
 watch(isVisible, refreshBlocklist);
 onMounted(refreshBlocklist);
 </script>
@@ -93,7 +108,7 @@ table.blocklist {
 table.blocklist td,
 table.blocklist th {
   text-align: left;
-  padding: calc(var(--spacer-sm)/2) var(--spacer-sm);
+  padding: calc(var(--spacer-sm) / 2) var(--spacer-sm);
 }
 
 table.blocklist th {

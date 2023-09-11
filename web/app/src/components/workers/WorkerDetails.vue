@@ -4,7 +4,9 @@
   <template v-if="hasWorkerData">
     <dl>
       <dt class="field-id">ID</dt>
-      <dd><span @click="copyElementText" class="click-to-copy">{{ workerData.id }}</span></dd>
+      <dd>
+        <span @click="copyElementText" class="click-to-copy">{{ workerData.id }}</span>
+      </dd>
 
       <dt class="field-name">Name</dt>
       <dd>{{ workerData.name }}</dd>
@@ -20,7 +22,9 @@
       <dd title="Version of Flamenco">{{ workerData.version }}</dd>
 
       <dt class="field-ip_address">IP Addr</dt>
-      <dd><span @click="copyElementText" class="click-to-copy">{{ workerData.ip_address }}</span></dd>
+      <dd>
+        <span @click="copyElementText" class="click-to-copy">{{ workerData.ip_address }}</span>
+      </dd>
 
       <dt class="field-platform">Platform</dt>
       <dd>{{ workerData.platform }}</dd>
@@ -35,7 +39,7 @@
 
       <template v-if="workerData.can_restart">
         <dt class="field-can-restart">Can Restart</dt>
-        <dd>{{  workerData.can_restart }}</dd>
+        <dd>{{ workerData.can_restart }}</dd>
       </template>
     </dl>
 
@@ -47,56 +51,73 @@
             :isChecked="thisWorkerTags[tag.id]"
             :label="tag.name"
             :title="tag.description"
-            @switch-toggle="toggleWorkerTag(tag.id)"
-          >
+            @switch-toggle="toggleWorkerTag(tag.id)">
           </switch-checkbox>
         </li>
       </ul>
       <p class="hint" v-if="hasTagsAssigned">
-        This worker will only pick up jobs assigned to one of its tags, and
-        tagless jobs.
+        This worker will only pick up jobs assigned to one of its tags, and tagless jobs.
       </p>
       <p class="hint" v-else>This worker will only pick up tagless jobs.</p>
     </section>
 
-    <section class="sleep-schedule" :class="{ 'is-schedule-active': workerSleepSchedule.is_active }">
+    <section
+      class="sleep-schedule"
+      :class="{ 'is-schedule-active': workerSleepSchedule.is_active }">
       <h3 class="sub-title">
-        <switch-checkbox :isChecked="workerSleepSchedule.is_active" @switch-toggle="toggleWorkerSleepSchedule">
+        <switch-checkbox
+          :isChecked="workerSleepSchedule.is_active"
+          @switch-toggle="toggleWorkerSleepSchedule">
         </switch-checkbox>
         Sleep Schedule
         <div v-if="!isScheduleEditing" class="sub-title-buttons">
           <button @click="isScheduleEditing = true">Edit</button>
         </div>
       </h3>
-      <p>Time of the day (and on which days) this worker should go to sleep. </p>
+      <p>Time of the day (and on which days) this worker should go to sleep.</p>
 
       <div class="sleep-schedule-edit" v-if="isScheduleEditing">
         <div>
           <label>Days of the week</label>
-          <input type="text" placeholder="mo tu we th fr" v-model="workerSleepSchedule.days_of_week">
+          <input
+            type="text"
+            placeholder="mo tu we th fr"
+            v-model="workerSleepSchedule.days_of_week" />
           <span class="input-help-text">
-            Write each day name using their first two letters, separated by spaces.
-            (e.g. mo tu we th fr)
+            Write each day name using their first two letters, separated by spaces. (e.g. mo tu we
+            th fr)
           </span>
         </div>
         <div class="sleep-schedule-edit-time">
           <div>
             <label>Start Time</label>
-            <input type="text" placeholder="09:00" v-model="workerSleepSchedule.start_time" class="time">
+            <input
+              type="text"
+              placeholder="09:00"
+              v-model="workerSleepSchedule.start_time"
+              class="time" />
           </div>
           <div>
             <label>End Time</label>
-            <input type="text" placeholder="18:00" v-model="workerSleepSchedule.end_time" class="time">
+            <input
+              type="text"
+              placeholder="18:00"
+              v-model="workerSleepSchedule.end_time"
+              class="time" />
           </div>
         </div>
-        <span class="input-help-text">
-          Use 24-hour format.
-        </span>
+        <span class="input-help-text"> Use 24-hour format. </span>
         <div class="btn-bar-group">
           <div class="btn-bar">
-            <button v-if="isScheduleEditing" @click="cancelEditWorkerSleepSchedule" class="btn">Cancel</button>
-            <button v-if="isScheduleEditing" @click="saveWorkerSleepSchedule" class="btn btn-primary">Save
-              Schedule</button>
+            <button v-if="isScheduleEditing" @click="cancelEditWorkerSleepSchedule" class="btn">
+              Cancel
+            </button>
+            <button
+              v-if="isScheduleEditing"
+              @click="saveWorkerSleepSchedule"
+              class="btn btn-primary">
+              Save Schedule
+            </button>
           </div>
         </div>
       </div>
@@ -130,15 +151,17 @@
         </template>
         <template v-else>
           <template v-if="workerData.status == 'error'">
-          in <span class="worker-status">error</span> state
+            in <span class="worker-status">error</span> state
           </template>
           <template v-else>
-            <span class="worker-status">{{ workerData.status }}</span>
-          </template>, which means removing it now can cause it to log errors. It
-          is advised to shut down the Worker before removing it from the system.
+            <span class="worker-status">{{ workerData.status }}</span> </template
+          >, which means removing it now can cause it to log errors. It is advised to shut down the
+          Worker before removing it from the system.
         </template>
       </p>
-      <p><button @click="deleteWorker">Remove {{ workerData.name }}</button></p>
+      <p>
+        <button @click="deleteWorker">Remove {{ workerData.name }}</button>
+      </p>
     </section>
   </template>
 
@@ -148,20 +171,20 @@
 </template>
 
 <script>
-import { useNotifs } from '@/stores/notifications'
-import { useWorkers } from '@/stores/workers'
+import { useNotifs } from '@/stores/notifications';
+import { useWorkers } from '@/stores/workers';
 
-import * as datetime from "@/datetime";
-import { WorkerMgtApi, WorkerSleepSchedule, WorkerTagChangeRequest } from "@/manager-api";
-import { getAPIClient } from "@/api-client";
-import { workerStatus } from "../../statusindicator";
+import * as datetime from '@/datetime';
+import { WorkerMgtApi, WorkerSleepSchedule, WorkerTagChangeRequest } from '@/manager-api';
+import { getAPIClient } from '@/api-client';
+import { workerStatus } from '../../statusindicator';
 import LinkWorkerTask from '@/components/LinkWorkerTask.vue';
 import SwitchCheckbox from '@/components/SwitchCheckbox.vue';
 import { copyElementText } from '@/clipboard';
 
 export default {
   props: [
-    "workerData", // Worker data to show.
+    'workerData', // Worker data to show.
   ],
   components: {
     LinkWorkerTask,
@@ -171,7 +194,7 @@ export default {
     return {
       datetime: datetime, // So that the template can access it.
       api: new WorkerMgtApi(getAPIClient()),
-      workerStatusHTML: "",
+      workerStatusHTML: '',
       workerSleepSchedule: this.defaultWorkerSleepSchedule(),
       isScheduleEditing: false,
       notifs: useNotifs(),
@@ -194,11 +217,11 @@ export default {
       if (newData) {
         this.workerStatusHTML = workerStatus(newData);
       } else {
-        this.workerStatusHTML = "";
+        this.workerStatusHTML = '';
       }
       // Update workerSleepSchedule only if oldData and newData have different ids, or if there is no oldData
       // and we provide newData.
-      if (((oldData && newData) && (oldData.id != newData.id)) || !oldData && newData) {
+      if ((oldData && newData && oldData.id != newData.id) || (!oldData && newData)) {
         this.fetchWorkerSleepSchedule();
       }
 
@@ -213,10 +236,17 @@ export default {
       // Utility to display workerSleepSchedule, taking into account the case when the default values are used.
       // This way, empty strings are represented more meaningfully.
       return {
-        'days_of_week': this.workerSleepSchedule.days_of_week === '' ? 'every day' : this.workerSleepSchedule.days_of_week,
-        'start_time': this.workerSleepSchedule.start_time === '' ? '00:00' : this.workerSleepSchedule.start_time,
-        'end_time': this.workerSleepSchedule.end_time === '' ? '24:00' : this.workerSleepSchedule.end_time,
-      }
+        days_of_week:
+          this.workerSleepSchedule.days_of_week === ''
+            ? 'every day'
+            : this.workerSleepSchedule.days_of_week,
+        start_time:
+          this.workerSleepSchedule.start_time === ''
+            ? '00:00'
+            : this.workerSleepSchedule.start_time,
+        end_time:
+          this.workerSleepSchedule.end_time === '' ? '24:00' : this.workerSleepSchedule.end_time,
+      };
     },
     workerSleepScheduleStatusLabel() {
       return this.workerSleepSchedule.is_active ? 'Enabled' : 'Disabled';
@@ -228,7 +258,8 @@ export default {
   },
   methods: {
     fetchWorkerSleepSchedule() {
-      this.api.fetchWorkerSleepSchedule(this.workerData.id)
+      this.api
+        .fetchWorkerSleepSchedule(this.workerData.id)
         .then((schedule) => {
           // Replace the default workerSleepSchedule if the Worker has one
 
@@ -244,8 +275,9 @@ export default {
         });
     },
     setWorkerSleepSchedule(notifMessage) {
-      this.api.setWorkerSleepSchedule(this.workerData.id, this.workerSleepSchedule).then(
-        this.notifs.add(notifMessage));
+      this.api
+        .setWorkerSleepSchedule(this.workerData.id, this.workerSleepSchedule)
+        .then(this.notifs.add(notifMessage));
     },
     toggleWorkerSleepSchedule() {
       this.workerSleepSchedule.is_active = !this.workerSleepSchedule.is_active;
@@ -261,12 +293,12 @@ export default {
       this.isScheduleEditing = false;
     },
     defaultWorkerSleepSchedule() {
-      return new WorkerSleepSchedule(false, '', '', '')  // Default values in OpenAPI
+      return new WorkerSleepSchedule(false, '', '', ''); // Default values in OpenAPI
     },
     deleteWorker() {
       let msg = `Are you sure you want to remove ${this.workerData.name}?`;
-      if (this.workerData.status != "offline") {
-        msg += "\nRemoving it without first shutting it down will cause it to log errors.";
+      if (this.workerData.status != 'offline') {
+        msg += '\nRemoving it without first shutting it down will cause it to log errors.';
       }
       if (!confirm(msg)) {
         return;
@@ -286,9 +318,9 @@ export default {
       this.thisWorkerTags = assignedTags;
     },
     toggleWorkerTag(tagID) {
-      console.log("Toggled", tagID);
+      console.log('Toggled', tagID);
       this.thisWorkerTags[tagID] = !this.thisWorkerTags[tagID];
-      console.log("New assignment:", plain(this.thisWorkerTags));
+      console.log('New assignment:', plain(this.thisWorkerTags));
 
       // Construct tag change request.
       const tagIDs = this.getAssignedTagIDs();
@@ -298,7 +330,7 @@ export default {
       this.api
         .setWorkerTags(this.workerData.id, changeRequest)
         .then(() => {
-          this.notifs.add("Tag assignment updated");
+          this.notifs.add('Tag assignment updated');
         })
         .catch((error) => {
           const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
@@ -333,7 +365,7 @@ export default {
   bottom: var(--spacer-xs);
 }
 
-.sleep-schedule .btn-bar label+.btn {
+.sleep-schedule .btn-bar label + .btn {
   margin-left: var(--spacer-sm);
 }
 
@@ -351,7 +383,7 @@ export default {
   flex-direction: column;
 }
 
-.sleep-schedule-edit>div {
+.sleep-schedule-edit > div {
   margin: var(--spacer-sm) 0;
 }
 
@@ -362,7 +394,7 @@ export default {
   color: var(--color-text-muted);
 }
 
-.sleep-schedule-edit>.sleep-schedule-edit-time {
+.sleep-schedule-edit > .sleep-schedule-edit-time {
   display: flex;
   margin-bottom: 0;
 }
@@ -372,19 +404,19 @@ export default {
   display: none;
 }
 
-.sleep-schedule-edit input[type="text"] {
+.sleep-schedule-edit input[type='text'] {
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
   width: 23ch;
 }
 
-.sleep-schedule-edit input[type="text"].time {
+.sleep-schedule-edit input[type='text'].time {
   width: 10ch;
   margin-right: var(--spacer);
 }
 
 /* Prevent fields with long IDs from overflowing. */
-.field-id+dd {
+.field-id + dd {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

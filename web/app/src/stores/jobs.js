@@ -1,8 +1,7 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 import * as API from '@/manager-api';
-import { getAPIClient } from "@/api-client";
-
+import { getAPIClient } from '@/api-client';
 
 const jobsAPI = new API.JobsApi(getAPIClient());
 
@@ -16,7 +15,7 @@ export const useJobs = defineStore('jobs', {
      * ID of the active job. Easier to query than `activeJob ? activeJob.id : ""`.
      * @type {string}
      */
-    activeJobID: "",
+    activeJobID: '',
 
     /**
      * Set to true when it is known that there are no jobs at all in the system.
@@ -26,13 +25,13 @@ export const useJobs = defineStore('jobs', {
   }),
   getters: {
     canDelete() {
-      return this._anyJobWithStatus(["queued", "paused", "failed", "completed", "canceled"])
+      return this._anyJobWithStatus(['queued', 'paused', 'failed', 'completed', 'canceled']);
     },
     canCancel() {
-      return this._anyJobWithStatus(["queued", "active", "failed"])
+      return this._anyJobWithStatus(['queued', 'active', 'failed']);
     },
     canRequeue() {
-      return this._anyJobWithStatus(["canceled", "completed", "failed", "paused"])
+      return this._anyJobWithStatus(['canceled', 'completed', 'failed', 'paused']);
     },
   },
   actions: {
@@ -41,7 +40,7 @@ export const useJobs = defineStore('jobs', {
     },
     setActiveJobID(jobID) {
       this.$patch({
-        activeJob: {id: jobID, settings: {}, metadata: {}},
+        activeJob: { id: jobID, settings: {}, metadata: {} },
         activeJobID: jobID,
       });
     },
@@ -60,7 +59,7 @@ export const useJobs = defineStore('jobs', {
     deselectAllJobs() {
       this.$patch({
         activeJob: null,
-        activeJobID: "",
+        activeJobID: '',
       });
     },
 
@@ -72,13 +71,17 @@ export const useJobs = defineStore('jobs', {
      * TODO: actually have these work on all selected jobs. For simplicity, the
      * code now assumes that only the active job needs to be operated on.
      */
-    cancelJobs() { return this._setJobStatus("cancel-requested"); },
-    requeueJobs() { return this._setJobStatus("requeueing"); },
+    cancelJobs() {
+      return this._setJobStatus('cancel-requested');
+    },
+    requeueJobs() {
+      return this._setJobStatus('requeueing');
+    },
     deleteJobs() {
       if (!this.activeJobID) {
         console.warn(`deleteJobs() impossible, no active job ID`);
         return new Promise((resolve, reject) => {
-          reject("No job selected, unable to delete");
+          reject('No job selected, unable to delete');
         });
       }
 
@@ -93,7 +96,9 @@ export const useJobs = defineStore('jobs', {
      * @returns bool indicating whether there is a selected job with any of the given statuses.
      */
     _anyJobWithStatus(statuses) {
-      return !!this.activeJob && !!this.activeJob.status && statuses.includes(this.activeJob.status);
+      return (
+        !!this.activeJob && !!this.activeJob.status && statuses.includes(this.activeJob.status)
+      );
       // return this.selectedJobs.reduce((foundJob, job) => (foundJob || statuses.includes(job.status)), false);
     },
 
@@ -107,8 +112,8 @@ export const useJobs = defineStore('jobs', {
         console.warn(`_setJobStatus(${newStatus}) impossible, no active job ID`);
         return;
       }
-      const statuschange = new API.JobStatusChange(newStatus, "requested from web interface");
+      const statuschange = new API.JobStatusChange(newStatus, 'requested from web interface');
       return jobsAPI.setJobStatus(this.activeJobID, statuschange);
     },
   },
-})
+});

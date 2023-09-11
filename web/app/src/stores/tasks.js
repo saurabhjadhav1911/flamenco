@@ -1,8 +1,7 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 import * as API from '@/manager-api';
-import { getAPIClient } from "@/api-client";
-
+import { getAPIClient } from '@/api-client';
 
 const jobsAPI = new API.JobsApi(getAPIClient());
 
@@ -16,20 +15,20 @@ export const useTasks = defineStore('tasks', {
      * ID of the active task. Easier to query than `activeTask ? activeTask.id : ""`.
      * @type {string}
      */
-     activeTaskID: "",
+    activeTaskID: '',
   }),
   getters: {
     canCancel() {
-      return this._anyTaskWithStatus(["queued", "active", "soft-failed"])
+      return this._anyTaskWithStatus(['queued', 'active', 'soft-failed']);
     },
     canRequeue() {
-      return this._anyTaskWithStatus(["canceled", "completed", "failed"])
+      return this._anyTaskWithStatus(['canceled', 'completed', 'failed']);
     },
   },
   actions: {
     setActiveTaskID(taskID) {
       this.$patch({
-        activeTask: {id: taskID},
+        activeTask: { id: taskID },
         activeTaskID: taskID,
       });
     },
@@ -42,7 +41,7 @@ export const useTasks = defineStore('tasks', {
     deselectAllTasks() {
       this.$patch({
         activeTask: null,
-        activeTaskID: "",
+        activeTaskID: '',
       });
     },
 
@@ -54,8 +53,12 @@ export const useTasks = defineStore('tasks', {
      * TODO: actually have these work on all selected tasks. For simplicity, the
      * code now assumes that only the active task needs to be operated on.
      */
-    cancelTasks() { return this._setTaskStatus("canceled"); },
-    requeueTasks() { return this._setTaskStatus("queued"); },
+    cancelTasks() {
+      return this._setTaskStatus('canceled');
+    },
+    requeueTasks() {
+      return this._setTaskStatus('queued');
+    },
 
     // Internal methods.
 
@@ -65,7 +68,9 @@ export const useTasks = defineStore('tasks', {
      * @returns bool indicating whether there is a selected task with any of the given statuses.
      */
     _anyTaskWithStatus(statuses) {
-      return !!this.activeTask && !!this.activeTask.status && statuses.includes(this.activeTask.status);
+      return (
+        !!this.activeTask && !!this.activeTask.status && statuses.includes(this.activeTask.status)
+      );
       // return this.selectedTasks.reduce((foundTask, task) => (foundTask || statuses.includes(task.status)), false);
     },
 
@@ -79,8 +84,8 @@ export const useTasks = defineStore('tasks', {
         console.warn(`_setTaskStatus(${newStatus}) impossible, no active task ID`);
         return;
       }
-      const statuschange = new API.TaskStatusChange(newStatus, "requested from web interface");
+      const statuschange = new API.TaskStatusChange(newStatus, 'requested from web interface');
       return jobsAPI.setTaskStatus(this.activeTaskID, statuschange);
     },
   },
-})
+});

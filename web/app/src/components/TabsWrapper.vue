@@ -1,17 +1,16 @@
 <script setup>
-import { useSlots, ref, provide } from "vue";
-const emit = defineEmits(['clickedJobDetailsTab',])
+import { useSlots, ref, provide } from 'vue';
+const emit = defineEmits(['clickedJobDetailsTab']);
 const slots = useSlots();
 
 const tabTitles = ref(slots.default().map((tab) => tab.props.title));
 const selectedTitle = ref(tabTitles.value[0]);
-provide("selectedTitle", selectedTitle);
+provide('selectedTitle', selectedTitle);
 
 function updateTabTitle(title) {
   selectedTitle.value = title;
   emit('clickedJobDetailsTab');
 }
-
 </script>
 
 <template>
@@ -22,8 +21,7 @@ function updateTabTitle(title) {
         :key="title"
         class="tab-item"
         :class="{ active: selectedTitle === title }"
-        @click="updateTabTitle(title)"
-      >
+        @click="updateTabTitle(title)">
         {{ title }}
       </li>
     </ul>
@@ -47,7 +45,8 @@ nav {
   color: var(--color-text-hint);
   cursor: pointer;
   padding: var(--spacer-sm) 0;
-  transition: border-color var(--transition-speed) ease-in-out, color var(--transition-speed) ease-in-out;
+  transition: border-color var(--transition-speed) ease-in-out,
+    color var(--transition-speed) ease-in-out;
   user-select: none;
 }
 

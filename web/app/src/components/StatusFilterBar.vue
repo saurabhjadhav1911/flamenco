@@ -1,9 +1,9 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 import { indicator } from '@/statusindicator';
 
 const props = defineProps(['availableStatuses', 'activeStatuses', 'classPrefix']);
-const emit = defineEmits(['click'])
+const emit = defineEmits(['click']);
 
 /**
  * visibleStatuses is a union between `availableStatuses` and `activeStatuses`,
@@ -14,17 +14,17 @@ const visibleStatuses = computed(() => {
   const available = props.availableStatuses;
   const unavailable = props.activeStatuses.filter((status) => available.indexOf(status) == -1);
   return available.concat(unavailable);
-})
+});
 </script>
 
 <template>
-  <ul class="status-filter-bar"
-    :class="{'is-filtered': activeStatuses.length > 0}">
-    <li v-for="status in visibleStatuses" class="status-filter-indicator"
+  <ul class="status-filter-bar" :class="{ 'is-filtered': activeStatuses.length > 0 }">
+    <li
+      v-for="status in visibleStatuses"
+      class="status-filter-indicator"
       :data-status="status"
-      :class="{active: activeStatuses.indexOf(status) >= 0}"
+      :class="{ active: activeStatuses.indexOf(status) >= 0 }"
       @click="emit('click', status)"
-      v-html="indicator(status, classPrefix)"
-    ></li>
+      v-html="indicator(status, classPrefix)"></li>
   </ul>
 </template>

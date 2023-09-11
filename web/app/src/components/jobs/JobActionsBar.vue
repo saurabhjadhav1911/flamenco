@@ -8,26 +8,32 @@
         <button class="btn delete dangerous" v-on:click="onButtonDeleteConfirmed">Delete</button>
       </div>
     </div>
-    <button class="btn cancel" :disabled="!jobs.canCancel" v-on:click="onButtonCancel">Cancel Job</button>
-    <button class="btn requeue" :disabled="!jobs.canRequeue" v-on:click="onButtonRequeue">Requeue</button>
-    <button class="action delete dangerous" title="Mark this job for deletion, after asking for a confirmation."
-      :disabled="!jobs.canDelete" v-on:click="onButtonDelete">Delete...</button>
+    <button class="btn cancel" :disabled="!jobs.canCancel" v-on:click="onButtonCancel">
+      Cancel Job
+    </button>
+    <button class="btn requeue" :disabled="!jobs.canRequeue" v-on:click="onButtonRequeue">
+      Requeue
+    </button>
+    <button
+      class="action delete dangerous"
+      title="Mark this job for deletion, after asking for a confirmation."
+      :disabled="!jobs.canDelete"
+      v-on:click="onButtonDelete">
+      Delete...
+    </button>
   </div>
 </template>
 
 <script>
 import { useJobs } from '@/stores/jobs';
 import { useNotifs } from '@/stores/notifications';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 import { JobsApi } from '@/manager-api';
 import { JobDeletionInfo } from '@/manager-api';
 
-
 export default {
-  name: "JobActionsBar",
-  props: [
-    "activeJobID",
-  ],
+  name: 'JobActionsBar',
+  props: ['activeJobID'],
   data: () => ({
     jobs: useJobs(),
     notifs: useNotifs(),
@@ -35,8 +41,7 @@ export default {
 
     deleteInfo: null,
   }),
-  computed: {
-  },
+  computed: {},
   watch: {
     activeJobID() {
       this._hideDeleteJobPopup();
@@ -47,51 +52,48 @@ export default {
       this._startJobDeletionFlow();
     },
     onButtonDeleteConfirmed() {
-      return this.jobs.deleteJobs()
+      return this.jobs
+        .deleteJobs()
         .then(() => {
-          this.notifs.add("job marked for deletion");
+          this.notifs.add('job marked for deletion');
         })
         .catch((error) => {
           const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
           this.notifs.add(`Error: ${errorMsg}`);
         })
-        .finally(this._hideDeleteJobPopup)
-        ;
+        .finally(this._hideDeleteJobPopup);
     },
     onButtonCancel() {
-      return this._handleJobActionPromise(
-        this.jobs.cancelJobs(), "marked for cancellation");
+      return this._handleJobActionPromise(this.jobs.cancelJobs(), 'marked for cancellation');
     },
     onButtonRequeue() {
-      return this._handleJobActionPromise(
-        this.jobs.requeueJobs(), "requeueing");
+      return this._handleJobActionPromise(this.jobs.requeueJobs(), 'requeueing');
     },
 
     _handleJobActionPromise(promise, description) {
-      return promise
-        .then(() => {
-          // There used to be a call to `this.notifs.add(message)` here, but now
-          // that job status changes are logged in the notifications anyway,
-          // it's no longer necessary.
-          // This function is still kept, in case we want to bring back the
-          // notifications when multiple jobs can be selected. Then a summary
-          // ("N jobs requeued") could be logged here.btn-bar-popover
-        })
+      return promise.then(() => {
+        // There used to be a call to `this.notifs.add(message)` here, but now
+        // that job status changes are logged in the notifications anyway,
+        // it's no longer necessary.
+        // This function is still kept, in case we want to bring back the
+        // notifications when multiple jobs can be selected. Then a summary
+        // ("N jobs requeued") could be logged here.btn-bar-popover
+      });
     },
 
     _startJobDeletionFlow() {
       if (!this.activeJobID) {
-        this.notifs.add("No active job, unable to delete anything");
+        this.notifs.add('No active job, unable to delete anything');
         return;
       }
 
-      this.jobsAPI.deleteJobWhatWouldItDo(this.activeJobID)
+      this.jobsAPI
+        .deleteJobWhatWouldItDo(this.activeJobID)
         .then(this._showDeleteJobPopup)
         .catch((error) => {
           const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
           this.notifs.add(`Error: ${errorMsg}`);
-        })
-        ;
+        });
     },
 
     /**
@@ -103,10 +105,9 @@ export default {
 
     _hideDeleteJobPopup() {
       this.deleteInfo = null;
-    }
-  }
-}
-
+    },
+  },
+};
 </script>
 
 <style scoped>

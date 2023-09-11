@@ -8,15 +8,17 @@
       <option :value="key" v-if="action.condition()">{{ action.label }}</option>
     </template>
   </select>
-  <button :disabled="!canPerformAction" class="btn" @click.prevent="performWorkerAction">Apply</button>
+  <button :disabled="!canPerformAction" class="btn" @click.prevent="performWorkerAction">
+    Apply
+  </button>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref } from 'vue';
 import { useWorkers } from '@/stores/workers';
 import { useNotifs } from '@/stores/notifications';
 import { WorkerMgtApi, WorkerStatusChangeRequest } from '@/manager-api';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 
 /* Freeze to prevent Vue.js from creating getters & setters all over this object.
  * We don't need it to be tracked, as it won't be changed anyway. */
@@ -24,7 +26,8 @@ const WORKER_ACTIONS = Object.freeze({
   offline_lazy: {
     label: 'Shut Down (after task is finished)',
     icon: '✝',
-    title: 'Shut down the worker after the current task finishes. The worker may automatically restart.',
+    title:
+      'Shut down the worker after the current task finishes. The worker may automatically restart.',
     target_status: 'offline',
     lazy: true,
     condition: () => true,
@@ -88,19 +91,19 @@ const notifs = useNotifs();
 function performWorkerAction() {
   const workerID = workers.activeWorkerID;
   if (!workerID) {
-    notifs.add("Select a Worker before applying an action.");
+    notifs.add('Select a Worker before applying an action.');
     return;
   }
 
   const api = new WorkerMgtApi(getAPIClient());
   const action = WORKER_ACTIONS[selectedAction.value];
   const statuschange = new WorkerStatusChangeRequest(action.target_status, action.lazy);
-  console.log("Requesting worker status change", statuschange);
-  api.requestWorkerStatusChange(workerID, statuschange)
+  console.log('Requesting worker status change', statuschange);
+  api
+    .requestWorkerStatusChange(workerID, statuschange)
     .then((result) => notifs.add(`Worker status change to ${action.target_status} confirmed.`))
     .catch((error) => {
-      notifs.add(`Error requesting worker status change: ${error.body.message}`)
+      notifs.add(`Error requesting worker status change: ${error.body.message}`);
     });
 }
-
 </script>

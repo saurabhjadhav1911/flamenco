@@ -1,6 +1,6 @@
-import { ApiClient } from "@/manager-api";
-import { CountingApiClient } from "@/stores/api-query-count";
-import { api as apiURL } from '@/urls'
+import { ApiClient } from '@/manager-api';
+import { CountingApiClient } from '@/stores/api-query-count';
+import { api as apiURL } from '@/urls';
 
 /**
  * Scrub the custom User-Agent header from the API client, for those webbrowsers

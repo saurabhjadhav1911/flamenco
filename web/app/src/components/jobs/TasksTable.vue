@@ -3,7 +3,9 @@
   <div class="btn-bar-group">
     <task-actions-bar />
     <div class="align-right">
-      <status-filter-bar :availableStatuses="availableStatuses" :activeStatuses="shownStatuses"
+      <status-filter-bar
+        :availableStatuses="availableStatuses"
+        :activeStatuses="shownStatuses"
         @click="toggleStatusFilter" />
     </div>
   </div>
@@ -14,23 +16,24 @@
 
 <script>
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import * as datetime from "@/datetime";
-import * as API from '@/manager-api'
+import * as datetime from '@/datetime';
+import * as API from '@/manager-api';
 import { indicator } from '@/statusindicator';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 import { useTasks } from '@/stores/tasks';
 
-import TaskActionsBar from '@/components/jobs/TaskActionsBar.vue'
-import StatusFilterBar from '@/components/StatusFilterBar.vue'
+import TaskActionsBar from '@/components/jobs/TaskActionsBar.vue';
+import StatusFilterBar from '@/components/StatusFilterBar.vue';
 
 export default {
-  emits: ["tableRowClicked"],
+  emits: ['tableRowClicked'],
   props: [
-    "jobID", // ID of the job of which the tasks are shown here.
-    "taskID", // The active task.
+    'jobID', // ID of the job of which the tasks are shown here.
+    'taskID', // The active task.
   ],
   components: {
-    TaskActionsBar, StatusFilterBar,
+    TaskActionsBar,
+    StatusFilterBar,
   },
   data: () => {
     return {
@@ -52,7 +55,9 @@ export default {
         // Useful for debugging when there are many similar tasks:
         // { title: "ID", field: "id", headerSort: false, formatter: (cell) => cell.getData().id.substr(0, 8), },
         {
-          title: 'Status', field: 'status', sorter: 'string',
+          title: 'Status',
+          field: 'status',
+          sorter: 'string',
           formatter: (cell) => {
             const status = cell.getData().status;
             const dot = indicator(status);
@@ -61,36 +66,36 @@ export default {
         },
         { title: 'Name', field: 'name', sorter: 'string' },
         {
-          title: 'Updated', field: 'updated',
-          sorter: 'alphanum', sorterParams: { alignEmptyValues: "top" },
+          title: 'Updated',
+          field: 'updated',
+          sorter: 'alphanum',
+          sorterParams: { alignEmptyValues: 'top' },
           formatter(cell) {
             const cellValue = cell.getData().updated;
             // TODO: if any "{amount} {units} ago" shown, the table should be
             // refreshed every few {units}, so that it doesn't show any stale "4
             // seconds ago" for days.
             return datetime.relativeTime(cellValue);
-          }
+          },
         },
       ],
       rowFormatter(row) {
         const data = row.getData();
-        const isActive = (data.id === vueComponent.taskID);
-        row.getElement().classList.toggle("active-row", isActive);
+        const isActive = data.id === vueComponent.taskID;
+        row.getElement().classList.toggle('active-row', isActive);
       },
-      initialSort: [
-        { column: "updated", dir: "desc" },
-      ],
-      layout: "fitData",
+      initialSort: [{ column: 'updated', dir: 'desc' }],
+      layout: 'fitData',
       layoutColumnsOnNewData: true,
-      height: "100%", // Must be set in order for the virtual DOM to function correctly.
-      maxHeight: "100%",
+      height: '100%', // Must be set in order for the virtual DOM to function correctly.
+      maxHeight: '100%',
       data: [], // Will be filled via a Flamenco API request.
       selectable: false, // The active task is tracked by click events.
     };
 
     this.tabulator = new Tabulator('#flamenco_task_list', options);
-    this.tabulator.on("rowClick", this.onRowClick);
-    this.tabulator.on("tableBuilt", this._onTableBuilt);
+    this.tabulator.on('rowClick', this.onRowClick);
+    this.tabulator.on('tableBuilt', this._onTableBuilt);
 
     window.addEventListener('resize', this.recalcTableHeight);
   },
@@ -133,11 +138,10 @@ export default {
       }
 
       const jobsApi = new API.JobsApi(getAPIClient());
-      jobsApi.fetchJobTasks(this.jobID)
-        .then(this.onTasksFetched, function (error) {
-          // TODO: error handling.
-          console.error(error);
-        })
+      jobsApi.fetchJobTasks(this.jobID).then(this.onTasksFetched, function (error) {
+        // TODO: error handling.
+        console.error(error);
+      });
     },
     onTasksFetched(data) {
       // "Down-cast" to TaskUpdate to only get those fields, just for debugging things:
@@ -151,9 +155,12 @@ export default {
       // updateData() will only overwrite properties that are actually set on
       // taskUpdate, and leave the rest as-is.
       if (this.tabulator.initialized) {
-        this.tabulator.updateData([taskUpdate])
+        this.tabulator
+          .updateData([taskUpdate])
           .then(this.sortData)
-          .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
+          .then(() => {
+            this.tabulator.redraw();
+          }); // Resize columns based on new data.
       }
       this._refreshAvailableStatuses();
     },
@@ -163,7 +170,7 @@ export default {
       // store. There were some issues where navigating to another job would
       // overwrite the old job's ID, and this prevents that.
       const rowData = plain(row.getData());
-      this.$emit("tableRowClicked", rowData);
+      this.$emit('tableRowClicked', rowData);
     },
     toggleStatusFilter(status) {
       const asSet = new Set(this.shownStatuses);
@@ -191,7 +198,7 @@ export default {
       // Use tab.rowManager.findRow() instead of `tab.getRow()` as the latter
       // logs a warning when the row cannot be found.
       const row = this.tabulator.rowManager.findRow(jobID);
-      if (!row) return
+      if (!row) return;
       if (row.reformat) row.reformat();
       else if (row.reinitialize) row.reinitialize(true);
     },
@@ -221,7 +228,9 @@ export default {
         // `offsetParent` is assumed to be the actual column in the 3-column
         // view. To ensure this, it's given `position: relative` in the CSS
         // styling.
-        console.warn("TaskTable.recalcTableHeight() only works when the offset parent is the real parent of the element.");
+        console.warn(
+          'TaskTable.recalcTableHeight() only works when the offset parent is the real parent of the element.'
+        );
         return;
       }
 
@@ -234,7 +243,6 @@ export default {
 
       this.tabulator.setHeight(tableHeight);
     },
-  }
+  },
 };
-
 </script>

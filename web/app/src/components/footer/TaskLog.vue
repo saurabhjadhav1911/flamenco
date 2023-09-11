@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue';
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import { useTaskLog } from '@/stores/tasklog'
-import { useTasks } from '@/stores/tasks'
-import { getAPIClient } from "@/api-client";
+import { useTaskLog } from '@/stores/tasklog';
+import { useTasks } from '@/stores/tasks';
+import { getAPIClient } from '@/api-client';
 import { JobsApi } from '@/manager-api';
 
 const taskLog = useTaskLog();
@@ -20,19 +20,19 @@ const tabOptions = {
     },
   ],
   headerVisible: false,
-  layout: "fitDataStretch",
+  layout: 'fitDataStretch',
   resizableColumnFit: true,
-  height: "calc(25vh - 3rem)", // Must be set in order for the virtual DOM to function correctly.
+  height: 'calc(25vh - 3rem)', // Must be set in order for the virtual DOM to function correctly.
   data: taskLog.history,
-  placeholder: "Task log will appear here",
+  placeholder: 'Task log will appear here',
   selectable: false,
 };
 
 let tabulator = null;
 onMounted(() => {
   tabulator = new Tabulator('#task_log_list', tabOptions);
-  tabulator.on("tableBuilt", _scrollToBottom);
-  tabulator.on("tableBuilt", _subscribeToPinia);
+  tabulator.on('tableBuilt', _scrollToBottom);
+  tabulator.on('tableBuilt', _subscribeToPinia);
   _fetchLogTail(tasks.activeTaskID);
 });
 onUnmounted(() => {
@@ -45,13 +45,12 @@ tasks.$subscribe((_, state) => {
 
 function _scrollToBottom() {
   if (taskLog.empty) return;
-  tabulator.scrollToRow(taskLog.lastID, "bottom", false);
+  tabulator.scrollToRow(taskLog.lastID, 'bottom', false);
 }
 function _subscribeToPinia() {
   taskLog.$subscribe(() => {
-    tabulator.setData(taskLog.history)
-      .then(_scrollToBottom)
-  })
+    tabulator.setData(taskLog.history).then(_scrollToBottom);
+  });
 }
 
 function _fetchLogTail(taskID) {
@@ -60,10 +59,9 @@ function _fetchLogTail(taskID) {
   if (!taskID) return;
 
   const jobsAPI = new JobsApi(getAPIClient());
-  return jobsAPI.fetchTaskLogTail(taskID)
-    .then((logTail) => {
-      taskLog.addChunk(logTail);
-    });
+  return jobsAPI.fetchTaskLogTail(taskID).then((logTail) => {
+    taskLog.addChunk(logTail);
+  });
 }
 </script>
 

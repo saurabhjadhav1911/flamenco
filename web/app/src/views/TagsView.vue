@@ -16,13 +16,8 @@
             name="newtagname"
             v-model="newTagName"
             placeholder="New Tag Name"
-            class="create-tag-input"
-          />
-          <button
-            id="submit-button"
-            type="submit"
-            :disabled="newTagName.trim() === ''"
-          >
+            class="create-tag-input" />
+          <button id="submit-button" type="submit" :disabled="newTagName.trim() === ''">
             Create Tag
           </button>
         </div>
@@ -35,32 +30,25 @@
     <h2 class="column-title">Information</h2>
 
     <p>
-      Workers and jobs can be tagged. With these tags you can assign a job to a
-      subset of your workers.
+      Workers and jobs can be tagged. With these tags you can assign a job to a subset of your
+      workers.
     </p>
 
     <h4>Job Perspective:</h4>
     <ul>
       <li>A job can have one tag, or no tag.</li>
-      <li>
-        A job <strong>with</strong> a tag will only be assigned to workers with
-        that tag.
-      </li>
-      <li>
-        A job <strong>without</strong> tag will be assigned to any worker.
-      </li>
+      <li>A job <strong>with</strong> a tag will only be assigned to workers with that tag.</li>
+      <li>A job <strong>without</strong> tag will be assigned to any worker.</li>
     </ul>
 
     <h4>Worker Perspective:</h4>
     <ul>
       <li>A worker can have any number of tags.</li>
       <li>
-        A worker <strong>with</strong> one or more tags will work only on jobs
-        with one those tags, and on tagless jobs.
+        A worker <strong>with</strong> one or more tags will work only on jobs with one those tags,
+        and on tagless jobs.
       </li>
-      <li>
-        A worker <strong>without</strong> tags will only work on tagless jobs.
-      </li>
+      <li>A worker <strong>without</strong> tags will only work on tagless jobs.</li>
     </ul>
   </div>
   <footer class="app-footer">
@@ -70,8 +58,7 @@
       mainSubscription="allWorkerTags"
       @workerTagUpdate="onSIOWorkerTagsUpdate"
       @sioReconnected="onSIOReconnected"
-      @sioDisconnected="onSIODisconnected"
-    />
+      @sioDisconnected="onSIODisconnected" />
   </footer>
 </template>
 
@@ -108,14 +95,14 @@
 </style>
 
 <script>
-import { TabulatorFull as Tabulator } from "tabulator-tables";
-import { useWorkers } from "@/stores/workers";
-import { useNotifs } from "@/stores/notifications";
-import { WorkerMgtApi } from "@/manager-api";
-import { WorkerTag } from "@/manager-api";
-import { getAPIClient } from "@/api-client";
-import NotificationBar from "@/components/footer/NotificationBar.vue";
-import UpdateListener from "@/components/UpdateListener.vue";
+import { TabulatorFull as Tabulator } from 'tabulator-tables';
+import { useWorkers } from '@/stores/workers';
+import { useNotifs } from '@/stores/notifications';
+import { WorkerMgtApi } from '@/manager-api';
+import { WorkerTag } from '@/manager-api';
+import { getAPIClient } from '@/api-client';
+import NotificationBar from '@/components/footer/NotificationBar.vue';
+import UpdateListener from '@/components/UpdateListener.vue';
 
 export default {
   components: {
@@ -126,25 +113,25 @@ export default {
     return {
       tags: [],
       selectedTag: null,
-      newTagName: "",
+      newTagName: '',
       workers: useWorkers(),
       activeRowIndex: -1,
     };
   },
 
   mounted() {
-    document.body.classList.add("is-two-columns");
+    document.body.classList.add('is-two-columns');
 
     this.fetchTags();
 
     const tag_options = {
       columns: [
-        { title: "Name", field: "name", sorter: "string", editor: "input" },
+        { title: 'Name', field: 'name', sorter: 'string', editor: 'input' },
         {
-          title: "Description",
-          field: "description",
-          sorter: "string",
-          editor: "input",
+          title: 'Description',
+          field: 'description',
+          sorter: 'string',
+          editor: 'input',
           formatter(cell) {
             const cellValue = cell.getData().description;
             if (!cellValue) {
@@ -154,24 +141,24 @@ export default {
           },
         },
       ],
-      layout: "fitData",
+      layout: 'fitData',
       layoutColumnsOnNewData: true,
-      height: "82%",
+      height: '82%',
       selectable: true,
     };
 
-    this.tabulator = new Tabulator("#tag-table-container", tag_options);
-    this.tabulator.on("rowClick", this.onRowClick);
-    this.tabulator.on("tableBuilt", () => {
+    this.tabulator = new Tabulator('#tag-table-container', tag_options);
+    this.tabulator.on('rowClick', this.onRowClick);
+    this.tabulator.on('tableBuilt', () => {
       this.fetchTags();
     });
-    this.tabulator.on("cellEdited", (cell) => {
+    this.tabulator.on('cellEdited', (cell) => {
       const editedTag = cell.getRow().getData();
       this.updateTagInAPI(editedTag);
     });
   },
   unmounted() {
-    document.body.classList.remove("is-two-columns");
+    document.body.classList.remove('is-two-columns');
   },
 
   methods: {
@@ -201,7 +188,7 @@ export default {
         .createWorkerTag(newTag)
         .then(() => {
           this.fetchTags(); // Refresh table data
-          this.newTagName = "";
+          this.newTagName = '';
         })
         .catch((error) => {
           const errorMsg = JSON.stringify(error);
@@ -216,7 +203,7 @@ export default {
       api
         .updateWorkerTag(tagId, updatedTagData)
         .then(() => {
-          console.log("Tag updated successfully");
+          console.log('Tag updated successfully');
         })
         .catch((error) => {
           const errorMsg = JSON.stringify(error);

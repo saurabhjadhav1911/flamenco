@@ -8,15 +8,18 @@
 
   <footer class="app-footer"><notification-bar /></footer>
 
-  <update-listener ref="updateListener" mainSubscription="allLastRendered"
+  <update-listener
+    ref="updateListener"
+    mainSubscription="allLastRendered"
     @lastRenderedUpdate="onSioLastRenderedUpdate"
-    @sioReconnected="onSIOReconnected" @sioDisconnected="onSIODisconnected" />
+    @sioReconnected="onSIOReconnected"
+    @sioDisconnected="onSIODisconnected" />
 </template>
 
 <script>
-import LastRenderedImage from '@/components/jobs/LastRenderedImage.vue'
-import NotificationBar from '@/components/footer/NotificationBar.vue'
-import UpdateListener from '@/components/UpdateListener.vue'
+import LastRenderedImage from '@/components/jobs/LastRenderedImage.vue';
+import NotificationBar from '@/components/footer/NotificationBar.vue';
+import UpdateListener from '@/components/UpdateListener.vue';
 
 export default {
   name: 'LastRenderedView',
@@ -25,8 +28,7 @@ export default {
     NotificationBar,
     UpdateListener,
   },
-  data: () => ({
-  }),
+  data: () => ({}),
   methods: {
     /**
      * Event handler for SocketIO "last-rendered" updates.
@@ -37,12 +39,10 @@ export default {
     },
 
     // SocketIO connection event handlers:
-    onSIOReconnected() {
-    },
-    onSIODisconnected(reason) {
-    },
+    onSIOReconnected() {},
+    onSIODisconnected(reason) {},
   },
-}
+};
 </script>
 
 <style scoped>
@@ -52,7 +52,9 @@ export default {
   grid-column-end: col-3;
   grid-column-start: col-1;
   justify-content: center;
-  height: calc(100vh - calc(var(--header-height) - var(--footer-height) - calc(var(--grid-gap) * -12)));
+  height: calc(
+    100vh - calc(var(--header-height) - var(--footer-height) - calc(var(--grid-gap) * -12))
+  );
   max-height: 100%;
 }
 

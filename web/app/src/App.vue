@@ -20,8 +20,7 @@
     <api-spinner />
     <span class="app-version">
       <a :href="backendURL('/flamenco-addon.zip')">add-on</a>
-      | <a :href="backendURL('/api/v3/swagger-ui/')">API</a>
-      | version: {{ flamencoVersion }}
+      | <a :href="backendURL('/api/v3/swagger-ui/')">API</a> | version: {{ flamencoVersion }}
     </span>
   </header>
   <router-view></router-view>
@@ -29,14 +28,14 @@
 
 <script>
 import * as API from '@/manager-api';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 import { backendURL } from '@/urls';
 import { useSocketStatus } from '@/stores/socket-status';
 
 import ApiSpinner from '@/components/ApiSpinner.vue';
 
-const DEFAULT_FLAMENCO_NAME = "Flamenco";
-const DEFAULT_FLAMENCO_VERSION = "unknown";
+const DEFAULT_FLAMENCO_NAME = 'Flamenco';
+const DEFAULT_FLAMENCO_VERSION = 'unknown';
 
 export default {
   name: 'App',
@@ -53,12 +52,14 @@ export default {
     this.fetchManagerInfo();
 
     const sockStatus = useSocketStatus();
-    this.$watch(() => sockStatus.isConnected, (isConnected) => {
-      if (!isConnected) return;
-      if (!sockStatus.wasEverDisconnected) return;
-      this.socketIOReconnect();
-    });
-
+    this.$watch(
+      () => sockStatus.isConnected,
+      (isConnected) => {
+        if (!isConnected) return;
+        if (!sockStatus.wasEverDisconnected) return;
+        this.socketIOReconnect();
+      }
+    );
   },
   methods: {
     fetchManagerInfo() {
@@ -67,23 +68,22 @@ export default {
         this.flamencoName = version.name;
         this.flamencoVersion = version.version;
         document.title = version.name;
-      })
+      });
     },
 
     socketIOReconnect() {
-      const metaAPI = new API.MetaApi(getAPIClient())
+      const metaAPI = new API.MetaApi(getAPIClient());
       metaAPI.getVersion().then((version) => {
-        if (version.name === this.flamencoName && version.version == this.flamencoVersion)
-          return;
+        if (version.name === this.flamencoName && version.version == this.flamencoVersion) return;
         console.log(`Updated from ${this.flamencoVersion} to ${version.version}`);
         location.reload();
       });
     },
   },
-}
+};
 </script>
 
 <style>
-@import "assets/base.css";
-@import "assets/tabulator.css";
+@import 'assets/base.css';
+@import 'assets/tabulator.css';
 </style>

@@ -3,7 +3,9 @@
   <div class="btn-bar-group">
     <job-actions-bar :activeJobID="jobs.activeJobID" />
     <div class="align-right">
-      <status-filter-bar :availableStatuses="availableStatuses" :activeStatuses="shownStatuses"
+      <status-filter-bar
+        :availableStatuses="availableStatuses"
+        :activeStatuses="shownStatuses"
         @click="toggleStatusFilter" />
     </div>
   </div>
@@ -14,21 +16,22 @@
 
 <script>
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import * as datetime from "@/datetime";
-import * as API from '@/manager-api'
+import * as datetime from '@/datetime';
+import * as API from '@/manager-api';
 import { indicator } from '@/statusindicator';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 import { useJobs } from '@/stores/jobs';
 
-import JobActionsBar from '@/components/jobs/JobActionsBar.vue'
-import StatusFilterBar from '@/components/StatusFilterBar.vue'
+import JobActionsBar from '@/components/jobs/JobActionsBar.vue';
+import StatusFilterBar from '@/components/StatusFilterBar.vue';
 
 export default {
   name: 'JobsTable',
-  props: ["activeJobID"],
-  emits: ["tableRowClicked", "activeJobDeleted"],
+  props: ['activeJobID'],
+  emits: ['tableRowClicked', 'activeJobDeleted'],
   components: {
-    JobActionsBar, StatusFilterBar,
+    JobActionsBar,
+    StatusFilterBar,
   },
   data: () => {
     return {
@@ -51,7 +54,9 @@ export default {
         // Useful for debugging when there are many similar jobs:
         // { title: "ID", field: "id", headerSort: false, formatter: (cell) => cell.getData().id.substr(0, 8), },
         {
-          title: 'Status', field: 'status', sorter: 'string',
+          title: 'Status',
+          field: 'status',
+          sorter: 'string',
           formatter: (cell) => {
             const status = cell.getData().status;
             const dot = indicator(status);
@@ -62,8 +67,10 @@ export default {
         { title: 'Type', field: 'type', sorter: 'string' },
         { title: 'Prio', field: 'priority', sorter: 'number' },
         {
-          title: 'Updated', field: 'updated',
-          sorter: 'alphanum', sorterParams: { alignEmptyValues: "top" },
+          title: 'Updated',
+          field: 'updated',
+          sorter: 'alphanum',
+          sorterParams: { alignEmptyValues: 'top' },
           formatter(cell) {
             const cellValue = cell.getData().updated;
             // TODO: if any "{amount} {units} ago" shown, the table should be
@@ -75,23 +82,21 @@ export default {
       ],
       rowFormatter(row) {
         const data = row.getData();
-        const isActive = (data.id === vueComponent.activeJobID);
+        const isActive = data.id === vueComponent.activeJobID;
         const classList = row.getElement().classList;
-        classList.toggle("active-row", isActive);
-        classList.toggle("deletion-requested", !!data.delete_requested_at);
+        classList.toggle('active-row', isActive);
+        classList.toggle('deletion-requested', !!data.delete_requested_at);
       },
-      initialSort: [
-        { column: "updated", dir: "desc" },
-      ],
-      layout: "fitData",
+      initialSort: [{ column: 'updated', dir: 'desc' }],
+      layout: 'fitData',
       layoutColumnsOnNewData: true,
-      height: "720px", // Must be set in order for the virtual DOM to function correctly.
+      height: '720px', // Must be set in order for the virtual DOM to function correctly.
       data: [], // Will be filled via a Flamenco API request.
       selectable: false, // The active job is tracked by click events, not row selection.
     };
     this.tabulator = new Tabulator('#flamenco_job_list', options);
-    this.tabulator.on("rowClick", this.onRowClick);
-    this.tabulator.on("tableBuilt", this._onTableBuilt);
+    this.tabulator.on('rowClick', this.onRowClick);
+    this.tabulator.on('tableBuilt', this._onTableBuilt);
 
     window.addEventListener('resize', this.recalcTableHeight);
   },
@@ -113,7 +118,7 @@ export default {
   computed: {
     selectedIDs() {
       return this.tabulator.getSelectedData().map((job) => job.id);
-    }
+    },
   },
   methods: {
     onReconnected() {
@@ -160,18 +165,20 @@ export default {
       if (jobUpdate.was_deleted) {
         if (row) promise = row.delete();
         else promise = Promise.resolve();
-        promise.finally(() => { this.$emit("activeJobDeleted", jobUpdate.id); });
-      }
-      else {
+        promise.finally(() => {
+          this.$emit('activeJobDeleted', jobUpdate.id);
+        });
+      } else {
         if (row) promise = this.tabulator.updateData([jobUpdate]);
         else promise = this.tabulator.addData([jobUpdate]);
       }
 
       promise
         .then(this.sortData)
-        .then(() => { this.tabulator.redraw(); }) // Resize columns based on new data.
-        .then(this._refreshAvailableStatuses)
-        ;
+        .then(() => {
+          this.tabulator.redraw();
+        }) // Resize columns based on new data.
+        .then(this._refreshAvailableStatuses);
     },
 
     onRowClick(event, row) {
@@ -179,7 +186,7 @@ export default {
       // store. There were some issues where navigating to another job would
       // overwrite the old job's ID, and this prevents that.
       const rowData = plain(row.getData());
-      this.$emit("tableRowClicked", rowData);
+      this.$emit('tableRowClicked', rowData);
     },
     toggleStatusFilter(status) {
       const asSet = new Set(this.shownStatuses);
@@ -207,7 +214,7 @@ export default {
       // Use tab.rowManager.findRow() instead of `tab.getRow()` as the latter
       // logs a warning when the row cannot be found.
       const row = this.tabulator.rowManager.findRow(jobID);
-      if (!row) return
+      if (!row) return;
       if (row.reformat) row.reformat();
       else if (row.reinitialize) row.reinitialize(true);
     },
@@ -237,7 +244,9 @@ export default {
         // `offsetParent` is assumed to be the actual column in the 3-column
         // view. To ensure this, it's given `position: relative` in the CSS
         // styling.
-        console.warn("JobsTable.recalcTableHeight() only works when the offset parent is the real parent of the element.");
+        console.warn(
+          'JobsTable.recalcTableHeight() only works when the offset parent is the real parent of the element.'
+        );
         return;
       }
 

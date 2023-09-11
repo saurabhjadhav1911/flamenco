@@ -1,15 +1,14 @@
-
 <template>
   <div v-if="imageURL != ''" :class="cssClasses">
-    <img :src="imageURL" alt="Last-rendered image for this job">
+    <img :src="imageURL" alt="Last-rendered image for this job" />
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue';
 import { api } from '@/urls';
 import { JobsApi, JobLastRenderedImageInfo, SocketIOLastRenderedUpdate } from '@/manager-api';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 
 const props = defineProps([
   /* The job UUID to show renders for, or some false-y value if renders from all
@@ -25,7 +24,7 @@ const imageURL = ref('');
 const cssClasses = reactive({
   'last-rendered': true,
   'nothing-rendered-yet': true,
-})
+});
 
 const jobsApi = new JobsApi(getAPIClient());
 
@@ -34,14 +33,12 @@ const jobsApi = new JobsApi(getAPIClient());
  */
 function fetchImageURL(jobID) {
   let promise;
-  if (jobID)
-    promise = jobsApi.fetchJobLastRenderedInfo(jobID);
-  else
-    promise = jobsApi.fetchGlobalLastRenderedInfo();
+  if (jobID) promise = jobsApi.fetchJobLastRenderedInfo(jobID);
+  else promise = jobsApi.fetchGlobalLastRenderedInfo();
 
-  promise
-    .then(setImageURL)
-    .catch((error) => { console.warn("error fetching last-rendered image info:", error) });
+  promise.then(setImageURL).catch((error) => {
+    console.warn('error fetching last-rendered image info:', error);
+  });
 }
 
 /**
@@ -51,7 +48,7 @@ function setImageURL(thumbnailInfo) {
   if (thumbnailInfo == null) {
     // This indicates that there is no last-rendered image.
     // Default to a hard-coded 'nothing to be seen here, move along' image.
-    imageURL.value = "/app/nothing-rendered-yet.svg";
+    imageURL.value = '/app/nothing-rendered-yet.svg';
     cssClasses['nothing-rendered-yet'] = true;
     return;
   }
@@ -66,14 +63,17 @@ function setImageURL(thumbnailInfo) {
     // Flamenco Manager, and not from any development server that might be
     // serving the webapp.
     let url = new URL(api());
-    url.pathname = thumbnailInfo.base + "/" + suffix
+    url.pathname = thumbnailInfo.base + '/' + suffix;
     url.search = new Date().getTime(); // This forces the image to be reloaded.
     imageURL.value = url.toString();
     foundThumbnail = true;
     break;
   }
   if (!foundThumbnail) {
-    console.warn(`LastRenderedImage.vue: could not find thumbnail with suffix "${suffixToFind}"; available are:`, thumbnailInfo.suffixes);
+    console.warn(
+      `LastRenderedImage.vue: could not find thumbnail with suffix "${suffixToFind}"; available are:`,
+      thumbnailInfo.suffixes
+    );
   }
   cssClasses['nothing-rendered-yet'] = !foundThumbnail;
 }
@@ -85,9 +85,11 @@ function refreshLastRenderedImage(lastRenderedUpdate) {
   // Only filter out other job IDs if this component has actually a non-empty job ID.
   if (props.jobID && lastRenderedUpdate.job_id != props.jobID) {
     console.log(
-      "LastRenderedImage.vue: refreshLastRenderedImage() received update for job",
+      'LastRenderedImage.vue: refreshLastRenderedImage() received update for job',
       lastRenderedUpdate.job_id,
-      "but this component is showing job", props.jobID);
+      'but this component is showing job',
+      props.jobID
+    );
     return;
   }
 
@@ -95,9 +97,12 @@ function refreshLastRenderedImage(lastRenderedUpdate) {
 }
 
 // Call fetchImageURL(jobID) whenever the job ID prop changes value.
-watch(() => props.jobID, (newJobID) => {
-  fetchImageURL(newJobID);
-});
+watch(
+  () => props.jobID,
+  (newJobID) => {
+    fetchImageURL(newJobID);
+  }
+);
 fetchImageURL(props.jobID);
 
 // Expose refreshLastRenderedImage() so that it can be called from the parent

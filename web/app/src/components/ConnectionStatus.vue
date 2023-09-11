@@ -1,5 +1,7 @@
 <template>
-  <span class='socket-status' v-if="!sockStatus.isConnected" :title="sockStatus.message">Connection Lost</span>
+  <span class="socket-status" v-if="!sockStatus.isConnected" :title="sockStatus.message"
+    >Connection Lost</span
+  >
 </template>
 
 <script setup>

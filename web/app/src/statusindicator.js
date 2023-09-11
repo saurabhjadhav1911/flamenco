@@ -13,7 +13,7 @@ import { toTitleCase } from '@/strings';
  */
 export function indicator(status, classNamePrefix) {
   const label = toTitleCase(status);
-  if (!classNamePrefix) classNamePrefix = ""; // force an empty string for any false value.
+  if (!classNamePrefix) classNamePrefix = ''; // force an empty string for any false value.
   return `<span title="${label}" class="indicator ${classNamePrefix}status-${status}"></span>`;
 }
 
@@ -31,9 +31,9 @@ export function workerStatus(worker) {
 
   let arrow;
   if (worker.status_change.is_lazy) {
-    arrow = `<span class='state-transition-arrow lazy' title='lazy status transition'>➠</span>`
+    arrow = `<span class='state-transition-arrow lazy' title='lazy status transition'>➠</span>`;
   } else {
-    arrow = `<span class='state-transition-arrow forced' title='forced status transition'>➜</span>`
+    arrow = `<span class='state-transition-arrow forced' title='forced status transition'>➜</span>`;
   }
 
   return `<span class="worker-status-${worker.status}">${worker.status}</span>

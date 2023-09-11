@@ -29,7 +29,7 @@ span {
 
 .spinner {
   -webkit-animation: rotate 2s linear infinite;
-          animation: rotate 2s linear infinite;
+  animation: rotate 2s linear infinite;
   z-index: 2;
   position: absolute;
   top: 50%;
@@ -42,7 +42,7 @@ span {
   stroke: var(--color-text-hint);
   stroke-linecap: round;
   -webkit-animation: dash 1.5s ease-in-out infinite;
-          animation: dash 1.5s ease-in-out infinite;
+  animation: dash 1.5s ease-in-out infinite;
 }
 
 @-webkit-keyframes rotate {

@@ -1,13 +1,13 @@
 <template>
   <section class="notification-bar">
-    <span class='notifications' v-if="notifs.last">{{ notifs.last.msg }}</span>
+    <span class="notifications" v-if="notifs.last">{{ notifs.last.msg }}</span>
     <connection-status />
   </section>
 </template>
 
 <script>
 import { useNotifs } from '@/stores/notifications';
-import ConnectionStatus from '@/components/ConnectionStatus.vue'
+import ConnectionStatus from '@/components/ConnectionStatus.vue';
 
 export default {
   name: 'NotificationBar',
@@ -17,7 +17,7 @@ export default {
   data: () => ({
     notifs: useNotifs(),
   }),
-}
+};
 </script>
 
 <style scoped>

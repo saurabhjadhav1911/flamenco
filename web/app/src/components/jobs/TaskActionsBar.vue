@@ -1,7 +1,11 @@
 <template>
   <section class="btn-bar tasks">
-    <button class="btn cancel" :disabled="!tasks.canCancel" v-on:click="onButtonCancel">Cancel Task</button>
-    <button class="btn requeue" :disabled="!tasks.canRequeue" v-on:click="onButtonRequeue">Requeue</button>
+    <button class="btn cancel" :disabled="!tasks.canCancel" v-on:click="onButtonCancel">
+      Cancel Task
+    </button>
+    <button class="btn requeue" :disabled="!tasks.canRequeue" v-on:click="onButtonRequeue">
+      Requeue
+    </button>
   </section>
 </template>
 
@@ -10,21 +14,18 @@ import { useTasks } from '@/stores/tasks';
 import { useNotifs } from '@/stores/notifications';
 
 export default {
-  name: "TaskActionsBar",
+  name: 'TaskActionsBar',
   data: () => ({
     tasks: useTasks(),
     notifs: useNotifs(),
   }),
-  computed: {
-  },
+  computed: {},
   methods: {
     onButtonCancel() {
-      return this._handleTaskActionPromise(
-        this.tasks.cancelTasks(), "cancelled");
+      return this._handleTaskActionPromise(this.tasks.cancelTasks(), 'cancelled');
     },
     onButtonRequeue() {
-      return this._handleTaskActionPromise(
-        this.tasks.requeueTasks(), "requeueing");
+      return this._handleTaskActionPromise(this.tasks.requeueTasks(), 'requeueing');
     },
 
     _handleTaskActionPromise(promise, description) {
@@ -42,8 +43,8 @@ export default {
         .catch((error) => {
           const errorMsg = JSON.stringify(error); // TODO: handle API errors better.
           this.notifs.add(`Error: ${errorMsg}`);
-        })
+        });
     },
-  }
-}
+  },
+};
 </script>

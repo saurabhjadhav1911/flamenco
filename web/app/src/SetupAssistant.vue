@@ -12,12 +12,11 @@
 </template>
 
 <script>
-
-const DEFAULT_FLAMENCO_NAME = "Flamenco";
-const DEFAULT_FLAMENCO_VERSION = "unknown";
-import ApiSpinner from '@/components/ApiSpinner.vue'
-import { MetaApi } from "@/manager-api";
-import { getAPIClient } from "@/api-client";
+const DEFAULT_FLAMENCO_NAME = 'Flamenco';
+const DEFAULT_FLAMENCO_VERSION = 'unknown';
+import ApiSpinner from '@/components/ApiSpinner.vue';
+import { MetaApi } from '@/manager-api';
+import { getAPIClient } from '@/api-client';
 
 export default {
   name: 'SetupAssistant',
@@ -39,13 +38,13 @@ export default {
       metaAPI.getVersion().then((version) => {
         this.flamencoName = version.name;
         this.flamencoVersion = version.version;
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style>
-@import "assets/base.css";
-@import "assets/tabulator.css";
+@import 'assets/base.css';
+@import 'assets/tabulator.css';
 </style>

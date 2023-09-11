@@ -1,11 +1,11 @@
 <script setup>
-import { inject, computed, provide } from "vue";
+import { inject, computed, provide } from 'vue';
 const props = defineProps({
   title: String,
 });
-const selectedTitle = inject("selectedTitle");
-const isVisible = computed(() => selectedTitle.value === props.title)
-provide("isVisible", isVisible);
+const selectedTitle = inject('selectedTitle');
+const isVisible = computed(() => selectedTitle.value === props.title);
+provide('isVisible', isVisible);
 </script>
 
 <template>

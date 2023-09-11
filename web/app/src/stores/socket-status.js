@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
-import { useNotifs } from '@/stores/notifications'
+import { defineStore } from 'pinia';
+import { useNotifs } from '@/stores/notifications';
 
 /**
  * Status of the SocketIO/Websocket connection to Flamenco Manager.
@@ -12,7 +12,7 @@ export const useSocketStatus = defineStore('socket-status', {
     wasEverDisconnected: false,
 
     /** @type {string} */
-    message: "",
+    message: '',
   }),
   actions: {
     /**
@@ -21,8 +21,7 @@ export const useSocketStatus = defineStore('socket-status', {
      */
     disconnected(reason) {
       // Only patch the state if it actually will change.
-      if (!this.isConnected)
-        return;
+      if (!this.isConnected) return;
       this._get_notifs().add(`Connection to Flamenco Manager lost`);
       this.$patch({
         isConnected: false,
@@ -35,14 +34,13 @@ export const useSocketStatus = defineStore('socket-status', {
      */
     connected() {
       // Only patch the state if it actually will change.
-      if (this.isConnected)
-        return;
+      if (this.isConnected) return;
 
       if (this.wasEverDisconnected)
-        this._get_notifs().add("Connection to Flamenco Manager established");
+        this._get_notifs().add('Connection to Flamenco Manager established');
       this.$patch({
         isConnected: true,
-        message: "",
+        message: '',
       });
     },
 
@@ -53,6 +51,6 @@ export const useSocketStatus = defineStore('socket-status', {
       // that'll cause the Notifications popover to be handled at the app-global
       // level, instead of per view, creating a better place to put this logic.
       return useNotifs();
-    }
-  }
-})
+    },
+  },
+});

@@ -1,9 +1,9 @@
-import { DateTime } from "luxon";
+import { DateTime } from 'luxon';
 
 const relativeTimeDefaultOptions = {
   thresholdDays: 14,
   format: DateTime.DATE_MED_WITH_WEEKDAY,
-}
+};
 
 /**
  * Convert the given timestamp to a Luxon time object.
@@ -29,16 +29,14 @@ export function relativeTime(timestamp, options) {
 
   const now = DateTime.local();
   const ageInDays = now.diff(parsedTimestamp).as('days');
-  if (ageInDays > options.format)
-    return parsedTimestamp.toLocaleString(options.format);
-  return parsedTimestamp.toRelative({style: "narrow"});
+  if (ageInDays > options.format) return parsedTimestamp.toLocaleString(options.format);
+  return parsedTimestamp.toRelative({ style: 'narrow' });
 }
 
 export function shortened(timestamp) {
   const parsedTimestamp = parseTimestamp(timestamp);
   const now = DateTime.local();
   const ageInHours = now.diff(parsedTimestamp).as('hours');
-  if (ageInHours < 24)
-    return parsedTimestamp.toLocaleString(DateTime.TIME_24_SIMPLE);
+  if (ageInHours < 24) return parsedTimestamp.toLocaleString(DateTime.TIME_24_SIMPLE);
   return parsedTimestamp.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY);
 }

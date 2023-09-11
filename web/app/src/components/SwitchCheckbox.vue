@@ -1,7 +1,7 @@
 <template>
   <label :title="title">
     <span class="switch">
-      <input type="checkbox" :checked="isChecked" @change="$emit('switchToggle')">
+      <input type="checkbox" :checked="isChecked" @change="$emit('switchToggle')" />
       <span class="slider round"></span>
     </span>
     <span class="switch-label">{{ label }}</span>
@@ -13,7 +13,6 @@ const props = defineProps(['isChecked', 'label', 'title']);
 </script>
 
 <style scoped>
-
 label {
   display: inline-block;
 }
@@ -38,20 +37,20 @@ label {
   right: 0;
   bottom: 0;
   background-color: var(--color-text-muted);
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 10px;
   width: 10px;
   left: 4px;
   bottom: 2px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
@@ -80,5 +79,4 @@ input:checked + .slider:before {
   margin-left: 0.5rem;
   cursor: pointer;
 }
-
 </style>

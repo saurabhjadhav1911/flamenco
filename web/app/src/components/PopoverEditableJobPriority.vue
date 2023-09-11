@@ -9,12 +9,10 @@
         <button @click="togglePopover">&#10006;</button>
       </div>
       <div class="popover-form">
-        <input type="number" v-model="priorityState">
+        <input type="number" v-model="priorityState" />
         <button @click="updateJobPriority" class="btn-primary">Set</button>
       </div>
-      <div class="input-help-text">
-        Range 1-100.
-      </div>
+      <div class="input-help-text">Range 1-100.</div>
       <div class="popover-error" v-if="errorMessage">
         <span>{{ errorMessage }}</span>
       </div>
@@ -26,12 +24,12 @@
 import { ref } from 'vue';
 
 import { useNotifs } from '@/stores/notifications';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 import { JobsApi, JobPriorityChange } from '@/manager-api';
 
 const props = defineProps({
   jobId: String,
-  priority: Number
+  priority: Number,
 });
 
 // Init notification state
@@ -46,9 +44,10 @@ const errorMessage = ref('');
 function updateJobPriority() {
   const jobPriorityChange = new JobPriorityChange(priorityState.value);
   const jobsAPI = new JobsApi(getAPIClient());
-  return jobsAPI.setJobPriority(props.jobId, jobPriorityChange)
+  return jobsAPI
+    .setJobPriority(props.jobId, jobPriorityChange)
     .then(() => {
-      notifs.add(`Updated job priority to ${priorityState.value}`)
+      notifs.add(`Updated job priority to ${priorityState.value}`);
       showPopover.value = false;
       errorMessage.value = '';
     })
@@ -122,7 +121,7 @@ function togglePopover() {
 
 /* Save/Set button. */
 .popover-form button {
-  flex: 1
+  flex: 1;
 }
 
 .input-help-text {

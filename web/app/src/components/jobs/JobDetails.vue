@@ -7,7 +7,7 @@
     <TabsWrapper @clicked-job-details-tab="emit_reshuffled_delayed">
       <TabItem title="Job Settings">
         <dl v-if="hasSettings">
-          <template v-for="value, key in settingsToDisplay">
+          <template v-for="(value, key) in settingsToDisplay">
             <dt :class="`field-${key}`" :title="key">{{ key }}</dt>
             <dd>{{ value }}</dd>
           </template>
@@ -18,7 +18,7 @@
       </TabItem>
       <TabItem title="Metadata">
         <dl v-if="hasMetadata">
-          <template v-for="value, key in jobData.metadata">
+          <template v-for="(value, key) in jobData.metadata">
             <dt :class="`field-${key}`" :title="key">{{ key }}</dt>
             <dd>{{ value }}</dd>
           </template>
@@ -30,18 +30,17 @@
       <TabItem title="Details">
         <dl>
           <dt class="field-name" title="ID">ID</dt>
-          <dd><span @click="copyElementText" class="click-to-copy">{{ jobData.id }}</span></dd>
+          <dd>
+            <span @click="copyElementText" class="click-to-copy">{{ jobData.id }}</span>
+          </dd>
 
           <template v-if="workerTag">
             <!-- TODO: fetch tag name and show that instead, and allow editing of the tag. -->
             <dt class="field-name" title="Worker Tag">Tag</dt>
             <dd :title="workerTag.description">
-              <span
-                @click="copyElementData"
-                class="click-to-copy"
-                :data-clipboard="workerTag.id"
-                >{{ workerTag.name }}</span
-              >
+              <span @click="copyElementData" class="click-to-copy" :data-clipboard="workerTag.id">{{
+                workerTag.name
+              }}</span>
             </dd>
           </template>
 
@@ -49,7 +48,9 @@
           <dd>{{ jobData.name }}</dd>
 
           <dt class="field-status" title="Status">Status</dt>
-          <dd class="field-status-label" :class="'status-' + jobData.status">{{ jobData.status }}</dd>
+          <dd class="field-status-label" :class="'status-' + jobData.status">
+            {{ jobData.status }}
+          </dd>
 
           <dt class="field-type" title="Type">Type</dt>
           <dd>{{ jobType ? jobType.label : jobData.type }}</dd>
@@ -87,24 +88,24 @@
 </template>
 
 <script>
-import * as datetime from "@/datetime";
+import * as datetime from '@/datetime';
 import * as API from '@/manager-api';
-import { getAPIClient } from "@/api-client";
-import LastRenderedImage from '@/components/jobs/LastRenderedImage.vue'
-import Blocklist from './Blocklist.vue'
-import TabItem from '@/components/TabItem.vue'
-import TabsWrapper from '@/components/TabsWrapper.vue'
-import PopoverEditableJobPriority from '@/components/PopoverEditableJobPriority.vue'
+import { getAPIClient } from '@/api-client';
+import LastRenderedImage from '@/components/jobs/LastRenderedImage.vue';
+import Blocklist from './Blocklist.vue';
+import TabItem from '@/components/TabItem.vue';
+import TabsWrapper from '@/components/TabsWrapper.vue';
+import PopoverEditableJobPriority from '@/components/PopoverEditableJobPriority.vue';
 import { copyElementText, copyElementData } from '@/clipboard';
-import { useWorkers } from '@/stores/workers'
+import { useWorkers } from '@/stores/workers';
 import { useNotifs } from '@/stores/notifications';
 
 export default {
   props: [
-    "jobData", // Job data to show.
+    'jobData', // Job data to show.
   ],
   emits: [
-    "reshuffled", // Emitted when the size of this component may have changed. Used to resize other components in response.
+    'reshuffled', // Emitted when the size of this component may have changed. Used to resize other components in response.
   ],
   components: {
     LastRenderedImage,
@@ -192,9 +193,12 @@ export default {
       if (objectEmpty(this.jobType) || this.jobType.name != newJobData.type) {
         this._clearJobSettings(); // They should only be shown when the type info is known.
 
-        this.jobsApi.getJobType(newJobData.type)
+        this.jobsApi
+          .getJobType(newJobData.type)
           .then(this.onJobTypeLoaded)
-          .catch((error) => { console.warn("error fetching job type:", error) });
+          .catch((error) => {
+            console.warn('error fetching job type:', error);
+          });
       } else {
         this._setJobSettings(newJobData.settings);
       }
@@ -205,8 +209,7 @@ export default {
 
       // Construct a lookup table for the settings.
       const jobTypeSettings = {};
-      for (let setting of jobType.settings)
-        jobTypeSettings[setting.key] = setting;
+      for (let setting of jobType.settings) jobTypeSettings[setting.key] = setting;
       this.jobTypeSettings = jobTypeSettings;
 
       if (this.jobData) {
@@ -227,7 +230,7 @@ export default {
       }
 
       if (objectEmpty(this.jobTypeSettings)) {
-        console.warn("empty job type settings");
+        console.warn('empty job type settings');
         this._clearJobSettings();
         return;
       }
@@ -255,7 +258,9 @@ export default {
       this.$emit('reshuffled');
     },
     emit_reshuffled_delayed() {
-      const reshuffle = () => { this.$emit('reshuffled'); }
+      const reshuffle = () => {
+        this.$emit('reshuffled');
+      };
 
       // Changing tabs requires two sequential "reshuffled" events, at least it
       // does on Firefox. Not sure what the reason is, but it works to get rid
@@ -269,7 +274,7 @@ export default {
 
 <style scoped>
 /* Prevent fields with long IDs from overflowing. */
-.field-id+dd {
+.field-id + dd {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -1,17 +1,17 @@
 <script setup>
-import { ref, watch } from 'vue'
-import NotificationList from './NotificationList.vue'
-import TaskLog from './TaskLog.vue'
-import ConnectionStatus from '@/components/ConnectionStatus.vue'
+import { ref, watch } from 'vue';
+import NotificationList from './NotificationList.vue';
+import TaskLog from './TaskLog.vue';
+import ConnectionStatus from '@/components/ConnectionStatus.vue';
 
-const emit = defineEmits(['clickClose'])
+const emit = defineEmits(['clickClose']);
 
-const initialTab = localStorage.getItem("footer-popover-active-tab") || 'NotificationList';
-const currentTab = ref(initialTab)
-const tabs = { NotificationList, TaskLog }
+const initialTab = localStorage.getItem('footer-popover-active-tab') || 'NotificationList';
+const currentTab = ref(initialTab);
+const tabs = { NotificationList, TaskLog };
 
 watch(currentTab, async (newTab) => {
-  localStorage.setItem("footer-popover-active-tab", newTab);
+  localStorage.setItem('footer-popover-active-tab', newTab);
 });
 
 function showTaskLogTail() {
@@ -27,22 +27,17 @@ defineExpose({
     <nav>
       <ul>
         <li
-          :class='["footer-tab", {"active": currentTab == "NotificationList"}]'
+          :class="['footer-tab', { active: currentTab == 'NotificationList' }]"
           @click="currentTab = 'NotificationList'">
-            Notifications
+          Notifications
         </li>
         <li
-          :class='["footer-tab", {"active": currentTab == "TaskLog"}]'
+          :class="['footer-tab', { active: currentTab == 'TaskLog' }]"
           @click="currentTab = 'TaskLog'">
-            Task Log
+          Task Log
         </li>
         <connection-status />
-        <li
-          class="collapse"
-          @click="emit('clickClose')"
-          title="Collapse">
-          &#10005;
-        </li>
+        <li class="collapse" @click="emit('clickClose')" title="Collapse">&#10005;</li>
       </ul>
     </nav>
     <component :is="tabs[currentTab]" class="tab"></component>
@@ -54,7 +49,7 @@ footer {
   background-color: var(--color-background-column);
   border-radius: var(--border-radius);
   bottom: var(--grid-gap);
-  box-shadow: 0 0 5rem rgba(0, 0, 0, .66), 0 0 1.33rem rgba(0, 0, 0, .66);
+  box-shadow: 0 0 5rem rgba(0, 0, 0, 0.66), 0 0 1.33rem rgba(0, 0, 0, 0.66);
   left: var(--grid-gap);
   padding: var(--spacer-xs) var(--spacer-sm) var(--spacer-sm);
   position: fixed;
@@ -77,7 +72,8 @@ footer nav ul li {
   color: var(--color-text-hint);
   cursor: pointer;
   padding: var(--spacer-sm) 0;
-  transition: border-color var(--transition-speed) ease-in-out, color var(--transition-speed) ease-in-out;
+  transition: border-color var(--transition-speed) ease-in-out,
+    color var(--transition-speed) ease-in-out;
   user-select: none;
 }
 
@@ -98,7 +94,6 @@ footer nav ul li.active {
   font-size: 1.5rem;
   padding: 0 var(--spacer-sm) 0;
 }
-
 
 footer button.footer-tab {
   border: none;

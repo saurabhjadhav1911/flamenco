@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 // Maximum number of task log lines that will be stored.
 const capacity = 1000;
@@ -17,7 +17,7 @@ export const useTaskLog = defineStore('taskLog', {
      * @type {{ id: Number, line: string }[]} */
     history: [],
     /** @type { id: Number, line: string } */
-    last: "",
+    last: '',
 
     lastID: 0,
   }),
@@ -52,8 +52,7 @@ export const useTaskLog = defineStore('taskLog', {
       if (!logChunk) return;
 
       const lines = logChunk.trimEnd().split('\n');
-      if (lines.length == 0)
-        return;
+      if (lines.length == 0) return;
 
       if (lines.length > capacity) {
         // Only keep the `capacity` last lines, so that adding them to the
@@ -73,7 +72,7 @@ export const useTaskLog = defineStore('taskLog', {
         }
 
         if (entry == null) {
-          console.warn("taskLog.addChunk: there were lines to add, but no entry created. Weird.");
+          console.warn('taskLog.addChunk: there were lines to add, but no entry created. Weird.');
           return;
         }
 
@@ -84,7 +83,7 @@ export const useTaskLog = defineStore('taskLog', {
     },
 
     _createEntry(state, line) {
-      return {id: this._generateID(state), line: line};
+      return { id: this._generateID(state), line: line };
     },
 
     /**
@@ -105,6 +104,6 @@ export const useTaskLog = defineStore('taskLog', {
     },
     _generateID(state) {
       return ++state.lastID;
-    }
+    },
   },
-})
+});

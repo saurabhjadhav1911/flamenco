@@ -4,7 +4,9 @@
   <template v-if="hasTaskData">
     <dl>
       <dt class="field-id" title="ID">ID</dt>
-      <dd><span @click="copyElementText" class="click-to-copy">{{ taskData.id }}</span></dd>
+      <dd>
+        <span @click="copyElementText" class="click-to-copy">{{ taskData.id }}</span>
+      </dd>
 
       <dt class="field-name" title="Name">Name</dt>
       <dd>{{ taskData.name }}</dd>
@@ -57,9 +59,15 @@
     <h3 class="sub-title">Task Log</h3>
     <div class="btn-bar-group">
       <section class="btn-bar tasklog">
-        <button class="btn" @click="$emit('showTaskLogTail')" title="Open the task log tail in the footer.">
-          Follow Task Log</button>
-        <button class="btn" @click="openFullLog" title="Opens the task log in a new window.">Open Full Log</button>
+        <button
+          class="btn"
+          @click="$emit('showTaskLogTail')"
+          title="Open the task log tail in the footer.">
+          Follow Task Log
+        </button>
+        <button class="btn" @click="openFullLog" title="Opens the task log in a new window.">
+          Open Full Log
+        </button>
       </section>
     </div>
   </template>
@@ -70,20 +78,20 @@
 </template>
 
 <script>
-import * as datetime from "@/datetime";
+import * as datetime from '@/datetime';
 import { JobsApi } from '@/manager-api';
 import { backendURL } from '@/urls';
-import { getAPIClient } from "@/api-client";
-import { useNotifs } from "@/stores/notifications";
+import { getAPIClient } from '@/api-client';
+import { useNotifs } from '@/stores/notifications';
 import LinkWorker from '@/components/LinkWorker.vue';
 import { copyElementText } from '@/clipboard';
 
 export default {
   props: [
-    "taskData", // Task data to show.
+    'taskData', // Task data to show.
   ],
   emits: [
-    "showTaskLogTail", // Emitted when the user presses the "follow task log" button.
+    'showTaskLogTail', // Emitted when the user presses the "follow task log" button.
   ],
   components: { LinkWorker },
   data() {
@@ -107,20 +115,21 @@ export default {
     openFullLog() {
       const taskUUID = this.taskData.id;
 
-      this.jobsApi.fetchTaskLogInfo(taskUUID)
+      this.jobsApi
+        .fetchTaskLogInfo(taskUUID)
         .then((logInfo) => {
           if (logInfo == null) {
-            this.notifs.add(`Task ${taskUUID} has no log yet`)
+            this.notifs.add(`Task ${taskUUID} has no log yet`);
             return;
           }
           console.log(`task ${taskUUID} log info:`, logInfo);
 
           const url = backendURL(logInfo.url);
-          window.open(url, "_blank");
+          window.open(url, '_blank');
         })
         .catch((error) => {
           console.log(`Error fetching task ${taskUUID} log info:`, error);
-        })
+        });
     },
   },
 };
@@ -128,7 +137,7 @@ export default {
 
 <style scoped>
 /* Prevent fields with long IDs from overflowing. */
-.field-id+dd {
+.field-id + dd {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

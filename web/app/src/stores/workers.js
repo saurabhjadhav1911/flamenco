@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 import { WorkerMgtApi } from '@/manager-api';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 
 // 'use' prefix is idiomatic for Pinia stores.
 // See https://pinia.vuejs.org/core-concepts/
@@ -13,7 +13,7 @@ export const useWorkers = defineStore('workers', {
      * ID of the active worker. Easier to query than `activeWorker ? activeWorker.id : ""`.
      * @type {string}
      */
-    activeWorkerID: "",
+    activeWorkerID: '',
 
     /** @type {API.WorkerTag[]} */
     tags: [],
@@ -43,7 +43,7 @@ export const useWorkers = defineStore('workers', {
     deselectAllWorkers() {
       this.$patch({
         activeWorker: null,
-        activeWorkerID: "",
+        activeWorkerID: '',
       });
     },
     /**

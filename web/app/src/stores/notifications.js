@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 /** Time after which a notification is hidden. */
 const MESSAGE_HIDE_DELAY_MS = 5000;
@@ -17,7 +17,7 @@ export const useNotifs = defineStore('notifications', {
      * @type {{ id: Number, msg: string, time: Date }[]} */
     history: [],
     /** @type { id: Number, msg: string, time: Date } */
-    last: "",
+    last: '',
 
     hideTimerID: 0,
     lastID: 0,
@@ -31,7 +31,7 @@ export const useNotifs = defineStore('notifications', {
      * @param {string} message
      */
     add(message) {
-      const notif = {id: this._generateID(), msg: message, time: new Date()};
+      const notif = { id: this._generateID(), msg: message, time: new Date() };
       this.history.push(notif);
       this.last = notif;
       this._prune();
@@ -42,19 +42,17 @@ export const useNotifs = defineStore('notifications', {
      * @param {API.SocketIOJobUpdate} jobUpdate Job update received via SocketIO.
      */
     addJobUpdate(jobUpdate) {
-      let msg = "Job";
+      let msg = 'Job';
       if (jobUpdate.name) msg += ` ${jobUpdate.name}`;
       if (jobUpdate.was_deleted) {
-        msg += " was deleted";
-      }
-      else if (jobUpdate.previous_status && jobUpdate.previous_status != jobUpdate.status) {
+        msg += ' was deleted';
+      } else if (jobUpdate.previous_status && jobUpdate.previous_status != jobUpdate.status) {
         msg += ` changed status ${jobUpdate.previous_status} ➜ ${jobUpdate.status}`;
-      }
-      else {
+      } else {
         // Don't bother logging just "Job" + its name, as it conveys no info.
         return;
       }
-      this.add(msg)
+      this.add(msg);
     },
 
     /**
@@ -68,19 +66,19 @@ export const useNotifs = defineStore('notifications', {
       if (taskUpdate.activity) {
         msg += `: ${taskUpdate.activity}`;
       }
-      this.add(msg)
+      this.add(msg);
     },
 
     /**
      * @param {API.SocketIOWorkerUpdate} workerUpdate Worker update received via SocketIO.
      */
-     addWorkerUpdate(workerUpdate) {
+    addWorkerUpdate(workerUpdate) {
       let msg = `Worker ${workerUpdate.name}`;
       if (workerUpdate.previous_status && workerUpdate.previous_status != workerUpdate.status) {
         msg += ` changed status ${workerUpdate.previous_status} ➜ ${workerUpdate.status}`;
         this.add(msg);
       } else if (workerUpdate.deleted_at) {
-        msg += " was removed from the system";
+        msg += ' was removed from the system';
         this.add(msg);
       }
     },
@@ -98,11 +96,11 @@ export const useNotifs = defineStore('notifications', {
     _hideMessage() {
       this.$patch({
         hideTimerID: 0,
-        last: "",
+        last: '',
       });
     },
     _generateID() {
       return ++this.lastID;
-    }
+    },
   },
-})
+});

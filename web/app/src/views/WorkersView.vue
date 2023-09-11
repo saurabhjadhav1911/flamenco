@@ -1,16 +1,23 @@
 <template>
   <div class="col col-workers-list">
-    <workers-table ref="workersTable" :activeWorkerID="workerID" @tableRowClicked="onTableWorkerClicked" />
+    <workers-table
+      ref="workersTable"
+      :activeWorkerID="workerID"
+      @tableRowClicked="onTableWorkerClicked" />
   </div>
   <div class="col col-workers-details">
     <worker-details :workerData="workers.activeWorker" />
   </div>
   <footer class="app-footer">
     <notification-bar />
-    <update-listener ref="updateListener"
-      mainSubscription="allWorkers" extraSubscription="allWorkerTags"
-      @workerUpdate="onSIOWorkerUpdate" @workerTagUpdate="onSIOWorkerTagsUpdate"
-      @sioReconnected="onSIOReconnected" @sioDisconnected="onSIODisconnected" />
+    <update-listener
+      ref="updateListener"
+      mainSubscription="allWorkers"
+      extraSubscription="allWorkerTags"
+      @workerUpdate="onSIOWorkerUpdate"
+      @workerTagUpdate="onSIOWorkerTagsUpdate"
+      @sioReconnected="onSIOReconnected"
+      @sioDisconnected="onSIODisconnected" />
   </footer>
 </template>
 
@@ -26,18 +33,18 @@
 
 <script>
 import { WorkerMgtApi } from '@/manager-api';
-import { useNotifs } from '@/stores/notifications'
+import { useNotifs } from '@/stores/notifications';
 import { useWorkers } from '@/stores/workers';
-import { getAPIClient } from "@/api-client";
+import { getAPIClient } from '@/api-client';
 
-import NotificationBar from '@/components/footer/NotificationBar.vue'
-import UpdateListener from '@/components/UpdateListener.vue'
-import WorkerDetails from '@/components/workers/WorkerDetails.vue'
-import WorkersTable from '@/components/workers/WorkersTable.vue'
+import NotificationBar from '@/components/footer/NotificationBar.vue';
+import UpdateListener from '@/components/UpdateListener.vue';
+import WorkerDetails from '@/components/workers/WorkerDetails.vue';
+import WorkersTable from '@/components/workers/WorkersTable.vue';
 
 export default {
   name: 'WorkersView',
-  props: ["workerID"], // provided by Vue Router.
+  props: ['workerID'], // provided by Vue Router.
   components: {
     NotificationBar,
     UpdateListener,
@@ -69,27 +76,24 @@ export default {
       this.$refs.workersTable.onReconnected();
       this._fetchWorker(this.workerID);
     },
-    onSIODisconnected(reason) {
-    },
+    onSIODisconnected(reason) {},
     onSIOWorkerUpdate(workerUpdate) {
       this.notifs.addWorkerUpdate(workerUpdate);
 
       if (this.$refs.workersTable) {
         this.$refs.workersTable.processWorkerUpdate(workerUpdate);
       }
-      if (this.workerID != workerUpdate.id)
-        return;
+      if (this.workerID != workerUpdate.id) return;
 
       if (workerUpdate.deleted_at) {
-        this._routeToWorker("");
+        this._routeToWorker('');
         return;
       }
 
       this._fetchWorker(this.workerID);
     },
     onSIOWorkerTagsUpdate(workerTagsUpdate) {
-      this.workers.refreshTags()
-        .then(() => this._fetchWorker(this.workerID));
+      this.workers.refreshTags().then(() => this._fetchWorker(this.workerID));
     },
 
     onTableWorkerClicked(rowData) {
@@ -115,9 +119,8 @@ export default {
         return;
       }
 
-      return this.api.fetchWorker(workerID)
-        .then((worker) => this.workers.setActiveWorker(worker));
+      return this.api.fetchWorker(workerID).then((worker) => this.workers.setActiveWorker(worker));
     },
   },
-}
+};
 </script>

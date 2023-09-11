@@ -5,12 +5,12 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 // 'worker' should be a Worker or TaskWorker (see schemas defined in `flamenco-openapi.yaml`).
 const props = defineProps(['worker']);
 const workerAddress = computed(() => {
   if (props.worker.address) return `(${props.worker.address})`;
-  return "";
+  return '';
 });
 </script>
