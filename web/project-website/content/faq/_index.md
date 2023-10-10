@@ -83,6 +83,17 @@ even add your own custom job settings like a sequence identifier and use that to
 determine the location of rendered files.
 
 
+## Can Flamenco render a single image across multiple Workers?
+
+Flamenco does not support this at the moment. In theory this would be possible
+with a [custom job type][jobtypes]. With the Cycles render engine it might be
+possible it set up a set of tasks that each render a specific chunk of samples,
+and then merge those samples together for the final image.
+
+If you have made a custom job type that does this, please contact us to get it
+added to the [third-party jobs section][thirdpartyjobs].
+
+
 ## Can I use the Compositor to output multiple EXR files or Passes?
 
 This is possible with Flamenco, but it takes a bit of work. Although it's not
