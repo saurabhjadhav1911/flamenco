@@ -25,6 +25,7 @@ bugs in actually-released versions.
 - Security updates of some dependencies:
   - https://pkg.go.dev/vuln/GO-2023-1989
   - https://pkg.go.dev/vuln/GO-2023-1990
+  - https://pkg.go.dev/vuln/GO-2023-2102
 
 
 ## 3.2 - released 2023-02-21
