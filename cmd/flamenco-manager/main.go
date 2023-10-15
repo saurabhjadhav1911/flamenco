@@ -39,6 +39,7 @@ import (
 	"projects.blender.org/studio/flamenco/internal/own_url"
 	"projects.blender.org/studio/flamenco/internal/upnp_ssdp"
 	"projects.blender.org/studio/flamenco/pkg/shaman"
+	"projects.blender.org/studio/flamenco/pkg/sysinfo"
 )
 
 var cliArgs struct {
@@ -58,11 +59,17 @@ const (
 func main() {
 	output := zerolog.ConsoleWriter{Out: colorable.NewColorableStdout(), TimeFormat: time.RFC3339}
 	log.Logger = log.Output(output)
+
+	osDetail, err := sysinfo.Description()
+	if err != nil {
+		osDetail = err.Error()
+	}
 	log.Info().
 		Str("version", appinfo.ApplicationVersion).
 		Str("git", appinfo.ApplicationGitHash).
 		Str("releaseCycle", appinfo.ReleaseCycle).
 		Str("os", runtime.GOOS).
+		Str("osDetail", osDetail).
 		Str("arch", runtime.GOARCH).
 		Msgf("starting %v", appinfo.ApplicationName)
 

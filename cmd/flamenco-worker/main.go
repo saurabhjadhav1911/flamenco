@@ -23,6 +23,7 @@ import (
 	"projects.blender.org/studio/flamenco/internal/appinfo"
 	"projects.blender.org/studio/flamenco/internal/worker"
 	"projects.blender.org/studio/flamenco/internal/worker/cli_runner"
+	"projects.blender.org/studio/flamenco/pkg/sysinfo"
 )
 
 var (
@@ -61,12 +62,18 @@ func main() {
 	output := zerolog.ConsoleWriter{Out: colorable.NewColorableStdout(), TimeFormat: time.RFC3339}
 	log.Logger = log.Output(output)
 
+	osDetail, err := sysinfo.Description()
+	if err != nil {
+		osDetail = err.Error()
+	}
+
 	log.Info().
 		Str("version", appinfo.ApplicationVersion).
 		Str("git", appinfo.ApplicationGitHash).
 		Str("releaseCycle", appinfo.ReleaseCycle).
-		Str("OS", runtime.GOOS).
-		Str("ARCH", runtime.GOARCH).
+		Str("os", runtime.GOOS).
+		Str("osDetail", osDetail).
+		Str("arch", runtime.GOARCH).
 		Int("pid", os.Getpid()).
 		Msgf("starting %v Worker", appinfo.ApplicationName)
 	configLogLevel()
