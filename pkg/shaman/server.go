@@ -25,6 +25,7 @@ package shaman
 import (
 	"context"
 	"io"
+	"runtime"
 	"sync"
 
 	"github.com/rs/zerolog/log"
@@ -34,6 +35,7 @@ import (
 	"projects.blender.org/studio/flamenco/pkg/shaman/fileserver"
 	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 	"projects.blender.org/studio/flamenco/pkg/shaman/jwtauth"
+	"projects.blender.org/studio/flamenco/pkg/sysinfo"
 )
 
 var ErrDoesNotExist = checkout.ErrDoesNotExist
@@ -58,6 +60,8 @@ func NewServer(conf config.Config, auther jwtauth.Authenticator) *Server {
 		return nil
 	}
 
+	checkPlatformSymlinkSupport()
+
 	if conf.StoragePath == "" {
 		log.Error().Interface("config", conf).Msg("shaman: no checkout path configured, unable to start")
 		return nil
@@ -79,6 +83,33 @@ func NewServer(conf config.Config, auther jwtauth.Authenticator) *Server {
 	}
 
 	return shamanServer
+}
+
+func checkPlatformSymlinkSupport() {
+	canSymlink, err := sysinfo.CanSymlink()
+	switch {
+	case err != nil:
+		log.Warn().AnErr("cause", err).
+			Msg("unable to determine whether this platform can use symlinks. " +
+				"Please report a bug about this: https://flamenco.blender.org/development/get-involved/")
+		return
+	case canSymlink:
+		return
+	}
+
+	osDetail, err := sysinfo.Description()
+	if err != nil {
+		log.Warn().AnErr("cause", err).
+			Msg("unable to find details of your operating system. " +
+				"Please report a bug about this: https://flamenco.blender.org/development/get-involved/")
+		return
+	}
+
+	log.Warn().
+		Str("os", runtime.GOOS).
+		Str("arch", runtime.GOARCH).
+		Str("osDetail", osDetail).
+		Msg("this platform does not reliably support symbolic links; using the Shaman system is not recommended")
 }
 
 // Go starts goroutines for background operations.
