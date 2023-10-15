@@ -36,6 +36,7 @@ import (
 	"projects.blender.org/studio/flamenco/pkg/shaman/config"
 	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
 	"projects.blender.org/studio/flamenco/pkg/shaman/jwtauth"
+	"projects.blender.org/studio/flamenco/pkg/shaman/testsupport"
 )
 
 func createTestShaman() (*Server, func()) {
@@ -116,6 +117,8 @@ func TestGCFindOldFiles(t *testing.T) {
 
 // Test of the lower-level functions of the garbage collector.
 func TestGCComponents(t *testing.T) {
+	testsupport.SkipTestIfUnableToSymlink(t)
+
 	server, cleanup := createTestShaman()
 	defer cleanup()
 
@@ -200,6 +203,8 @@ func TestGCComponents(t *testing.T) {
 
 // Test of the high-level GCStorage() function.
 func TestGarbageCollect(t *testing.T) {
+	testsupport.SkipTestIfUnableToSymlink(t)
+
 	server, cleanup := createTestShaman()
 	defer cleanup()
 

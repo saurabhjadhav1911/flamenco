@@ -9,9 +9,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"projects.blender.org/studio/flamenco/pkg/api"
 	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/testsupport"
 )
 
 func TestCheckout(t *testing.T) {
+	testsupport.SkipTestIfUnableToSymlink(t)
+
 	manager, cleanup := createTestManager()
 	defer cleanup()
 	ctx := context.Background()

@@ -36,6 +36,7 @@ import (
 	"projects.blender.org/studio/flamenco/pkg/api"
 	"projects.blender.org/studio/flamenco/pkg/shaman/config"
 	"projects.blender.org/studio/flamenco/pkg/shaman/filestore"
+	"projects.blender.org/studio/flamenco/pkg/shaman/testsupport"
 )
 
 func createTestManager() (*Manager, func()) {
@@ -46,6 +47,8 @@ func createTestManager() (*Manager, func()) {
 }
 
 func TestSymlinkToCheckout(t *testing.T) {
+	testsupport.SkipTestIfUnableToSymlink(t)
+
 	manager, cleanup := createTestManager()
 	defer cleanup()
 
@@ -101,6 +104,8 @@ func TestPrepareCheckout(t *testing.T) {
 }
 
 func TestEraseCheckout(t *testing.T) {
+	testsupport.SkipTestIfUnableToSymlink(t)
+
 	manager, cleanup := createTestManager()
 	defer cleanup()
 	ctx := context.Background()
