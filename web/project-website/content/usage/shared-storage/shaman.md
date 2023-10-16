@@ -53,13 +53,33 @@ Because of the use of *symbolic links* (also known as *symlinks*), using Shaman
 is only possible on systems that support those. These should be supported by the
 computers running Flamenco Manager and Workers.
 
-
 ### Windows
 
 The Shaman storage system uses _symbolic links_. On Windows the creation of
-symbolic links requires a change in security policy. Unfortunately, *Home*
-editions of Windows do not have a policy editor, but the freely available
-[Polsedit][polsedit] can be used on these editions.
+symbolic links requires a change in security policy. This can be done as
+follows:
+
+{{< tabs "shaman-windows" >}}
+{{< tab "Windows Home / Core" >}}
+
+On Windows Home (also known as "core"), you'll need to enable Developer Mode:
+
+1. Press the Windows key, type "*Developer settings*", and click Open or press
+   Enter.
+2. Click the slider under "*Developer Mode*" to turn it ON.
+
+See [Developer Mode][devmode] for more information, including some security implications.
+
+Alternatively you can use the freely available [Polsedit][polsedit] to enable
+the *Create Symbolic Links* security policy.
+
+[devmode]: https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
+[polsedit]: https://www.southsoftware.com/polsedit.html
+
+{{< /tab >}}
+{{< tab "Windows Pro / Enterprise" >}}
+
+On Windows Pro & Enterprise you need to enable a security policy.
 
 1. Press Win+R, in the popup type `secpol.msc`. Then click OK.
 2. In the _Local Security Policy_ window that opens, go to _Security Settings_ > _Local Policies_ > _User Rights Assignment_.
@@ -67,8 +87,12 @@ editions of Windows do not have a policy editor, but the freely available
 4. Double-click the item and add yourself (or the user running Flamenco Manager or the whole users group) to the list.
 5. Log out & back in again, or reboot the machine.
 
-[polsedit]: https://www.southsoftware.com/polsedit.html
+For more info see [the Microsoft documentation][secpol].
 
+[secpol]: https://learn.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/create-symbolic-links
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ### Linux
 

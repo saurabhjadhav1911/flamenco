@@ -109,7 +109,8 @@ func checkPlatformSymlinkSupport() {
 		Str("os", runtime.GOOS).
 		Str("arch", runtime.GOARCH).
 		Str("osDetail", osDetail).
-		Msg("this platform does not reliably support symbolic links; using the Shaman system is not recommended")
+		Msg("this platform does not reliably support symbolic links, " +
+			"see https://flamenco.blender.org/usage/shared-storage/shaman/#requirements")
 }
 
 // Go starts goroutines for background operations.
