@@ -117,6 +117,41 @@ Finally `mkdir /media/flamenco` and `sudo mount /media/flamenco` should get thin
 
 The above info was obtained from [Ask Ubuntu](https://askubuntu.com/a/157140).
 
+## Enabling Symlinks on SAMBA
+
+If you're using SAMBA to host your Shared Storage, you'll also need to enable symlinks
+on your `/etc/samba/smb.conf` file.
+
+To do this you must add the `follow symlinks` and `wide links` options to your globals,
+as exemplified below.
+
+```
+[global]
+# Symlink Parameters
+follow symlinks = yes
+wide links = yes
+unix extensions = no
+allow insecure wide links = no
+```
+
+You may try adding these parameters to your share sub-section only insteadm,
+if you need a more restricted configuration.
+
+```
+[global]
+allow insecure wide links = yes
+unix extensions = no
+
+[share]
+follow symlinks = yes
+wide links = yes
+```
+
+This configuration has been tested with both Windows and Linux clients working together
+over the same shared storage.
+
+The following info was obtained from [UNIX Stack Exchange](https://unix.stackexchange.com/questions/5120/how-do-you-make-samba-follow-symlink-outside-the-shared-path)
+
 ## Enabling Shaman
 
 In `flamenco-manager.yaml`, set `shaman.enabled: true` like this:
