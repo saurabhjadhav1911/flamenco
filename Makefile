@@ -393,9 +393,9 @@ release-package-windows:
 .PHONY: publish-release-packages
 publish-release-packages:
 	$(MAKE) -s check-environment
-	cd dist; sha256sum ${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_WINDOWS} > ${RELEASE_PACKAGE_SHAFILE}
+	cd dist; sha256sum ${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_ARM64} ${RELEASE_PACKAGE_WINDOWS} > ${RELEASE_PACKAGE_SHAFILE}
 	cd dist; rsync -va \
-		${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_WINDOWS} ${RELEASE_PACKAGE_SHAFILE} \
+		${RELEASE_PACKAGE_LINUX} ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_ARM64} ${RELEASE_PACKAGE_WINDOWS} ${RELEASE_PACKAGE_SHAFILE} \
 		${WEBSERVER_SSH}:${WEBSERVER_ROOT}/downloads/
 
 .PHONY: application version flamenco-manager flamenco-worker flamenco-manager_race flamenco-worker_race webapp webapp-static generate generate-go generate-py with-deps swagger-ui list-embedded test clean clean-webapp-static
