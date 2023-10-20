@@ -187,6 +187,7 @@ Class | Method | HTTP request | Description
  - [SocketIOSubscriptionType](flamenco/manager/docs/SocketIOSubscriptionType.md)
  - [SocketIOTaskLogUpdate](flamenco/manager/docs/SocketIOTaskLogUpdate.md)
  - [SocketIOTaskUpdate](flamenco/manager/docs/SocketIOTaskUpdate.md)
+ - [SocketIOWorkerTagUpdate](flamenco/manager/docs/SocketIOWorkerTagUpdate.md)
  - [SocketIOWorkerUpdate](flamenco/manager/docs/SocketIOWorkerUpdate.md)
  - [SubmittedJob](flamenco/manager/docs/SubmittedJob.md)
  - [Task](flamenco/manager/docs/Task.md)
