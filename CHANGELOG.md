@@ -6,21 +6,21 @@ bugs in actually-released versions.
 
 ## 3.3 - in development
 
+- Add Worker Tag support. Workers can be members of any number of tags. Workers will only work on jobs that are assigned to that tag. Jobs that do not have a tag will be available to all workers, regardless of their tag assignment. As a result, tagless workers will only work on tagless jobs.
+- Add support for finding the top-level 'project' directory. When submitting files to Flamenco, the add-on will try to retain the directory structure of your Blender project as precisely as possible. This new feature allows the add-on to find the top-level directory of your project by finding a `.blender_project`, `.git`, or `.subversion` directory. This can be configured in the add-on preferences.
+- Worker status is remembered when they sign off, so that workers when they come back online do so to the same state ([#99549](https://projects.blender.org/studio/flamenco/issues/99549)).
+- Job settings: make it possible for a setting to be "linked" to its automatic value. For job settings that have this new feature enabled, they will not be editable by default, and the setting will just use its `eval` expression to determine the value. This can be toggled by the user in Blender's submission interface, to still allow manual edits of the value when needed.
+- Job settings: add a description for the `eval` field. This is shown in the tooltip of the 'set to automatic value' button, to make it clear what that button will do.
+- Database integrity tests. These are always run at startup of Flamenco Manager, and by default run periodically every hour. This can be configured by adding/changing the `database_check_period: 1h` setting in `flamenco-manager.yaml`. Setting it to `0` will disable the periodic check. When a database consistency error is found, Flamenco Manager will immediately shut down.
+- Workers can be marked as 'restartable' by using the `-restart-exit-code N` commandline option. More info in the [Worker Actions documentation](https://flamenco.blender.org/usage/worker-actions/).
 - Upgrade bundled FFmpeg from 5.0 to 5.1.
 - Rename the add-on download to `flamenco-addon.zip` (it used to be `flamenco3-addon.zip`). It still contains the same files as before, and in Blender the name of the add-on has not changed.
 - Improve speed of queueing up >100 simultaneous job deletions.
 - Improve logging of job deletion.
-- Add Worker Tag support. Workers can be members of any number of tags. Workers will only work on jobs that are assigned to that tag. Jobs that do not have a tag will be available to all workers, regardless of their tag assignment. As a result, tagless workers will only work on tagless jobs.
 - Fix limitation where a job could have no more than 1000 tasks ([#104201](https://projects.blender.org/studio/flamenco/issues/104201))
-- Add support for finding the top-level 'project' directory. When submitting files to Flamenco, the add-on will try to retain the directory structure of your Blender project as precisely as possible. This new feature allows the add-on to find the top-level directory of your project by finding a `.blender_project`, `.git`, or `.subversion` directory. This can be configured in the add-on preferences.
-- Worker status is remembered when they sign off, so that workers when they come back online do so to the same state ([#99549](https://projects.blender.org/studio/flamenco/issues/99549)).
 - Nicer version display for non-release builds. Instead of `3.3-alpha0-v3.2-76-gdd34d538`, show `3.3-alpha0 (v3.2-76-gdd34d538)`.
-- Job settings: add a description for the `eval` field. This is shown in the tooltip of the 'set to automatic value' button, to make it clear what that button will do.
-- Job settings: make it possible for a setting to be "linked" to its automatic value. For job settings that have this new feature enabled, they will not be editable by default, and the setting will just use its `eval` expression to determine the value. This can be toggled by the user in Blender's submission interface, to still allow manual edits of the value when needed.
-- Database integrity tests. These are always run at startup of Flamenco Manager, and by default run periodically every hour. This can be configured by adding/changing the `database_check_period: 1h` setting in `flamenco-manager.yaml`. Setting it to `0` will disable the periodic check. When a database consistency error is found, Flamenco Manager will immediately shut down.
 - The webapp automatically reloads after a disconnect, when it reconnects to Flamenco Manager and sees the Manager version changed [#104235](https://projects.blender.org/studio/flamenco/pulls/104235).
 - Show the configured Flamenco Manager name in the webapp's browser window title.
-- Workers can be marked as 'restartable' by using the `-restart-exit-code N` commandline option. More info in the [Worker Actions documentation](https://flamenco.blender.org/usage/worker-actions/).
 - The `{timestamp}` placeholder in the render output path is now replaced with a local timestamp (rather than UTC).
 - Log more information about the operating system at startup. On Windows this includes the version & edition (like "Core" or "Professional"), and on Linux this includes the distribution, version, and kernel version.
 - Security updates of some dependencies:
