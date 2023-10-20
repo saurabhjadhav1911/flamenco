@@ -325,6 +325,8 @@ RELEASE_PACKAGE_LINUX := ${RELEASE_PACKAGE_LINUX_BASE}.tar.gz
 
 RELEASE_PACKAGE_DARWIN_BASE := flamenco-${VERSION}-macos-amd64
 RELEASE_PACKAGE_DARWIN := ${RELEASE_PACKAGE_DARWIN_BASE}.tar.gz
+RELEASE_PACKAGE_DARWIN_ARM64_BASE := flamenco-${VERSION}-macos-arm64
+RELEASE_PACKAGE_DARWIN_ARM64 := ${RELEASE_PACKAGE_DARWIN_ARM64_BASE}.tar.gz
 
 RELEASE_PACKAGE_WINDOWS := flamenco-${VERSION}-windows-amd64.zip
 
@@ -355,15 +357,26 @@ release-package-linux:
 release-package-darwin:
 	$(MAKE) -s clean
 	$(MAKE) -s webapp-static
-	$(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=amd64
-	$(MAKE) -s flamenco-worker GOOS=darwin GOARCH=amd64
-	$(MAKE) -s tools-darwin
-	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
-	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_DARWIN_BASE}
-	cp tools/*-darwin* dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
-	cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_BASE}
-	rm -rf dist/${RELEASE_PACKAGE_DARWIN_BASE}
-	@echo "Done! Created ${RELEASE_PACKAGE_DARWIN}"
+
+# AMD64
+	# $(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=amd64
+	# $(MAKE) -s flamenco-worker GOOS=darwin GOARCH=amd64
+	# $(MAKE) -s tools-darwin
+	# mkdir -p dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
+	# cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_DARWIN_BASE}
+	# cp tools/*-darwin* dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
+	# cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_BASE}
+	# rm -rf dist/${RELEASE_PACKAGE_DARWIN_BASE}
+
+# ARM64, without tools because ffmpeg.org doesn't link to any official ARM64 binary.
+	$(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=arm64
+	$(MAKE) -s flamenco-worker GOOS=darwin GOARCH=arm64
+	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}
+	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}
+	cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN_ARM64} ${RELEASE_PACKAGE_DARWIN_ARM64_BASE}
+	rm -rf dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}
+
+	@echo "Done! Created ${RELEASE_PACKAGE_DARWIN} and ${RELEASE_PACKAGE_DARWIN_ARM64}"
 
 .PHONY: release-package-windows
 release-package-windows:
