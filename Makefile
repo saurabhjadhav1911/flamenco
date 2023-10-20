@@ -359,14 +359,14 @@ release-package-darwin:
 	$(MAKE) -s webapp-static
 
 # AMD64
-	# $(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=amd64
-	# $(MAKE) -s flamenco-worker GOOS=darwin GOARCH=amd64
-	# $(MAKE) -s tools-darwin
-	# mkdir -p dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
-	# cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_DARWIN_BASE}
-	# cp tools/*-darwin* dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
-	# cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_BASE}
-	# rm -rf dist/${RELEASE_PACKAGE_DARWIN_BASE}
+	$(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=amd64
+	$(MAKE) -s flamenco-worker GOOS=darwin GOARCH=amd64
+	$(MAKE) -s tools-darwin
+	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
+	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_DARWIN_BASE}
+	cp tools/*-darwin* dist/${RELEASE_PACKAGE_DARWIN_BASE}/tools
+	cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN} ${RELEASE_PACKAGE_DARWIN_BASE}
+	rm -rf dist/${RELEASE_PACKAGE_DARWIN_BASE}
 
 # ARM64, without tools because ffmpeg.org doesn't link to any official ARM64 binary.
 	$(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=arm64
