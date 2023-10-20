@@ -18,7 +18,7 @@ Then follow the steps below to get everything up & running.
 
 Most of Flamenco is made in Go.
 
-1. Install [Go 1.20 or newer](https://go.dev/).
+1. Install [Go 1.21 or newer](https://go.dev/).
 2. Optional: set the environment variable `GOPATH` to where you want Go to put its packages. Go will use `$HOME/go` by default.
 3. Ensure `$GOPATH/bin` is included in your `$PATH` environment variable. Run `go env GOPATH` if you're not sure what path to use.
 
@@ -33,7 +33,7 @@ and build the frontend files.
 It's recommended to install Node via Snap:
 
 ```
-sudo snap install node --classic --channel=16
+sudo snap install node --classic --channel=18
 ```
 
 If you install NodeJS in a different way, it may not be bundled with Yarn. In that case, run:
@@ -44,7 +44,7 @@ sudo npm install --global yarn
 
 {{< /tab >}}
 {{< tab "Windows" >}}
-Install [Node v16 LTS](https://nodejs.org/en/download/). Be sure to enable the "Automatically install the necessary tools" checkbox.
+Install [Node v18 LTS](https://nodejs.org/en/download/). Be sure to enable the "Automatically install the necessary tools" checkbox.
 
 Then install Yarn via:
 
@@ -56,7 +56,7 @@ npm install --global yarn
 {{< tab "macOS" >}}
 **Option 1** (Native install)
 
-Install [Node v16 LTS](https://nodejs.org/en/download/) and then install Yarn via:
+Install [Node v18 LTS](https://nodejs.org/en/download/) and then install Yarn via:
 
 ```
 npm install --global yarn
@@ -66,10 +66,10 @@ npm install --global yarn
 
 **Option 2** (Homebrew)
 
-Install Node 16 via homebrew:
+Install Node 18 via homebrew:
 
 ```
-brew install node@16
+brew install node@18
 ```
 
 Then install yarn:
