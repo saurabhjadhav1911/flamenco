@@ -11,17 +11,39 @@ Manager web-interface after installation.
 
 The latest version is: **{{< flamenco/latestVersion >}}**
 
-| Platform  | File                                                 |
-|-----------|------------------------------------------------------|
-| Windows   | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
-| Linux     | {{< flamenco/downloadLink os="linux" >}}             |
-| macOS     | {{< flamenco/downloadLink os="macos" >}}             |
-| checksums | {{< flamenco/sha256link >}}                          |
+| Platform      | File                                                 |
+|---------------|------------------------------------------------------|
+| Windows       | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
+| Linux         | {{< flamenco/downloadLink os="linux" >}}             |
+| macOS (Intel) | {{< flamenco/downloadLink os="macos" >}}             |
+| checksums     | {{< flamenco/sha256link >}}                          |
 
+Please report any issue at [projects.blender.org][bugs].
+
+## Go Experimental!
+
+The latest experimental version is: **{{< flamenco/latestExperimentalVersion
+>}}**. This version is not guaranteed to be stable, so do not run this on
+production systems. Or at least make a backup of your `flamenco-manager.yaml`
+and `flamenco-manager.sqlite` files before you venture forth.
+
+
+| Platform      | File                                                             |
+|---------------|------------------------------------------------------------------|
+| Windows       | {{< flamenco/downloadExperimentalLink os="windows" ext="zip" >}} |
+| Linux         | {{< flamenco/downloadExperimentalLink os="linux" >}}             |
+| macOS (Intel) | {{< flamenco/downloadExperimentalLink os="macos" >}}             |
+| checksums     | {{< flamenco/sha256linkExperimental >}}                          |
+
+Please report any issue at [projects.blender.org][bugs].
+
+[bugs]: https://projects.blender.org/studio/flamenco/issues/new?template=.gitea%2fissue_template%2fbug.yaml
+
+<!--
 
 {{< hint type=caution >}}
-When **upgrading** from a previous v3 beta version, it is recommended to start
-afresh with the following steps:
+When **upgrading** from a previous experimental version, it is recommended to
+start afresh with the following steps:
 
 1. Cancel any running or queued job.
 2. Shut down Flamenco Manager and all Workers.
@@ -32,13 +54,9 @@ afresh with the following steps:
    interface, and install it. It has seen development as well, and will need to
    be upgraded.
 
-Read the beta announcement at the [Blender Studio blog][blog].<br>
-Please report any issue at [project.blender.org][bugs].
-
 [blog]: https://studio.blender.org/blog/announcing-flamenco-3-beta/
-[bugs]: https://projects.blender.org/studio/flamenco/issues/new?template=.gitea%2fissue_template%2fbug.yaml
 {{< /hint >}}
-
+-->
 
 ## License
 
