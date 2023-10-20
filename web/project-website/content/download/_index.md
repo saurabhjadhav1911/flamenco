@@ -27,6 +27,7 @@ The latest experimental version is: **{{< flamenco/latestExperimentalVersion
 production systems. Or at least make a backup of your `flamenco-manager.yaml`
 and `flamenco-manager.sqlite` files before you venture forth.
 
+To see what's new, check [the changelog](https://projects.blender.org/studio/flamenco/src/branch/main/CHANGELOG.md).
 
 | Platform      | File                                                             |
 |---------------|------------------------------------------------------------------|
