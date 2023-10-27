@@ -39,6 +39,8 @@ var defaultConfig = WorkerConfig{
 // WorkerConfig represents the configuration of a single worker.
 // It does not include authentication credentials.
 type WorkerConfig struct {
+	WorkerName string `yaml:"worker_name"`
+
 	// ConfiguredManager is the Manager URL that's in the configuration file.
 	ConfiguredManager string `yaml:"manager_url"`
 

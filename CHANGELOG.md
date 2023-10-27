@@ -13,6 +13,7 @@ bugs in actually-released versions.
 - Job settings: add a description for the `eval` field. This is shown in the tooltip of the 'set to automatic value' button, to make it clear what that button will do.
 - Database integrity tests. These are always run at startup of Flamenco Manager, and by default run periodically every hour. This can be configured by adding/changing the `database_check_period: 1h` setting in `flamenco-manager.yaml`. Setting it to `0` will disable the periodic check. When a database consistency error is found, Flamenco Manager will immediately shut down.
 - Workers can be marked as 'restartable' by using the `-restart-exit-code N` commandline option. More info in the [Worker Actions documentation](https://flamenco.blender.org/usage/worker-actions/).
+- Worker name can be configured via `flamenco_worker.yaml` via `worker_name = "somename"`.
 - Upgrade bundled FFmpeg from 5.0 to 5.1.
 - Rename the add-on download to `flamenco-addon.zip` (it used to be `flamenco3-addon.zip`). It still contains the same files as before, and in Blender the name of the add-on has not changed.
 - Improve speed of queueing up >100 simultaneous job deletions.
