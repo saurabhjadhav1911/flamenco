@@ -81,6 +81,7 @@ func NewCommandExecutor(cli CommandLineRunner, listener CommandListener, timeSer
 		// misc
 		"echo":  ce.cmdEcho,
 		"sleep": ce.cmdSleep,
+		"cli":   ce.cmdCLI,
 
 		// blender
 		"blender-render": ce.cmdBlenderRender,
