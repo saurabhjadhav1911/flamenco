@@ -11,12 +11,12 @@ Manager web-interface after installation.
 
 The latest version is: **{{< flamenco/latestVersion >}}**
 
-| Platform      | File                                                 |
-|---------------|------------------------------------------------------|
-| Windows       | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
-| Linux         | {{< flamenco/downloadLink os="linux" >}}             |
-| macOS (Intel) | {{< flamenco/downloadLink os="macos" >}}             |
-| checksums     | {{< flamenco/sha256link >}}                          |
+| Platform                     | File                                                 |
+|------------------------------|------------------------------------------------------|
+| Windows                      | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
+| Linux                        | {{< flamenco/downloadLink os="linux" >}}             |
+| macOS <small>(Intel)</small> | {{< flamenco/downloadLink os="macos" >}}             |
+| checksums                    | {{< flamenco/sha256link >}}                          |
 
 Please report any issue at [projects.blender.org][bugs].
 
@@ -29,13 +29,13 @@ and `flamenco-manager.sqlite` files before you venture forth.
 
 To see what's new, check [the changelog](https://projects.blender.org/studio/flamenco/src/branch/main/CHANGELOG.md).
 
-| Platform            | File                                                                                                     |
-|---------------------|----------------------------------------------------------------------------------------------------------|
-| Windows             | {{< flamenco/downloadExperimentalLink os="windows" ext="zip" >}}                                         |
-| Linux               | {{< flamenco/downloadExperimentalLink os="linux" >}}                                                     |
-| macOS (Intel)       | {{< flamenco/downloadExperimentalLink os="macos" >}}                                                     |
-| macOS (Silicon/ARM) | {{< flamenco/downloadExperimentalLink os="macos" arch="arm64" >}} (without FFmpeg, [see below][mac-arm]) |
-| checksums           | {{< flamenco/sha256linkExperimental >}}                                                                  |
+| Platform                           | File                                                                                                     |
+|------------------------------------|----------------------------------------------------------------------------------------------------------|
+| Windows                            | {{< flamenco/downloadExperimentalLink os="windows" ext="zip" >}}                                         |
+| Linux                              | {{< flamenco/downloadExperimentalLink os="linux" >}}                                                     |
+| macOS <small>(Intel)</small>       | {{< flamenco/downloadExperimentalLink os="macos" >}}                                                     |
+| macOS <small>(Silicon/ARM)</small> | {{< flamenco/downloadExperimentalLink os="macos" arch="arm64" >}} (without FFmpeg, [see below][mac-arm]) |
+| checksums                          | {{< flamenco/sha256linkExperimental >}}                                                                  |
 
 Please report any issue at [projects.blender.org][bugs].
 
