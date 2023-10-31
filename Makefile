@@ -371,7 +371,8 @@ release-package-darwin:
 # ARM64, without tools because ffmpeg.org doesn't link to any official ARM64 binary.
 	$(MAKE) -s flamenco-manager-without-webapp GOOS=darwin GOARCH=arm64
 	$(MAKE) -s flamenco-worker GOOS=darwin GOARCH=arm64
-	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}
+	mkdir -p dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}/tools
+	echo "Put an ffmpeg executable in this directory so that Flamenco Worker can find it" > dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}/tools/put_ffmpeg_here.txt
 	cp flamenco-manager flamenco-worker ${RELEASE_PACKAGE_EXTRA_FILES} dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}
 	cd dist; tar zcvf ${RELEASE_PACKAGE_DARWIN_ARM64} ${RELEASE_PACKAGE_DARWIN_ARM64_BASE}
 	rm -rf dist/${RELEASE_PACKAGE_DARWIN_ARM64_BASE}

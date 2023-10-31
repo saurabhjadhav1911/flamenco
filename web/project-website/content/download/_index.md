@@ -29,16 +29,18 @@ and `flamenco-manager.sqlite` files before you venture forth.
 
 To see what's new, check [the changelog](https://projects.blender.org/studio/flamenco/src/branch/main/CHANGELOG.md).
 
-| Platform      | File                                                             |
-|---------------|------------------------------------------------------------------|
-| Windows       | {{< flamenco/downloadExperimentalLink os="windows" ext="zip" >}} |
-| Linux         | {{< flamenco/downloadExperimentalLink os="linux" >}}             |
-| macOS (Intel) | {{< flamenco/downloadExperimentalLink os="macos" >}}             |
-| checksums     | {{< flamenco/sha256linkExperimental >}}                          |
+| Platform            | File                                                                                                     |
+|---------------------|----------------------------------------------------------------------------------------------------------|
+| Windows             | {{< flamenco/downloadExperimentalLink os="windows" ext="zip" >}}                                         |
+| Linux               | {{< flamenco/downloadExperimentalLink os="linux" >}}                                                     |
+| macOS (Intel)       | {{< flamenco/downloadExperimentalLink os="macos" >}}                                                     |
+| macOS (Silicon/ARM) | {{< flamenco/downloadExperimentalLink os="macos" arch="arm64" >}} (without FFmpeg, [see below][mac-arm]) |
+| checksums           | {{< flamenco/sha256linkExperimental >}}                                                                  |
 
 Please report any issue at [projects.blender.org][bugs].
 
 [bugs]: https://projects.blender.org/studio/flamenco/issues/new?template=.gitea%2fissue_template%2fbug.yaml
+[mac-arm]: #macos-silicon-builds
 
 <!--
 
@@ -58,6 +60,18 @@ start afresh with the following steps:
 [blog]: https://studio.blender.org/blog/announcing-flamenco-3-beta/
 {{< /hint >}}
 -->
+
+## macOS "Silicon" builds
+
+The FFmpeg binaries that are bundled with Flamenco are linked directly from
+[ffmpeg.org](https://ffmpeg.org/), and thus there is a level of trust. That
+website, however, does not link directly to any trusted binaries for macOS
+"Silicon" ARM64. This is why Flamenco did not ship macOS/ARM64 builds for a long
+time. As of v3.3 this architecture will be included in the official Flamenco
+builds, but for now will be shipped without FFmpeg binary.
+
+To install this binary, download it from a source you trust or build it
+yourself, then place it into Flamenco's `tools` directory.
 
 ## License
 
