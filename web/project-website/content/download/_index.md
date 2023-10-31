@@ -63,15 +63,17 @@ start afresh with the following steps:
 
 ## macOS "Silicon" builds
 
-The FFmpeg binaries that are bundled with Flamenco are linked directly from
-[ffmpeg.org](https://ffmpeg.org/), and thus there is a level of trust. That
-website, however, does not link directly to any trusted binaries for macOS
-"Silicon" ARM64. This is why Flamenco did not ship macOS/ARM64 builds for a long
-time. As of v3.3 this architecture will be included in the official Flamenco
-builds, but for now will be shipped without FFmpeg binary.
+The macOS "Silicon" build does not ship with FFmpeg, because a trusted build for
+this architecture is not provided by the FFmpeg project. This is why Flamenco v3
+did not ship macOS/ARM64 builds. As of v3.3 this architecture will be included
+in the official Flamenco builds, but still without FFmpeg binary.
 
-To install this binary, download it from a source you trust or build it
-yourself, then place it into Flamenco's `tools` directory.
+You can install FFmpeg using [the ffmpeg Homebrew formula][brew] or any other
+method. Once installed Flamenco Worker should find it automatically. If not,
+place the ffmpeg executable into Flamenco's `tools` directory.
+
+[brew]: https://formulae.brew.sh/formula/ffmpeg
+
 
 ## License
 
