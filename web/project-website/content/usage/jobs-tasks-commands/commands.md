@@ -62,6 +62,31 @@ Copies a file from one location to another.
 | `src`     | `string` | Path of the file to copy. Must be an absolute path.                               |
 | `dest`    | `string` | Destination to copy it to. Must be an absolute path. This path may not yet exist. |
 
+## Misc: `exec`
+
+Run an executable. This can be any executable. The command succeeds when the
+executable exit status is `0`, and fails otherwise. The executable needs to stop
+running (or fork) in order for the Worker to consider the command 'done'.
+
+The executable is run directly, and *not* via a shell invocation. To run a shell
+command, use something like `{exe: "/bin/bash", args: ["-c", "echo", "hello
+world"]}`.
+
+
+{{< hint type=info >}}
+If there is a specific command for the functionality you need, like
+`blender-render` or `ffmpeg`, use those commands instead. They are aware of
+cross-platform differences, and know more about the program they are running.
+For example, the `blender-render` command sends rendered images to the Manager
+to show in the web interface, and `ffmpeg` will change its commandline arguments
+depending on the platform it runs on.
+{{< /hint >}}
+
+| Parameter | Type       | Description            |
+|-----------|------------|------------------------|
+| `exec`    | `string`   | The executable to run. |
+| `args`    | `[]string` | Commandline arguments. |
+
 ## Misc: `echo`
 
 Writes a message to the task log.

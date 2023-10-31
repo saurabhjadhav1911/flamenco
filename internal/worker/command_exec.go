@@ -14,17 +14,17 @@ import (
 	"projects.blender.org/studio/flamenco/pkg/api"
 )
 
-type CliParams struct {
+type ExecParams struct {
 	exe  string   // Executable to run.
 	args []string // Arguments for the executable.
 }
 
-// cmdCLI runs an arbitrary executable with arguments.
-func (ce *CommandExecutor) cmdCLI(ctx context.Context, logger zerolog.Logger, taskID string, cmd api.Command) error {
+// cmdExec runs an arbitrary executable with arguments.
+func (ce *CommandExecutor) cmdExec(ctx context.Context, logger zerolog.Logger, taskID string, cmd api.Command) error {
 	cmdCtx, cmdCtxCancel := context.WithCancel(ctx)
 	defer cmdCtxCancel()
 
-	execCmd, err := ce.cmdCLICommand(cmdCtx, logger, taskID, cmd)
+	execCmd, err := ce.cmdExecCommand(cmdCtx, logger, taskID, cmd)
 	if err != nil {
 		return err
 	}
@@ -43,13 +43,13 @@ func (ce *CommandExecutor) cmdCLI(ctx context.Context, logger zerolog.Logger, ta
 	return nil
 }
 
-func (ce *CommandExecutor) cmdCLICommand(
+func (ce *CommandExecutor) cmdExecCommand(
 	ctx context.Context,
 	logger zerolog.Logger,
 	taskID string,
 	cmd api.Command,
 ) (*exec.Cmd, error) {
-	parameters, err := cmdCLIParams(logger, cmd)
+	parameters, err := cmdExecParams(logger, cmd)
 	if err != nil {
 		return nil, err
 	}
@@ -70,9 +70,9 @@ func (ce *CommandExecutor) cmdCLICommand(
 	return execCmd, nil
 }
 
-func cmdCLIParams(logger zerolog.Logger, cmd api.Command) (CliParams, error) {
+func cmdExecParams(logger zerolog.Logger, cmd api.Command) (ExecParams, error) {
 	var (
-		parameters CliParams
+		parameters ExecParams
 		ok         bool
 	)
 
