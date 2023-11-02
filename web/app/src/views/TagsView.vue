@@ -2,12 +2,6 @@
   <div class="col col-tags-list">
     <h2 class="column-title">Available Tags</h2>
 
-    <div class="action-buttons btn-bar-group">
-      <div class="btn-bar">
-        <button @click="deleteTag" :disabled="!selectedTag">Delete Tag</button>
-      </div>
-    </div>
-
     <div class="action-buttons btn-bar">
       <form @submit="createTag">
         <div class="create-tag-container">
@@ -126,12 +120,22 @@ export default {
 
     const tag_options = {
       columns: [
-        { title: 'Name', field: 'name', sorter: 'string', editor: 'input' },
+        {
+          title: 'Name',
+          field: 'name',
+          sorter: 'string',
+          editor: 'input',
+          vertAlign: 'center',
+          widthGrow: 1,
+        },
         {
           title: 'Description',
           field: 'description',
           sorter: 'string',
           editor: 'input',
+          vertAlign: 'center',
+          widthGrow: 2,
+
           formatter(cell) {
             const cellValue = cell.getData().description;
             if (!cellValue) {
@@ -140,15 +144,33 @@ export default {
             return cellValue;
           },
         },
+        {
+          title: '',
+          headerHozAlign: 'right',
+          width: 60,
+
+          formatter: (cell) => {
+            const button = document.createElement('button');
+            button.classList.add('remove-tag-button');
+            button.innerHTML = '❌';
+            button.addEventListener('click', () => {
+              const tag = cell.getRow().getData();
+              this.deleteTag(tag);
+            });
+
+            return button;
+          },
+          headerSort: false,
+          vertAlign: 'center',
+        },
       ],
-      layout: 'fitData',
+      layout: 'fitColumns',
       layoutColumnsOnNewData: true,
       height: '82%',
-      selectable: true,
+      selectable: false,
     };
 
     this.tabulator = new Tabulator('#tag-table-container', tag_options);
-    this.tabulator.on('rowClick', this.onRowClick);
     this.tabulator.on('tableBuilt', () => {
       this.fetchTags();
     });
@@ -211,33 +233,21 @@ export default {
         });
     },
 
-    deleteTag() {
-      if (!this.selectedTag) {
-        return;
-      }
-
+    deleteTag(tag) {
       const api = new WorkerMgtApi(getAPIClient());
       api
-        .deleteWorkerTag(this.selectedTag.id)
+        .deleteWorkerTag(tag.id)
         .then(() => {
-          this.selectedTag = null;
-          this.tabulator.setData(this.tags);
+          this.tabulator.getRows().forEach((row) => {
+            if (row.getData().id === tag.id) {
+              row.delete();
+            }
+          });
         })
         .catch((error) => {
           const errorMsg = JSON.stringify(error);
           useNotifs().add(`Error: ${errorMsg}`);
         });
-    },
-
-    onRowClick(event, row) {
-      const tag = row.getData();
-      const rowIndex = row.getIndex();
-
-      this.tabulator.deselectRow();
-      this.tabulator.selectRow(rowIndex);
-
-      this.selectedTag = tag;
-      this.activeRowIndex = rowIndex;
     },
 
     // SocketIO connection event handlers:
