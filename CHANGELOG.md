@@ -16,6 +16,7 @@ bugs in actually-released versions.
 - Worker name can be configured via `flamenco_worker.yaml` via `worker_name = "somename"`.
 - Add worker command `exec` for executing arbitrary executables.
 - Upgrade bundled FFmpeg from 5.0 to 5.1.
+- Upgrade bundled Blender Asset Tracer (BAT) to version 1.16.
 - Preliminary support for macOS "Silicon" (ARM64 architecture). Official Flamenco builds will be available, but ship without bundling FFmpeg. See the [download page](https://flamenco.blender.org/download/#macos-silicon-builds) for more info.
 - Rename the add-on download to `flamenco-addon.zip` (it used to be `flamenco3-addon.zip`). It still contains the same files as before, and in Blender the name of the add-on has not changed.
 - Improve speed of queueing up >100 simultaneous job deletions.
