@@ -143,7 +143,7 @@ class FLAMENCO_OT_eval_setting(FlamencoOpMixin, bpy.types.Operator):
     setting_key: bpy.props.StringProperty(name="Setting Key")  # type: ignore
     setting_eval: bpy.props.StringProperty(name="Python Expression")  # type: ignore
 
-    eval_description: bpy.props.StringProperty(name="Description", options={"HIDDEN"})
+    eval_description: bpy.props.StringProperty(name="Description", options={"HIDDEN"})  # type: ignore
 
     @classmethod
     def description(cls, context, properties):
