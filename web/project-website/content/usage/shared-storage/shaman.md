@@ -2,6 +2,8 @@
 title: Shaman Storage System
 ---
 
+{{< toc >}}
+
 Flamenco comes with a storage system named *Shaman*. It makes it possible to
 have independence of render jobs, as well as as-fast-as-possible uploads to the
 farm. Shaman is built into Flamenco Manager.
@@ -150,16 +152,31 @@ wide links = yes
 This configuration has been tested with both Windows and Linux clients working together
 over the same shared storage.
 
-The following info was obtained from [UNIX Stack Exchange](https://unix.stackexchange.com/questions/5120/how-do-you-make-samba-follow-symlink-outside-the-shared-path)
+The above information was obtained from [UNIX Stack Exchange](https://unix.stackexchange.com/q/5120)
 
-## Enabling Shaman
+## Enabling or Disabling Shaman
 
-In `flamenco-manager.yaml`, set `shaman.enabled: true` like this:
+Shaman is enabled by default on Linux and macOS. Since on Windows symbolic links
+are not that commonly used, and require some additional system permission (see
+[Windows](#windows)), Shaman is disabled by default there.
+
+To enable Shaman, edit `flamenco-manager.yaml` and set `shaman.enabled: true`
+like this:
 
 ```yaml
 shaman:
   enabled: true
 ```
+
+Similarly, it can be disabled by setting it to `false`.
+
+{{< hint type=warning >}}
+
+After changing this setting, be sure to **restart** Flamenco Manager, and
+**refresh** the connection in the Blender add-on preferences. The last step is
+necessary to make Blender fetch the updated configuration.
+
+{{< /hint >}}
 
 
 ## Garbage Collection
