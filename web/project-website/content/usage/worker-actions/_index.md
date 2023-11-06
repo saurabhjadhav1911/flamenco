@@ -16,7 +16,7 @@ will be disabled until a specific action is chosen. The available actions are:
 | Label                   | Effect                                                                                                                                                                                       |
 |-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Shut Down               | Stop the worker. It will exit with status code `0`, indicating a clean shutdown.                                                                                                             |
-| Restart                 | Stop the worker. It will exit with the configured status code, indicating a desire to restart. This option is only available when the selected worker is marked as 'restartable'. See below. |
+| Restart                 | Stop the worker. It will exit with a configurable status code, indicating a desire to restart. This option is only available when the selected worker is marked as 'restartable'. See below. |
 | Send&nbsp;to&nbsp;Sleep | Let the worker sleep. It will not get any new task, just check every 30 seconds to see if it should wake up.                                                                                 |
 | Wake Up                 | Wake the worker up. A sleeping worker can take a while to respond.                                                                                                                           |
 
