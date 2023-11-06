@@ -11,12 +11,13 @@ Manager web-interface after installation.
 
 The latest version is: **{{< flamenco/latestVersion >}}**
 
-| Platform                     | File                                                 |
-|------------------------------|------------------------------------------------------|
-| Windows                      | {{< flamenco/downloadLink os="windows" ext="zip" >}} |
-| Linux                        | {{< flamenco/downloadLink os="linux" >}}             |
-| macOS <small>(Intel)</small> | {{< flamenco/downloadLink os="macos" >}}             |
-| checksums                    | {{< flamenco/sha256link >}}                          |
+| Platform                           | File                                                                                         |
+|------------------------------------|----------------------------------------------------------------------------------------------|
+| Windows                            | {{< flamenco/downloadLink os="windows" ext="zip" >}}                                         |
+| Linux                              | {{< flamenco/downloadLink os="linux" >}}                                                     |
+| macOS <small>(Intel)</small>       | {{< flamenco/downloadLink os="macos" >}}                                                     |
+| macOS <small>(Silicon/ARM)</small> | {{< flamenco/downloadLink os="macos" arch="arm64" >}} (without FFmpeg, [see below][mac-arm]) |
+| checksums                          | {{< flamenco/sha256link >}}                                                                  |
 
 Please report any issue at [projects.blender.org][bugs].
 
