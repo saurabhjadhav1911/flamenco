@@ -19,6 +19,7 @@ flamenco-manager.yaml
 flamenco-worker.yaml
 flamenco-worker-credentials.yaml
 node_modules/
+/vendor/
 
 # Directory for custom job compiler scripts:
 /scripts/
