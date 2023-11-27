@@ -44,7 +44,7 @@ func OpenDB(ctx context.Context, dsn string) (*DB, error) {
 	// Perfom some maintenance at startup.
 	db.vacuum()
 
-	if err := db.migrate(); err != nil {
+	if err := db.migrate(ctx); err != nil {
 		return nil, err
 	}
 	log.Debug().Msg("database automigration succesful")
