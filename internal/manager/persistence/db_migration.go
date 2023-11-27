@@ -3,51 +3,69 @@ package persistence
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import (
+	"context"
+	"embed"
 	"fmt"
+	"strings"
 
+	goose "github.com/pressly/goose/v3"
 	"github.com/rs/zerolog/log"
 )
 
-func (db *DB) migrate() error {
-	log.Debug().Msg("auto-migrating database")
+//go:embed migrations/*.sql
+var embedMigrations embed.FS
 
-	// There is an issue with the GORM auto-migration, in that it doesn't always
-	// disable foreign key constraints when it should. Due to limitations of
-	// SQLite, not all 'alter table' commands you'd want to use are available. As
-	// a workaround, these steps are performed:
+func (db *DB) migrate(ctx context.Context) error {
+	// Set up Goose.
+	gooseLogger := GooseLogger{}
+	goose.SetLogger(&gooseLogger)
+	goose.SetBaseFS(embedMigrations)
+	if err := goose.SetDialect("sqlite3"); err != nil {
+		log.Fatal().AnErr("cause", err).Msg("could not tell Goose to use sqlite3")
+	}
+
+	// Hook up Goose to the database.
+	lowLevelDB, err := db.gormDB.DB()
+	if err != nil {
+		log.Fatal().AnErr("cause", err).Msg("GORM would not give us its low-level interface")
+	}
+
+	// Disable foreign key constraints during the migrations. This is necessary
+	// for SQLite to do column renames / drops, as that requires creating a new
+	// table with the new schema, copying the data, dropping the old table, and
+	// moving the new one in its place. That table drop shouldn't trigger 'ON
+	// DELETE' actions on foreign keys.
 	//
-	// 1. create a new table with the desired schema,
-	// 2. copy the data over,
-	// 3. drop the old table,
-	// 4. rename the new table to the old name.
-	//
-	// Step #3 will wreak havoc with the database when foreign key constraint
-	// checks are active.
+	// Since migration is 99% schema changes, and very little to no manipulation
+	// of data, foreign keys are disabled here instead of in the migration SQL
+	// files, so that it can't be forgotten.
 
 	if err := db.pragmaForeignKeys(false); err != nil {
-		return fmt.Errorf("disabling foreign key checks before auto-migration: %w", err)
+		log.Fatal().AnErr("cause", err).Msg("could not disable foreign key constraints before performing database migrations, please report a bug at https://flamenco.blender.org/get-involved")
 	}
-	defer func() {
-		err := db.pragmaForeignKeys(true)
-		if err != nil {
-			// There is no way that Flamenco Manager should be runnign with foreign key checks disabled.
-			log.Fatal().Err(err).Msg("re-enabling foreign key checks after auto-migration failed")
-		}
-	}()
 
-	err := db.gormDB.AutoMigrate(
-		&Job{},
-		&JobBlock{},
-		&JobStorageInfo{},
-		&LastRendered{},
-		&SleepSchedule{},
-		&Task{},
-		&TaskFailure{},
-		&Worker{},
-		&WorkerTag{},
-	)
-	if err != nil {
-		return fmt.Errorf("failed to automigrate database: %v", err)
+	// Run Goose.
+	log.Debug().Msg("migrating database with Goose")
+	if err := goose.UpContext(ctx, lowLevelDB, "migrations"); err != nil {
+		log.Fatal().AnErr("cause", err).Msg("could not migrate database to the latest version")
 	}
+
+	// Re-enable foreign key checks.
+	if err := db.pragmaForeignKeys(true); err != nil {
+		log.Fatal().AnErr("cause", err).Msg("could not re-enable foreign key constraints after performing database migrations, please report a bug at https://flamenco.blender.org/get-involved")
+	}
+
 	return nil
+}
+
+type GooseLogger struct{}
+
+func (gl *GooseLogger) Fatalf(format string, v ...interface{}) {
+	msg := fmt.Sprintf(format, v...)
+	log.Fatal().Msg(strings.TrimSpace(msg))
+}
+
+func (gl *GooseLogger) Printf(format string, v ...interface{}) {
+	msg := fmt.Sprintf(format, v...)
+	log.Debug().Msg(strings.TrimSpace(msg))
 }

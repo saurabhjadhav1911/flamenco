@@ -70,6 +70,19 @@ flamenco-manager-without-webapp:
 flamenco-worker:
 	go build -v ${BUILD_FLAGS} ${PKG}/cmd/flamenco-worker
 
+
+# NOTE: these database migration commands are just for reference / debugging /
+# development purposes. Flamenco Manager and Worker each perform their own
+# migration at startup. In normal use, you'll never need those commands. This is
+# also why the `with-deps` target doesn't install the Goose CLI program.
+db-migrate-status:
+	goose -dir ./internal/manager/persistence/migrations/ sqlite3 flamenco-manager.sqlite status
+db-migrate-up:
+	goose -dir ./internal/manager/persistence/migrations/ sqlite3 flamenco-manager.sqlite up
+db-migrate-down:
+	goose -dir ./internal/manager/persistence/migrations/ sqlite3 flamenco-manager.sqlite down
+.PHONY: db-migrate-status db-migrate-up db-migrate-down
+
 .PHONY: stresser
 stresser:
 	go build -v ${BUILD_FLAGS} ${PKG}/cmd/stresser

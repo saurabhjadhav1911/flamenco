@@ -54,17 +54,22 @@ func OpenDB(ctx context.Context, dsn string) (*DB, error) {
 		return nil, err
 	}
 
-	// Perfom some maintenance at startup.
+	// Perfom some maintenance at startup, before trying to migrate the database.
 	if !db.performIntegrityCheck(ctx) {
 		return nil, ErrIntegrity
 	}
 
 	db.vacuum()
 
-	if err := db.migrate(); err != nil {
+	if err := db.migrate(ctx); err != nil {
 		return nil, err
 	}
 	log.Debug().Msg("database automigration succesful")
+
+	// Perfom post-migration integrity check, just to be sure.
+	if !db.performIntegrityCheck(ctx) {
+		return nil, ErrIntegrity
+	}
 
 	closeConnOnReturn = false
 	return db, nil
@@ -180,13 +185,23 @@ func (db *DB) pragmaForeignKeys(enabled bool) error {
 	if tx := db.gormDB.Exec(sql); tx.Error != nil {
 		return fmt.Errorf("%sing foreign keys: %w", noun, tx.Error)
 	}
-	var fkEnabled int
-	if tx := db.gormDB.Raw("PRAGMA foreign_keys").Scan(&fkEnabled); tx.Error != nil {
-		return fmt.Errorf("checking whether the database has foreign key checks %sed: %w", noun, tx.Error)
+	fkEnabled, err := db.areForeignKeysEnabled()
+	if err != nil {
+		return err
 	}
-	if fkEnabled != value {
+	if fkEnabled != enabled {
 		return fmt.Errorf("SQLite database does not want to %se foreign keys, this may cause data loss", noun)
 	}
 
 	return nil
+}
+
+func (db *DB) areForeignKeysEnabled() (bool, error) {
+	log.Trace().Msg("checking whether SQLite foreign key checks are enabled")
+
+	var fkEnabled int
+	if tx := db.gormDB.Raw("PRAGMA foreign_keys").Scan(&fkEnabled); tx.Error != nil {
+		return false, fmt.Errorf("checking whether the database has foreign key checks are enabled: %w", tx.Error)
+	}
+	return fkEnabled != 0, nil
 }

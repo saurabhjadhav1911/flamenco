@@ -53,7 +53,9 @@ func CreateTestDB(t *testing.T) (db *DB, closer func()) {
 		t.Fatalf("opening DB: %v", err)
 	}
 
-	err = db.migrate()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	err = db.migrate(ctx)
 	if err != nil {
 		t.Fatalf("migrating DB: %v", err)
 	}
