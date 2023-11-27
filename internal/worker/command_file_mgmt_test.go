@@ -85,7 +85,7 @@ func TestCmdMoveDirectoryExistingDest(t *testing.T) {
 	}
 
 	// This cannot be a hard-coded string, as the test would fail in other timezones.
-	backupDir := destPath + "-2006-01-02_" + mtime.Local().Format("150405")
+	backupDir := destPath + "-" + mtime.Local().Format("2006-01-02_150405")
 
 	// Just a sanity check.
 	ts, err := timestampedPath(destPath)
@@ -122,7 +122,7 @@ func TestCmdMoveDirectoryExistingDestAndBackup(t *testing.T) {
 	fileCreateEmpty(filepath.Join(destPath, "destfile.txt"))
 
 	// This cannot be a hard-coded string, as the test would fail in other timezones.
-	backupDir := destPath + "-2006-01-02_" + mtime.Local().Format("150405")
+	backupDir := destPath + "-" + mtime.Local().Format("2006-01-02_150405")
 	ensureDirExists(backupDir)
 	ensureDirExists(backupDir + "-046")
 	fileCreateEmpty(filepath.Join(backupDir, "backupfile.txt"))
@@ -169,7 +169,7 @@ func TestTimestampedPathFile(t *testing.T) {
 	newpath, err := timestampedPath("somefile.txt")
 
 	// This cannot be a hard-coded string, as the test would fail in other timezones.
-	expect := fmt.Sprintf("somefile.txt-2006-01-02_%s", mtime.Local().Format("150405"))
+	expect := "somefile.txt-" + mtime.Local().Format("2006-01-02_150405")
 
 	assert.NoError(t, err)
 	assert.Equal(t, expect, newpath)
@@ -192,7 +192,7 @@ func TestTimestampedPathDir(t *testing.T) {
 	newpath, err := timestampedPath("somedir")
 
 	// This cannot be a hard-coded string, as the test would fail in other timezones.
-	expect := fmt.Sprintf("somedir-2006-01-02_%s", mtime.Local().Format("150405"))
+	expect := "somedir-" + mtime.Local().Format("2006-01-02_150405")
 
 	assert.NoError(t, err)
 	assert.Equal(t, expect, newpath)
