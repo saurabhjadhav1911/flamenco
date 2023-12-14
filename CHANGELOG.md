@@ -6,6 +6,7 @@ bugs in actually-released versions.
 
 ## 3.3.1 - released 2023-12-14
 
+- Reorder the Jobs table, so that it lists 'Name', 'Updated', 'Priority', 'Job Type'.
 - Upgrade Blender Asset Tracer to 1.17 to fix a bug with non-IES lights ([#104269](https://projects.blender.org/studio/flamenco/issues/104269)).
 - Perform databases migration on both Manager and Worker with [Goose](https://pressly.github.io/goose/) instead of GORM Automigrate. This is invisible to users of Flamenco, but will help developers in the future.
 - Improve Worker performance a tiny bit by enabling *write-ahead journaling* for its database. This will likely go unnoticed, but might help when there is a lot of logs being produced by Blender, and they all need to be cached on the Worker because Flamenco Manager is unreachable.

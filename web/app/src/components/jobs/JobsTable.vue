@@ -64,8 +64,6 @@ export default {
           },
         },
         { title: 'Name', field: 'name', sorter: 'string' },
-        { title: 'Type', field: 'type', sorter: 'string' },
-        { title: 'Prio', field: 'priority', sorter: 'number' },
         {
           title: 'Updated',
           field: 'updated',
@@ -79,6 +77,8 @@ export default {
             return datetime.relativeTime(cellValue);
           },
         },
+        { title: 'Prio', field: 'priority', sorter: 'number' },
+        { title: 'Type', field: 'type', sorter: 'string' },
       ],
       rowFormatter(row) {
         const data = row.getData();
