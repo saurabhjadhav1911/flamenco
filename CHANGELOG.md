@@ -4,7 +4,11 @@ This file contains the history of changes to Flamenco. Only changes that might
 be interesting for users are listed here, such as new features and fixes for
 bugs in actually-released versions.
 
-## 3.4 - in development
+## 3.3.1 - released 2023-12-14
+
+- Upgrade Blender Asset Tracer to 1.17 to fix a bug with non-IES lights ([#104269](https://projects.blender.org/studio/flamenco/issues/104269)).
+- Perform databases migration on both Manager and Worker with [Goose](https://pressly.github.io/goose/) instead of GORM Automigrate. This is invisible to users of Flamenco, but will help developers in the future.
+- Improve Worker performance a tiny bit by enabling *write-ahead journaling* for its database. This will likely go unnoticed, but might help when there is a lot of logs being produced by Blender, and they all need to be cached on the Worker because Flamenco Manager is unreachable.
 
 ## 3.3 - released 2023-11-06
 
