@@ -135,6 +135,11 @@ type ClientInterface interface {
 	// FetchGlobalLastRenderedInfo request
 	FetchGlobalLastRenderedInfo(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteJobMass request with any body
+	DeleteJobMassWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	DeleteJobMass(ctx context.Context, body DeleteJobMassJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// QueryJobs request with any body
 	QueryJobsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -476,6 +481,30 @@ func (c *Client) SubmitJobCheck(ctx context.Context, body SubmitJobCheckJSONRequ
 
 func (c *Client) FetchGlobalLastRenderedInfo(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewFetchGlobalLastRenderedInfoRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteJobMassWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteJobMassRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteJobMass(ctx context.Context, body DeleteJobMassJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteJobMassRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1568,6 +1597,46 @@ func NewFetchGlobalLastRenderedInfoRequest(server string) (*http.Request, error)
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewDeleteJobMassRequest calls the generic DeleteJobMass builder with application/json body
+func NewDeleteJobMassRequest(server string, body DeleteJobMassJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewDeleteJobMassRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewDeleteJobMassRequestWithBody generates requests for DeleteJobMass with any type of body
+func NewDeleteJobMassRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/v3/jobs/mass-delete")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -3236,6 +3305,11 @@ type ClientWithResponsesInterface interface {
 	// FetchGlobalLastRenderedInfo request
 	FetchGlobalLastRenderedInfoWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FetchGlobalLastRenderedInfoResponse, error)
 
+	// DeleteJobMass request with any body
+	DeleteJobMassWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DeleteJobMassResponse, error)
+
+	DeleteJobMassWithResponse(ctx context.Context, body DeleteJobMassJSONRequestBody, reqEditors ...RequestEditorFn) (*DeleteJobMassResponse, error)
+
 	// QueryJobs request with any body
 	QueryJobsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*QueryJobsResponse, error)
 
@@ -3640,6 +3714,29 @@ func (r FetchGlobalLastRenderedInfoResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r FetchGlobalLastRenderedInfoResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteJobMassResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON416      *Error
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteJobMassResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteJobMassResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4731,6 +4828,23 @@ func (c *ClientWithResponses) FetchGlobalLastRenderedInfoWithResponse(ctx contex
 	return ParseFetchGlobalLastRenderedInfoResponse(rsp)
 }
 
+// DeleteJobMassWithBodyWithResponse request with arbitrary body returning *DeleteJobMassResponse
+func (c *ClientWithResponses) DeleteJobMassWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DeleteJobMassResponse, error) {
+	rsp, err := c.DeleteJobMassWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteJobMassResponse(rsp)
+}
+
+func (c *ClientWithResponses) DeleteJobMassWithResponse(ctx context.Context, body DeleteJobMassJSONRequestBody, reqEditors ...RequestEditorFn) (*DeleteJobMassResponse, error) {
+	rsp, err := c.DeleteJobMass(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteJobMassResponse(rsp)
+}
+
 // QueryJobsWithBodyWithResponse request with arbitrary body returning *QueryJobsResponse
 func (c *ClientWithResponses) QueryJobsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*QueryJobsResponse, error) {
 	rsp, err := c.QueryJobsWithBody(ctx, contentType, body, reqEditors...)
@@ -5568,6 +5682,39 @@ func ParseFetchGlobalLastRenderedInfoResponse(rsp *http.Response) (*FetchGlobalL
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteJobMassResponse parses an HTTP response from a DeleteJobMassWithResponse call
+func ParseDeleteJobMassResponse(rsp *http.Response) (*DeleteJobMassResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteJobMassResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 416:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON416 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 

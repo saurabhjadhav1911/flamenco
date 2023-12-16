@@ -320,6 +320,12 @@ type JobLastRenderedImageInfo struct {
 	Suffixes []string `json:"suffixes"`
 }
 
+// Parameters to describe which jobs should be deleted.
+type JobMassDeletionSelection struct {
+	// All jobs that were last updated before or on this timestamp will be deleted.
+	LastUpdatedMax *time.Time `json:"last_updated_max,omitempty"`
+}
+
 // Arbitrary metadata strings. More complex structures can be modeled by using `a.b.c` notation for the key.
 type JobMetadata struct {
 	AdditionalProperties map[string]string `json:"-"`
@@ -870,6 +876,9 @@ type SubmitJobJSONBody SubmittedJob
 // SubmitJobCheckJSONBody defines parameters for SubmitJobCheck.
 type SubmitJobCheckJSONBody SubmittedJob
 
+// DeleteJobMassJSONBody defines parameters for DeleteJobMass.
+type DeleteJobMassJSONBody JobMassDeletionSelection
+
 // QueryJobsJSONBody defines parameters for QueryJobs.
 type QueryJobsJSONBody JobsQuery
 
@@ -941,6 +950,9 @@ type SubmitJobJSONRequestBody SubmitJobJSONBody
 
 // SubmitJobCheckJSONRequestBody defines body for SubmitJobCheck for application/json ContentType.
 type SubmitJobCheckJSONRequestBody SubmitJobCheckJSONBody
+
+// DeleteJobMassJSONRequestBody defines body for DeleteJobMass for application/json ContentType.
+type DeleteJobMassJSONRequestBody DeleteJobMassJSONBody
 
 // QueryJobsJSONRequestBody defines body for QueryJobs for application/json ContentType.
 type QueryJobsJSONRequestBody QueryJobsJSONBody
