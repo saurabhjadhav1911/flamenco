@@ -286,9 +286,50 @@ func (db *DB) RequestJobDeletion(ctx context.Context, j *Job) error {
 		Model(j).
 		Updates(Job{DeleteRequestedAt: j.DeleteRequestedAt})
 	if tx.Error != nil {
-		return jobError(tx.Error, "deleting job")
+		return jobError(tx.Error, "queueing job for deletion")
 	}
 	return nil
+}
+
+// RequestJobMassDeletion sets multiple job's "DeletionRequestedAt" field to "now".
+// The list of affected job UUIDs is returned.
+func (db *DB) RequestJobMassDeletion(ctx context.Context, lastUpdatedMax time.Time) ([]string, error) {
+	// In order to be able to report which jobs were affected, first fetch the
+	// list of jobs, then update them.
+	var jobs []*Job
+	selectResult := db.gormDB.WithContext(ctx).
+		Model(&Job{}).
+		Select("uuid").
+		Where("updated_at <= ?", lastUpdatedMax).
+		Scan(&jobs)
+	if selectResult.Error != nil {
+		return nil, jobError(selectResult.Error, "fetching jobs by last-modified timestamp")
+	}
+
+	if len(jobs) == 0 {
+		return nil, ErrJobNotFound
+	}
+
+	// Convert array of jobs to array of UUIDs.
+	uuids := make([]string, len(jobs))
+	for index := range jobs {
+		uuids[index] = jobs[index].UUID
+	}
+
+	// Update the selected jobs.
+	deleteRequestedAt := sql.NullTime{
+		Time:  db.gormDB.NowFunc(),
+		Valid: true,
+	}
+	tx := db.gormDB.WithContext(ctx).
+		Model(Job{}).
+		Where("uuid in ?", uuids).
+		Updates(Job{DeleteRequestedAt: deleteRequestedAt})
+	if tx.Error != nil {
+		return nil, jobError(tx.Error, "queueing jobs for deletion")
+	}
+
+	return uuids, nil
 }
 
 func (db *DB) FetchJobsDeletionRequested(ctx context.Context) ([]string, error) {

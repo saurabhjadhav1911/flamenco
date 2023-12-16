@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
@@ -212,6 +213,68 @@ func (f *Flamenco) DeleteJobWhatWouldItDo(e echo.Context, jobID string) error {
 
 	deletionInfo := f.jobDeleter.WhatWouldBeDeleted(dbJob)
 	return e.JSON(http.StatusOK, deletionInfo)
+}
+
+func timestampRoundUp(stamp time.Time) time.Time {
+	truncated := stamp.Truncate(time.Second)
+	if truncated == stamp {
+		return stamp
+	}
+	return truncated.Add(time.Second)
+}
+
+func (f *Flamenco) DeleteJobMass(e echo.Context) error {
+	logger := requestLogger(e)
+
+	var settings api.DeleteJobMassJSONBody
+	if err := e.Bind(&settings); err != nil {
+		logger.Warn().Err(err).Msg("bad request received")
+		return sendAPIError(e, http.StatusBadRequest, "invalid format")
+	}
+
+	if settings.LastUpdatedMax == nil {
+		// This is the only parameter, so if this is missing, we can't do anything.
+		// The parameter is optional in order to make space for future extensions.
+		logger.Warn().Msg("bad request received, no 'last_updated_max' field")
+		return sendAPIError(e, http.StatusBadRequest, "invalid format (no last_updated_max)")
+	}
+
+	// Round the time up to entire seconds. This makes it possible to take an
+	// 'updated at' timestamp from an existing job, and delete that job + all
+	// older ones.
+	//
+	// There might be precision differences between time representation in various
+	// languages. When the to-be-deleted job has an 'updated at' timestamp at time
+	// 13:14:15.100, it could get truncated to 13:14:15, which is before the
+	// to-be-deleted job.
+	//
+	// Rounding the given timestamp up to entire seconds solves this, even though
+	// it might delete too many jobs.
+	lastUpdatedMax := timestampRoundUp(*settings.LastUpdatedMax)
+
+	logger = logger.With().
+		Time("lastUpdatedMax", lastUpdatedMax).
+		Logger()
+	logger.Info().Msg("mass deletion of jobs reqeuested")
+
+	// All the required info is known, this can keep running even when the client
+	// disconnects.
+	ctx := context.Background()
+	err := f.jobDeleter.QueueMassJobDeletion(ctx, lastUpdatedMax.UTC())
+
+	switch {
+	case persistence.ErrIsDBBusy(err):
+		logger.Error().AnErr("cause", err).Msg("database too busy to queue job deletion")
+		return sendAPIErrorDBBusy(e, "too busy to queue job deletion, try again later")
+	case errors.Is(err, persistence.ErrJobNotFound):
+		logger.Warn().Msg("mass job deletion: cannot find jobs modified before timestamp")
+		return sendAPIError(e, http.StatusRequestedRangeNotSatisfiable, "no jobs modified before timestamp")
+	case err != nil:
+		logger.Error().AnErr("cause", err).Msg("error queueing job deletion")
+		return sendAPIError(e, http.StatusInternalServerError, "error queueing job deletion")
+	default:
+		return e.NoContent(http.StatusNoContent)
+	}
 }
 
 // SetJobStatus is used by the web interface to change a job's status.

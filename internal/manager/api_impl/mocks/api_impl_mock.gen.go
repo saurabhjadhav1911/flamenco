@@ -8,6 +8,7 @@ import (
 	context "context"
 	io "io"
 	reflect "reflect"
+	time "time"
 
 	gomock "github.com/golang/mock/gomock"
 	zerolog "github.com/rs/zerolog"
@@ -1383,6 +1384,20 @@ func (m *MockJobDeleter) QueueJobDeletion(arg0 context.Context, arg1 *persistenc
 func (mr *MockJobDeleterMockRecorder) QueueJobDeletion(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueJobDeletion", reflect.TypeOf((*MockJobDeleter)(nil).QueueJobDeletion), arg0, arg1)
+}
+
+// QueueMassJobDeletion mocks base method.
+func (m *MockJobDeleter) QueueMassJobDeletion(arg0 context.Context, arg1 time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueueMassJobDeletion", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// QueueMassJobDeletion indicates an expected call of QueueMassJobDeletion.
+func (mr *MockJobDeleterMockRecorder) QueueMassJobDeletion(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueueMassJobDeletion", reflect.TypeOf((*MockJobDeleter)(nil).QueueMassJobDeletion), arg0, arg1)
 }
 
 // WhatWouldBeDeleted mocks base method.

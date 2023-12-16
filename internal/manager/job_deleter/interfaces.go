@@ -4,6 +4,7 @@ package job_deleter
 
 import (
 	"context"
+	"time"
 
 	"projects.blender.org/studio/flamenco/internal/manager/local_storage"
 	"projects.blender.org/studio/flamenco/internal/manager/persistence"
@@ -19,6 +20,8 @@ type PersistenceService interface {
 	FetchJob(ctx context.Context, jobUUID string) (*persistence.Job, error)
 
 	RequestJobDeletion(ctx context.Context, j *persistence.Job) error
+	RequestJobMassDeletion(ctx context.Context, lastUpdatedMax time.Time) ([]string, error)
+
 	// FetchJobsDeletionRequested returns the UUIDs of to-be-deleted jobs.
 	FetchJobsDeletionRequested(ctx context.Context) ([]string, error)
 	DeleteJob(ctx context.Context, jobUUID string) error

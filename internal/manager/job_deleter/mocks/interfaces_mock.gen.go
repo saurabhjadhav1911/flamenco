@@ -7,6 +7,7 @@ package mocks
 import (
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	gomock "github.com/golang/mock/gomock"
 	persistence "projects.blender.org/studio/flamenco/internal/manager/persistence"
@@ -92,6 +93,21 @@ func (m *MockPersistenceService) RequestJobDeletion(arg0 context.Context, arg1 *
 func (mr *MockPersistenceServiceMockRecorder) RequestJobDeletion(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestJobDeletion", reflect.TypeOf((*MockPersistenceService)(nil).RequestJobDeletion), arg0, arg1)
+}
+
+// RequestJobMassDeletion mocks base method.
+func (m *MockPersistenceService) RequestJobMassDeletion(arg0 context.Context, arg1 time.Time) ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RequestJobMassDeletion", arg0, arg1)
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RequestJobMassDeletion indicates an expected call of RequestJobMassDeletion.
+func (mr *MockPersistenceServiceMockRecorder) RequestJobMassDeletion(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestJobMassDeletion", reflect.TypeOf((*MockPersistenceService)(nil).RequestJobMassDeletion), arg0, arg1)
 }
 
 // MockStorage is a mock of Storage interface.

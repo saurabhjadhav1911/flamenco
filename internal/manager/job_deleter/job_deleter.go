@@ -89,6 +89,50 @@ func (s *Service) QueueJobDeletion(ctx context.Context, job *persistence.Job) er
 	return nil
 }
 
+func (s *Service) QueueMassJobDeletion(ctx context.Context, lastUpdatedMax time.Time) error {
+	logger := log.With().Time("lastUpdatedMax", lastUpdatedMax).Logger()
+
+	uuids, err := s.persist.RequestJobMassDeletion(ctx, lastUpdatedMax)
+	if err != nil {
+		return fmt.Errorf("requesting mass job deletion: %w", err)
+	}
+
+	logger.Info().
+		Int("numjobs", len(uuids)).
+		Msg("job deleter: queueing multiple jobs for deletion")
+
+	// Do the poking of the job deleter, and broadcasting of the job deletion, in
+	// the background. The main work is done, and the rest can be done asynchronously.
+	bgCtx := context.Background()
+	go s.broadcastAndQueueMassJobDeletion(bgCtx, uuids, logger)
+
+	return nil
+}
+
+func (s *Service) broadcastAndQueueMassJobDeletion(ctx context.Context, jobUUIDs []string, logger zerolog.Logger) {
+	for _, uuid := range jobUUIDs {
+		// Let the Run() goroutine know this job is ready for deletion.
+		select {
+		case s.queue <- uuid:
+			logger.Debug().Msg("job deleter: job succesfully queued for deletion")
+		case <-time.After(100 * time.Millisecond):
+			logger.Trace().Msg("job deleter: job deletion queue is full")
+		}
+
+		// Broadcast that the jobs were queued for deletion.
+		job, err := s.persist.FetchJob(ctx, uuid)
+		if err != nil {
+			logger.Debug().
+				Str("uuid", uuid).
+				Err(err).
+				Msg("job deleter: unable to fetch job to send updates")
+			continue
+		}
+		jobUpdate := webupdates.NewJobUpdate(job)
+		s.changeBroadcaster.BroadcastJobUpdate(jobUpdate)
+	}
+}
+
 func (s *Service) WhatWouldBeDeleted(job *persistence.Job) api.JobDeletionInfo {
 	logger := log.With().Str("job", job.UUID).Logger()
 	logger.Info().Msg("job deleter: checking what job deletion would do")

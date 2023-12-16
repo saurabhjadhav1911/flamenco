@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -929,4 +930,55 @@ func TestDeleteJob(t *testing.T) {
 	assert.NoError(t, err)
 
 	assertResponseNoContent(t, echoCtx)
+}
+
+func TestDeleteJobMass(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mf := newMockedFlamenco(mockCtrl)
+
+	withFracionalSecs, err := time.Parse(time.RFC3339Nano, "2023-12-01T09:17:34.275+02:00")
+	require.NoError(t, err)
+
+	roundedUp, err := time.Parse(time.RFC3339Nano, "2023-12-01T09:17:35+02:00")
+	require.NoError(t, err)
+
+	body := api.DeleteJobMassJSONBody{
+		LastUpdatedMax: &withFracionalSecs,
+	}
+
+	{ // Happy flow.
+		echoCtx := mf.prepareMockedJSONRequest(body)
+		mf.jobDeleter.EXPECT().QueueMassJobDeletion(gomock.Any(), roundedUp.UTC())
+
+		err := mf.flamenco.DeleteJobMass(echoCtx)
+		require.NoError(t, err)
+
+		assertResponseNoContent(t, echoCtx)
+	}
+
+	{ // No jobs found.
+		echoCtx := mf.prepareMockedJSONRequest(body)
+		mf.jobDeleter.EXPECT().QueueMassJobDeletion(gomock.Any(), roundedUp.UTC()).
+			Return(persistence.ErrJobNotFound)
+
+		err := mf.flamenco.DeleteJobMass(echoCtx)
+		require.NoError(t, err)
+
+		assertResponseAPIError(t, echoCtx,
+			http.StatusRequestedRangeNotSatisfiable,
+			"no jobs modified before timestamp")
+	}
+}
+
+func TestTimestampRoundUp(t *testing.T) {
+	withFracionalSecs, err := time.Parse(time.RFC3339Nano, "2023-12-01T09:17:34.275+00:00")
+	require.NoError(t, err)
+
+	roundedUp, err := time.Parse(time.RFC3339Nano, "2023-12-01T09:17:35+00:00")
+	require.NoError(t, err)
+
+	assert.Equal(t, roundedUp, timestampRoundUp(withFracionalSecs))
+	assert.Equal(t, roundedUp, timestampRoundUp(roundedUp))
 }

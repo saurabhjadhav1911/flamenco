@@ -185,6 +185,74 @@ func TestRequestJobDeletion(t *testing.T) {
 	assert.False(t, dbJob2.DeleteRequestedAt.Valid)
 }
 
+func TestRequestJobMassDeletion(t *testing.T) {
+	// This is a fresh job, that shouldn't be touched by the mass deletion.
+	ctx, close, db, job1, authoredJob1 := jobTasksTestFixtures(t)
+	defer close()
+
+	origGormNow := db.gormDB.NowFunc
+	now := db.gormDB.NowFunc()
+
+	// Ensure different jobs get different timestamps.
+	db.gormDB.NowFunc = func() time.Time { return now.Add(-3 * time.Second) }
+	authoredJob2 := duplicateJobAndTasks(authoredJob1)
+	job2 := persistAuthoredJob(t, ctx, db, authoredJob2)
+
+	db.gormDB.NowFunc = func() time.Time { return now.Add(-4 * time.Second) }
+	authoredJob3 := duplicateJobAndTasks(authoredJob1)
+	job3 := persistAuthoredJob(t, ctx, db, authoredJob3)
+
+	db.gormDB.NowFunc = func() time.Time { return now.Add(-5 * time.Second) }
+	authoredJob4 := duplicateJobAndTasks(authoredJob1)
+	job4 := persistAuthoredJob(t, ctx, db, authoredJob4)
+
+	// Request that "job3 and older" gets deleted.
+	timeOfDeleteRequest := origGormNow()
+	db.gormDB.NowFunc = func() time.Time { return timeOfDeleteRequest }
+	uuids, err := db.RequestJobMassDeletion(ctx, job3.UpdatedAt)
+	assert.NoError(t, err)
+
+	db.gormDB.NowFunc = origGormNow
+
+	// Only jobs 3 and 4 should be updated.
+	assert.Equal(t, []string{job3.UUID, job4.UUID}, uuids)
+
+	// All the jobs should still exist.
+	job1, err = db.FetchJob(ctx, job1.UUID)
+	require.NoError(t, err)
+	job2, err = db.FetchJob(ctx, job2.UUID)
+	require.NoError(t, err)
+	job3, err = db.FetchJob(ctx, job3.UUID)
+	require.NoError(t, err)
+	job4, err = db.FetchJob(ctx, job4.UUID)
+	require.NoError(t, err)
+
+	// Jobs 3 and 4 should have been marked for deletion, the rest should be untouched.
+	assert.False(t, job1.DeleteRequested())
+	assert.False(t, job2.DeleteRequested())
+	assert.True(t, job3.DeleteRequested())
+	assert.True(t, job4.DeleteRequested())
+
+	assert.Equal(t, timeOfDeleteRequest, job3.DeleteRequestedAt.Time)
+	assert.Equal(t, timeOfDeleteRequest, job4.DeleteRequestedAt.Time)
+}
+
+func TestRequestJobMassDeletion_noJobsFound(t *testing.T) {
+	ctx, close, db, job, _ := jobTasksTestFixtures(t)
+	defer close()
+
+	// Request deletion with a timestamp that doesn't match any jobs.
+	now := db.gormDB.NowFunc()
+	uuids, err := db.RequestJobMassDeletion(ctx, now.Add(-24*time.Hour))
+	assert.ErrorIs(t, err, ErrJobNotFound)
+	assert.Zero(t, uuids)
+
+	// The job shouldn't have been touched.
+	job, err = db.FetchJob(ctx, job.UUID)
+	require.NoError(t, err)
+	assert.False(t, job.DeleteRequested())
+}
+
 func TestFetchJobsDeletionRequested(t *testing.T) {
 	ctx, close, db, job1, authoredJob1 := jobTasksTestFixtures(t)
 	defer close()

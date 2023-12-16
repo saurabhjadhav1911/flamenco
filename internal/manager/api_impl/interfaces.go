@@ -234,6 +234,7 @@ var _ WorkerSleepScheduler = (*sleep_scheduler.SleepScheduler)(nil)
 
 type JobDeleter interface {
 	QueueJobDeletion(ctx context.Context, job *persistence.Job) error
+	QueueMassJobDeletion(ctx context.Context, lastUpdatedMax time.Time) error
 	WhatWouldBeDeleted(job *persistence.Job) api.JobDeletionInfo
 }
 
