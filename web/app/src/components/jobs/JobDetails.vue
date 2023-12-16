@@ -69,7 +69,12 @@
           </template>
           <template v-else>
             <dt class="field-updated" title="Updated">Updated</dt>
-            <dd>{{ datetime.relativeTime(jobData.updated) }}</dd>
+            <dd
+              @click="copyElementData"
+              class="click-to-copy"
+              :data-clipboard="jobData.updated.toISOString()">
+              {{ datetime.relativeTime(jobData.updated) }}
+            </dd>
           </template>
 
           <dt class="field-activity" title="Activity">Activity</dt>
