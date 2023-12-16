@@ -762,6 +762,40 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
 
+  /api/v3/jobs/mass-delete:
+    summary: >
+      Mark many jobs for deletion, based on certain criteria. This endpoint will
+      not actually delete the jobs, but just mark them for deletion. Flamenco
+      Manager will process the deletions in the background.
+
+      Note that the `last_updated_max` parameter is rounded up to entire
+      seconds. This may mark more jobs for deletion than you expect, if their
+      `updated_at` timestamps differ by less than a second.
+    delete:
+      operationId: deleteJobMass
+      summary: Mark jobs for deletion, based on certain criteria.
+      tags: [jobs]
+      requestBody:
+        description: Parameters to determine which jobs to delete.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobMassDeletionSelection"
+      responses:
+        "204":
+          description: Jobs were succesfully marked for deletion.
+        "416":
+          description: There were no jobs that match the request.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        default:
+          description: Error message
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+
   /api/v3/jobs/check:
     summary: Check the job for validity, without creating it.
     post:
@@ -1877,6 +1911,17 @@ components:
           type: boolean
           description: Whether the Shaman checkout directory will be removed along with the job.
       required: ["shaman_checkout"]
+
+    JobMassDeletionSelection:
+      type: object
+      description: Parameters to describe which jobs should be deleted.
+      properties:
+        "last_updated_max":
+          type: string
+          format: date-time
+          description: All jobs that were last updated before or on this timestamp will be deleted.
+      example:
+        "last_updated_max": "2023-06-01T13:14:15+02:00"
 
     JobsQuery:
       type: object
