@@ -1800,21 +1800,20 @@ components:
         priority: 50
         submitter_platform: linux
         settings:
-          blender_cmd: "{blender}"
-          filepath: "/render/sf/jobs/scene123.blend"
+          blendfile: "/render/sf/jobs/scene123.blend"
           render_output_root: "/render/sf/frames/scene123"
           render_output_path: "/render/sf/frames/scene123/3Д рендеринг/######"
           frames: "1-10"
           chunk_size: 3
           fps: 24
-          extract_audio: true
-          images_or_video: "images"
           format: "PNG"
-          output_file_extension: ".png"
+          has_previews: false
+          image_file_extension: ".png"
         metadata:
           "user.name": "Sybren Stüvel"
           "user.email": "sybren@blender.org"
           "project": "Sprite Fright"
+
     Job:
       allOf:
         - $ref: "#/components/schemas/SubmittedJob"
