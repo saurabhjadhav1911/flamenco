@@ -6,7 +6,6 @@ package worker
 
 import (
 	"context"
-	"fmt"
 	"os/exec"
 
 	"github.com/rs/zerolog"
@@ -57,13 +56,6 @@ func (ce *CommandExecutor) cmdExecCommand(
 	if execCmd == nil {
 		logger.Error().Msg("unable to create command executor")
 		return nil, ErrNoExecCmd
-	}
-	logger.Info().
-		Str("execCmd", execCmd.String()).
-		Msg("going to execute CLI command")
-
-	if err := ce.listener.LogProduced(ctx, taskID, fmt.Sprintf("going to run: %s %q", parameters.exe, parameters.args)); err != nil {
-		return nil, err
 	}
 
 	return execCmd, nil

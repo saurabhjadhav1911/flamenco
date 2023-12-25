@@ -97,14 +97,6 @@ func (ce *CommandExecutor) cmdFramesToVideoExeCommand(
 		logger.Error().Msg("unable to create command executor")
 		return nil, nil, ErrNoExecCmd
 	}
-	logger.Info().
-		Str("execCmd", execCmd.String()).
-		Msg("going to execute FFmpeg")
-
-	if err := ce.listener.LogProduced(ctx, taskID, fmt.Sprintf("going to run: %s %q", parameters.exe, cliArgs)); err != nil {
-		runCleanup()
-		return nil, nil, err
-	}
 
 	return execCmd, cleanup, nil
 }

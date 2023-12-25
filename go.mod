@@ -3,7 +3,6 @@ module projects.blender.org/studio/flamenco
 go 1.21
 
 require (
-	github.com/pressly/goose/v3 v3.15.1
 	github.com/adrg/xdg v0.4.0
 	github.com/benbjohnson/clock v1.3.0
 	github.com/deepmap/oapi-codegen v1.9.0
@@ -22,6 +21,7 @@ require (
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/mattn/go-colorable v0.1.12
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
+	github.com/pressly/goose/v3 v3.15.1
 	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
 	github.com/zcalusic/sysinfo v1.0.1
@@ -36,6 +36,7 @@ require (
 )
 
 require (
+	github.com/alessio/shellescape v1.4.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect

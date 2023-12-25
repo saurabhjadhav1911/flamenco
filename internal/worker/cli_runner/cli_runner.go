@@ -9,6 +9,7 @@ import (
 	"io"
 	"os/exec"
 
+	"github.com/alessio/shellescape"
 	"github.com/rs/zerolog"
 )
 
@@ -33,6 +34,9 @@ func (cli *CLIRunner) CommandContext(ctx context.Context, name string, arg ...st
 // lineChannel. Stdout and stderr are combined.
 // Before returning. RunWithTextOutput() waits for the subprocess, to ensure it
 // doesn't become defunct.
+//
+// Note that all output read from the command is logged via `logChunker` as
+// well, so the receiving end of the `lineChannel` does not have to do this.
 func (cli *CLIRunner) RunWithTextOutput(
 	ctx context.Context,
 	logger zerolog.Logger,
@@ -45,6 +49,11 @@ func (cli *CLIRunner) RunWithTextOutput(
 		return err
 	}
 	execCmd.Stderr = execCmd.Stdout // Redirect stderr to stdout.
+
+	if err := cli.logCmd(ctx, logger, execCmd, logChunker); err != nil {
+		logger.Error().Err(err).Msg("error logging CLI execution")
+		return err
+	}
 
 	if err := execCmd.Start(); err != nil {
 		logger.Error().Err(err).Msg("error starting CLI execution")
@@ -132,5 +141,33 @@ readloop:
 	}
 
 	logger.Info().Msg("command exited succesfully")
+	return nil
+}
+
+// Log the command before starting, in a way that can be easily copy-pasted
+// from the task log to a shell.
+func (cli *CLIRunner) logCmd(
+	ctx context.Context,
+	logger zerolog.Logger,
+	execCmd *exec.Cmd,
+	logChunker LogChunker,
+) error {
+
+	quotedCommand := shellescape.QuoteCommand(execCmd.Args)
+
+	// The quotedCommand is intentionally not logged in one of the structured
+	// fields here, as those will be quoted once again and hard to read /
+	// copy-paste from. And that's the whole point of doing this quoting, to get
+	// something copy-pastable for debugging purposes (mostly to answer: is the
+	// issue with Blender or with Flamenco?)
+	logger.Info().Msgf("going to run: %s", quotedCommand)
+
+	logger.Debug().Strs("args", execCmd.Args).Msg("CLI arguments")
+
+	forTaskLog := fmt.Sprintf("going to run:\n\n    %s\n", quotedCommand)
+	err := logChunker.Append(ctx, forTaskLog)
+	if err != nil {
+		return fmt.Errorf("could not send to Manager's task log: %w", err)
+	}
 	return nil
 }

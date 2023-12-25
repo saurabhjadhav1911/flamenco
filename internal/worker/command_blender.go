@@ -6,7 +6,6 @@ package worker
 
 import (
 	"context"
-	"fmt"
 	"os/exec"
 	"regexp"
 	"sync"
@@ -110,14 +109,6 @@ func (ce *CommandExecutor) cmdBlenderRenderCommand(
 			Str("cmdName", cmd.Name).
 			Msg("unable to create command executor")
 		return nil, ErrNoExecCmd
-	}
-	logger.Info().
-		Str("cmdName", cmd.Name).
-		Str("execCmd", execCmd.String()).
-		Msg("going to execute Blender")
-
-	if err := ce.listener.LogProduced(ctx, taskID, fmt.Sprintf("going to run: %s %q", parameters.exe, cliArgs)); err != nil {
-		return nil, err
 	}
 
 	return execCmd, nil
