@@ -71,7 +71,6 @@ func (ce *CommandExecutor) cmdBlenderRender(ctx context.Context, logger zerolog.
 		return subprocessErr
 	}
 
-	logger.Info().Msg("command exited succesfully")
 	return nil
 }
 

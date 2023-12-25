@@ -56,7 +56,6 @@ func (ce *CommandExecutor) cmdFramesToVideo(ctx context.Context, logger zerolog.
 		return subprocessErr
 	}
 
-	logger.Info().Msg("command exited succesfully")
 	return nil
 }
 

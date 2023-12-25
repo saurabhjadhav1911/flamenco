@@ -39,7 +39,6 @@ func (ce *CommandExecutor) cmdExec(ctx context.Context, logger zerolog.Logger, t
 		return subprocessErr
 	}
 
-	logger.Info().Msg("command exited succesfully")
 	return nil
 }
 
